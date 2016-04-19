@@ -1,0 +1,1 @@
+#Shop implementation of all views
