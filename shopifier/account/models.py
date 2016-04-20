@@ -4,9 +4,9 @@ import os
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.core.mail import send_mail
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
-from easy_thumbnails.fields import ThumbnailerImageField
 
 class UserManager(BaseUserManager):
     def create_user(self, email, **extra_fields):
@@ -37,10 +37,14 @@ def normalization_file_name(instance, filename):
     return "avatar/img{}".format(os.path.splitext(filename)[1])
 
 class User(AbstractBaseUser):
+    first_name = models.CharField(_('first name'), max_length=30, blank=True)
+    last_name = models.CharField(_('last name'), max_length=30, blank=True)
     email = models.EmailField(_('email address'), max_length=254, unique=True)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    bio = models.TextField(_('bio (optional)'),blank=True,  max_length=2048)
-    avatar_image = ThumbnailerImageField(_('Portfile photo'), blank=True, resize_source=dict(size=(100, 100)), upload_to=normalization_file_name)
+    phone = models.CharField(_('Phone (optional)'), max_length=30, blank=True)
+    www_site = models.CharField(_('Personal website address (optional)'), max_length=30, blank=True)
+    bio = models.TextField(_('Bio (optional)'),blank=True,  max_length=2048)
+    avatar_image = models.ImageField(_('Portfile photo'), blank=True, upload_to=normalization_file_name)
     
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(_('staff status'), default=False,)
@@ -56,12 +60,11 @@ class User(AbstractBaseUser):
         verbose_name_plural = _('users')
 
     def get_full_name(self):
-        # The user is identified by their email address
-        return self.email
+        full_name = '%s %s' % (self.first_name, self.last_name)
+        return full_name.strip()
 
     def get_short_name(self):
-        # The user is identified by their email address
-        return self.email
+        return self.first_name
 
     def __unicode__(self):
         return self.email
@@ -75,7 +78,10 @@ class User(AbstractBaseUser):
         "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return True
-
+    
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        send_mail(subject, message, from_email, [self.email], **kwargs)
+    
     @property
     def username(self):
         "Username"
