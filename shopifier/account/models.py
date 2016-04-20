@@ -7,6 +7,27 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.sessions.models import Session
+from django.contrib.auth.signals import user_logged_in
+
+__all__ = [
+    'user_log',
+    'UserManager',
+    'User',
+    'UserLog',
+]
+
+def user_log(sender, user, request, **kwargs):
+    xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
+    ip = request.META.get('REMOTE_ADDR', xff.split(',')[0]) or None
+
+    request.session.modified = True
+    request.session.save()
+    s = Session.objects.get(pk=request.session.session_key)
+    UserLog.objects.create(user=user, session=s, ip=ip)
+    
+user_logged_in.connect(user_log)
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, **extra_fields):
@@ -85,5 +106,20 @@ class User(AbstractBaseUser):
     @property
     def username(self):
         "Username"
-        # Simplest possible answer: All admins are staff
         return self.email
+        
+        
+class UserLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    session= models.ForeignKey(Session, null=True, on_delete=models.SET_NULL)
+    ip = models.GenericIPAddressField(null=True)
+    visit_datetime = models.DateTimeField(null=True, default=timezone.now)
+    
+    class Meta:
+        ordering = ['-visit_datetime', 'id']
+        
+    @property
+    def is_active(self):
+        "Is the session active?"
+        return self.session <> None
+

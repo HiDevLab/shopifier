@@ -7,7 +7,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from account.models import User
+from account.models import User, UserLog
+
+class UserLogInline(admin.TabularInline):
+    model = UserLog
+    extra = 5
+    readonly_fields = ('is_active', 'ip', 'visit_datetime')
+    exclude = ('session',)
 
 class UserCreationForm(forms.ModelForm):
 
@@ -55,7 +61,8 @@ class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
-        
+    
+    inlines = [UserLogInline]    
 
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
