@@ -58,9 +58,9 @@ def normalization_file_name(instance, filename):
     return "avatar/img{}".format(os.path.splitext(filename)[1])
 
 class User(AbstractBaseUser):
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
-    email = models.EmailField(_('email address'), max_length=254, unique=True)
+    first_name = models.CharField(_('first name'), max_length=30, blank=False)
+    last_name = models.CharField(_('last name'), max_length=30, blank=False)
+    email = models.EmailField(_('email address'), max_length=254, unique=True, blank=False)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     phone = models.CharField(_('Phone (optional)'), max_length=30, blank=True)
     www_site = models.CharField(_('Personal website address (optional)'), max_length=30, blank=True)

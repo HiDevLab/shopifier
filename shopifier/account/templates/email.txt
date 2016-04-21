@@ -1,0 +1,7 @@
+{% load i18n %}
+Account activation on the Shopifier
+
+To complete registration, follow the activation link in your email-address:
+{{ reference }}
+
+To complete the account activation procedure.
