@@ -2,18 +2,15 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.messages import get_messages
-from django.core.validators import validate_email, ValidationError
-from django.db import transaction
-from django.db.utils import IntegrityError
-from django.utils.timezone import now
 
 from rest_framework import permissions, mixins
-from rest_framework.decorators import detail_route
-from rest_framework.generics import *
+from rest_framework.decorators import detail_route, list_route
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.status import *
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.serializers import *
 
@@ -22,7 +19,7 @@ from django.core.mail import send_mail
 
 from account.serializers import *
 from account.models import *
-import pdb
+#import pdb
 
 
 class LoginView(APIView):
@@ -110,7 +107,7 @@ class  UserConfimView(APIView):
     
     def get(self, request, format=None):
         
-        serializer = self.serializer_class(data=request.GET)
+        serializer = self.serializer_class(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         
         user = serializer.validated_data['pk']
@@ -125,7 +122,7 @@ class UserActivateView(APIView):
     serializer_class = UserActivateSerializer
         
     def post(self, request, format=None):
-        #pdb.set_trace()
+        
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         
@@ -144,56 +141,60 @@ class UserActivateView(APIView):
         return Response({'success': 'User logged in'}, status=HTTP_200_OK)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-
-    def get_object(self):
-        print sel.user
-        return self.user
-
-    def dispatch(self, request, *args, **kwargs):
-        
-        self.user = User.objects.get(pk=kwargs.get('pk', None))
-        if self.user == None:
-            raise Http404("Invalid confirm email information")
-        
-        signer = Signer()
-        s1 = signer.signature(self.user)
-        s2 = kwargs.get('sign_user', None)
-        
-        if self.user.is_active == True:
-            raise Http404("Account is active yet!")
-        if s1<>s2:
-            raise Http404("Invalid confirm email information")
-        #self.serializparameter nameser_class.instance = self.user    
-        return super(EmailUserConfirmView, self).dispatch(request, *args, **kwargs)
+class UsersAdminViewSet(ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = User.objects.all().order_by('id')
+    serializer_class = UsersAdminSerializer
     
-    
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    def destroy(self, request, *args, **kwargs):
+        #pdb.set_trace()
+        user = self.get_object()
+        if user.id == request.user.id or request.user.is_admin==False:
+            content = {'status': 'User can not delete this account'}
+            return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
+       
+        return super(UsersAdminViewSet, self).destroy(request, *args, **kwargs)
         
-        self.user.set_password(serializer.data['password1'])
-        self.user.first_name(serializer.data['first_name'])
-        self.user.last_name(serializer.data['last_name'])
-        self.user.is_active = True
-        self.user.is_staff = True
-        self.user.save()
-        return Response(status=HTTP_204_NO_CONTENT)
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.id <> request.user.id and request.user.is_admin==False:
+            content = {'status': 'User can not change this account'}
+            return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
+       
+        return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
     
-"""
+    def retrieve(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.id <> request.user.id and request.user.is_admin==False:
+            content = {'status': 'User can not view this account information'}
+            return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
+       
+        return super(UsersAdminViewSet, self).retrieve(request, *args, **kwargs)
+
+
+class UsersStaffViewSet(mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      GenericViewSet):
+                      
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = User.objects.all()
+    serializer_class = UsersStaffSerializer
+    
+    def check_object_permissions(self, request, obj):
+        if obj.id <> request.user.id:
+            raise PermissionDenied
+        else:
+            super(UsersStaffViewSet, self).check_object_permissions(request, obj)    
+
+        
+        
+class SessionsViewSet(mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  GenericViewSet):
+                      
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = SessionsSerializer
+    queryset = UserLog.objects.exclude(session__exact=None)
 
 

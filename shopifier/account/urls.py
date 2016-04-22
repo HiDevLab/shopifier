@@ -2,8 +2,14 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 from rest_framework.routers import SimpleRouter, Route, DynamicDetailRoute
+from rest_framework.routers import DefaultRouter
 
 from account.views import *
+
+router = DefaultRouter()
+router.register(r'admin', UsersAdminViewSet)
+router.register(r'sessions', SessionsViewSet)
+router.register(r'staff', UsersStaffViewSet)
 
 urlpatterns = [
     #Api
@@ -13,6 +19,7 @@ urlpatterns = [
     url(r'^api/user-invaite/$', UserInvaiteView.as_view(), name='api_invaite'),
     url(r'^api/user-confim/$', UserConfimView.as_view(), name='api_confirm'),
     url(r'^api/user-activate/$', UserActivateView.as_view(), name='api_activate'),
+    url(r'^api/', include(router.urls)),
     
 ]
 #url(r'^api/user-activate/(?P<pk>\d+)/(?P<sign_user>[\w.@+-_]+)/', UserAView.as_view(), name='api_activate'),
