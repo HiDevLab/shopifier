@@ -22,4 +22,4 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     
 ]
-#url(r'^api/user-activate/(?P<pk>\d+)/(?P<sign_user>[\w.@+-_]+)/', UserAView.as_view(), name='api_activate'),
+

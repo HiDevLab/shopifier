@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import permissions, mixins
 from rest_framework.decorators import detail_route, list_route
@@ -20,6 +21,7 @@ from django.core.mail import send_mail
 from account.serializers import *
 from account.models import *
 #import pdb
+#pdb.set_trace()
 
 
 class LoginView(APIView):
@@ -34,9 +36,9 @@ class LoginView(APIView):
         
         if user:
             login(request, user)
-            return Response({'success': 'User logged in'}, status=HTTP_200_OK)
+            return Response({'success': _('User logged in')}, status=HTTP_200_OK)
         else:
-            content = {'detail': 'Unable to login with provided credentials'}
+            content = {'detail': _('Unable to login with provided credentials')}
             return Response(content, status=HTTP_401_UNAUTHORIZED)
 
 
@@ -49,13 +51,13 @@ class PasswordChangeView(APIView):
         serializer.is_valid(raise_exception=True)
         
         if not request.user.check_password(serializer.data['old_password']):
-            content = {'status': 'Current password is wrong'}
+            content = {'status': _('Current password is wrong')}
             return Response(content, status=HTTP_400_BAD_REQUEST)
         
         request.user.set_password(serializer.data['password'])
-        request.user.save(update_fieldsBaseSerializer=('password',))
+        request.user.save(update_fields=('password',))
+        return Response({"success": _("New password has been saved.")}, status=HTTP_200_OK)
         
-        return Response(status=HTTP_204_NO_CONTENT)
 
         
 class LogoutView(APIView):
@@ -63,7 +65,7 @@ class LogoutView(APIView):
     
     def get(self, request, format=None):
         logout(request)
-        content = {'success': 'User logged out.'}
+        content = {'success': _('User logged out.')}
         return Response(content, status=HTTP_200_OK)
 
 def get_token(email):
@@ -100,7 +102,7 @@ class  UserInvaiteView(CreateAPIView):
         user.save()
         return user    
         
-        
+       
 class  UserConfimView(APIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserConfimSerializer    
@@ -112,7 +114,7 @@ class  UserConfimView(APIView):
         
         user = serializer.validated_data['pk']
         if get_token(user.email) != serializer.validated_data['token']:
-            return Response({'details': 'Wrong Token'}, status=HTTP_400_BAD_REQUEST)
+            return Response({'details': _('Wrong Token')}, status=HTTP_400_BAD_REQUEST)
         
         serializer = UserSerializer(user)
         return Response(serializer.data, status=HTTP_200_OK)
@@ -127,8 +129,9 @@ class UserActivateView(APIView):
         serializer.is_valid(raise_exception=True)
         
         user = serializer.validated_data['pk']
+        
         if get_token(user.email) != serializer.validated_data['token']:
-            return Response({'details': 'Wrong Token'}, status=HTTP_400_BAD_REQUEST)
+            return Response({'details': _('Wrong Token')}, status=HTTP_400_BAD_REQUEST)
         
         user.set_password(serializer.validated_data['password'])
         user.is_active = True
@@ -138,7 +141,7 @@ class UserActivateView(APIView):
         user = authenticate(**serializer.validated_data)
         if user:
             login(request, user)
-        return Response({'success': 'User logged in'}, status=HTTP_200_OK)
+        return Response({'success': _('User logged in')}, status=HTTP_200_OK)
 
 
 class UsersAdminViewSet(ModelViewSet):
@@ -147,10 +150,11 @@ class UsersAdminViewSet(ModelViewSet):
     serializer_class = UsersAdminSerializer
     
     def destroy(self, request, *args, **kwargs):
+        #import pdb
         #pdb.set_trace()
         user = self.get_object()
         if user.id == request.user.id or request.user.is_admin==False:
-            content = {'status': 'User can not delete this account'}
+            content = {'status': _('User can not delete this account')}
             return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
        
         return super(UsersAdminViewSet, self).destroy(request, *args, **kwargs)
@@ -158,7 +162,7 @@ class UsersAdminViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         user = self.get_object()
         if user.id <> request.user.id and request.user.is_admin==False:
-            content = {'status': 'User can not change this account'}
+            content = {'status': _('User can not change this account')}
             return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
        
         return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
@@ -166,7 +170,7 @@ class UsersAdminViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         user = self.get_object()
         if user.id <> request.user.id and request.user.is_admin==False:
-            content = {'status': 'User can not view this account information'}
+            content = {'status': _('User can not view this account information')}
             return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
        
         return super(UsersAdminViewSet, self).retrieve(request, *args, **kwargs)
@@ -186,7 +190,6 @@ class UsersStaffViewSet(mixins.RetrieveModelMixin,
         else:
             super(UsersStaffViewSet, self).check_object_permissions(request, obj)    
 
-        
         
 class SessionsViewSet(mixins.ListModelMixin,
                   mixins.RetrieveModelMixin,

@@ -100,8 +100,8 @@ class User(AbstractBaseUser):
         # Simplest possible answer: Yes, always
         return True
     
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+    #def email_user(self, subject, message, from_email=None, **kwargs):
+    #    send_mail(subject, message, from_email, [self.email], **kwargs)
     
     @property
     def username(self):
