@@ -2,26 +2,50 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.core.signing import Signer
+from django.core.mail import send_mail
+from django.http.response import Http404
+from django.views.generic.base import TemplateView
+from django.views.decorators.cache import cache_page
+from django.template.exceptions import TemplateDoesNotExist
+from django.template.loader import get_template
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import permissions, mixins
 from rest_framework.decorators import detail_route, list_route
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
+from rest_framework.serializers import *
 from rest_framework.status import *
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.serializers import *
 
-from django.core.signing import Signer
-from django.core.mail import send_mail
 
 from account.serializers import *
 from account.models import *
 #import pdb
 #pdb.set_trace()
+
+class AdminTemplateView(TemplateView):
+    '''
+    Render admin app template
+    '''
+    cache_timeout = 0
+    template_engine = 'default'
+    
+    def get_template_names(self):
+        template_name = 'admin/{}'.format(self.kwargs['template_name'])
+        try:
+            get_template(template_name)
+        except TemplateDoesNotExist:
+            raise Http404
+        return [template_name]
+    
+    def dispatch(self, request, *args, **kwargs):
+        s = super(AdminTemplateView, self).dispatch
+        return cache_page(self.cache_timeout)(s)(request, *args, **kwargs)
 
 
 class LoginView(APIView):
@@ -82,7 +106,7 @@ class  UserInvaiteView(CreateAPIView):
 
     def perform_create(self, serializer):
         user = serializer.save()          
-        ref_url = 'http://127.0.0.1:8000/api/user-activate/?pk={}&token={}'.format(user.id, get_token(user.email))
+        ref_url = '{}/api/user-activate/?pk={}&token={}'.format(settings.SITE.domain, user.id, get_token(user.email))
         #ref_url = 'http://127.0.0.1:8000/api/confirm-email/{}/{}/'.format(user.id, self.get_token(user.email))
         #user-activate?pk=\d+&token=[\w.@+-_]+)/
         txt_body = render_to_string(self.email_text_template_name,
