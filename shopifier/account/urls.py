@@ -21,8 +21,8 @@ urlpatterns = [
     url(r'^api/user-activate/$', UserActivateView.as_view(), name='api_activate'),
     url(r'^api/', include(router.urls)),
     url(r'^admin/(?P<template_name>.+)$', AdminTemplateView.as_view()),
-    url(r'^$', TemplateView.as_view(template_name='public/base.html'), name='root'),
-    url(r'^.*$', TemplateView.as_view(template_name='public/base.html'), name='root'),  
+    url(r'^$', TemplateView.as_view(template_name='admin/base.html'), name='root'),
+    url(r'^.*$', TemplateView.as_view(template_name='admin/base.html'), name='root'),  
 ]
 
 urlpatterns += [

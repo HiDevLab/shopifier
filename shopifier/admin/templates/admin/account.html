@@ -1,8 +1,7 @@
-{% verbatim %}
-<h1>{{title}}</h1>
+<h1>{% verbatim %}{{title}}{% endverbatim %}</h1>
 <nav>
     <a [routerLink]="['Login']">Log in</a>
     <a [routerLink]="['Logout']">Log out</a>
 </nav>
 <router-outlet></router-outlet>
-{% endverbatim %}
+

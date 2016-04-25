@@ -1,19 +1,12 @@
-{% verbatim %}
-<div >
-    <h2>{{message.success}}</h2>
-    
-    <div>
-        <label>email: </label>
-        <input [(ngModel)]="user.email" placeholder="email"/>
-    </div>
-    <div>
-        <label>name: </label>
-        <input [(ngModel)]="user.password" placeholder="password"/>
-    </div>
-    
-    <button (click)="goLogin()">Log in</button>
-    
-    <button (click)="goLogout()">Log out</button>
-    
+<div class="login">
+    <h1>hidevlab</h1>
+    <h4>Log in to manage your store</h4>
+    <form name="loginForm" class="login-box">
+        
+        <input type="email" class="login-input" name="email" [(ngModel)]="user.email" required placeholder="Email"/>
+        <input type="password" class="login-input" name="password" [(ngModel)]="user.password" required placeholder="Password"/>
+        
+        <button class="login-btn" type="submit" (click)="goLogin()">Log in</button>
+        
+    </form>
 </div>
-{% endverbatim %}
