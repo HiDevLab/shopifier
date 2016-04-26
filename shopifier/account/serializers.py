@@ -23,9 +23,8 @@ class EmailSerializer(serializers.Serializer):
 
 
 class PasswordResetSerializer(serializers.Serializer):
-    user = serializers.PrimaryKeyRelatedField(
+    pk = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all())
-    #TODO: add validation
     token = serializers.CharField(max_length=32)
     password = serializers.CharField(min_length=6)
 
@@ -35,12 +34,12 @@ class UserInvaiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
-
+"""
 class UserConfimSerializer(serializers.Serializer):
     pk = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.exclude(is_active=True))
     token = serializers.CharField(max_length=32)
-
+"""
 
 class UserActivateSerializer(serializers.Serializer):
     pk = serializers.PrimaryKeyRelatedField(
