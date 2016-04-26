@@ -1,0 +1,12 @@
+{% load static %}<!DOCTYPE html>
+<html>
+<head></head>
+<body style="background: #f4f7f9; font-family: Helvetica Neue,Helvetica,Arial,sans-serif;">
+    <div style="width: 700px; margin: 0 auto; padding-top: 115px;">
+        <div style="height: 230px; background: #31429b url({{ settings.SITE }}{% static 'img/logo_white_text_bottom.png' %}) no-repeat center center;"></div>
+        {% block h1 %}{% endblock %}
+        <div style="background: white; padding: 50px 80px 80px; font-size: 18px; line-height: 26px; color: #4e5559;">{% block content %}{% endblock %}</div>
+        <div style="font-size: 14px; padding: 40px 0; text-align: center; line-height: 26px; color: #8b9499;">© {% now "Y" %} Shopifier, All Rights Reserved.</div>
+    </div>
+</body>
+</html>

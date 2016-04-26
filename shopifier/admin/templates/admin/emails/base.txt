@@ -1,0 +1,6 @@
+{% block h1 %}{% endblock %}
+{% block content %}{% endblock %}
+
+--
+© {% now "Y" %} Shopifier,
+All Rights Reserved.

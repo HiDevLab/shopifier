@@ -2,13 +2,14 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.tokens import default_token_generator
 from django.core.signing import Signer
 from django.core.mail import send_mail
 from django.http.response import Http404
 from django.views.generic.base import TemplateView
 from django.views.decorators.cache import cache_page
 from django.template.exceptions import TemplateDoesNotExist
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import permissions, mixins
@@ -101,12 +102,12 @@ class  UserInvaiteView(CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserInvaiteSerializer
     
-    email_html_template_name = 'email.html'    
-    email_text_template_name = 'email.txt'
+    email_html_template_name = 'admin/invaite_email.html'    
+    email_text_template_name = 'admin/invaite_email.txt'
 
     def perform_create(self, serializer):
         user = serializer.save()          
-        ref_url = '{}/api/user-activate/?pk={}&token={}'.format(settings.SITE.domain, user.id, get_token(user.email))
+        ref_url = '{}/api/user-activate/?pk={}&token={}'.format(settings.SITE, user.id, get_token(user.email))
         #ref_url = 'http://127.0.0.1:8000/api/confirm-email/{}/{}/'.format(user.id, self.get_token(user.email))
         #user-activate?pk=\d+&token=[\w.@+-_]+)/
         txt_body = render_to_string(self.email_text_template_name,
@@ -166,6 +167,66 @@ class UserActivateView(APIView):
         if user:
             login(request, user)
         return Response({'success': _('User logged in')}, status=HTTP_200_OK)
+
+
+class UserPasswordResetView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = EmailSerializer
+    
+    subject_template_name = 'admin/emails/password_reset_subject.txt'
+    email_template_name = 'admin/emails/password_reset_body.html'
+    txt_template_name = 'admin/emails/password_reset_body.txt'
+    
+    token_generator = default_token_generator
+    
+    def send_email(self, user):
+
+        context = {
+            'reference': '{}/api/password-reset-confirm/{}/{}/'.format(settings.SITE, user.id, self.token_generator.make_token(user)),            
+        }
+       
+        subject = render_to_string(self.subject_template_name, context)
+        subject = ''.join(subject.splitlines())  # Email subject *must not* contain newlines
+        send_mail(
+            subject=subject,
+            message=render_to_string(self.txt_template_name, context),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            html_message=render_to_string(self.email_template_name, context),
+        )
+    
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        email = serializer.data['email']
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            pass
+        else:
+            self.send_email(user)
+        
+        return Response({}, status=HTTP_200_OK)
+
+
+class UserPasswordResetConfirmView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = PasswordResetSerializer
+    token_generator = UserPasswordResetView.token_generator
+    
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        user = serializer.validated_data['user']
+        if self.token_generator.make_token(user) != serializer.validated_data['token']:
+            return Response({'details': 'Wrong Token'}, status=HTTP_400_BAD_REQUEST)
+        
+        user.set_password(serializer.validated_data['password'])
+        user.save(update_fields=('password',))
+        
+        return Response({"success": _("New password has been saved.")}, status=HTTP_200_OK)
 
 
 class UsersAdminViewSet(ModelViewSet):

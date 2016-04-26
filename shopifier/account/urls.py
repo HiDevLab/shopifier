@@ -15,16 +15,17 @@ urlpatterns = [
     #Api
     url(r'^account/login/$', LoginView.as_view(), name='api_login'),
     url(r'^account/logout/$', LogoutView.as_view(), name='api_logout'),
+    
     url(r'^api/password/change/$', PasswordChangeView.as_view(), name='api_password_change'),
     url(r'^api/user-invaite/$', UserInvaiteView.as_view(), name='api_invaite'),
     url(r'^api/user-confim/$', UserConfimView.as_view(), name='api_confirm'),
     url(r'^api/user-activate/$', UserActivateView.as_view(), name='api_activate'),
+    url(r'^api/password-reset/$', UserPasswordResetView.as_view(), name='api_password_reset'),
+    url(r'^api/password-reset-confirm/(?P<user>\d+)/(?P<token>[\w.@+-_]+)/', UserPasswordResetConfirmView.as_view(), name='api_password_reset_confirm'),
+    
     url(r'^api/', include(router.urls)),
     url(r'^admin/(?P<template_name>.+)$', AdminTemplateView.as_view()),
     url(r'^$', TemplateView.as_view(template_name='admin/base.html'), name='root'),
     url(r'^.*$', TemplateView.as_view(template_name='admin/base.html'), name='root'),  
 ]
 
-urlpatterns += [
-        
-    ]

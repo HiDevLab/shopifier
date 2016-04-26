@@ -12,8 +12,21 @@ class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
     password = serializers.CharField(max_length=128)
 
+
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(min_length=6)
+    password = serializers.CharField(min_length=6)
+
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all())
+    #TODO: add validation
+    token = serializers.CharField(max_length=32)
     password = serializers.CharField(min_length=6)
 
 
@@ -22,7 +35,6 @@ class UserInvaiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
-
 
 class UserConfimSerializer(serializers.Serializer):
     pk = serializers.PrimaryKeyRelatedField(

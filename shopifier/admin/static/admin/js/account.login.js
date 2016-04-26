@@ -2,7 +2,6 @@
     app.AccountLogin = ng.core.Component({
         "selector" : 'login',
         "templateUrl" : "admin/account-login.html",
-        "styleUrls" : ["static/admin/css/account-login.css"]
     })
     .Class({
         constructor : [
