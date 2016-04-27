@@ -7,7 +7,7 @@
        
         <div *ngIf="errors" class="dialog-status">
             {% verbatim %}{{errors.detail}}{% endverbatim %}
-            <i class="fa fa-question-circle-o"></i>
+            <i class="fa fa-exclamation-triangle"></i>
         </div>
         <div class="dialog-input">
             <input id="email" type="email" class="login-input login-input-top" value="&#xf0c4;" name="email" [(ngModel)]="user.email" required placeholder="Email" autofocus>

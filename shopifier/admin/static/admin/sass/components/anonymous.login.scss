@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    font-weight: 200;
     
     h1 {
         color: rgb(49,55,61);
@@ -14,7 +15,7 @@
         color: rgb(149,167,183);
         padding-top: 20px;
         font-size: 18px;
-        margin-bottom: 70px;
+        font-weight: 200 !important;
     }    
     
     div {
@@ -44,13 +45,13 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        font-family: "ProximaNovaLight","Helvetica Neue",Helvetica,Arial,sans-serif;
-        
+                
         justify-content: center;
         width: 340px;
         border-style: none;
         line-height: 18px;
-        font-size: 18px !important;
+        font-size: 18px;
+        font-weight: 200;
         
         .dialog-status {
             width: 256px;
@@ -73,7 +74,7 @@
         
         .dialog-status ~ div {
             background-color: #fffbe5 !important;
-       
+            
             border: 1px solid #fed600 !important;
             border-radius: 1px !important;
             
@@ -107,9 +108,10 @@
             border: none;
             border-top: 1px solid;
             border-top-color: inherit; 
+            font-size: 18px !important;
+            font-weight: 200 !important;
         }
 
-        
         
         .login-btn {
             margin: 0 0 0;
@@ -117,8 +119,8 @@
             
             color: rgb(255,255,255);
             background-color: rgb(71,156,207);
-            font-size: 16px;
-            font-weight: 400;
+            font-size: 16px  !important;
+            font-weight: 200 !important;
         
             padding: 24px 24px 24px 24px;
             border-style: solid;
