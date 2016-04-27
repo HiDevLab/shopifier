@@ -1,13 +1,13 @@
 'use strict';
 (function(app) {
-  app.Account =
+  app.Anonymous =
     ng.core.Component({
-      "selector" : 'account',
-      "templateUrl" : "admin/account.html",
+      "selector" : 'anonymous',
+      "templateUrl" : "admin/anonymous.html",
       "directives" : [
           ng.router.ROUTER_DIRECTIVES,
         ],
-      "providers" : [ng.router.ROUTER_PROVIDERS, ng.http.HTTP_PROVIDERS, app.AccountService]
+      "providers" : [ng.router.ROUTER_PROVIDERS, ng.http.HTTP_PROVIDERS, app.AnonymousService]
     })
     .Class({
         constructor : function() {
@@ -20,16 +20,9 @@
     {
       path : '/login',
       name : 'Login',
-      component : app.AccountLogin,
-      useAsDefault : false
-    },
-    {
-      path : '/logout',
-      name : 'Logout',
-      component : app.AccountLogin,
-      useAsDefault : false
+      component : app.AnonymousLogin,
+      useAsDefault : true
     }
-    
-  ])(app.Account);
+  ])(app.Anonymous);
 })(window.app || (window.app = {}));
  

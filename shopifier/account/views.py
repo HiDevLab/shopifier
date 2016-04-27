@@ -108,8 +108,6 @@ class  UserInvaiteView(CreateAPIView):
     def perform_create(self, serializer):
         user = serializer.save()          
         ref_url = '{}/api/user-activate/?pk={}&token={}'.format(settings.SITE, user.id, get_token(user.email))
-        #ref_url = 'http://127.0.0.1:8000/api/confirm-email/{}/{}/'.format(user.id, self.get_token(user.email))
-        #user-activate?pk=\d+&token=[\w.@+-_]+)/
         txt_body = render_to_string(self.email_text_template_name,
                                     {'reference': ref_url})
         html_body = render_to_string(self.email_html_template_name,

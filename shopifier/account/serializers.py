@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from easy_thumbnails.files import get_thumbnailer
 from django.contrib.gis.geoip2 import GeoIP2
 
-from account.models import *
+from account.models import User, UserLog
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
