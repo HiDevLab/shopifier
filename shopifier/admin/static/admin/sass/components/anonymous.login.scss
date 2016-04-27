@@ -3,8 +3,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: "ProximaNovaLight", "Helvetica Neue", "Helvetica", "Arial", "sans-serif" !important;
-            
+    
     h1 {
         color: rgb(49,55,61);
         padding-top: 90px;
@@ -16,42 +15,102 @@
         padding-top: 20px;
         font-size: 18px;
         margin-bottom: 70px;
-    
     }    
+    
+    div {
+        position: relative;
+    }
+    
+    input+i {
+        position: absolute;
+        top: 50%;
+        left: 30px;
+        margin-top: -12px;
+        font-size: 22px;
+        color: rgb(149,167,183);
+    }
+    a i{
+        position: absolute;
+        top: 50%;
+        right: 30px;
+        margin-top: -12px;
+        font-size: 22px;
+        color: rgb(149,167,183);
+        cursor: pointer; cursor: hand;
+    }
+       
     
     .login-box {
         display: flex;
         flex-direction: column;
         align-items: center;
-        
+        font-family: "ProximaNovaLight","Helvetica Neue",Helvetica,Arial,sans-serif;
         
         justify-content: center;
         width: 340px;
         border-style: none;
         line-height: 18px;
-        font-size: 18px;
-        font-weight: 400;
+        font-size: 18px !important;
         
-        .login-input {
+        .dialog-status {
             width: 256px;
+            background: #fff1f1 none repeat scroll 0 0;
+            border-bottom: 1px solid #ffe4e4;
+            border-radius: 8px 8px 0 0;
+            color: #950000;
+            font-size: 14px;
+            padding: 15px 24px 15px 70px;
+            margin: 0;
+            
+            i {
+                position: absolute;
+                top: 50%;
+                left: 30px;
+                margin-top: -12px;
+                font-size: 22px;
+            }
+        }
+        
+        .dialog-status ~ div {
+            background-color: #fffbe5 !important;
+       
+            border: 1px solid #fed600 !important;
+            border-radius: 1px !important;
+            
+            .login-input:focus {
+                background: inherit !important;
+            }
+            .login-input-top {
+                border-color: inherit !important;
+                border-radius: 0 0 0 0;
+            }   
+        }
+        
+        .dialog-input {
             color: rgb(149,167,183);
             line-height: 24px;
-            padding: 24px 24px 24px 70px;
             border: none;
-            border-top: 1px solid #E5E5E5;
+            border-top-color: #E5E5E5;
             
-        }
-        
-        .login-input:focus {
-            background: rgb(250,252,252);
-        }     
-        
-        .login-input-email {
+            .login-input:focus {
+                background: rgb(250,252,252);
+            }     
+            .login-input-top {
                 border-color: transparent;
                 border-radius: 8px 8px 0 0;
+            }
         }
+
+        .login-input {
+            width: 256px;
+            padding: 24px 24px 24px 70px;
+            border: none;
+            border-top: 1px solid;
+            border-top-color: inherit; 
+        }
+
         
-           
+        
         .login-btn {
             margin: 0 0 0;
             width: 350px;

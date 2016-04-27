@@ -11,11 +11,15 @@
                 this._anonymousService = anonymousService;
                 this._routeParams = routeParams;
                 this.message = ``
+                this.errors = ``
                 this.user = app.User             
             }
         ],
         goLogin() {
-           this._anonymousService.login(this.user).subscribe(data => console.log(this.message = data));
-        }
+           this._anonymousService.login(this.user)
+                .subscribe( data => this.message = data,
+                            err => this.errors = err.json()
+                )
+        },
     });
 })(window.app || (window.app = {}));
