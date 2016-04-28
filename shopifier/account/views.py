@@ -63,7 +63,7 @@ class LoginView(APIView):
             login(request, user)
             return Response({'success': _('User logged in')}, status=HTTP_200_OK)
         else:
-            content = {'detail': _('Unable to login with provided credentials')}
+            content = {'detail': _('Your email or password was incorrect')}
             return Response(content, status=HTTP_401_UNAUTHORIZED)
 
 

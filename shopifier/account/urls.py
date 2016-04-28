@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^account/login/$', LoginView.as_view(), name='api_login'),
     url(r'^api/password-reset/$', UserPasswordResetView.as_view(), name='api_password_reset'),
     #Api2
-    url(r'^api/account/logout/$', LogoutView.as_view(), name='api_logout'),
+    url(r'^account/logout/$', LogoutView.as_view(), name='api_logout'),
     
     url(r'^api/password/change/$', PasswordChangeView.as_view(), name='api_password_change'),
     url(r'^api/user-invaite/$', UserInvaiteView.as_view(), name='api_invaite'),

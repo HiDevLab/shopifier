@@ -2,7 +2,7 @@
     <h1>Hidevlab</h1>
     <h2>Log in to manage your store</h2>
     
-    <form name="loginForm" class="login-box">
+    <form name="loginForm" class="login-box" [ngFormModel]="lform" (ngSubmit)="goLogin()">
         {% csrf_token %}
        
         <div *ngIf="errors" class="dialog-status">
@@ -10,16 +10,16 @@
             <i class="fa fa-exclamation-triangle"></i>
         </div>
         <div class="dialog-input">
-            <input id="email" type="email" class="login-input login-input-top" value="&#xf0c4;" name="email" [(ngModel)]="user.email" required placeholder="Email" autofocus>
+            <input id="email" type="text" class="login-input login-input-top" value="&#xf0c4;" name="email" [ngFormControl]="lform.controls['email']" placeholder="Email" autofocus>
             <i class="fa fa-envelope"></i>
         </div>
         <div class="dialog-input">
-            <input type="password" class="login-input" name="password" [(ngModel)]="user.password" required placeholder="Password"/>
+            <input type="password" class="login-input" name="password" [ngFormControl]="lform.controls['password']" placeholder="Password"/>
              <i class="fa fa-lock"></i>
-             <a (click)="goLogin()">
+             <a (click)="goLogout()">
                  <i class="fa fa-question-circle-o"></i>
              </a>
         </div>
-        <button class="login-btn" type="submit" (click)="goLogin()">Log in</button>
+        <button class="login-btn" type="submit">Log in</button>
     </form>
 </div>

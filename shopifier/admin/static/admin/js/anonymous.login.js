@@ -1,25 +1,54 @@
 (function(app) {
     app.AnonymousLogin = ng.core.Component({
-        "selector" : 'login',
+        "selector" : 'login-form',
         "templateUrl" : "admin/anonymous-login.html",
+        "directives" : [
+          ng.common.FORM_DIRECTIVES
+        ],
+        "providers" : [ng.common.FORM_PROVIDERS, ng.common.FormBuilder, ng.common.Validators,]
     })
     .Class({
         constructor : [
             app.AnonymousService,
-            ng.router.RouteParams,
-            function(anonymousService, routeParams) {
+            ng.router.Router,
+            ng.common.FormBuilder,
+            function(anonymousService, router, formbilder) {
                 this._anonymousService = anonymousService;
-                this._routeParams = routeParams;
-                this.message = ``
-                this.errors = ``
-                this.user = app.User             
+                this._router = router;
+                this.message = ``;
+                this.errors = ``;
+                this.user = app.User;
+  
+                this.lform = formbilder.group({
+                    "email": ['',this.emailValidator],
+                    "password": ['', ng.common.Validators.required]
+                });
+                
             }
         ],
         goLogin() {
-           this._anonymousService.login(this.user)
-                .subscribe( data => this.message = data,
-                            err => this.errors = err.json()
-                )
+            if(this.lform.controls['email'].status == 'INVALID') {
+                this.errors = this.lform.controls['email'].errors;
+            }
+            else {
+                this._anonymousService.login(this.lform.value)
+                    .subscribe( data => this.message = data,
+                                err => this.errors = err.json(),
+                                () => alert(this.message.success)
+                    )
+            }
         },
+        
+        emailValidator(control) {
+            if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+              return null;
+            }   else {
+                return { 'detail': 'invalidEmailAddress' };
+            }
+        },
+        
+        goLogout(){
+            this._anonymousService.user_logout().subscribe();
+        } ,   
     });
 })(window.app || (window.app = {}));

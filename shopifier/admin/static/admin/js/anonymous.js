@@ -5,7 +5,7 @@
       "selector" : 'anonymous',
       "templateUrl" : "admin/anonymous.html",
       "directives" : [
-          ng.router.ROUTER_DIRECTIVES,
+          ng.router.ROUTER_DIRECTIVES, 
         ],
       "providers" : [ng.router.ROUTER_PROVIDERS, ng.http.HTTP_PROVIDERS, app.AnonymousService]
     })
@@ -22,7 +22,17 @@
       name : 'Login',
       component : app.AnonymousLogin,
       useAsDefault : true
-    }
+    }, 
+    
+    {
+      path : '/logout',
+      name : 'Logout',
+      component : app.AnonymousLogin,
+      useAsDefault : false
+    }, 
+    
+    
+    
   ])(app.Anonymous);
 })(window.app || (window.app = {}));
  
