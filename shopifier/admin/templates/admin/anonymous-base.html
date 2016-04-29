@@ -2,30 +2,31 @@
 
 <html>
   <head>
-    <base href="/" />
+    <base href="/admin/" />
+    <meta charset="utf-8" />
     <title>Shopifier</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-    <link href="{% static 'admin/css/reset.css' %}" type="text/css" rel="stylesheet"/>
     
     {% compress css %}
+        <link href="{% static 'admin/css/reset.css' %}" type="text/css" rel="stylesheet"/>
         <link rel="stylesheet" type="text/x-scss" href="{% static 'admin/sass/style.scss' %}" />
     {% endcompress %}
 
     <!-- 1. Load libraries -->
     <!-- IE required polyfill -->
-    <script src="https://code.angularjs.org/2.0.0-beta.8/angular2-polyfills.js"></script>
-    <script src="https://code.angularjs.org/2.0.0-beta.8/Rx.umd.min.js"></script>
-    <script src="https://code.angularjs.org/2.0.0-beta.8/angular2-all.umd.dev.js"></script>
+    <script src="https://code.angularjs.org/2.0.0-beta.15/angular2-polyfills.js"></script>
+    <script src="https://code.angularjs.org/2.0.0-beta.15/Rx.umd.min.js"></script>
+    <script src="https://code.angularjs.org/2.0.0-beta.15/angular2-all.umd.dev.js"></script>
 
     <!-- 2. Load our 'modules' -->
-    <script src='static/admin/js/account.user.js'></script>
-    <script src='static/admin/js/anonymous.service.js'></script>
-    <script src='static/admin/js/anonymous.login.js'></script>
-    <script src='static/admin/js/anonymous.js'></script>
-    <script src='static/admin/js/anonymous.main.js'></script>
+    <script src="{% static 'admin/js/account.user.js' %}"></script>
+    <script src="{% static 'admin/js/anonymous.service.js' %}"></script>
+    <script src="{% static 'admin/js/anonymous.login.js' %}"></script>
+    <script src="{% static 'admin/js/anonymous.js' %}"></script>
+    <script src="{% static 'admin/js/anonymous.main.js' %}"></script>
   </head>
-
 
     <body>
          <anonymous>Loading...</anonymous>

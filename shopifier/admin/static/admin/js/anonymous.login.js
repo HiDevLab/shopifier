@@ -1,7 +1,7 @@
 (function(app) {
     app.AnonymousLogin = ng.core.Component({
         "selector" : 'login-form',
-        "templateUrl" : "admin/anonymous-login.html",
+        "templateUrl" : "templates/anonymous-login.html",
         "directives" : [
           ng.common.FORM_DIRECTIVES
         ],
@@ -49,6 +49,8 @@
         
         goLogout(){
             this._anonymousService.user_logout().subscribe();
+            // let link = ['Logout'];
+          // this._router.navigate(link);
         } ,   
     });
 })(window.app || (window.app = {}));

@@ -3,7 +3,7 @@
   app.Anonymous =
     ng.core.Component({
       "selector" : 'anonymous',
-      "templateUrl" : "admin/anonymous.html",
+      "templateUrl" : "templates/anonymous.html",
       "directives" : [
           ng.router.ROUTER_DIRECTIVES, 
         ],
@@ -12,25 +12,25 @@
     .Class({
         constructor : function() {
             this.title = "Shopifier";
-            this.user  = localStorage.getItem("user");
+            
         }
     });
     
   ng.router.RouteConfig([
+    
     {
-      path : '/login',
+      path : '/auth/login',
       name : 'Login',
       component : app.AnonymousLogin,
       useAsDefault : true
     }, 
     
     {
-      path : '/logout',
+      path : '/auth/logout',
       name : 'Logout',
       component : app.AnonymousLogin,
       useAsDefault : false
     }, 
-    
     
     
   ])(app.Anonymous);

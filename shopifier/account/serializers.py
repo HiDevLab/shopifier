@@ -1,12 +1,16 @@
 from __future__ import unicode_literals
+
 from django.conf import settings
-from rest_framework import serializers
 from django.contrib.auth import password_validation
-from django.template.loader import render_to_string
-from easy_thumbnails.files import get_thumbnailer
 from django.contrib.gis.geoip2 import GeoIP2
+from django.template.loader import render_to_string
+
+from rest_framework import serializers
+
+from easy_thumbnails.files import get_thumbnailer
 
 from account.models import User, UserLog
+
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=255)
@@ -58,12 +62,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         exclude = ('is_admin', 'is_active', 'is_staff')
 
+
 class UsersAdminSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields=('id', 'first_name', 'last_name', 'email', 
-                'phone', 'bio', 'www_site', 'date_join', 'avatar_image', 'avatar', 'is_admin', 'is_active', 'is_staff')
+        fields = ('id', 'first_name', 'last_name', 'email', 
+                'phone', 'bio', 'www_site', 'date_join', 'avatar_image',
+                'avatar', 'is_admin', 'is_active', 'is_staff')
 
     is_admin = serializers.BooleanField(read_only=True)
     is_active = serializers.BooleanField(read_only=True)
@@ -76,6 +82,7 @@ class UsersAdminSerializer(serializers.ModelSerializer):
             return get_thumbnailer(obj.avatar_image)['avatar'].url
             #options = {'size': (100, 100), 'crop': True}
             #thumb_url = get_thumbnailer(profile.photo).get_thumbnail(options).url
+
 
 class UsersStaffSerializer(serializers.ModelSerializer):
     

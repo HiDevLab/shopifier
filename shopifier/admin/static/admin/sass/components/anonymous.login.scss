@@ -98,7 +98,7 @@
                 background: rgb(250,252,252);
             }     
             .login-input-top {
-                border-color: transparent;
+                
                 border-radius: 8px 8px 0 0;
             }
         }
@@ -107,8 +107,8 @@
             width: 256px;
             padding: 24px 24px 24px 70px;
             border: none;
-            border-top: 1px solid;
-            border-top-color: inherit; 
+            border: 1px solid;
+            border-color: #e5e5e5;
             font-size: 18px !important;
             font-weight: 200 !important;
         }
