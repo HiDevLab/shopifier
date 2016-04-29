@@ -35,4 +35,3 @@
     
   ])(app.Anonymous);
 })(window.app || (window.app = {}));
- 

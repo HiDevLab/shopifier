@@ -5,7 +5,7 @@
         "directives" : [
           ng.common.FORM_DIRECTIVES
         ],
-        "providers" : [ng.common.FORM_PROVIDERS, ng.common.FormBuilder, ng.common.Validators,]
+        "providers" : [ng.common.FORM_PROVIDERS, ng.common.FormBuilder, ng.common.Validators],
     })
     .Class({
         constructor : [
