@@ -62,3 +62,7 @@ target/
 .ipynb_checkpoints
 
 local_settings.*
+
+#Eclipse
+.pydevproject
+.project
