@@ -24,6 +24,7 @@ urlpatterns = [
     #Api
     url(r'^api/login/$', LoginView.as_view(), name='api_login'),
     url(r'^api/logout/$', LogoutView.as_view(), name='api_logout'),
+    url(r'^api/current-user/$', CurrentUserView.as_view(), name='api_current_user'),
     url(r'^api/password/change/$', PasswordChangeView.as_view(), name='api_password_change'),
     url(r'^api/user-invaite/$', UserInvaiteView.as_view(), name='api_invaite'),
     url(r'^api/password-reset/$', UserPasswordResetView.as_view(), name='api_password_reset'),
@@ -31,8 +32,8 @@ urlpatterns = [
     url(r'^api/password-reset-confirm/$', UserPasswordResetConfirmView.as_view(), name='api_password_reset_confirm'),
     url(r'^api/', include(router.urls)),
     
-    url(r'^admin/', TemplateView.as_view(template_name='admin/anonymous-base.html'), name='shopifier-admin'),
-    url(r'^admin/.*$', TemplateView.as_view(template_name='admin/anonymous-base.html'), name='shopifier-admin'),
+    url(r'^admin/', TemplateView.as_view(template_name='admin/admin-base.html'), name='shopifier-admin'),
+    url(r'^admin/.*$', TemplateView.as_view(template_name='admin/admin-base.html'), name='shopifier-admin'),
     url(r'^.*$', RedirectView.as_view(url='http://127.0.0.1:8000/admin/')),  #url for future shopifier
 ]
 

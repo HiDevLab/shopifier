@@ -83,7 +83,6 @@ class PasswordChangeView(APIView):
         request.user.save(update_fields=('password',))
         return Response({"success": _("New password has been saved.")}, status=HTTP_200_OK)
         
-
         
 class LogoutView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -143,6 +142,17 @@ class  UserConfimView(APIView):
         return Response(serializer.data, status=HTTP_200_OK)
 """
 
+
+class  CurrentUserView(APIView):
+    permission_classes = (permissions.AllowAny,)
+        
+    def get(self, request, format=None):
+        if request.user.is_anonymous():
+            return Response({'id': 0}, status=HTTP_200_OK)
+        else:
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data, status=HTTP_200_OK)
+
 class UserPasswordResetConfirmView(APIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = PasswordResetSerializer
@@ -163,7 +173,6 @@ class UserPasswordResetConfirmView(APIView):
         if user:
             login(request, user)
         return Response({'success': _("New password has been saved.")}, status=HTTP_200_OK)
-
 
 
 class UserActivateView(APIView):
@@ -278,6 +287,9 @@ class UsersStaffViewSet(mixins.RetrieveModelMixin,
             raise PermissionDenied
         else:
             super(UsersStaffViewSet, self).check_object_permissions(request, obj)    
+
+
+
 
         
 class SessionsViewSet(mixins.ListModelMixin,
