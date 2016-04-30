@@ -2,13 +2,14 @@
 (function(app) {
   app.AdminRouter =
     ng.core.Component({
-      "selector" : "admin",
+      "selector" : "admin-router",
       "templateUrl" : "templates/admin-router.html",
       "directives" : [
                         ng.router.ROUTER_DIRECTIVES, 
                     ],
       "providers" : [
                         ng.router.ROUTER_PROVIDERS, 
+                        ng.router.ROUTER_DIRECTIVES,
                         ng.http.HTTP_PROVIDERS, 
                         ng.common.FORM_PROVIDERS, 
                     ]
@@ -16,25 +17,31 @@
     .Class({
         constructor : [
             ng.http.Http,
-            function(http) {
-                this.http = http;
-                this.title = "Shopifier";
+            ng.router.Router,
+            function(http, router) {
+                app.Http = http;
+                app.Router = router;
             }
         ],
-        ngOnInit() {
-            this.http.get(`/api/current-user/`, app.httpOptions)
-                .map(res => res.json())
-                .subscribe(data => app.currentUuser = data);
-        },
     });
     
     
+    
     ng.router.RouteConfig([ 
+    
+    {
+      path : '/',
+      name : 'Admin',
+      component : app.Admin,
+      useAsDefault : true,
+      
+    },
+    
     {
       path : '/auth/login',
       name : 'Login',
       component : app.AdminAuthLogin,
-      useAsDefault : true
+      useAsDefault : false
     }, 
     
     {
@@ -44,6 +51,6 @@
       useAsDefault : false
     }, 
     
-    
   ])(app.AdminRouter);
+  
 })(window.app || (window.app = {}));

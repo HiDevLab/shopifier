@@ -1,27 +1,27 @@
 
-<div class="login">
-    <h1>Hidevlab</h1>
-    <h2>Log in to manage your store</h2>
-    
-    <form name="loginForm" class="login-box" [ngFormModel]="lform" (ngSubmit)="goLogin()" novalidate>
-        {% csrf_token %}
-       
-        <div *ngIf="errors" class="dialog-status">
-            {% verbatim %}{{errors.detail}}{% endverbatim %}
-            <i class="fa fa-exclamation-triangle"></i>
-        </div>
-        <div class="dialog-input">
-            <input type="email" class="login-input login-input-top" name="email" [ngFormControl]="lform.controls['email']" placeholder="Email" autofocus>
-            <i class="fa fa-envelope"></i>
-        </div>
-        <div class="dialog-input">
-            <input type="password" class="login-input" name="password" [ngFormControl]="lform.controls['password']" placeholder="Password"/>
-             <i class="fa fa-lock"></i>
-             <a (click)="goLogout()">
-                 <i class="fa fa-question-circle-o"></i>
-             </a>
-        </div>
-        <button class="login-btn" type="submit">Log in</button>
-    </form>
-</div>
+    <div class="login">
+        <h1>Hidevlab</h1>
+        <h2>Log in to manage your store</h2>
+        
+        <form name="loginForm" class="login-box" [ngFormModel]="lform" (ngSubmit)="goLogin()" novalidate>
+            {% csrf_token %}
+           
+            <div *ngIf="errors" class="dialog-status">
+                {% verbatim %}{{errors.detail}}{% endverbatim %}
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+            <div class="dialog-input">
+                <input type="email" class="login-input login-input-top" name="email" [ngFormControl]="lform.controls['email']" placeholder="Email" autofocus>
+                <i class="fa fa-envelope"></i>
+            </div>
+            <div class="dialog-input">
+                <input type="password" class="login-input" name="password" [ngFormControl]="lform.controls['password']" placeholder="Password"/>
+                 <i class="fa fa-lock"></i>
+                 <a (click)="goLogout()">
+                     <i class="fa fa-question-circle-o"></i>
+                 </a>
+            </div>
+            <button class="login-btn" type="submit">Log in</button>
+        </form>
+    </div>
 

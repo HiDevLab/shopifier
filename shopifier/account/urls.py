@@ -17,8 +17,8 @@ router.register(r'staff', UsersStaffViewSet)
 
 urlpatterns = [
     #Angular
-    url(r'^admin/auth/login/$', LoginView.as_view(), name='api_login'),
-    url(r'^admin/auth/logout/$', LogoutView.as_view(), name='api_logout'),
+  #  url(r'^admin/auth/login/$', LoginView.as_view(), name='api_login'),
+   # url(r'^admin/auth/logout/$', LogoutView.as_view(), name='api_logout'),
     url(r'^admin/templates/(?P<template_name>.+)$', AdminTemplateView.as_view()),
     
     #Api

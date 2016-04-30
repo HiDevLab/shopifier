@@ -40,9 +40,9 @@
             }
             else {
                 this._adminauthService.login(this.lform.value)
-                    .subscribe( data => this.message = data,
+                    .subscribe( data => app.currentUser = data,
                                 err => this.errors = err.json(),
-                                () => alert(this.message.success)
+                                () => app.Router.navigate(['Admin'])
                     )
             }
         },
@@ -57,9 +57,12 @@
         
         goLogout(){
             this._adminauthService.user_logout().subscribe();
-            // let link = ['Logout'];
+           //  let link = ['Logout'];
           // this._router.navigate(link);
         } ,
            
     });
+    
+    ng.router.CanActivate(() => app.CheckCurrenUser(false, 'Admin'))(app.AdminAuthLogin); 
+    
 })(window.app || (window.app = {}));
