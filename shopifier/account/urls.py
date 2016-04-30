@@ -1,19 +1,16 @@
 from django.conf.urls import url, include
-from django.core.urlresolvers import reverse
 from django.views.generic.base import RedirectView
 
-from django.shortcuts import redirect
-from django.views.generic.base import TemplateView
-
-from rest_framework.routers import SimpleRouter, Route, DynamicDetailRoute
 from rest_framework.routers import DefaultRouter
 
 from account.views import *
+
 
 router = DefaultRouter()
 router.register(r'admin', UsersAdminViewSet)
 router.register(r'sessions', SessionsViewSet)
 router.register(r'staff', UsersStaffViewSet)
+
 
 urlpatterns = [
     #Angular
@@ -32,8 +29,6 @@ urlpatterns = [
     url(r'^api/password-reset-confirm/$', UserPasswordResetConfirmView.as_view(), name='api_password_reset_confirm'),
     url(r'^api/', include(router.urls)),
     
-    url(r'^admin/', TemplateView.as_view(template_name='admin/admin-base.html'), name='shopifier-admin'),
     url(r'^admin/.*$', TemplateView.as_view(template_name='admin/admin-base.html'), name='shopifier-admin'),
-    url(r'^.*$', RedirectView.as_view(url='http://127.0.0.1:8000/admin/')),  #url for future shopifier
+    url(r'^.*$', RedirectView.as_view(url='/admin/')),  # url for future shopifier
 ]
-
