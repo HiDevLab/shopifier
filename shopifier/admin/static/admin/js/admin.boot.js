@@ -1,4 +1,5 @@
 'use strict';
+/*
 (function(app) {
     document.addEventListener('DOMContentLoaded', function() {
         ng.platform.browser.bootstrap(app.AdminRouter, [ng.router.ROUTER_PROVIDERS, ng.http.HTTP_PROVIDERS, ng.common.FORM_PROVIDERS]);
@@ -15,4 +16,13 @@
 
 
 })(window.app || (window.app = {}));
+*/
 
+import { bootstrap }    from 'angular2/platform/browser';
+import { ROUTER_PROVIDERS } from 'angular2/router';
+import { HTTP_PROVIDERS } from 'angular2/http';
+import { FORM_PROVIDERS } from 'angular2/common';
+
+import { AdminRouter } from './admin.router';
+
+bootstrap(AdminRouter, [ROUTER_PROVIDERS, HTTP_PROVIDERS, FORM_PROVIDERS]);

@@ -1,4 +1,5 @@
 'use strict';
+/*
 (function(app) {
   app.AdminRouter =
     ng.core.Component({
@@ -47,3 +48,34 @@
  // @RouteConfig end 
   
 })(window.app || (window.app = {}));
+*/
+
+import { Component } from 'angular2/core';
+import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
+
+import { Admin } from './admin';
+import { AdminAuthLogin } from './auth/admin.auth.login'
+
+@Component({
+  selector: "admin",
+  template : "<router-outlet></router-outlet>",
+  directives: [ROUTER_DIRECTIVES],
+  providers: [ROUTER_PROVIDERS],
+})
+@RouteConfig([
+    {
+        path : '/auth/login',
+        name : 'Login',
+        component : AdminAuthLogin,
+        useAsDefault : true,
+    }, 
+    {
+        path : '/',
+        name : 'Admin',
+        component : Admin,
+        useAsDefault : false,
+    },
+    
+])
+export class AdminRouter {
+}

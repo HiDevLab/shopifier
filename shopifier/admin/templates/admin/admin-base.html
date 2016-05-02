@@ -15,17 +15,15 @@
     {% endcompress %}
 
     <!-- 1. Load libraries -->
-    <!-- IE required polyfill -->
-    <script src="https://code.angularjs.org/2.0.0-beta.15/angular2-polyfills.js"></script>
-    <script src="https://code.angularjs.org/2.0.0-beta.15/Rx.umd.min.js"></script>
-    <script src="https://code.angularjs.org/2.0.0-beta.15/angular2-all.umd.dev.js"></script>
-
-    <!-- 2. Load our 'modules' -->
-    <script src="{% static 'admin/js/auth/admin.auth.service.js' %}"></script>
-    <script src="{% static 'admin/js/auth/admin.auth.login.js' %}"></script>
-    <script src="{% static 'admin/js/admin.js' %}"></script>
-    <script src="{% static 'admin/js/admin.router.js' %}"></script>
-    <script src="{% static 'admin/js/admin.boot.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.27/system.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/Rx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/angular2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/router.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/http.js"></script>
+  
+    <script src="{% static 'admin/js/es6/zone.js' %}"></script> {# нужен для class decorators #}
+    <script src="{% static 'admin/js/es6/Reflect.js' %}"></script> {# нужен для class decorators #}
+    <script src="{% static 'admin/js/es6/config.js' %}"></script>
   </head>
 
     <body>

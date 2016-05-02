@@ -1,3 +1,4 @@
+/*
 'use strict';
 (function(app) {
     app.AdminAuthService = ng.core.Class({
@@ -23,8 +24,9 @@
                
              
     });
-
-/*    Utils   */    
+*/
+/*    Utils   */
+/*    
     app.CheckCurrenUser = function(_found, _re_direct){
         let injector = ng.core.Injector.resolveAndCreate([Auth]);
         let auth = injector.get(Auth);
@@ -52,3 +54,30 @@
     
     
 })(window.app || (window.app = {}));
+*/
+
+import { Injectable } from 'angular2/core';
+import { Router } from 'angular2/router'
+import { Http, RequestOptions, Headers} from 'angular2/http'
+import 'rxjs/Rx'
+
+@Injectable()
+export class AdminAuthService {
+    
+    static get parameters() {
+        return [[Http], [Router]];
+    }
+    
+    constructor(http, router) {
+        this._http = http;
+        this._router = router;
+        this._headers = new Headers({'Accept': 'application/json; charset=utf-8',
+                'Content-Type': 'application/json; charset=utf-8'});
+    }
+    
+    login(user) {
+        let body = JSON.stringify(user);
+        return this._http.post(`/api/login/`, body,  {headers: this._headers}).map(res => res.json());
+    }
+    
+}
