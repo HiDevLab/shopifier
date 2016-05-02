@@ -1,33 +1,23 @@
 (function(app) {
     app.AdminAuthLogin = ng.core.Component({
         
-        "selector" : 'admin-auth-login-form',
+        "selector"      : 'admin-auth-login-form',
+        "templateUrl"   : "templates/admin-auth-login.html",
+        "directives"    : [ng.common.FORM_DIRECTIVES],
+        "providers"     : [app.AdminAuthService,],
         
-        "templateUrl" : "templates/admin-auth-login.html",
-        
-        "directives" : [
-                        ng.common.FORM_DIRECTIVES
-                        ],
-        "providers" : [
-                        ng.common.FormBuilder, 
-                        ng.common.Validators, 
-                        app.AdminAuthService, 
-                    ],
     })
     .Class({
         constructor : [
             app.AdminAuthService,
-            ng.router.Router,
-            ng.common.FormBuilder,
-            
-            function(adminauthService, router, formbilder) {
+                     
+            function(adminauthService) {
                 this._adminauthService = adminauthService;
-                this._router = router;
                 this.message = ``;
                 this.errors = ``;
                 this.user = app.User;
   
-                this.lform = formbilder.group({
+                this.lform = app.FormBuilder.group({
                     "email":    ['',this.emailValidator],
                     "password": ['', ng.common.Validators.required]
                 }); 

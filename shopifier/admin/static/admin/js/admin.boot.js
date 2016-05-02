@@ -1,9 +1,9 @@
 'use strict';
 (function(app) {
     document.addEventListener('DOMContentLoaded', function() {
-        ng.platform.browser.bootstrap(app.AdminRouter);
+        ng.platform.browser.bootstrap(app.AdminRouter, [ng.router.ROUTER_PROVIDERS, ng.http.HTTP_PROVIDERS, ng.common.FORM_PROVIDERS]);
     });
-    
+        
     //SET HTTP HEADERS
     app.httpHeaders = new ng.http.Headers(
                 {'Accept': 'application/json; charset=utf-8', 

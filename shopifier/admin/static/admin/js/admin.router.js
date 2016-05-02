@@ -2,31 +2,24 @@
 (function(app) {
   app.AdminRouter =
     ng.core.Component({
-      "selector" : "admin-router",
-      "templateUrl" : "templates/admin-router.html",
-      "directives" : [
-                        ng.router.ROUTER_DIRECTIVES, 
-                    ],
-      "providers" : [
-                        ng.router.ROUTER_PROVIDERS, 
-                        ng.router.ROUTER_DIRECTIVES,
-                        ng.http.HTTP_PROVIDERS, 
-                        ng.common.FORM_PROVIDERS, 
-                    ]
-    })
+      "selector"    : "admin",
+      "template"    : "<router-outlet></router-outlet>",
+      "directives"  : [ng.router.ROUTER_DIRECTIVES,],
+     })
     .Class({
         constructor : [
             ng.http.Http,
             ng.router.Router,
-            function(http, router) {
+            ng.common.FormBuilder,
+            function(http, router, formbuilder) {
                 app.Http = http;
                 app.Router = router;
+                app.FormBuilder = formbuilder;                
             }
         ],
     });
     
-    
-    
+// @RouteConfig begin  
     ng.router.RouteConfig([ 
     
     {
@@ -50,7 +43,7 @@
       component : app.AdminAuthLogin,
       useAsDefault : false
     }, 
-    
   ])(app.AdminRouter);
+ // @RouteConfig end 
   
 })(window.app || (window.app = {}));
