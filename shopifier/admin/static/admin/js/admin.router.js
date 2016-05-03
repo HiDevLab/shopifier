@@ -54,7 +54,7 @@ import { Component } from 'angular2/core';
 import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 import { Admin } from './admin';
-import { AdminAuthLogin, AdminAuthRecover } from './admin.auth'
+import { AdminAuthLogin, AdminAuthRecover, AdminAuthReset } from './admin.auth'
 
 @Component({
   selector: "admin",
@@ -68,13 +68,22 @@ import { AdminAuthLogin, AdminAuthRecover } from './admin.auth'
         name : 'Login',
         component : AdminAuthLogin,
         useAsDefault : false,
-    }, 
+    },
+     
     {
         path : '/auth/recover',
         name : 'Recover',
         component : AdminAuthRecover,
+        useAsDefault : false,
+    },
+     
+    {
+        path : '/auth/reset/:pk/:token/',
+        name : 'Reset',
+        component : AdminAuthReset,
         useAsDefault : true,
     }, 
+    
     {
         path : '/',
         name : 'Admin',

@@ -123,6 +123,33 @@ class  UserInvaiteView(CreateAPIView):
         user.is_admin = False
         user.save()
         return user    
+
+
+class UserActivateView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = UserActivateSerializer
+        
+    def post(self, request, format=None):
+        
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        user = serializer.validated_data['pk']
+        
+        if get_token(user.email) != serializer.validated_data['token']:
+            return Response({'details': _('Wrong Token')}, status=HTTP_400_BAD_REQUEST)
+        
+        user.set_password(serializer.validated_data['password'])
+        user.is_active = True
+        user.is_staff = True
+        user.save()
+        
+        user = authenticate(**serializer.validated_data)
+        if user:
+            login(request, user)
+        return Response({'success': _('User logged in')}, status=HTTP_200_OK)
+
+
         
 """       
 class  UserConfimView(APIView):
@@ -153,7 +180,28 @@ class  CurrentUserView(APIView):
             serializer = UserSerializer(request.user)
             return Response(serializer.data, status=HTTP_200_OK)
 
-class UserPasswordResetConfirmView(APIView):
+
+
+class  UserCheckToken2View(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = UserCheckToken2Serializer    
+    token_generator = default_token_generator
+    
+    def post(self, request, format=None):
+        
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        user = serializer.validated_data['pk']
+        
+        if self.token_generator.make_token(user) != serializer.validated_data['token']:
+            return Response({'details': _('The link to reset your password is no longer valid.')}, status=HTTP_400_BAD_REQUEST)
+        
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=HTTP_200_OK)
+
+
+class UserPasswordResetView(APIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = PasswordResetSerializer
     token_generator = default_token_generator
@@ -175,32 +223,8 @@ class UserPasswordResetConfirmView(APIView):
         return Response({'success': _("New password has been saved.")}, status=HTTP_200_OK)
 
 
-class UserActivateView(APIView):
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = UserActivateSerializer
-        
-    def post(self, request, format=None):
-        
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        user = serializer.validated_data['pk']
-        
-        if get_token(user.email) != serializer.validated_data['token']:
-            return Response({'details': _('Wrong Token')}, status=HTTP_400_BAD_REQUEST)
-        
-        user.set_password(serializer.validated_data['password'])
-        user.is_active = True
-        user.is_staff = True
-        user.save()
-        
-        user = authenticate(**serializer.validated_data)
-        if user:
-            login(request, user)
-        return Response({'success': _('User logged in')}, status=HTTP_200_OK)
 
-
-class UserPasswordResetView(APIView):
+class UserPasswordRecoverView(APIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = EmailSerializer
     
@@ -213,7 +237,7 @@ class UserPasswordResetView(APIView):
     def send_email(self, user):
 
         context = {
-            'reference': '{}/admin/auth/password-reset-confirm/?pk={}&token={}'.format(settings.SITE, user.id, self.token_generator.make_token(user)),            
+            'reference': '{}/admin/auth/reset/{}/{}'.format(settings.SITE, user.id, self.token_generator.make_token(user)),            
         }
        
         subject = render_to_string(self.subject_template_name, context)

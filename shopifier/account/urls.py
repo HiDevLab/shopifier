@@ -24,9 +24,10 @@ urlpatterns = [
     url(r'^api/current-user/$', CurrentUserView.as_view(), name='api_current_user'),
     url(r'^api/password/change/$', PasswordChangeView.as_view(), name='api_password_change'),
     url(r'^api/user-invaite/$', UserInvaiteView.as_view(), name='api_invaite'),
-    url(r'^api/recover/$', UserPasswordResetView.as_view(), name='api_password_reset'),
+    url(r'^api/recover/$', UserPasswordRecoverView.as_view(), name='api_recover'),
     url(r'^api/user-activate/$', UserActivateView.as_view(), name='api_activate'),
-    url(r'^api/password-reset-confirm/$', UserPasswordResetConfirmView.as_view(), name='api_password_reset_confirm'),
+    url(r'^api/check_token2/$', UserCheckToken2View.as_view(), name='api_check_token2'),
+    url(r'^api/reset/$', UserPasswordResetView.as_view(), name='api_reset'),
     url(r'^api/', include(router.urls)),
     
     url(r'^admin/.*$', TemplateView.as_view(template_name='admin/admin-base.html'), name='shopifier-admin'),

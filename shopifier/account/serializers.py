@@ -38,12 +38,14 @@ class UserInvaiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
-"""
-class UserConfimSerializer(serializers.Serializer):
+
+
+
+class UserCheckToken2Serializer(serializers.Serializer):
     pk = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.exclude(is_active=True))
+        queryset=User.objects.all())
     token = serializers.CharField(max_length=32)
-"""
+
 
 class UserActivateSerializer(serializers.Serializer):
     pk = serializers.PrimaryKeyRelatedField(
