@@ -54,7 +54,7 @@ import { Component } from 'angular2/core';
 import { RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS } from 'angular2/router';
 
 import { Admin } from './admin';
-import { AdminAuthLogin } from './auth/admin.auth.login'
+import { AdminAuthLogin } from './admin.auth'
 
 @Component({
   selector: "admin",
