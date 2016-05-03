@@ -213,7 +213,7 @@ class UserPasswordResetView(APIView):
     def send_email(self, user):
 
         context = {
-            'reference': '{}/api/password-reset-confirm/?pk={}&token={}'.format(settings.SITE, user.id, self.token_generator.make_token(user)),            
+            'reference': '{}/admin/auth/password-reset-confirm/?pk={}&token={}'.format(settings.SITE, user.id, self.token_generator.make_token(user)),            
         }
        
         subject = render_to_string(self.subject_template_name, context)

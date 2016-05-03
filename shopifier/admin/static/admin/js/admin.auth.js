@@ -23,10 +23,11 @@ export class AdminAuthService {
         return this._http.post(`/api/login/`, body,  {headers: this._headers}).map(res => res.json());
     }
     
-    reset_password(user) {
+    recover(user) {
         let body = JSON.stringify(user);
-        return this._http.post(`/api/login/`, body,  {headers: this._headers}).map(res => res.json());
+        return this._http.post(`/api/recover/`, body,  {headers: this._headers}).map(res => res.json());
     }
+    
 }
 
 
@@ -81,7 +82,7 @@ export class AdminAuthLogin {
             )
         }
     }
-        
+    
     emailValidator(control) {
         if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
@@ -91,3 +92,49 @@ export class AdminAuthLogin {
     }
 }
 
+
+@Component({
+    selector      : 'admin-auth-recover-form',
+    templateUrl   : 'templates/admin-auth-recover.html',
+    directives    : [FORM_DIRECTIVES],
+    providers     : [AdminAuthService]
+})
+export class AdminAuthRecover {
+    message = ``;
+    errors = ``;
+    currentUser = ''
+    
+    static get parameters() {
+        return [[AdminAuthService], [Router], [FormBuilder]];
+    }
+    
+    constructor(adminauthService, router, formbuilder) {
+        this._adminauthService = adminauthService;
+        this._router  = router;
+        this.lform = formbuilder.group({
+                    "email":    ['',this.emailValidator]
+                }); 
+        
+    }
+    
+    goRecover() {
+        if(this.lform.controls['email'].status == 'INVALID') {
+            this.errors = this.lform.controls['email'].errors;
+        }
+        else {
+            this._adminauthService.recover(this.lform.value)
+                    .subscribe( data => this.currentUser = data,
+                                err => this.errors = err.json(),
+                                () => this._router.navigate(['Login'])//Instructions to reset your password have been emailed to you
+            )
+        }
+    }
+        
+    emailValidator(control) {
+        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+            return null;
+        }   else {
+            return { 'detail': 'invalidEmailAddress' };
+        }
+    }
+}

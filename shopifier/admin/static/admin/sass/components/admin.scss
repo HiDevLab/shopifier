@@ -82,6 +82,13 @@ admin-auth-login-form {
     flex-direction: column;
 }
 
+admin-auth-recover-form {
+    width: auto;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+}
+
 header {
     background: #9C9C9C;
     line-height: 40px;

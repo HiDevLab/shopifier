@@ -1,0 +1,23 @@
+<div class="login">
+    <h1>Forgot your password?</h1>
+    <h2>We'll email you instructions on how to reset it</h2>
+    
+    <form name="recoverForm" class="login-box" [ngFormModel]="lform" (ngSubmit)="goRecover()" novalidate>
+        {% csrf_token %}
+       
+        <div *ngIf="errors" class="dialog-status">
+            {% verbatim %}{{errors.detail}}{% endverbatim %}
+            <i class="fa fa-exclamation-triangle"></i>
+        </div>
+        <div class="dialog-input">
+            <input type="email" class="login-input login-input-top" name="email" [ngFormControl]="lform.controls['email']" placeholder="Email" autofocus>
+            <i class="fa fa-envelope"></i>
+        </div>
+        <button class="login-btn" type="submit">Email instructions</button>
+        
+        <h2>
+            <a href="/admin/auth/login">Cancel</a>
+        </h2>
+    </form>
+</div>
+
