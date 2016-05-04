@@ -11,7 +11,7 @@
     
     <nav2>
         <ul>
-            <li *ngFor="let nav2 of navs2"> 
+            <li *ngFor="let nav2 of navs2|parentNav:selectedNav1"> 
                  {% verbatim %}{{nav2.text}}{% endverbatim %}
             </li>
         </ul>
