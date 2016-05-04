@@ -1,11 +1,20 @@
 <nav>
     <nav1>
-        <p>Punkt1 </p>  
-        <p>Punkt1 </p>
+        <ul>
+            <li *ngFor="let nav1 of navs1" 
+                [class.selected]="nav1 === selectedNav1" 
+                (click)="onSelect1(nav1)">
+                 <a >{% verbatim %}{{nav1.text}}{% endverbatim %}</a>
+            </li>
+        </ul>
     </nav1>
+    
     <nav2>
-        <p>Punkt3 </p>
-        <p>Punkt3 </p>
+        <ul>
+            <li *ngFor="let nav2 of navs2"> 
+                 {% verbatim %}{{nav2.text}}{% endverbatim %}
+            </li>
+        </ul>
     </nav2>
 </nav>
 
