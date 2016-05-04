@@ -25,4 +25,13 @@ import { FORM_PROVIDERS, COMMON_DIRECTIVES } from 'angular2/common';
 
 import { AdminRouter } from './admin.router';
 
-bootstrap(AdminRouter, [ROUTER_PROVIDERS, HTTP_PROVIDERS, FORM_PROVIDERS, COMMON_DIRECTIVES, ROUTER_DIRECTIVES,]);
+//bootstrap(AdminRouter, [ROUTER_PROVIDERS, HTTP_PROVIDERS, FORM_PROVIDERS, COMMON_DIRECTIVES, ROUTER_DIRECTIVES,]);
+
+bootstrap(AdminRouter, [
+    ROUTER_PROVIDERS,
+    HTTP_PROVIDERS,
+    FORM_PROVIDERS,
+    COMMON_DIRECTIVES,
+    ROUTER_DIRECTIVES,
+]).then((appRef) => window.injector = appRef.injector);
+

@@ -1,6 +1,6 @@
 import { Component, Injectable, Injector } from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, Validators, ngFormModel, ngFormControl, ngSubmit } from 'angular2/common';
-import { Router, RouteParams } from 'angular2/router'
+import { Router, RouteParams, CanActivate } from 'angular2/router'
 import { Http, Headers } from 'angular2/http'
 import 'rxjs/Rx'
 
@@ -17,45 +17,46 @@ export class AdminAuthService {
         this._headers = new Headers({'Accept': 'application/json; charset=utf-8',
                 'Content-Type': 'application/json; charset=utf-8'});
     }
-     
-    checkToken(user) {
-        let body = JSON.stringify(user);
-        return this._http.post(`/api/check_token2/`, body,  {headers: this._headers}).map(res => res.json());
-    } 
     
-    psw_reset(user) {
+    post(user, url) {
         let body = JSON.stringify(user);
-        return this._http.post(`/api/reset/`, body,  {headers: this._headers}).map(res => res.json());
-    }    
-    
-    login(user) {
-        let body = JSON.stringify(user);
-        return this._http.post(`/api/login/`, body,  {headers: this._headers}).map(res => res.json());
+        return this._http.post(url, body,  {headers: this._headers}).map(res => res.json());
     }
-    
-    recover(user) {
-        let body = JSON.stringify(user);
-        console.log(body);
-        return this._http.post(`/api/recover/`, body,  {headers: this._headers}).map(res => res.json());
+       
+    emailValidator(control) {
+        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+            return null;
+        }   else {
+            return { 'detail': 'invalidEmailAddress' };
+        }
     }
     
 }
 
-
-@Injectable()    
-class Auth {
-    check(_found, _re_direct) {
-        return new Promise((resolve, reject) => {resolve(false)});              
-    }  
+export function getCurrentUser(_found, _re_direct) {
+    let http = window.injector.get(Http);
+    let router = window.injector.get(Router);
+    let headers = new Headers({
+        'Accept': 'application/json; charset=utf-8',
+        'Content-Type': 'application/json; charset=utf-8',
+    });
+   
+    return new Promise((resolve, reject) => {
+        http.get('/api/current-user/', {headers: headers})
+            .map(res => res.json())
+            .subscribe(function(data) {
+                let _u = Boolean(data.id === 0);
+                let _ret = _found ? !_u : _u;
+                
+                if(!_ret) {
+                    router.navigate([_re_direct]);
+                }
+                resolve(_ret);
+            });
+    });
 }
 
-export function CheckCurrentUser(){
-    let injector = Injector.resolveAndCreate([Auth]);
-    let auth = injector.get(Auth);
-    return auth.check();
-}
-
-
+@CanActivate(() => getCurrentUser(false, 'Admin'))
 @Component({
     selector      : 'admin-auth-login-form',
     templateUrl   : 'templates/admin-auth-login.html',
@@ -75,7 +76,7 @@ export class AdminAuthLogin {
         this._adminauthService = adminauthService;
         this._router  = router;
         this.lform = formbuilder.group({
-                    'email':    ['',this.emailValidator],
+                    'email':    ['', this._adminauthService.emailValidator],
                     'password': ['', Validators.required]
                 }); 
         
@@ -86,24 +87,17 @@ export class AdminAuthLogin {
             this.errors = this.lform.controls['email'].errors;
         }
         else {
-            this._adminauthService.login(this.lform.value)
+            this._adminauthService.post(this.lform.value, `/api/login/`)
                     .subscribe( data => this.currentUser = data,
                                 err => this.errors = err.json(),
                                 () => this._router.navigate(['Admin'])
             )
         }
     }
-    
-    emailValidator(control) {
-        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-            return null;
-        }   else {
-            return { 'detail': 'invalidEmailAddress' };
-        }
-    }
+ 
 }
 
-
+@CanActivate(() => getCurrentUser(false, 'Admin'))
 @Component({
     selector      : 'admin-auth-recover-form',
     templateUrl   : 'templates/admin-auth-recover.html',
@@ -123,7 +117,7 @@ export class AdminAuthRecover {
         this._adminauthService = adminauthService;
         this._router  = router;
         this.lform = formbuilder.group({
-                    'email':    ['',this.emailValidator]
+                    'email':    ['', this._adminauthService.emailValidator]
                 }); 
         
     }
@@ -133,24 +127,17 @@ export class AdminAuthRecover {
             this.errors = this.lform.controls['email'].errors;
         }
         else {
-            this._adminauthService.recover(this.lform.value)
+            this._adminauthService.post(this.lform.value,`/api/recover/` )
                     .subscribe( data => this.currentUser = data,
                                 err => this.errors = err.json(),
                                 () => this._router.navigate(['Login'])//Instructions to reset your password have been emailed to you
             )
         }
     }
-        
-    emailValidator(control) {
-        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-            return null;
-        }   else {
-            return { 'detail': 'invalidEmailAddress' };
-        }
-    }
 }
 
 
+@CanActivate(() => getCurrentUser(false, 'Admin'))
 @Component({
     selector      : 'admin-auth-reset-form',
     templateUrl   : 'templates/admin-auth-reset.html',
@@ -185,7 +172,7 @@ export class AdminAuthReset {
           this.pk = this._routeParams.get('pk');
           this.token = this._routeParams.get('token');
           let user = {'pk': this.pk, 'token': this.token };
-          this._adminauthService.checkToken(user)
+          this._adminauthService.post(user, `/api/check_token2/`)
                 .subscribe( data => this.currentUser = data,
                             err => this._router.navigate(['Recover']));          
     }
@@ -202,7 +189,7 @@ export class AdminAuthReset {
         else {         
             let user = {'pk': this.pk, 'token': this.token, 'password': this.lform.controls['password1'].value };       
             console.log(user);
-            this._adminauthService.psw_reset(user)
+            this._adminauthService.post(user, `/api/reset/`)
                     .subscribe( data => this.currentUser = data,
                                 err => this.errors = err.json(),
                                 () => this._router.navigate(['Admin']));
