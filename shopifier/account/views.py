@@ -258,7 +258,8 @@ class UserPasswordRecoverView(APIView):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            pass
+            content = {'detail': _("Couldn't find an account for {}".format(email)) }
+            return Response(content, status=HTTP_401_UNAUTHORIZED)
         else:
             self.send_email(user)
         

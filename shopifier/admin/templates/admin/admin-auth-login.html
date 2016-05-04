@@ -10,11 +10,11 @@
             <i class="fa fa-exclamation-triangle"></i>
         </div>
         <div class="dialog-input">
-            <input type="email" class="login-input login-input-top" name="email" [ngFormControl]="lform.controls['email']" placeholder="Email" autofocus>
+            <input type="email" class="login-input" [ngFormControl]="lform.controls['email']" placeholder="Email" autofocus>
             <i class="fa fa-envelope"></i>
         </div>
         <div class="dialog-input">
-            <input type="password" class="login-input" name="password" [ngFormControl]="lform.controls['password']" placeholder="Password"/>
+            <input type="password" class="login-input" [ngFormControl]="lform.controls['password']" placeholder="Password"/>
             <i class="fa fa-lock"></i>
             <a href="/admin/auth/recover">     
                <i class="fa fa-question-circle-o"></i>      
