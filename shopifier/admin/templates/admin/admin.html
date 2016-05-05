@@ -1,13 +1,16 @@
 <nav>
-    <nav1>
+    <div [class.nav1]="selectedNav1.child" [class.nav1-alone]="!selectedNav1.child">
         <ul>
-            <li *ngFor="let nav1 of navs1" 
-                [class.selected]="nav1 === selectedNav1" 
+            <li *ngFor="let nav1 of navs1" class="nav-item" 
+                [class.nav-item-selected]="nav1 === selectedNav1" 
                 (click)="onSelect1(nav1)">
-                 <a >{% verbatim %}{{nav1.text}}{% endverbatim %}</a>
+                 <a class="nav-item-link">
+                    <i class="{% verbatim %}{{nav1.icon}}{% endverbatim %}" title="{% verbatim %}{{nav1.text}}{% endverbatim %}"></i>
+                    <span class="nav-item-text">{% verbatim %}{{nav1.text}}{% endverbatim %}</span>
+                 </a>
             </li>
         </ul>
-    </nav1>
+    </div>
     
     <nav2>
         <ul>
