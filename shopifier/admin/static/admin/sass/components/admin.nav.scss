@@ -85,7 +85,6 @@ nav {
         height: 100%;
         position: relative;
         width: 100%;
-        background:  #31373d ;
         
         .nav-item-selected {
             background: #454e57;
@@ -95,13 +94,11 @@ nav {
     .nav1:hover { 
         width: 100%;
         transition-duration: 300ms;
+        background: #31373d;
         
-        .nav-item {
-            background:  #31373d;
-        }
         .nav-item-selected {
             background: #454e57;
-        }  
+        }
     }
     
  
@@ -117,8 +114,8 @@ nav {
          justify-content: center !important;
                 
      }
-      
-     .nav-item-link {
+     
+      .nav-item-link {
          display: flex;
          flex-direction: row;
          align-items: center !important;        
