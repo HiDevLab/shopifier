@@ -1,156 +1,157 @@
 nav {
     position: relative;
-    background: #31373d;
     display: flex;
     flex-direction: row;
+    
     width: 230px;
     height: 100%;
-    color: #ffffff;
+    
     overflow-x: hidden;
     overflow-y: auto;
     
+    color: $color-nav;
+    background: $background-nav-color;
+    
     .menu {
+        position: relative;
+        height: 100%;
         width: 100%;
-        margin-top: 50px;
-        font-size: 16px;
-        
+              
         > li {
-            a {
-                display: block;
-                line-height: 40px;
-                color: white;
-                padding: 0 10px;
-                
-                text-decoration: none;
-                &:HOVER {
-                    background: #999;
-                }
+            cursor: pointer; cursor: hand;
+            height: 40px;
+            width: calc(100%-10px-20px);
+            font-weight: 300;
+            
+            padding: 0 10px 0 20px; 
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            &.selected {
+                background: $background-nav-selected-color;
             }
-            i {
-                margin-right: 10px;
+               
+            a {
+                font-size: 13px;        
+                text-decoration: none;
+                color: inherit;
+                
+                display: flex;
+                flex-direction: row;
+                align-items: center;   
+                
+                span {
+                    color: inherit;
+                    margin: 0 0 0 10px;
+                    overflow: hidden;       
+                }
+                
+                i {                
+                    color: inherit;
+                    margin-right: 10px;
+                    font-size: 16px;
+                }    
             }
             
+                                
             &.with-submenu {
                 > a {
                     position: relative;
+                    overflow: hidden;     
                     &:AFTER {
                         content: "\f105";
                         position: absolute;
                         right: 10px;
                         top: 0px;
                         font-family: FontAwesome;
+                        
                     }
                 }
             }
             
-            //Sub-menu
-            > ul {
-                height: 100%;
-                width: 0;
-                transition: width 0.5s;
-                
-                position: absolute;
-                right: 0;
-                top: 0;
-                
-                background: #777;
-                z-index: 1;
+            &:HOVER, &.selected { 
+                color: $color-nav-selected;
+                i {                 
+                    font-weight: 600;
+                }    
             }
             
-            &.selected {
-                > ul {
-                    width: 200px;
-                }
+        }
+        
+       
+        
+        &.selected-with-submenu {
+            background: $background-nav-icon-color;
+            width: 56px;
+            
+            > li.selected {
+                background: $background-nav-icon-color;
+            }          
+        }
+
+
+        &:HOVER { 
+            width: 100%;
+            transition-duration: 300ms;
+            background: $background-nav-color;
+            
+            > li.selected {
+                background: $background-nav-selected-color;
+                color: $color-nav-selected;
+             }
+        }
+        
+        &.force-submenu-show.selected-with-submenu {
+            background: $background-nav-icon-color;
+            width: 56px;
+            > li.selected {
+                background: $background-nav-icon-color;
             }
         }
-        
-    }
-    
-    &:HOVER .menu > li.selected > ul:not(:HOVER) {
-        width: 0;
-    }
-}
+    }    
 
-/*
-    .nav1 {
+       
+    .submenu {
         overflow-x: hidden;
         height: 100%;
-        position: relative;
-        background: #272c30;
-        width: 56px;
-    }
-    
-    .nav1-alone {
-        overflow-x: hidden;
-        height: 100%;
-        position: relative;
-        width: 100%;
+        width: auto;
+        flex: 1 1 0;
         
-        .nav-item-selected {
-            background: #454e57;
-        }
-    }
-
-    .nav1:hover { 
-        width: 100%;
-        transition-duration: 300ms;
-        background: #31373d;
+        position: relative;   
         
-        .nav-item-selected {
-            background: #454e57;
-        }
-    }
-    
- 
-    .nav-item{
-         cursor: pointer; cursor: hand;
-         height: 40px;
-         width: calc(100%-10px-10px);
-         font-weight: 300;
-         padding: 0 10px 0 20px; 
-         position: relative;
-         display: flex;
-         flex-direction: column;
-         justify-content: center !important;
+        > li {
+            cursor: pointer; cursor: hand;
+            height: 40px;
+            width: calc(100%-10px-20px);
+            font-weight: 300;
+            
+            padding: 0 10px 0 20px; 
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            &.selected {
+                background: $background-nav-selected-color;
+            }
+            
+            &:HOVER, &.selected { 
+                color: $color-nav-selected;    
+            }
+               
+            a {
+                font-size: 13px;        
+                text-decoration: none;
+                color: inherit;
                 
-     }
-     
-      .nav-item-link {
-         display: flex;
-         flex-direction: row;
-         align-items: center !important;        
-         i {
-             font-size: 16px;
-           
-         } 
-         
-         .nav-item-text {
-             margin: 0 0 0 10px;
-             
-             overflow: hidden;        
-         }   
-     
-     
-     }
-   
-
-
-
-
-nav2 {
-    overflow-x: hidden;
-    background: #31373d;  
-    height: 100%;
-    width: auto;
-    flex: 1 1 0;
-    position: relative;
-}
-  
-.show-class {
-  display: block;
-}
-
-.hide-class {
-  display: none;
-} 
-*/
+                display: flex;
+                flex-direction: row;
+                align-items: center;   
+                    
+            }   
+        }      
+    }        
+    
+}    

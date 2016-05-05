@@ -1,19 +1,23 @@
 <nav>
-    <ul class="menu">
+    <ul class="menu"[ngClass]="{'selected-with-submenu': selectedNav.submenu.length > 0, 'force-submenu-show': forceSubmenuShow}">
         <li *ngFor="let nav of navs"
             [ngClass]="{selected: nav === selectedNav, 'with-submenu': nav.submenu.length > 0}"
-            (click)="onSelect(nav)">
+            (click)="onSelect(nav); forceSubmenuShow=true"
+            (mousemove)="forceSubmenuShow=false">
              <a href="{% verbatim %}{{ nav.url }}{% endverbatim %}">
                 <i class="fa fa-{% verbatim %}{{ nav.icon }}{% endverbatim %}" title="{% verbatim %}{{ nav.text }}{% endverbatim %}"></i>
                 <span>{% verbatim %}{{ nav.text }}{% endverbatim %}</span>
              </a>
-             <ul *ngIf="nav.submenu.length > 0">
-                <li *ngFor="let subnav of nav.submenu">
-                     <a href="{% verbatim %}{{ subnav.url }}{% endverbatim %}">{% verbatim %}{{ subnav.text }}{% endverbatim %}</a>
-                </li>
-            </ul>
         </li>
     </ul>
+    <ul class= "submenu" *ngIf="selectedNav.submenu.length > 0">
+         <li *ngFor="let subnav of selectedNav.submenu"
+            [ngClass]="{selected: subnav === selectedSubNav}"
+            (click)="onSelectSubNav(subnav)">
+            <a href="{% verbatim %}{{ subnav.url }}{% endverbatim %}">{% verbatim %}{{ subnav.text }}{% endverbatim %}</a>
+        </li>
+    </ul>
+    
 </nav>
 
 <section>

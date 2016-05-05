@@ -5,7 +5,6 @@ import { NgFor } from 'angular2/common';
 import { getCurrentUser } from './admin.auth'
 import { Nav } from './nav'
 
-
 @CanActivate(() => getCurrentUser(true, 'Login'))
 @Component({
     selector: 'admin-form',
@@ -14,9 +13,13 @@ import { Nav } from './nav'
 export class Admin {
     navs = Nav;
     selectedNav = Nav[1];
-    //displayNav = 'hide-class';
-    
+    selectedSubNav = null;
+    forceSubmenuShow = false;
+     
     onSelect(nav) {
         this.selectedNav = nav;
+    }
+    onSelectSubNav(nav) {
+        this.selectedSubNav = nav;
     }
 }
