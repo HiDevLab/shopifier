@@ -1,24 +1,19 @@
 <nav>
-    <div [class.nav1]="selectedNav1.child" [class.nav1-alone]="!selectedNav1.child">
-        <ul>
-            <li *ngFor="let nav1 of navs1" class="nav-item" 
-                [class.nav-item-selected]="nav1 === selectedNav1" 
-                (click)="onSelect1(nav1)">
-                 <a class="nav-item-link">
-                    <i class="{% verbatim %}{{nav1.icon}}{% endverbatim %}" title="{% verbatim %}{{nav1.text}}{% endverbatim %}"></i>
-                    <span class="nav-item-text">{% verbatim %}{{nav1.text}}{% endverbatim %}</span>
-                 </a>
-            </li>
-        </ul>
-    </div>
-    
-    <nav2>
-        <ul>
-            <li *ngFor="let nav2 of navs2|parentNav:selectedNav1"> 
-                 {% verbatim %}{{nav2.text}}{% endverbatim %}
-            </li>
-        </ul>
-    </nav2>
+    <ul class="menu">
+        <li *ngFor="let nav of navs"
+            [ngClass]="{selected: nav === selectedNav, 'with-submenu': nav.submenu.length > 0}"
+            (click)="onSelect(nav)">
+             <a href="{% verbatim %}{{ nav.url }}{% endverbatim %}">
+                <i class="fa fa-{% verbatim %}{{ nav.icon }}{% endverbatim %}" title="{% verbatim %}{{ nav.text }}{% endverbatim %}"></i>
+                <span>{% verbatim %}{{ nav.text }}{% endverbatim %}</span>
+             </a>
+             <ul *ngIf="nav.submenu.length > 0">
+                <li *ngFor="let subnav of nav.submenu">
+                     <a href="{% verbatim %}{{ subnav.url }}{% endverbatim %}">{% verbatim %}{{ subnav.text }}{% endverbatim %}</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </nav>
 
 <section>

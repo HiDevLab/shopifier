@@ -1,17 +1,77 @@
 nav {
     position: relative;
     background: #31373d;
-    position: relative;
-    display: flex; 
+    display: flex;
     flex-direction: row;
     width: 230px;
     height: 100%;
     color: #ffffff;
     overflow-x: hidden;
     overflow-y: auto;
+    
+    .menu {
+        width: 100%;
+        margin-top: 50px;
+        font-size: 16px;
+        
+        > li {
+            a {
+                display: block;
+                line-height: 40px;
+                color: white;
+                padding: 0 10px;
+                
+                text-decoration: none;
+                &:HOVER {
+                    background: #999;
+                }
+            }
+            i {
+                margin-right: 10px;
+            }
+            
+            &.with-submenu {
+                > a {
+                    position: relative;
+                    &:AFTER {
+                        content: "\f105";
+                        position: absolute;
+                        right: 10px;
+                        top: 0px;
+                        font-family: FontAwesome;
+                    }
+                }
+            }
+            
+            //Sub-menu
+            > ul {
+                height: 100%;
+                width: 0;
+                transition: width 0.5s;
+                
+                position: absolute;
+                right: 0;
+                top: 0;
+                
+                background: #777;
+                z-index: 1;
+            }
+            
+            &.selected {
+                > ul {
+                    width: 200px;
+                }
+            }
+        }
+        
+    }
+    
+    &:HOVER .menu > li.selected > ul:not(:HOVER) {
+        width: 0;
+    }
 }
 
-
+/*
     .nav1 {
         overflow-x: hidden;
         height: 100%;
@@ -95,4 +155,5 @@ nav2 {
 
 .hide-class {
   display: none;
-}  
+} 
+*/
