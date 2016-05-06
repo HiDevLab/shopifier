@@ -71,7 +71,7 @@ export var Nav = [
                  'url': '#',
              },
              {
-                 'icon': 'tag',
+                 'icon': 'bell',
                  'text': 'Nottifications',
                  'url': '#',
              }

@@ -24,7 +24,15 @@
 </nav>
 
 <section>
-  <header>SETTINGS / ACCOUNTS / John Doe</header>
+  <header>
+      <h1>
+        <i class="fa fa-{% verbatim %}{{ selectedIcon }}{% endverbatim %}"></i>
+        <a *ngIf="selectedNav.submenu.length > 0" href="{% verbatim %}{{ selectedNav.url }}{% endverbatim %}" >
+            {% verbatim %}{{ selectedNav.text }}{% endverbatim %}
+        </a>
+        <span>/</span> {% verbatim %}{{ selectedText }}{% endverbatim %}
+      </h1>
+  </header>
   <main>
     <div class="content">
       <input type="text" value="John" />
