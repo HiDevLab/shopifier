@@ -17,14 +17,17 @@ export var Nav = [
         'url': '#',
         'submenu': [
              {
+                 'icon': 'calendar-check-o',
                  'text': 'Orders',
                  'url': '#',
              },
              {
+                 'icon': 'calendar-check-o',
                  'text': 'Drafts',
                  'url': '#',
              },
              {
+                 'icon': 'calendar-check-o',
                  'text': 'Transfers',
                  'url': '#',
              }
@@ -36,15 +39,40 @@ export var Nav = [
         'url': '#',
         'submenu': [
              {
+                 'icon': 'tag',
                  'text': 'Products',
                  'url': '#',
              },
              {
+                 'icon': 'tag',
                  'text': 'Transfers',
                  'url': '#',
              },
              {
+                 'icon': 'tag',
                  'text': 'Collections',
+                 'url': '#',
+             }
+        ],
+    },
+    {
+        'icon': 'cog',
+        'text': 'Settings',
+        'url': '#',
+        'submenu': [
+             {
+                 'icon': 'cog',
+                 'text': 'General',
+                 'url': '#',
+             },
+             {
+                 'icon': 'shopping-cart',
+                 'text': 'Checkout',
+                 'url': '#',
+             },
+             {
+                 'icon': 'tag',
+                 'text': 'Nottifications',
                  'url': '#',
              }
         ],

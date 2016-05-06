@@ -20,7 +20,14 @@ export class Admin {
     onSelect(nav) {
         this.selectedNav = nav;
         this.forceSubmenuShow=true;
-        setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this);   
+        setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this);
+        if (nav.submenu.count > 0) {
+            this.selectedSubNav = nav.subnav[0];            
+        }
+        else {
+            this.selectedSubNav = null;
+        }
+           
     }
     
     onSelectSubNav(nav) {
