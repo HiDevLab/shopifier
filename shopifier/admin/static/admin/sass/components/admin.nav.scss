@@ -3,7 +3,7 @@ nav {
     display: flex;
     flex-direction: row;
     
-    width: 230px;
+    width: $nav-width;
     height: 100%;
     
     overflow-x: hidden;
@@ -14,91 +14,87 @@ nav {
     
     .menu {
         position: relative;
-        height: 100%;
+        //height: 100%;
         width: 100%;
         
         &:not(.selected-wiht-submenu) {
                 width: 100%;
                 background: $background-nav-color;
-                > li.selected { background: $background-nav-selected-color; }   
-
+                > li.selected {
+                    background: $background-nav-selected-color;
+                }
+                
                 &.submenu {
                     overflow-x: hidden;
                     height: 100%;
                     width: auto;
                     flex: 1 1 0;
-                    position: relative;               
+                    position: relative;
                 }
         }
         
         &.selected-with-submenu {
-            
             background: $background-nav-icon-color;
             width: 56px;
-            > li.selected { background: $background-nav-icon-color; }          
-        
+            
+            > li.selected {
+                background: $background-nav-icon-color;
+            }
+            
             &:not(.force-submenu-show):hover {
                 transition-duration: 300ms;
                 width: 100%;
                 background: $background-nav-color;
-                > li.selected { background: $background-nav-selected-color; }   
+                
+                > li.selected {
+                    background: $background-nav-selected-color;
+                }
             }
             
             &.force-submenu-show, &:not(:hover) {
                     background: $background-nav-icon-color;
                     width: 56px;
                     transition-duration: 300ms;
-                    > li.selected {  background: $background-nav-icon-color; }
+                    > li.selected {
+                        background: $background-nav-icon-color;
+                    }
             }
-            
         }
-
+        
         > li {
-            cursor: pointer; cursor: hand;
-            height: 40px;
-            width: calc(100%-10px-20px);
+            cursor: pointer;
             font-weight: 300;
             
-            padding: 0 10px 0 20px; 
-            
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-
             a {
-                font-size: 13px;        
+                font-size: 13px;
                 text-decoration: none;
+                line-height: 40px;
+                display: block;
+                padding: 0 10px 0 20px;
                 color: inherit;
+                overflow: hidden;
+                white-space: nowrap;
                 
-                display: flex;
-                flex-direction: row;
-                align-items: center;   
-                
-                span {
+                i {
+                    display: inline-block;
+                    width: 26px + 15px;
                     color: inherit;
-                    margin: 0 0 0 10px;
-                    overflow: hidden;       
-                }
-                
-                i {                
-                    color: inherit;
-                    margin-right: 10px;
                     font-size: 16px;
-                }    
+                    line-height: inherit;
+                    vertical-align: top;
+                }
             }
-                                        
+            
             &.with-submenu {
                 > a {
                     position: relative;
-                    overflow: hidden;     
+                    
                     &:AFTER {
                         content: "\f105";
                         position: absolute;
-                        left: calc(100% - 10px);
-                        overflow: hidden !important;     
+                        left: $nav-width - 20px;
                         top: 0px;
                         font-family: FontAwesome;
-                        
                     }
                 }
             }
@@ -107,6 +103,6 @@ nav {
                 color: $color-nav-selected;
             }
         }
-
-    }    
-}    
+    
+    }
+}

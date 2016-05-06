@@ -5,11 +5,11 @@
             (click)="onSelect(nav)">
             <a href="{% verbatim %}{{ nav.url }}{% endverbatim %}">
                 <i class="fa fa-{% verbatim %}{{ nav.icon }}{% endverbatim %}" title="{% verbatim %}{{ nav.text }}{% endverbatim %}"></i>
-                <span>{% verbatim %}{{ nav.text }}{% endverbatim %}</span>
+                {% verbatim %}{{ nav.text }}{% endverbatim %}
              </a>
         </li>
     </ul>
-    <ul class= "menu submenu" *ngIf="selectedNav.submenu.length > 0">
+    <ul class="menu submenu" *ngIf="selectedNav.submenu.length > 0">
          <li *ngFor="let subnav of selectedNav.submenu"
             [ngClass]="{selected: subnav === selectedSubNav}"
             (click)="onSelectSubNav(subnav)">
