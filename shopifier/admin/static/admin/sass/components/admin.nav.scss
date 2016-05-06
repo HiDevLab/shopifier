@@ -16,7 +16,43 @@ nav {
         position: relative;
         height: 100%;
         width: 100%;
-              
+        
+        &:not(.selected-wiht-submenu) {
+                width: 100%;
+                background: $background-nav-color;
+                > li.selected { background: $background-nav-selected-color; }   
+
+                &.submenu {
+                    overflow-x: hidden;
+                    height: 100%;
+                    width: auto;
+                    flex: 1 1 0;
+                    position: relative;               
+                }
+        }
+        
+        &.selected-with-submenu {
+            
+            background: $background-nav-icon-color;
+            width: 56px;
+            > li.selected { background: $background-nav-icon-color; }          
+        
+            &:not(.force-submenu-show):hover {
+                transition-duration: 300ms;
+                width: 100%;
+                background: $background-nav-color;
+                > li.selected { background: $background-nav-selected-color; }   
+            }
+            
+            &.force-submenu-show, &:not(:hover) {
+                    background: $background-nav-icon-color;
+                    width: 56px;
+                    transition-duration: 300ms;
+                    > li.selected {  background: $background-nav-icon-color; }
+            }
+            
+        }
+
         > li {
             cursor: pointer; cursor: hand;
             height: 40px;
@@ -28,11 +64,7 @@ nav {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            
-            &.selected {
-                background: $background-nav-selected-color;
-            }
-               
+
             a {
                 font-size: 13px;        
                 text-decoration: none;
@@ -54,8 +86,7 @@ nav {
                     font-size: 16px;
                 }    
             }
-            
-                                
+                                        
             &.with-submenu {
                 > a {
                     position: relative;
@@ -63,7 +94,8 @@ nav {
                     &:AFTER {
                         content: "\f105";
                         position: absolute;
-                        right: 10px;
+                        left: calc(100% - 10px);
+                        overflow: hidden !important;     
                         top: 0px;
                         font-family: FontAwesome;
                         
@@ -73,85 +105,8 @@ nav {
             
             &:HOVER, &.selected { 
                 color: $color-nav-selected;
-                i {                 
-                    font-weight: 600;
-                }    
-            }
-            
-        }
-        
-       
-        
-        &.selected-with-submenu {
-            background: $background-nav-icon-color;
-            width: 56px;
-            
-            > li.selected {
-                background: $background-nav-icon-color;
-            }          
-        }
-
-
-        &:HOVER { 
-            width: 100%;
-            transition-duration: 300ms;
-            background: $background-nav-color;
-            
-            > li.selected {
-                background: $background-nav-selected-color;
-                color: $color-nav-selected;
-             }
-        }
-        
-        &.force-submenu-show.selected-with-submenu {
-            background: $background-nav-icon-color;
-            width: 56px;
-            > li.selected {
-                background: $background-nav-icon-color;
             }
         }
+
     }    
-
-       
-    .submenu {
-        overflow-x: hidden;
-        height: 100%;
-        width: auto;
-        flex: 1 1 0;
-        
-        position: relative;   
-        
-        > li {
-            cursor: pointer; cursor: hand;
-            height: 40px;
-            width: calc(100%-10px-20px);
-            font-weight: 300;
-            
-            padding: 0 10px 0 20px; 
-            
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            
-            &.selected {
-                background: $background-nav-selected-color;
-            }
-            
-            &:HOVER, &.selected { 
-                color: $color-nav-selected;    
-            }
-               
-            a {
-                font-size: 13px;        
-                text-decoration: none;
-                color: inherit;
-                
-                display: flex;
-                flex-direction: row;
-                align-items: center;   
-                    
-            }   
-        }      
-    }        
-    
 }    
