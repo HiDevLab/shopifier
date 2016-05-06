@@ -1,32 +1,32 @@
 {% load static compress %}<!DOCTYPE html>
 
 <html>
-  <head>
-    <base href="/admin/" />
-    <meta charset="utf-8" />
-    <title>Shopifier</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <base href="/admin/" />
+        <meta charset="utf-8" />
+        <title>Shopifier</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+        
+        {% compress css %}
+            <link rel="stylesheet" type="text/x-scss" href="{% static 'admin/sass/style.scss' %}" />
+        {% endcompress %}
+        
+        <!-- 1. Load libraries -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.27/system.js"></script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/Rx.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/angular2.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/router.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/http.js"></script>
+        
+        <script src="{% static 'admin/js/es6/zone.js' %}"></script>
+        <script src="{% static 'admin/js/es6/Reflect.js' %}"></script>
+        <script src="{% static 'admin/js/es6/config.js' %}"></script>
+    </head>
     
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-    
-    {% compress css %}
-        <link rel="stylesheet" type="text/x-scss" href="{% static 'admin/sass/style.scss' %}" />
-    {% endcompress %}
-
-    <!-- 1. Load libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.27/system.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/Rx.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/angular2.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/router.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/http.js"></script>
-  
-    <script src="{% static 'admin/js/es6/zone.js' %}"></script> {# нужен для class decorators #}
-    <script src="{% static 'admin/js/es6/Reflect.js' %}"></script> {# нужен для class decorators #}
-    <script src="{% static 'admin/js/es6/config.js' %}"></script>
-  </head>
-
     <body>
          <admin>Loading...</admin>
     </body>
+    
 </html>
-
