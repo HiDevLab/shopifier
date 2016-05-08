@@ -38,6 +38,12 @@ export class AdminAuthService {
             return { 'detail': 'invalidEmailAddress' };
         }
     }
+    
+    get_currentUser() {
+        this.currentUser = null;
+        this.get(`/api/current-user/`)
+            .subscribe( data => this.currentUser = data );                                
+    }
 }
 
 export function getCurrentUser(_found, _re_direct) {
@@ -70,7 +76,7 @@ export class AdminAuthLogin {
     }
     
     constructor(authService, formbuilder, router) {
-        this._authService = authService;
+        this._authService = window.injector.get(AdminAuthService);//authService;
         this._router = router;
         this.lform = formbuilder.group({
                     'email':    ['', this._authService.emailValidator],
@@ -82,12 +88,12 @@ export class AdminAuthLogin {
     goLogin() {
         if(this.lform.controls['email'].status == 'INVALID') {
             this.errors = this.lform.controls['email'].errors;
-            this.lform.controls['password'].value ='';
+            //this.lform.controls['password'].value = '';
         }
         else {
             this._authService.post(this.lform.value, `/api/login/`)
-                    .subscribe( data => { this._authService.currentUser = data; this._router.navigate(['Admin']);},
-                                err => {this.errors = err.json(); this._authService.currentUser=null;} );                                
+                    .subscribe( data => { this._router.navigate(['Admin']);},
+                                err => { this.errors = err.json(); this._authService.currentUser=null;} );                                
         }
     }
 }
@@ -185,7 +191,7 @@ export class AdminAuthReset {
             let user = {'pk': this.pk, 'token': this.token, 'password': this.lform.controls['password1'].value };       
             console.log(user);
             this._authService.post(user, `/api/reset/`)
-                    .subscribe( data => { this._authService.currentUser = data; this._router.navigate(['Admin']);},
+                    .subscribe( data => { this._router.navigate(['Admin']);},
                                 err => {this.errors = err.json(); this._authService.currentUser=null;} );
         }
     }   

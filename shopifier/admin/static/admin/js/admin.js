@@ -2,7 +2,7 @@ import { Component, Pipe, PipeTransform } from 'angular2/core';
 import { CanActivate } from 'angular2/router'
 import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
 
-import { getCurrentUser } from './admin.auth'
+import { getCurrentUser, AdminAuthService } from './admin.auth'
 import { Nav } from './nav'
 
 @CanActivate(() => getCurrentUser(true, 'Login'))
@@ -16,8 +16,15 @@ export class Admin {
     selectedNav = Nav[1];
     selectedSubNav = null;
     headerNav = [Nav[1]];
-    
     forceSubmenuShow = false;
+    currentUser = null;
+        
+    constructor() {
+        let _authService = window.injector.get(AdminAuthService);
+        
+        _authService.get(`/api/current-user/`)
+            .subscribe( data => this.currentUser = data );               
+    }
      
     onSelect(nav) {
         this.selectedNav = nav;
