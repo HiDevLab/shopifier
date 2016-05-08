@@ -22,22 +22,28 @@ export class Admin {
     onSelect(nav) {
         this.selectedNav = nav;
         this.forceSubmenuShow=true;
-        this.headerNav = [nav];
                
         if (nav.submenu.length > 0) {
             this.selectedSubNav = nav.submenu[0];            
-            this.headerNav[1] = this.selectedSubNav;
+            this.onSelectSubNav(this.selectedSubNav);
         }
         else {
             this.selectedSubNav = null;
+            this.headerNav =[this.selectedNav];        
         }
+        
+        
         setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this);   
 
     }
     
     onSelectSubNav(subnav) {
         this.selectedSubNav = subnav;
-        this.headerNav[1] = this.selectedSubNav;
+        
+        if (subnav.type=='router')
+            this.headerNav = [this.selectedSubNav];
+        else 
+            this.headerNav = [this.selectedNav, this.selectedSubNav];
     }
     
     onSelectHeader(headnav) {
