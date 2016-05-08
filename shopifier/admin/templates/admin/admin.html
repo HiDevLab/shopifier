@@ -26,11 +26,17 @@
 <section>
   <header>
       <h1>
-        <i class="fa fa-{% verbatim %}{{ selectedIcon }}{% endverbatim %}"></i>
-        <a *ngIf="selectedNav.submenu.length > 0" href="{% verbatim %}{{ selectedNav.url }}{% endverbatim %}" >
-            {% verbatim %}{{ selectedNav.text }}{% endverbatim %}
-        </a>
-        <span>/</span> {% verbatim %}{{ selectedText }}{% endverbatim %}
+        <i class="fa fa-{% verbatim %}{{ headerNav[headerNav.length-1].icon }}{% endverbatim %}"></i>
+        <ul>
+            <li *ngFor="let headnav of headerNav"
+                (click)="onSelectHeader(headnav)">
+                <a href="{% verbatim %}{{ headnav.url }}{% endverbatim %}" >
+                    {% verbatim %}{{ headnav.text }}{% endverbatim %}
+                </a>
+                <span>/</span> 
+                <div>{% verbatim %}{{ headnav.text }}{% endverbatim %}</div>
+            </li>
+        </ul>        
       </h1>
   </header>
   <main>

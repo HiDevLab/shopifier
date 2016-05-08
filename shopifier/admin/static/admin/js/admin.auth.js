@@ -82,6 +82,7 @@ export class AdminAuthLogin {
     goLogin() {
         if(this.lform.controls['email'].status == 'INVALID') {
             this.errors = this.lform.controls['email'].errors;
+            this.lform.controls['password'].value ='';
         }
         else {
             this._authService.post(this.lform.value, `/api/login/`)
@@ -117,7 +118,7 @@ export class AdminAuthRecover {
     
     goRecover() {
         if(this.lform.controls['email'].status == 'INVALID') {
-            this.errors = this.lform.controls['email'].errors;
+            this.errors = this.lform.controls['email'].errors;            
         }
         else {
             this._authService.post(this.lform.value,`/api/recover/` )
@@ -169,11 +170,15 @@ export class AdminAuthReset {
     
     goReset() {
         if ( this.lform.controls['password1'].status == 'INVALID' || this.lform.controls['password2'].status == 'INVALID' ) {
-            this.errors = 'There was an error updating your password';            
+            this.errors = 'There was an error updating your password';
+            this.lform.controls['password2'].value ='';
+            this.lform.controls['password1'].value ='';            
         }
         
         else if ( this.lform.controls['password1'].value != this.lform.controls['password2'].value ) {
             this.errors = 'There was an error updating your password';
+            this.lform.controls['password2'].value ='';
+            this.lform.controls['password1'].value ='';
         }
         
         else {         

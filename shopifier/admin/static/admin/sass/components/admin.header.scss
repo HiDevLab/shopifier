@@ -9,25 +9,49 @@ header {
         line-height: 24px;
         padding: 10px 0 10px 0;
         
-        a {
-            display: inline-block;
-            text-decoration: none;
-            color: $color-header-ref;
-            
-            &:hover {
-                text-decoration: underline;
-            }
-        }        
-        
-        span {
-            text-decoration: none;
+        i {
             color: $color-header-ref;
         }
         
-        i {
+        ul {
             display: inline-block;
-            color: $color-header-ref;
-            vertical-align: top;
+                        
+            > li {
+                display: inline-block;                
+                padding: 0 0 0 10px;
+                 
+                a {
+                    text-decoration: none;
+                    color: $color-header-ref;
+                    
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }        
+                
+                span {
+                    text-decoration: none;
+                    color: $color-header-ref;
+                }
+                
+                div { 
+                    display: none;                    
+                }        
+                
+                &:last-of-type {
+                    
+                    a, span {
+                        display: none;
+                    }
+            
+                    div {
+                        vertical-align: top;
+                        display: inline-block;  
+                    }
+                }
+        
+            }
+            
         }  
     }
 }
