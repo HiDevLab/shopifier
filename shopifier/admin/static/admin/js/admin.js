@@ -16,7 +16,10 @@ export class Admin {
     selectedNav = Nav[1];
     selectedSubNav = null;
     headerNav = [Nav[1]];
+    
     forceSubmenuShow = false;
+    forcePopupShow = false;
+    
     currentUser = null;
         
     constructor() {

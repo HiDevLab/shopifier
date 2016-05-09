@@ -12,6 +12,7 @@ nav {
     color: $color-nav;
     background: $background-nav-color;
     
+        
     .menu {
         position: relative;
         //height: 100%;
@@ -188,16 +189,60 @@ nav {
                 }
             }
         
-        }
-        
-        > menu {
-            border-radius: 3px;
+        } 
+    
+
+        popup {
+            display: none;
+            overflow: hidden;
+
+            &.show {
+                display: block;                
+            }
             
-            
-            div {
-                padding: 10px;    
+            >   div {
+                position: absolute;
+                border-radius: 3px;
+                left: 33px;
+                bottom: 60px;
+                display: block;
+                background: $background-nav-popup-menu;
+                color: $color-nav-popup-menu;
+                position: absolute;
+                background: $background-nav-popup-menu;
+                color: $color-nav-popup-menu;
+                
+                div {
+                    padding: 10px;
+                    width: 140px;    
+                    
+                    > ul {
+                        line-height: 18px;
+                        > li {
+                            > a {
+                                text-decoration: none;
+                                color: inherit;
+                                panding: 5px 20px 5px 5px; 
+                                &:hover {
+                                    text-decoration: underline;
+                                }
+                            }
+                        }                        
+                        
+                    }
+       
+                }
+            }
+            > tringle {
+                position: absolute;
+                left: 105px;
+                bottom: 40px;
+                border:none; 
+                border: 10px solid transparent; 
+                border-top: 10px solid $background-nav-popup-menu;;
+                height: 0px; 
+                width: 0px;     
             }
         }
-    
-    }
+    }                   
 }
