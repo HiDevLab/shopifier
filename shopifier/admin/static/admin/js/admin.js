@@ -3,7 +3,7 @@ import { CanActivate } from 'angular2/router'
 import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
 
 import { getCurrentUser, AdminAuthService } from './admin.auth'
-import { Nav } from './nav'
+import { Nav, PopUpMenu } from './nav'
 
 @CanActivate(() => getCurrentUser(true, 'Login'))
 @Component({
@@ -13,6 +13,7 @@ import { Nav } from './nav'
 })
 export class Admin {
     navs = Nav;
+    popups = PopUpMenu;
     selectedNav = Nav[1];
     selectedSubNav = null;
     headerNav = [Nav[1]];

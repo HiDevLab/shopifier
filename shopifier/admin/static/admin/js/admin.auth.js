@@ -1,6 +1,6 @@
 import { Component, Injectable, Injector } from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
-import { Router, RouteParams, CanActivate } from 'angular2/router'
+import { Router, RouteParams, CanActivate, ROUTER_DIRECTIVES } from 'angular2/router'
 import { Http, Headers } from 'angular2/http'
 import 'rxjs/Rx'
 
@@ -60,6 +60,30 @@ export function getCurrentUser(_found, _re_direct) {
     });
 }
 
+
+@Component({
+    selector      : 'admin-auth-logout-form',
+    template      : '',   
+    directives    : [ROUTER_DIRECTIVES],
+})
+export class AdminAuthLogout {
+   
+    static get parameters() {
+        return [[Router]];
+    }
+    
+    constructor(router) {
+        this._authService = window.injector.get(AdminAuthService);//authService;
+        this._router = router;        
+    }
+   
+    ngOnInit() {
+        this._authService.get(`/api/logout/`).subscribe( data => this._router.navigate(['Login']) );                                
+    }
+
+}
+
+
 @CanActivate(() => getCurrentUser(false, 'Admin'))
 @Component({
     selector      : 'admin-auth-login-form',
@@ -97,6 +121,7 @@ export class AdminAuthLogin {
         }
     }
 }
+
 
 @CanActivate(() => getCurrentUser(false, 'Admin'))
 @Component({

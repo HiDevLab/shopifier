@@ -26,18 +26,27 @@
             </div>
         </li>
         
-        <popup [ngClass]="{show: forcePopupShow }">
+        <popup [ngClass]="{show: forcePopupShow }">            
             <div>
-            <div>
-                <ul>
-                    <li>
-                        <a href="#">  Your profile</a>
-                    </li>
-                    <li>
-                        <a href="#"> Log out</a>
-                    </li>
-                </ul>
-            </div>
+                <div>
+                    <ul>
+                        <li *ngFor="let popup of popups">
+                            <a href="{% verbatim %}{{ popup.url }}{% endverbatim %}">  
+                            {% verbatim %}{{ popup.text }}{% endverbatim %}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <ul>
+                        <li>
+                            <a href="#">  Your profile</a>
+                        </li>
+                        <li>
+                            <a href="auth/logout"> Log out</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
             <tringle></tringle>   
         </popup>

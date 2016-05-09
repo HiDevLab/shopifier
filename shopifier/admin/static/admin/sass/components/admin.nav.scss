@@ -190,14 +190,14 @@ nav {
             }
         
         } 
-    
-
+        
         popup {
             display: none;
             overflow: hidden;
-
+             
             &.show {
-                display: block;                
+                display: block;
+                overflow: hidden;
             }
             
             >   div {
@@ -207,30 +207,28 @@ nav {
                 bottom: 60px;
                 display: block;
                 background: $background-nav-popup-menu;
-                color: $color-nav-popup-menu;
-                position: absolute;
-                background: $background-nav-popup-menu;
-                color: $color-nav-popup-menu;
-                
+                               
                 div {
-                    padding: 10px;
-                    width: 140px;    
+                    width: 143px;    
+                    padding: 10px 10px 10px 10px;
                     
-                    > ul {
-                        line-height: 18px;
-                        > li {
-                            > a {
-                                text-decoration: none;
-                                color: inherit;
-                                panding: 5px 20px 5px 5px; 
-                                &:hover {
-                                    text-decoration: underline;
-                                }
+                    li {
+                        a {
+                            
+                            line-height: 28px;
+                            padding: 0;                                      
+                            padding: 5px 5px 20px 5px;
+                            text-decoration: none;
+                            color: $color-nav-popup-menu;
+                            
+                            &:hover {
+                                text-decoration: underline;
                             }
-                        }                        
-                        
+                        }
+                    } 
+                    &:last-of-type {
+                        border-top: 1px solid $border-popup-menu-color;                        
                     }
-       
                 }
             }
             > tringle {

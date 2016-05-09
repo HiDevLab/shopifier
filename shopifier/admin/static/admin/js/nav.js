@@ -84,3 +84,12 @@ export var Nav = [
         ],
     }
 ];
+
+
+export var PopUpMenu = [
+    { 'text': 'Shopifier Live Chat', 'url': '#' },
+    { 'text': 'Shopifier Help Center', 'url': '#' },
+    { 'text': 'Community Forums', 'url': '#' },
+    { 'text': 'Hire an expert', 'url': '#' },
+    { 'text': 'Keyboard shortcuts', 'url': '#' }  
+];
