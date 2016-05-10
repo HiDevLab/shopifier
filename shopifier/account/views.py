@@ -268,10 +268,12 @@ class UserPasswordRecoverView(APIView):
 
 
 class UsersAdminViewSet(ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.IsAdminUser,)
     queryset = User.objects.all().order_by('id')
     serializer_class = UsersAdminSerializer
-    
+"""    
+    permission_classes = (permissions.IsAuthenticated,)
+       
     def destroy(self, request, *args, **kwargs):
         #import pdb
         #pdb.set_trace()
@@ -297,8 +299,16 @@ class UsersAdminViewSet(ModelViewSet):
             return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
        
         return super(UsersAdminViewSet, self).retrieve(request, *args, **kwargs)
-
-
+    
+    def list(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.id <> request.user.id and request.user.is_admin==False:
+            content = {'status': _('User can not view this account information')}
+            return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
+       
+        return super(UsersAdminViewSet, self).list(request, *args, **kwargs)
+"""    
+    
 class UsersStaffViewSet(mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,
                       GenericViewSet):

@@ -22,7 +22,7 @@ admin {
     line-height: 18px;
 }
 
-admin-form {
+admin-form, admin-account-form {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -34,6 +34,7 @@ admin-form {
     line-height: 18px;
     position: relative;
 }
+
 
 section {
     width: auto;
@@ -68,15 +69,4 @@ footer {
     background: #212121;
     line-height: 40px;
     padding: 0 10px;
-}
-
-main {
-  width: 100%;
-  height: calc(100% - 40px - 40px);
-  flex: 1 0 auto;
-  overflow-y: auto;
-}
-
-.content {
-    padding: 10px;
 }

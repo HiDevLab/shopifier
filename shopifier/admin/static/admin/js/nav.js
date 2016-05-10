@@ -76,9 +76,9 @@ export var Nav = [
                  'type': 'component',
              },
              {
-                 'icon': 'bell',
-                 'text': 'Nottifications',
-                 'url': '#',
+                 'icon': 'cog',
+                 'text': 'Account',
+                 'url': '/Settings/Account',
                  'type': 'component',
              }
         ],
