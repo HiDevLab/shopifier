@@ -8,7 +8,7 @@ export var Nav = [
     {
         'icon': 'home',
         'text': 'Home',
-        'url': '#',
+        'url': '/Admin/Home',
         'submenu': [],
     },
     {

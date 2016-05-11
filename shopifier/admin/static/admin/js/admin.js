@@ -1,5 +1,5 @@
 import { Component } from 'angular2/core';
-import { Router, RouterOutlet, RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, CanActivate } from 'angular2/router'
+import { ROUTER_DIRECTIVES, Router, RouteConfig, CanActivate } from 'angular2/router'
 import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
 
 import { getCurrentUser,AdminAuthService } from './admin.auth'
@@ -22,7 +22,12 @@ export class AdminHome {
     directives: [ROUTER_DIRECTIVES],
 })
 @RouteConfig([
-       
+    
+    {
+        path : '/',
+        redirectTo: ['Home'],
+    }, 
+     
     {
         path : '/home',
         name : 'Home',
@@ -53,17 +58,18 @@ export class Admin {
     }
         
     constructor(router) {
-        let _authService = window.injector.get(AdminAuthService);
+        this._authService = window.injector.get(AdminAuthService);
         this._router = router;
         
-        _authService.get(`/api/current-user/`)
+    }
+   
+    ngOnInit() {
+        //this._router.navigate(['Home']);
+
+        this._authService.get(`/api/current-user/`)
             .subscribe( data => this.currentUser = data );               
     }
-/*    
-    ngOnInit() {
-        this._router.navigate(['Home']);
-    }
-*/ 
+ 
     onSelect(nav) {
         this.selectedNav = nav;
         this.forceSubmenuShow=true;
@@ -74,7 +80,9 @@ export class Admin {
         }
         else {
             this.selectedSubNav = null;
-            this.headerNav =[this.selectedNav];        
+            this.headerNav =[this.selectedNav];
+             if (nav.url != '#')
+                this._router.navigate([nav.url])        
         }
                 
         setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this);   
