@@ -78,7 +78,7 @@ export var Nav = [
              {
                  'icon': 'cog',
                  'text': 'Account',
-                 'url': '/Settings/Account',
+                 'url': '/Admin/Settings/Account',
                  'type': 'component',
              }
         ],

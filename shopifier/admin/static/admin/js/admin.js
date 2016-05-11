@@ -2,18 +2,40 @@ import { Component } from 'angular2/core';
 import { Router, RouterOutlet, RouteConfig, ROUTER_DIRECTIVES, ROUTER_PROVIDERS, CanActivate } from 'angular2/router'
 import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
 
-import { getCurrentUser, AdminAuthService, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset } from './admin.auth'
+import { getCurrentUser,AdminAuthService } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 import { AdminSettings } from './admin.settings'
-import { AdminAccount } from './admin.account'
 
+//------------------------------------------------------------------------------
+@Component({
+    selector:   'main',
+    template:   '',
+})
+export class AdminHome {  
+}
 
+//------------------------------------------------------------------------------
 @CanActivate(() => getCurrentUser(true, 'Login'))
 @Component({
     selector: 'admin-form',
     templateUrl: 'templates/admin.html',
-    directives    : [RouterOutlet],
+    directives: [ROUTER_DIRECTIVES],
 })
+@RouteConfig([
+       
+    {
+        path : '/home',
+        name : 'Home',
+        component : AdminHome,
+    },
+
+    {
+        path : '/settings/...',
+        name : 'Settings',
+        component : AdminSettings,
+    },
+  
+])
 export class Admin {
     navs = Nav;
     popups = PopUpMenu;
@@ -37,7 +59,11 @@ export class Admin {
         _authService.get(`/api/current-user/`)
             .subscribe( data => this.currentUser = data );               
     }
-     
+/*    
+    ngOnInit() {
+        this._router.navigate(['Home']);
+    }
+*/ 
     onSelect(nav) {
         this.selectedNav = nav;
         this.forceSubmenuShow=true;
@@ -73,51 +99,3 @@ export class Admin {
             this.onSelectSubNav(this.headerNav[1]);
     }
 }
-
-
-@Component({
-  selector: "admin",
-  template : "<router-outlet></router-outlet>",
-  directives: [ROUTER_DIRECTIVES],
-  providers: [ROUTER_PROVIDERS],
-})
-@RouteConfig([
-    {
-        path : '/auth/login',
-        name : 'Login',
-        component : AdminAuthLogin,
-    },
-     
-    {
-        path : '/auth/logout',
-        name : 'Logout',
-        component : AdminAuthLogout,
-    },
-     
-    {
-        path : '/auth/recover',
-        name : 'Recover',
-        component : AdminAuthRecover,
-    },
-     
-    {
-        path : '/auth/reset/:pk/:token/',
-        name : 'Reset',
-        component : AdminAuthReset,
-    }, 
-    
-   
-    {
-        path : '/',
-        name : 'Admin',
-        component : AdminAccount,
-    },
-    {
-        path : '/admin',
-        name : 'AdminAdmin',
-        component : Admin,
-    },
-])
-export class AdminRouter {
-}
-

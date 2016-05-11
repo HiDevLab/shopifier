@@ -4,7 +4,7 @@ import { Router, RouteParams, CanActivate, ROUTER_DIRECTIVES } from 'angular2/ro
 import { Http, Headers } from 'angular2/http'
 import 'rxjs/Rx'
 
-
+//------------------------------------------------------------------------------
 @Injectable()
 export class AdminAuthService {
     
@@ -25,11 +25,13 @@ export class AdminAuthService {
     
     post(user, url) {
         let body = JSON.stringify(user);
-        return this.http.post(url, body,  {headers: this.headers}).map(res => res.json());
+        return this.http.post(url, body,  {headers: this.headers})
+                        .map(res => res.json());
     }
     
     get(url) {
-        return this.http.get(url, {headers: this.headers}).map(res => res.json());
+        return this.http.get(url, {headers: this.headers})
+                        .map(res => res.json());
     }
        
     emailValidator(control) {
@@ -47,6 +49,8 @@ export class AdminAuthService {
     }
 }
 
+
+//------------------------------------------------------------------------------
 export function getCurrentUser(_found, _re_direct) {
     let _authService = window.injector.get(AdminAuthService);
     let router = window.injector.get(Router);
@@ -62,6 +66,7 @@ export function getCurrentUser(_found, _re_direct) {
 }
 
 
+//------------------------------------------------------------------------------
 @Component({
     selector      : 'admin-auth-logout-form',
     template      : '',   
@@ -79,13 +84,15 @@ export class AdminAuthLogout {
     }
    
     ngOnInit() {
-        this._authService.get(`/api/logout/`).subscribe( data => this._router.navigate(['Login']) );                                
+        this._authService.get(`/api/logout/`)
+                         .subscribe( data => this._router.navigate(['Login']) );                                
     }
 
 }
 
 
-@CanActivate(() => getCurrentUser(false, 'Admin'))
+//------------------------------------------------------------------------------
+@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
     selector      : 'admin-auth-login-form',
     templateUrl   : 'templates/admin-auth-login.html',
@@ -117,14 +124,18 @@ export class AdminAuthLogin {
         }
         else {
             this._authService.post(this.lform.value, `/api/login/`)
-                    .subscribe( data => { this._router.navigate(['Admin']);},
-                                err => { this.errors = err.json(); this._authService.currentUser=null;} );                                
+                    .subscribe( data => { this._router.navigate(['/Admin/Home']);},
+                                err => { 
+                                            this.errors = err.json(); 
+                                            this._authService.currentUser=null;
+                                        } );                                
         }
     }
 }
 
 
-@CanActivate(() => getCurrentUser(false, 'Admin'))
+//------------------------------------------------------------------------------
+@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
     selector      : 'admin-auth-recover-form',
     templateUrl   : 'templates/admin-auth-recover.html',
@@ -154,14 +165,18 @@ export class AdminAuthRecover {
         }
         else {
             this._authService.post(this.lform.value,`/api/recover/` )
-                    .subscribe( data => { this._authService.currentUser = data; this._router.navigate(['Login']);},
+                    .subscribe( data => { 
+                                            this._authService.currentUser = data; 
+                                            this._router.navigate(['Login']);
+                                        },
                                 err => {this.errors = err.json();});
         }
     }
 }
 
 
-@CanActivate(() => getCurrentUser(false, 'Admin'))
+//------------------------------------------------------------------------------
+@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
     selector      : 'admin-auth-reset-form',
     templateUrl   : 'templates/admin-auth-reset.html',
@@ -197,17 +212,24 @@ export class AdminAuthReset {
           let user = {'pk': this.pk, 'token': this.token };
           this._authService.post(user, `/api/check_token2/`)
                 .subscribe( data => this._authService.currentUser = data,
-                            err => {this._authService.currentUser=null; this._router.navigate(['Recover']);});          
+                            err => {
+                                        this._authService.currentUser=null; 
+                                        this._router.navigate(['Recover']);
+                                    });          
     }
     
     goReset() {
-        if ( this.lform.controls['password1'].status == 'INVALID' || this.lform.controls['password2'].status == 'INVALID' ) {
+        if ( this.lform.controls['password1'].status == 'INVALID' 
+            || this.lform.controls['password2'].status == 'INVALID' ) {
+            
             this.errors = 'There was an error updating your password';
             this.lform.controls['password2'].value ='';
             this.lform.controls['password1'].value ='';            
         }
         
-        else if ( this.lform.controls['password1'].value != this.lform.controls['password2'].value ) {
+        else if (   this.lform.controls['password1'].value 
+                    != this.lform.controls['password2'].value ) {
+                    
             this.errors = 'There was an error updating your password';
             this.lform.controls['password2'].value ='';
             this.lform.controls['password1'].value ='';
@@ -217,8 +239,11 @@ export class AdminAuthReset {
             let user = {'pk': this.pk, 'token': this.token, 'password': this.lform.controls['password1'].value };       
             console.log(user);
             this._authService.post(user, `/api/reset/`)
-                    .subscribe( data => { this._router.navigate(['Admin']);},
-                                err => {this.errors = err.json(); this._authService.currentUser=null;} );
+                    .subscribe( data => { this._router.navigate(['/Admin/Home']);},
+                                err => {
+                                            this.errors = err.json(); 
+                                            this._authService.currentUser=null;
+                                        } );
         }
     }   
 }

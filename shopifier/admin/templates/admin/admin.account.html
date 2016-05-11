@@ -1,110 +1,88 @@
-
-    <nav>
-         <ul class="menu">
-         </ul>
-    </nav>
+<main>
+    <div class="section">
+        <div class="section-annotation">
+            <h3>Account overview</h3>
+            <div>
+                <p>
+                    An overview of your current plan. Grow your business by upgrading your plan features. View our
+                    <a href="#">terms of service</a>
+                    and
+                    <a href="#">privacy policy</a>
+                    .
+                </p>
+            </div>
+        </div>
+        <div class="section-content">
+            <div class="card">
+                <div class="section">
+                    <div class="cell">
+                        <label>Memeber since</label>                                
+                        <span *ngIf="currentUser" >{% verbatim %}{{ setDate(currentUser.date_joined) | date:'longDate' }}{% endverbatim %} </span>
+                    </div>
+                    <div class="cell">
+                        <label>Account status</label>                                
+                        <span>active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    <section>
-        <header>
-            <h1>
-                 <ul>
-                    <li>
-                        <a href="#"> 
-                            Settings / Account 
-                        </a>
-                    </li>
-                 </ul>        
-            </h1>
-        </header>
-        
-        <main>
-            <div class="section">
-                <div class="section-annotation">
-                    <h3>Account overview</h3>
-                    <div>
-                        <p>
-                            An overview of your current plan. Grow your business by upgrading your plan features. View our
-                            <a href="#">terms of service</a>
-                            and
-                            <a href="#">privacy policy</a>
-                            .
-                        </p>
-                    </div>
-                </div>
-                <div class="section-content">
-                    <div class="card">
-                        <div class="section">
-                            <div class="cell">
-                                <label>Memeber since</label>                                
-                                <span *ngIf="currentUser" >{% verbatim %}{{ setDate(currentUser.date_joined) | date:'longDate' }}{% endverbatim %} </span>
-                            </div>
-                            <div class="cell">
-                                <label>Account status</label>                                
-                                <span>active</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="section">
+        <div class="section-annotation">
+            <h3>Staff members</h3>
+            <div>
+                <p>You can give other people admin access to your Shopifier store.</p>
+                <p>
+                    <a class="btn" href="#">Add staff member</a>
+                </p>
+                <br>
+                <p>You can log other staff members out of your Shopifier store.</p>
+                <p>
+                    <a class="btn" href="#">Expire user sessions</a>
+                </p>
             </div>
-            
-            <div class="section">
-                <div class="section-annotation">
-                    <h3>Staff members</h3>
-                    <div>
-                        <p>You can give other people admin access to your Shopifier store.</p>
-                        <p>
-                            <a class="btn" href="#">Add staff member</a>
-                        </p>
-                        <br>
-                        <p>You can log other staff members out of your Shopifier store.</p>
-                        <p>
-                            <a class="btn" href="#">Expire user sessions</a>
-                        </p>
+        </div>
+        <div class="section-content">
+            <div class="card">
+                <div class="section">
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Admin Access</th>
+                                    <th>Last Login Date</th>
+                                    <th></th>
+                                </tr>
+                            </thead> 
+                            <tbody *ngIf="users">
+                                <tr *ngFor="let user of users">
+                                    <td><i>{% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}</i></td>
+                                    <td>
+                                        <a href="#">
+                                            {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
+                                        </a>    
+                                    </td>
+                                    <td>
+                                        <a class="email">
+                                            {% verbatim %}{{ user.email }}{% endverbatim %} 
+                                        </a>
+                                    </td>
+                                    <td>Account owner</td>
+                                    <td>May 10, 2016 08:42</td>
+                                    <td>
+                                        <a class="btn fa fa-trash" aria-hidden="true" title="Delete user"
+                                            [ngClass]="{hide: currentUser.id==user.id}" >
+                                        </a>
+                                    </td>
+                                  </tr>
+                            </tbody>                       
+                        </table>
                     </div>
                 </div>
-                <div class="section-content">
-                    <div class="card">
-                        <div class="section">
-                            <div class="table">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Admin Access</th>
-                                            <th>Last Login Date</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead> 
-                                    <tbody *ngIf="users">
-                                        <tr *ngFor="let user of users">
-                                            <td><i>{% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}</i></td>
-                                            <td>
-                                                <a href="#">
-                                                    {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
-                                                </a>    
-                                            </td>
-                                            <td>
-                                                <a class="email">
-                                                    {% verbatim %}{{ user.email }}{% endverbatim %} 
-                                                </a>
-                                            </td>
-                                            <td>Account owner</td>
-                                            <td>May 10, 2016 08:42</td>
-                                            <td>
-                                                <a class="btn fa fa-trash" aria-hidden="true" title="Delete user"
-                                                    [ngClass]="{hide: currentUser.id==user.id}" >
-                                                </a>
-                                            </td>
-                                          </tr>
-                                    </tbody>                       
-                                </table>
-                            </div>
-                        </div>
-                    </div>    
-                </div>
-            </div>
-         
-         </main>         
-    </section>
+            </div>    
+        </div>
+    </div>
