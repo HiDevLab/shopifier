@@ -62,8 +62,12 @@ main {
                         background-color: $background-main-color;
                         border-radius: 3px;
                         border: 1px solid $border-section-color;
-                           
-                  
+                   
+                        &:hover {
+                             background: $background-main-sel-btn-color;
+                             cursor: pointer; cursor: hand;
+                        }                       
+
                     }
                 }
             }
@@ -94,7 +98,7 @@ main {
                     padding: 20px;
                     display: flex;
                     flex-wrap: wrap;
-                    lex-direction: column;                   
+                    flex-direction: column;                   
                     justify-content: center;
                    
                     > div.cell {
@@ -110,9 +114,7 @@ main {
                         }
                         
                     }
-                    
-                
-                
+
                     > div.table {
                         flex: 1 1 0;
                         max-width: 100%;
@@ -135,7 +137,7 @@ main {
                                         max-width: 100%;
                                         min-width: 0;
                                         vertical-align: middle;
-                                        line-height: 36px;
+                                        line-height: 18px;
                                                                                 
                                     }
                             
@@ -223,4 +225,149 @@ main {
     }
     
 }
+
+modal-form {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    font-weight: 200;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.25) none repeat scroll 0 0;
+    display: inline-block;
+                        
+    > form {
+        
+        margin-top: 50vh;
+        transform: translateY(-100%);
+        margin-left: 50vw;
+        
+        transform: translateX(-50%);
+        display: block;
+        
+        width: 620px; 
+       
+        color: $color-section-annotation-title;       
+        background: $background-main-color;
+                
+        .modal-header {
+            border-bottom: 1px solid $border-section-tab-color;
+            padding: 20px;   
+            display: block;   
+            flex: 1 1 0;                 
+            .modal-title {
+                display: block;
+                font-size: 18px;
+                font-weight: 400;
+                line-height: 1.2em;
+            }
+        }
+        
+        .modal-section {
+            transition: box-shadow 0.3s ease-in-out 0s;
+            padding: 0 10px 0 10px;
+            margin: 20px 0 0 0;
+            display: flex;
+                      
+            
+            .modal-input-block {
+                flex: 1 1 0;
+                padding: 0 10px 0 10px;
+                font-size: 13px;
+                font-weight: normal;  
+                display: block;
+                
+                .modal-label {
+                    text-align: left;
+                    margin-bottom: 5px;
+                    cursor: pointer;
+                    display: block;
+                    font-size: 13px;
+                    
+                    font-weight: normal;                       
+                }
+                
+                > input {
+                    text-align: left;
+                    border: 1px solid $border-section-tab-color;
+                    border-radius: 3px;
+                    box-sizing: border-box;
+                    padding: 5px 10px;
+                    width: 100%;
+                    background: $background-main-color !important;
+                }
+                
+            }
+            
+        }
+        
+        .modal-footer {
+            border-top: 1px solid $border-section-tab-color;
+            padding: 20px;
+            margin-top: 20px;   
+            height: 32px;
+            display: block;   
+            flex: 1 1 0;  
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
+            
+            > a.btn {
+                -moz-user-select: none;
+                box-sizing: border-box;
+                
+                display: inline-block;
+                height: auto;
+                line-height: 1;
+                margin-left: 10px;
+                padding: 8.5px 15px;
+                position: relative;
+                text-align: center;
+                text-transform: none;
+                vertical-align: middle;
+                white-space: nowrap;
+                border-radius: 3px;
+                border: 1px solid $border-section-color;
+                   
+                &.cancel {
+                    background-color: $background-main-color;
+                    color: $color-section-ref;
+                    
+                    &:hover {
+                        background: $background-main-sel-btn-color;
+                        cursor: pointer; cursor: hand;
+                    }
+                }
+                
+                &.disabled {
+                    background: $background-main-btn-disabled;
+                    color:  $border-section-color;
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+                
+                &.enabled {
+                    background: $color-section-ref;
+                    color: $background-main-color;
+                    
+                    &:hover {
+                        cursor: pointer; cursor: hand;
+                        background: $background-main-btn-enabled;
+                    }
+                }
+                
+            }               
+            
+        }
+        
+    
+    
+    }
+
+}
+        
+    
+
 

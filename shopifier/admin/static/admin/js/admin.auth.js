@@ -68,7 +68,7 @@ export function getCurrentUser(_found, _re_direct) {
 
 //------------------------------------------------------------------------------
 @Component({
-    selector      : 'admin-auth-logout-form',
+    selector      : 'section',
     template      : '',   
     directives    : [ROUTER_DIRECTIVES],
 })
@@ -94,7 +94,7 @@ export class AdminAuthLogout {
 //------------------------------------------------------------------------------
 @CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
-    selector      : 'admin-auth-login-form',
+    selector      : 'section',
     templateUrl   : 'templates/admin-auth-login.html',
     directives    : [FORM_DIRECTIVES],
 })
@@ -137,7 +137,7 @@ export class AdminAuthLogin {
 //------------------------------------------------------------------------------
 @CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
-    selector      : 'admin-auth-recover-form',
+    selector      : 'section',
     templateUrl   : 'templates/admin-auth-recover.html',
     directives    : [FORM_DIRECTIVES],
 })
@@ -178,7 +178,7 @@ export class AdminAuthRecover {
 //------------------------------------------------------------------------------
 @CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
-    selector      : 'admin-auth-reset-form',
+    selector      : 'section',
     templateUrl   : 'templates/admin-auth-reset.html',
     directives    : [FORM_DIRECTIVES],
 })
@@ -236,8 +236,12 @@ export class AdminAuthReset {
         }
         
         else {         
-            let user = {'pk': this.pk, 'token': this.token, 'password': this.lform.controls['password1'].value };       
-            console.log(user);
+            let user = {
+                            'pk': this.pk, 
+                            'token': this.token, 
+                            'password': this.lform.controls['password1'].value 
+                        };       
+            
             this._authService.post(user, `/api/reset/`)
                     .subscribe( data => { this._router.navigate(['/Admin/Home']);},
                                 err => {

@@ -4,7 +4,7 @@ import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
 
 import { getCurrentUser,AdminAuthService } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
-import { AdminSettings } from './admin.settings'
+import { AdminSettings, AdminAccountInvite } from './admin.settings'
 
 //------------------------------------------------------------------------------
 @Component({
@@ -31,7 +31,7 @@ export class AdminHome {
     {
         path : '/home',
         name : 'Home',
-        component : AdminHome,
+        component : AdminAccountInvite,
     },
 
     {

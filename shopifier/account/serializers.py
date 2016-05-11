@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.gis.geoip2 import GeoIP2
+from django.db.models import Max
 from django.template.loader import render_to_string
 
 from rest_framework import serializers
@@ -10,6 +11,7 @@ from rest_framework import serializers
 from easy_thumbnails.files import get_thumbnailer
 
 from account.models import User, UserLog
+from IPython.testing.decorators import null_deco
 
 
 class LoginSerializer(serializers.Serializer):
@@ -71,21 +73,23 @@ class UsersAdminSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'first_name', 'last_name', 'email', 
                 'phone', 'bio', 'www_site', 'date_join', 'avatar_image',
-                'avatar', 'is_admin', 'is_active', 'is_staff')
+                'avatar', 'is_admin', 'is_active', 'is_staff', 'visit_datetime')
 
     is_admin = serializers.BooleanField(read_only=True)
     is_active = serializers.BooleanField(read_only=True)
     is_staff = serializers.BooleanField(read_only=True)
     date_join = serializers.DateTimeField(read_only=True)
     avatar = serializers.SerializerMethodField()
+    visit_datetime = serializers.SerializerMethodField()
     
     def get_avatar(self, obj):
         if obj.avatar_image:
             return get_thumbnailer(obj.avatar_image)['avatar'].url
-            #options = {'size': (100, 100), 'crop': True}
-            #thumb_url = get_thumbnailer(profile.photo).get_thumbnail(options).url
-
-
+    
+    def get_visit_datetime(self, obj):
+        m = UserLog.objects.filter(user=obj).aggregate(Max('visit_datetime'))
+        return m['visit_datetime__max']
+        
 class UsersStaffSerializer(serializers.ModelSerializer):
     
     class Meta:

@@ -5,9 +5,25 @@ import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import { AdminAuthService } from './admin.auth'
 
 
+
 //------------------------------------------------------------------------------
 @Component({
-    selector      : 'admin-account-form',
+    selector      : 'modal-form',
+    templateUrl: 'templates/admin.account.invaite.html',
+    directives    : [FORM_DIRECTIVES],
+})
+export class AdminAccountInvite {
+    
+    constructor(formbuilder, router) {
+        this._authService = window.injector.get(AdminAuthService);
+    }
+    
+}
+
+
+//------------------------------------------------------------------------------
+@Component({
+    selector      : 'main',
     templateUrl: 'templates/admin.account.html',
     directives    : [FORM_DIRECTIVES],
 })
@@ -26,20 +42,17 @@ export class AdminAccount {
             .subscribe( data => this.currentUser = data );      
         this._authService.get(`/api/admin/`)
             .subscribe( data => this.users = data );      
-                
     }
     
     setDate (date) {
         let d = new Date(date);
         return d;
     }
- 
 }
-
 
 //------------------------------------------------------------------------------ 
 @Component({
-  selector: 'main',
+  selector: 'section',
   template : '<router-outlet></router-outlet>',
   directives: [ROUTER_DIRECTIVES],
 })
