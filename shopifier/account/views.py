@@ -97,12 +97,12 @@ def get_token(email):
     return signer.signature(email)
 
     
-class  UserInvaiteView(CreateAPIView):
+class  UserInviteView(CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = UserInvaiteSerializer
+    serializer_class = UserInviteSerializer
     
-    email_html_template_name = 'admin/invaite_email.html'    
-    email_text_template_name = 'admin/invaite_email.txt'
+    email_html_template_name = 'admin/emails/invite_email.html'    
+    email_text_template_name = 'admin/emails/invite_email.txt'
 
     def perform_create(self, serializer):
         user = serializer.save()          

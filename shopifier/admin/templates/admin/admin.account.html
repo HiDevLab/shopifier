@@ -33,7 +33,8 @@
         <div>
             <p>You can give other people admin access to your Shopifier store.</p>
             <p>
-                <a class="btn" href="#">Add staff member</a>
+                <a *ngIf="invite_user" class="btn" 
+                (click)="goInvite()">Add staff member</a>
             </p>
             <br>
             <p>You can log other staff members out of your Shopifier store.</p>
@@ -92,4 +93,3 @@
         </div>    
     </div>
 </div>
-

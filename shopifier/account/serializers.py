@@ -35,7 +35,7 @@ class PasswordResetSerializer(serializers.Serializer):
     password = serializers.CharField(min_length=6)
 
 
-class UserInvaiteSerializer(serializers.ModelSerializer):
+class UserInviteSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User

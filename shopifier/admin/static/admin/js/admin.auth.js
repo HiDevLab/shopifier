@@ -20,7 +20,16 @@ export class AdminAuthService {
         this.http = http;
         this.router = router;
         this.headers = new Headers({'Accept': 'application/json; charset=utf-8',
-                'Content-Type': 'application/json; charset=utf-8'});
+                'Content-Type': 'application/json; charset=utf-8',
+                'X-CSRFToken': this.getCookie('csrftoken')});
+    
+    }
+    
+    getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+        if (parts.length == 2) 
+            return parts.pop().split(";").shift();
     }
     
     post(user, url) {
@@ -119,8 +128,10 @@ export class AdminAuthLogin {
     
     goLogin() {
         if(this.lform.controls['email'].status == 'INVALID') {
+            
             this.errors = this.lform.controls['email'].errors;
-            //this.lform.controls['password'].value = '';
+            this.lform.controls['password'].updateValue('', true, true);
+            this.lform.controls['email'].updateValue('', true, true);
         }
         else {
             this._authService.post(this.lform.value, `/api/login/`)
@@ -161,7 +172,8 @@ export class AdminAuthRecover {
     
     goRecover() {
         if(this.lform.controls['email'].status == 'INVALID') {
-            this.errors = this.lform.controls['email'].errors;            
+            this.errors = this.lform.controls['email'].errors;
+            this.lform.controls['email'].updateValue('', true, true);            
         }
         else {
             this._authService.post(this.lform.value,`/api/recover/` )
@@ -223,16 +235,16 @@ export class AdminAuthReset {
             || this.lform.controls['password2'].status == 'INVALID' ) {
             
             this.errors = 'There was an error updating your password';
-            this.lform.controls['password2'].value ='';
-            this.lform.controls['password1'].value ='';            
+            this.lform.controls['password2'].updateValue('', true, true);
+            this.lform.controls['password1'].updateValue('', true, true);            
         }
         
         else if (   this.lform.controls['password1'].value 
                     != this.lform.controls['password2'].value ) {
                     
             this.errors = 'There was an error updating your password';
-            this.lform.controls['password2'].value ='';
-            this.lform.controls['password1'].value ='';
+            this.lform.controls['password2']._value ='';
+            this.lform.controls['password1']._value ='';
         }
         
         else {         

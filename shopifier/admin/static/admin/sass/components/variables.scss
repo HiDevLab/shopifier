@@ -1,4 +1,5 @@
 // Colors
+$shopify-color: #96bf48;
 
 // Nav
 $background-nav-color: #31373d;
@@ -25,8 +26,14 @@ $nav-width: 230px;
 
 $background-main-color: #ffffff;
 $background-main-sel-btn-color: #f5f6f7;
+$background-main-btn: #f5f6f7;
 $background-main-btn-enabled: #4293c2;
 $background-main-btn-disabled: #fafbfc;
+$background-main-error: #ff9797;
+
+$background-input-error: #fef6f5;
+$border-input-error: #ff5d5d;
+                
 
 
 $border-section-color: #d3dbe2;
@@ -34,4 +41,5 @@ $border-section-tab-color: #ebeef0;
 $color-section-ref: #479ccf;
 $color-section-annotation: #798c9c;
 $color-section-annotation-title: #31373d;
-$background-main-sel-btn-color: #4293c2;
+$color-error: #d83e3e
+

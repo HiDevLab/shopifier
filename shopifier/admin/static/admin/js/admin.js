@@ -14,6 +14,7 @@ import { AdminSettings, AdminAccountInvite } from './admin.settings'
 export class AdminHome {  
 }
 
+
 //------------------------------------------------------------------------------
 @CanActivate(() => getCurrentUser(true, 'Login'))
 @Component({
@@ -31,7 +32,7 @@ export class AdminHome {
     {
         path : '/home',
         name : 'Home',
-        component : AdminAccountInvite,
+        component : AdminHome //AdminAccountInvite,// AdminHome,
     },
 
     {
