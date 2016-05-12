@@ -24,21 +24,18 @@
         
         <div class="modal-section">
             <div class="input-box">
-                <div>First Name</div>
-                <input [ngFormControl]="lform.controls['first_name']"
-                [ngClass]="error: obj_errors['first_name'].length > 0">
+                <div [ngClass]="{err: obj_errors['first_name']}">First Name</div>
+                <input [ngFormControl]="lform.controls['first_name']" [ngClass]="{err: obj_errors['first_name']}">
             </div>
             <div class="input-box">
-                <div>Last Name</div>
-                <input [ngFormControl]="lform.controls['last_name']"
-                > 
+                <div [ngClass]="{err: obj_errors['last_name']}">Last Name</div>
+                <input [ngFormControl]="lform.controls['last_name']" [ngClass]="{err: obj_errors['last_name']}" > 
             </div>
         </div>
         <div class="modal-section">
             <div class="input-box">
-                <div>Email</div>
-                <input [ngFormControl]="lform.controls['email']"
-                >
+                <div [ngClass]="{err: obj_errors['email']}">Email</div>
+                <input [ngFormControl]="lform.controls['email']"[ngClass]="{err: obj_errors['email']}" >
             </div>        
         </div>
         

@@ -15,13 +15,15 @@ export class AdminAccountInvite {
     show = false;
     parrent = null;
     errors = [];
-    obj_errors = {'first_name':[],'last_name':[],'email':[] };
+    obj_errors = {};
+    first_nameErr = true;
+    
     
     static get parameters() {
         return [[FormBuilder]];
     }
     constructor(formbuilder) {
-        this.obj_errors = {'first_name':[],'last_name':[],'email':[] };
+        
         this._authService = window.injector.get(AdminAuthService);
         this.lform = formbuilder.group({
                     'email':    ['', this._authService.emailValidator],
@@ -39,7 +41,7 @@ export class AdminAccountInvite {
             return;
         }
         */
-        this.obj_errors = {'first_name':[],'last_name':[],'email':[] };
+        this.obj_errors = {};
         this.errors = [];
         this._authService.post(this.lform.value, `/api/user-invite/`)
                 .subscribe( data => { console.log(data); this.show=false;},
