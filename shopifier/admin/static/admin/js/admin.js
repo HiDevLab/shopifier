@@ -67,7 +67,7 @@ export class Admin {
     ngOnInit() {
         //this._router.navigate(['Home']);
 
-        this._authService.get(`/api/current-user/`)
+        this._authService.get('/api/current-user/')
             .subscribe( data => this.currentUser = data );               
     }
  

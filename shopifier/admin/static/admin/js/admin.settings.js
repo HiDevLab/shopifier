@@ -1,6 +1,6 @@
 import { Component, DynamicComponentLoader, ViewContainerRef } from 'angular2/core';
 import { Router, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
-import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
+import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import 'rxjs/Rx'
 
 import { AdminAuthService } from './admin.auth'
@@ -19,8 +19,11 @@ export class AdminAccountDelete {
     errors = [];
     obj_errors = {};
     
-    constructor(formbuilder) {
-        this._authService = window.injector.get(AdminAuthService);
+    static get parameters() {
+        return [[AdminAuthService]];
+    }
+    constructor(authService) {
+        this._authService = authService;
     }
     
     goDelete() {
@@ -48,11 +51,11 @@ export class AdminAccountInvite {
     boolInvite = false;
     
     static get parameters() {
-        return [[FormBuilder]];
+        return [[AdminAuthService], [FormBuilder]];
     }
-    constructor(formbuilder) {
+    constructor(authService, formbuilder) {
         
-        this._authService = window.injector.get(AdminAuthService);
+        this._authService = authService;
         this.lform = formbuilder.group({
                     'email':    ['', this._authService.emailValidator],
                     'first_name': ['', Validators.required],
@@ -69,12 +72,11 @@ export class AdminAccountInvite {
             return;
         }
         */
-        this._authService.post(this.lform.value, `/api/user-invite/`)
+        this._authService.post(this.lform.value, '/api/user-invite/')
                 .subscribe( data => { this.show=false;},
                             err => { this.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
                  );                                
-    
     }
     
     to_array (err) {
@@ -113,19 +115,19 @@ export class AdminAccount {
     delete_user = null;
         
     static get parameters() {
-        return [[FormBuilder], [Router], [DynamicComponentLoader], [ViewContainerRef]];
+        return [[AdminAuthService], [FormBuilder], [Router], [DynamicComponentLoader], [ViewContainerRef]];
     }
      
-    constructor(formbuilder, router, dcl, viewContainerRef) {
+    constructor(authService, formbuilder, router, dcl, viewContainerRef) {
         this._router = router;
         this.dcl = dcl;
         this.viewContainerRef = viewContainerRef;
         
-        this._authService = window.injector.get(AdminAuthService);
+        this._authService = authService;
         
-        this._authService.get(`/api/current-user/`)
+        this._authService.get('/api/current-user/')
             .subscribe( data => this.currentUser = data );      
-        this._authService.get(`/api/admin/`)
+        this._authService.get('/api/admin/')
             .subscribe( data => this.users = data ); 
         
         this.dcl.loadNextToLocation(AdminAccountInvite,  this.viewContainerRef)
@@ -158,7 +160,7 @@ export class AdminAccount {
     
     
     userRefresh() {
-       this._authService.get(`/api/admin/`)
+       this._authService.get('/api/admin/')
             .subscribe( data => this.users = data );  
     }
 }

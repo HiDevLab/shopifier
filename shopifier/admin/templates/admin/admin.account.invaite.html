@@ -29,13 +29,13 @@
             </div>
             <div class="input-box" [ngClass]="{err: obj_errors['last_name']}">
                 <div>Last Name</div>
-                <input [ngFormControl]="lform.controls['last_name']"> 
+                <input [ngFormControl]="lform.controls['last_name']" (change)="boolInvite=true"> 
             </div>
         </div>
         <div class="modal-section">
             <div class="input-box"  [ngClass]="{err: obj_errors['email']}">
                 <div>Email</div>
-                <input [ngFormControl]="lform.controls['email']">
+                <input [ngFormControl]="lform.controls['email']" (change)="boolInvite=true">
             </div>        
         </div>
         

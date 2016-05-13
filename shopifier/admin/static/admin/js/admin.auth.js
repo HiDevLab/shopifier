@@ -22,7 +22,6 @@ export class AdminAuthService {
         this.headers = new Headers({'Accept': 'application/json; charset=utf-8',
                 'Content-Type': 'application/json; charset=utf-8',
                 'X-CSRFToken': this.getCookie('csrftoken')});
-    
     }
     
     getCookie(name) {
@@ -57,7 +56,7 @@ export class AdminAuthService {
     
     get_currentUser() {
         this.currentUser = null;
-        this.get(`/api/current-user/`)
+        this.get('/api/current-user/')
             .subscribe( data => this.currentUser = data );                                
     }
 }
@@ -88,16 +87,16 @@ export function getCurrentUser(_found, _re_direct) {
 export class AdminAuthLogout {
    
     static get parameters() {
-        return [[Router]];
+        return [[AdminAuthService], [Router]];
     }
     
-    constructor(router) {
-        this._authService = window.injector.get(AdminAuthService);//authService;
+    constructor(authService, router) {
+        this._authService = authService;
         this._router = router;        
     }
    
     ngOnInit() {
-        this._authService.get(`/api/logout/`)
+        this._authService.get('/api/logout/')
                          .subscribe( data => this._router.navigate(['Login']) );                                
     }
 
@@ -112,8 +111,8 @@ export class AdminAuthLogout {
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAuthLogin {
-    message = ``;
-    errors = ``;
+    message = '';
+    errors = '';
     currentUser = null;
     
     static get parameters() {
@@ -121,7 +120,7 @@ export class AdminAuthLogin {
     }
     
     constructor(authService, formbuilder, router) {
-        this._authService = window.injector.get(AdminAuthService);//authService;
+        this._authService = authService;
         this._router = router;
         this.lform = formbuilder.group({
                     'email':    ['', this._authService.emailValidator],
@@ -138,7 +137,7 @@ export class AdminAuthLogin {
             this.lform.controls['email'].updateValue('', true, true);
         }
         else {
-            this._authService.post(this.lform.value, `/api/login/`)
+            this._authService.post(this.lform.value, '/api/login/')
                     .subscribe( data => { this._router.navigate(['/Admin/Home']);},
                                 err => { 
                                             this.errors = err.json(); 
@@ -157,8 +156,8 @@ export class AdminAuthLogin {
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAuthRecover {
-    message = ``;
-    errors = ``;
+    message = '';
+    errors = '';
     currentUser = ''
     
     static get parameters() {
@@ -180,7 +179,7 @@ export class AdminAuthRecover {
             this.lform.controls['email'].updateValue('', true, true);            
         }
         else {
-            this._authService.post(this.lform.value,`/api/recover/` )
+            this._authService.post(this.lform.value,'/api/recover/' )
                     .subscribe( data => { 
                                             this._authService.currentUser = data; 
                                             this._router.navigate(['Login']);
@@ -226,7 +225,7 @@ export class AdminAuthReset {
           this.pk = this._routeParams.get('pk');
           this.token = this._routeParams.get('token');
           let user = {'pk': this.pk, 'token': this.token };
-          this._authService.post(user, `/api/check_token2/`)
+          this._authService.post(user, '/api/check_token2/')
                 .subscribe( data => this._authService.currentUser = data,
                             err => {
                                         this._authService.currentUser=null; 
@@ -258,7 +257,7 @@ export class AdminAuthReset {
                             'password': this.lform.controls['password1'].value 
                         };       
             
-            this._authService.post(user, `/api/reset/`)
+            this._authService.post(user, '/api/reset/')
                     .subscribe( data => { this._router.navigate(['/Admin/Home']);},
                                 err => {
                                             this.errors = err.json(); 

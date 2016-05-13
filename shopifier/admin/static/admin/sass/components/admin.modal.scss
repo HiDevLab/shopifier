@@ -85,6 +85,9 @@ modal-form {
                     display: block;
                     font-size: 13px;
                     font-weight: normal;
+                    > strong {
+                        font-weight: bold;
+                    }
                 }
                 
                 > input {
