@@ -31,10 +31,10 @@
     </div>
 </div>
 
-<div class="section">
+<div class="section" *ngIf="currentUser">
     <div class="section-annotation">
         <h3>Staff members</h3>
-        <div>
+        <div *ngIf="currentUser.is_admin">
             <p>You can give other people admin access to your Shopifier store.</p>
             <p>
                 <a *ngIf="invite_user" class="btn" 
@@ -43,7 +43,8 @@
             <br>
             <p>You can log other staff members out of your Shopifier store.</p>
             <p>
-                <a class="btn" href="#">Expire user sessions</a>
+                <a *ngIf="delete_sessions" class="btn"
+                (click)="goDeleteSessions()">Expire user sessions</a>
             </p>
         </div>
     </div>
@@ -80,12 +81,12 @@
                                 </td>
                                 <td [ngSwitch]="user.visit_datetime">
                                     <span *ngSwitchWhen="null">No sessions found</span>
-                                    <span *ngSwitchDefault>{% verbatim %}{{setDate(user.visit_datetime) | date:'longDate'}}{% endverbatim %}</span>
+                                    <span *ngSwitchDefault>{% verbatim %}{{setDate(user.visit_datetime) | date:'yMMMMd mmss'}}{% endverbatim %}</span>
                                 </td>
                                 
                                 <td>
                                     <a *ngIf="delete_user" class="btn fa fa-trash" aria-hidden="true" title="Delete user"
-                                        [ngClass]="{hide: currentUser.id==user.id}"
+                                        [ngClass]="{hide: currentUser.id==user.id || !currentUser.is_admin}"
                                         (click)="goDelete(user)">
                                     </a>
                                 </td>

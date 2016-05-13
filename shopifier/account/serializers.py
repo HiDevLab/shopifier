@@ -64,7 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        exclude = ('is_admin', 'is_active', 'is_staff', 'password')
+        exclude = ('password',)
 
 
 class UsersAdminSerializer(serializers.ModelSerializer):

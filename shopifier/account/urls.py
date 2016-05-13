@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^api/user-activate/$', UserActivateView.as_view(), name='api_activate'),
     url(r'^api/check_token2/$', UserCheckToken2View.as_view(), name='api_check_token2'),
     url(r'^api/reset/$', UserPasswordResetView.as_view(), name='api_reset'),
+    url(r'^api/sessions-expire/$', SessionsExpire.as_view(), name='sessions-expire'),
     url(r'^api/', include(router.urls)),
     
     url(r'^admin/.*$', TemplateView.as_view(template_name='admin/admin-base.html'), name='shopifier-admin'),

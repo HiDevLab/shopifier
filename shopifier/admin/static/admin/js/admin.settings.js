@@ -8,6 +8,35 @@ import { AdminAuthService } from './admin.auth'
 
 //------------------------------------------------------------------------------
 @Component({
+    selector      : 'sessions',
+    templateUrl: 'templates/admin.account.del-sessions.html',
+    directives    : [FORM_DIRECTIVES],
+})
+export class AdminAccountDeleteSessions {
+    show = false;
+    parrent = null;
+    errors = [];
+    obj_errors = {};
+    
+    static get parameters() {
+        return [[AdminAuthService]];
+    }
+    constructor(authService) {
+        this._authService = authService;
+    }
+    
+    goDeleteSessions() {
+        this._authService.delete('/api/sessions-expire/')
+                .subscribe( () => {},
+                            () => {}, 
+                            () =>  {this.show=false;} 
+                 );
+    }   
+}
+
+
+//------------------------------------------------------------------------------
+@Component({
     selector      : 'delete',
     templateUrl: 'templates/admin.account.delete.html',
     directives    : [FORM_DIRECTIVES],
@@ -113,6 +142,7 @@ export class AdminAccount {
     users = [];    
     invite_user = null;
     delete_user = null;
+    delete_sessions = null;
         
     static get parameters() {
         return [[AdminAuthService], [FormBuilder], [Router], [DynamicComponentLoader], [ViewContainerRef]];
@@ -140,6 +170,12 @@ export class AdminAccount {
             .then((compRef)=> {
                 this.delete_user = compRef.instance;
                 this.delete_user.parrent = this; 
+            });
+        
+        this.dcl.loadNextToLocation(AdminAccountDeleteSessions,  this.viewContainerRef)
+            .then((compRef)=> {
+                this.delete_sessions = compRef.instance;
+                this.delete_sessions.parrent = this; 
             });    
     }
     
@@ -158,6 +194,9 @@ export class AdminAccount {
         this.delete_user.user = user;
     }
     
+    goDeleteSessions() {
+        this.delete_sessions.show = true;
+    }
     
     userRefresh() {
        this._authService.get('/api/admin/')

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sessions.models import Session
 from django.core.signing import Signer
 from django.core.mail import send_mail
 from django.http.response import Http404
@@ -181,7 +182,6 @@ class  CurrentUserView(APIView):
             return Response(serializer.data, status=HTTP_200_OK)
 
 
-
 class  UserCheckToken2View(APIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserCheckToken2Serializer    
@@ -337,3 +337,13 @@ class SessionsViewSet(mixins.ListModelMixin,
     queryset = UserLog.objects.exclude(session__exact=None)
 
 
+class SessionsExpire(APIView):
+    permission_classes = (permissions.IsAdminUser,)
+    
+    def delete(self, request, format=None):
+        user = request.user
+        [s.delete() for s in Session.objects.all() if s.get_decoded().get('_auth_user_id') != user.id]      
+                
+        content = {'success': 'Sessions Expired.'}
+        return Response(content, status=HTTP_200_OK)
+    
