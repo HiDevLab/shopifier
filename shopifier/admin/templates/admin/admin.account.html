@@ -81,8 +81,9 @@
                                 </td>
                                 
                                 <td>
-                                    <a class="btn fa fa-trash" aria-hidden="true" title="Delete user"
-                                        [ngClass]="{hide: currentUser.id==user.id}">
+                                    <a *ngIf="delete_user" class="btn fa fa-trash" aria-hidden="true" title="Delete user"
+                                        [ngClass]="{hide: currentUser.id==user.id}"
+                                        (click)="goDelete(user)">
                                     </a>
                                 </td>
                             </tr>

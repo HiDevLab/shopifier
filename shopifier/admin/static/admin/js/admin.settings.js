@@ -5,6 +5,34 @@ import 'rxjs/Rx'
 
 import { AdminAuthService } from './admin.auth'
 
+
+//------------------------------------------------------------------------------
+@Component({
+    selector      : 'delete',
+    templateUrl: 'templates/admin.account.delete.html',
+    directives    : [FORM_DIRECTIVES],
+})
+export class AdminAccountDelete {
+    show = false;
+    parrent = null;
+    user = {};
+    errors = [];
+    obj_errors = {};
+    
+    constructor(formbuilder) {
+        this._authService = window.injector.get(AdminAuthService);
+    }
+    
+    goDelete() {
+        this._authService.delete(`/api/admin/${this.user.id}/`)
+                .subscribe( () => { this.show=false;},
+                            () => {}, 
+                            () => this.parrent.userRefresh() 
+                 );                                
+    }   
+}
+
+
 //------------------------------------------------------------------------------
 @Component({
     selector      : 'invite',
@@ -17,7 +45,7 @@ export class AdminAccountInvite {
     errors = [];
     obj_errors = {};
     first_nameErr = true;
-    
+    boolInvite = false;
     
     static get parameters() {
         return [[FormBuilder]];
@@ -32,7 +60,7 @@ export class AdminAccountInvite {
                 }); 
     }
     
-    goInvite() {
+    goInvite () {
         /*
         if(this.lform.controls['email'].status == 'INVALID' ||
             this.lform.controls['first_name'].status == 'INVALID' ||
@@ -41,10 +69,8 @@ export class AdminAccountInvite {
             return;
         }
         */
-        this.obj_errors = {};
-        this.errors = [];
         this._authService.post(this.lform.value, `/api/user-invite/`)
-                .subscribe( data => { console.log(data); this.show=false;},
+                .subscribe( data => { this.show=false;},
                             err => { this.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
                  );                                
@@ -63,6 +89,14 @@ export class AdminAccountInvite {
             }
         }
     }
+    
+    cls () {
+        for (let control in this.lform.controls) {
+            this.lform.controls[control].updateValue('', true, true);
+        }
+        this.obj_errors = {};
+        this.errors = [];
+    }
 }
 
 
@@ -76,6 +110,7 @@ export class AdminAccount {
     currentUser = null;
     users = [];    
     invite_user = null;
+    delete_user = null;
         
     static get parameters() {
         return [[FormBuilder], [Router], [DynamicComponentLoader], [ViewContainerRef]];
@@ -98,6 +133,12 @@ export class AdminAccount {
                 this.invite_user = compRef.instance;
                 this.invite_user.parrent = this; 
             });      
+        
+        this.dcl.loadNextToLocation(AdminAccountDelete,  this.viewContainerRef)
+            .then((compRef)=> {
+                this.delete_user = compRef.instance;
+                this.delete_user.parrent = this; 
+            });    
     }
     
     setDate (date) {
@@ -107,11 +148,14 @@ export class AdminAccount {
     
     goInvite() {
         this.invite_user.show = true;
-        
-        for (let control in this.invite_user.lform.controls) {
-            this.invite_user.lform.controls[control].updateValue('', true, true);
-        }
+        this.invite_user.cls();
     }
+    
+    goDelete(user) {
+        this.delete_user.show = true;
+        this.delete_user.user = user;
+    }
+    
     
     userRefresh() {
        this._authService.get(`/api/admin/`)

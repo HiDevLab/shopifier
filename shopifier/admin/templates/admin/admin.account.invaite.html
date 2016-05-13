@@ -1,4 +1,4 @@
-<modal-form [ngClass]="{hide: !show}" >
+<modal-form [ngClass]="{hideInvite: !show}">
     <form  [ngFormModel]="lform" novalidate>
         {% csrf_token %}
         <div class="modal-header">
@@ -8,7 +8,7 @@
             <a class="fa fa-times" aria-hidden="true"
               (click)="show=false"></a>
         </div>
-        <div  *ngIf="errors.length > 0" class="modal-section">
+        <div  *ngIf="errors.length> 0" class="modal-section">
             <div class="error">
                 <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
                 <div>
@@ -23,26 +23,26 @@
         </div>
         
         <div class="modal-section">
-            <div class="input-box">
-                <div [ngClass]="{err: obj_errors['first_name']}">First Name</div>
-                <input [ngFormControl]="lform.controls['first_name']" [ngClass]="{err: obj_errors['first_name']}">
+            <div class="input-box" [ngClass]="{err: obj_errors['first_name']}">
+                <div>First Name</div>
+                <input [ngFormControl]="lform.controls['first_name']" (change)="boolInvite=true">
             </div>
-            <div class="input-box">
-                <div [ngClass]="{err: obj_errors['last_name']}">Last Name</div>
-                <input [ngFormControl]="lform.controls['last_name']" [ngClass]="{err: obj_errors['last_name']}" > 
+            <div class="input-box" [ngClass]="{err: obj_errors['last_name']}">
+                <div>Last Name</div>
+                <input [ngFormControl]="lform.controls['last_name']"> 
             </div>
         </div>
         <div class="modal-section">
-            <div class="input-box">
-                <div [ngClass]="{err: obj_errors['email']}">Email</div>
-                <input [ngFormControl]="lform.controls['email']"[ngClass]="{err: obj_errors['email']}" >
+            <div class="input-box"  [ngClass]="{err: obj_errors['email']}">
+                <div>Email</div>
+                <input [ngFormControl]="lform.controls['email']">
             </div>        
         </div>
         
         <div class="modal-footer">
             <a class="btn"
             (click)="show=false">Cancel</a>
-            <a class="btn-main" type="submit" (click)="goInvite()">Send invite</a>
+            <a class="btn-main" type="submit" (click)="goInvite()" [ngClass]="{disabled: !boolInvite}">Send invite</a>
         </div>
     </form>
 </modal-form>

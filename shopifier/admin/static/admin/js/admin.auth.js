@@ -42,6 +42,10 @@ export class AdminAuthService {
         return this.http.get(url, {headers: this.headers})
                         .map(res => res.json());
     }
+     
+    delete(url) {
+        return this.http.delete(url, {headers: this.headers});
+    }
        
     emailValidator(control) {
         if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {

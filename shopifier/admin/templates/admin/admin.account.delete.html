@@ -1,0 +1,26 @@
+<modal-form [ngClass]="{hideDelete: !show}">
+    <form novalidate>
+        {% csrf_token %}
+        <div class="modal-header">
+            <div>
+                Remove user account for {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}?
+            </div>
+            <a class="fa fa-times" aria-hidden="true"
+              (click)="show=false"></a>
+        </div>
+         <div class="modal-section">
+            <div class="input-box">
+                <div>Are you sure you want to remove the user account for 
+                    <strong>
+                        {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
+                    </strong>? This action cannot be reversed.
+                </div>
+            </div>            
+        </div>
+        <div class="modal-footer">
+            <a class="btn"
+            (click)="show=false">Cancel</a>
+            <a class="btn-delete" type="submit" (click)="goDelete()">Delete</a>
+        </div>
+    </form>
+</modal-form>
