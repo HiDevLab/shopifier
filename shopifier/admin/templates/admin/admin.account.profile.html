@@ -1,0 +1,137 @@
+<div *ngIf="user" class="section-profile ">
+    <div class="section-annotation">
+        <h3>Account information</h3>
+        <p>All information relevant to the account.</p>
+    </div>
+    
+    <div class="section-content">
+        <form>
+            <div class="section">
+                <div class="input-box">
+                    <i>{% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}</i>
+                </div>
+            </div>
+            <div class="section">
+                <div class="input-box">
+                    <strong>Profile photo</strong>
+                    <p>Shown whenever you comment or perform an action within Shopify. </p>
+                </div>
+            </div>
+            <div class="section">
+                <div class="box">
+                    <a class="btn">Upload photo</a>
+                
+                    <a class="btn disabled">Delete photo</a>
+                </div>
+            </div>
+            <div class="section">
+                <div class="input-box">
+                    <label>First Name</label>
+                    <input>
+                </div>    
+                <div class="input-box">
+                    <label>Last Name</label>
+                    <input>
+                </div>   
+            </div>
+            <div class="section">
+                <div class="input-box">
+                    <p>Email address</p>
+                    <span>ainf23@rambler.ru <a href="#">Change email</a></span>
+                </div>    
+                <div class="input-box">
+                    <label>Phone (optional)</label>
+                    <input>
+                </div>   
+            </div>
+            <div class="section">
+                <div class="input-box">
+                    <label>Personal website address (optional)</label>
+                    <input>
+                </div>   
+            </div>
+            <div class="section">
+                <div class="input-box">
+                    <label>Bio (optional)</label>
+                    <textarea></textarea>
+                </div>   
+            </div>
+            <div class="section">
+                <div class="input-box">
+                    <a href="#">Change password</a>
+                </div>   
+            </div>
+        </form>
+    </div>
+</div>
+
+<div *ngIf="user" class="section-profile ">    
+    <div class="section-annotation">
+        <h3>Recent login history</h3>
+        <p>Access from an ISP, Location, or IP address you don't recognize may indicate that the account has been compromised and should be reviewed further.</p>
+        <p>
+            <a class="btn">Expire user's sessions</a>
+        </p>
+    </div>
+    
+     <div class="section-content">
+        <div class="card">
+            <div class="section">
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>IP</th>
+                                <th>ISP</th>
+                                <th>Location</th>
+                                <th></th>
+                            </tr>
+                        </thead> 
+                        <tbody *ngIf="user">
+                            <tr  class="wide">
+                                 <td>
+                                    Yesterday at 3:20pm     
+                                </td>
+                                <td>
+                                    188.233.245.28
+                                </td>
+                                <td >
+                                    JSC ER-Telecom Holding
+                                </td>
+                                <td>
+                                    Omsk, 54, Russia
+                                </td>
+                                
+                                <td>
+                                    <a class="btn fa fa-info-circle" aria-hidden="true" title="Firefox 46 on ubuntu">
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr  class="wide">
+                                 <td>
+                                    Yesterday at 3:20pm     
+                                </td>
+                                <td>
+                                    188.233.245.28
+                                </td>
+                                <td >
+                                    JSC ER-Telecom Holding
+                                </td>
+                                <td>
+                                    Omsk, 54, Russia
+                                </td>
+                                
+                                <td>
+                                    <a class="btn fa fa-info-circle" aria-hidden="true" title="Firefox 46 on ubuntu">
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>                       
+                    </table>
+                </div>
+            </div>
+        </div>    
+    </div>
+</div>
+

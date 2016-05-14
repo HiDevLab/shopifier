@@ -26,7 +26,7 @@
             </div>
         </li>
         
-        <popup [ngClass]="{show: forcePopupShow }">            
+        <popup *ngIf="currentUser" [ngClass]="{show: forcePopupShow }">            
             <div>
                 <div>
                     <ul>
@@ -40,7 +40,7 @@
                 <div>
                     <ul>
                         <li>
-                            <a href="#">  Your profile</a>
+                            <a  href="settings/account/1/"> Your profile</a>
                         </li>
                         <li>
                             <a href="auth/logout"> Log out</a>

@@ -105,6 +105,12 @@ export class Admin {
         let i = this.headerNav.indexOf(headnav);
         this.onSelect(this.headerNav[0]);
         if (i > 0)
-            this.onSelectSubNav(this.headerNav[1]);
+            this.onSelectSubNav(this.headerNav[1]);            
     }
+    
+    gotoProfile() {
+        let link = [`./settings/account/${this.currentUser.id }/`];
+        console.log(link);
+        this._router.navigate(link);        
+    } 
 }

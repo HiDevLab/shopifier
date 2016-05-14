@@ -53,6 +53,19 @@ export class AdminAuthService {
             return { 'detail': 'invalidEmailAddress' };
         }
     }
+
+    to_array (data) {
+        let err = data;
+        let errors = [];
+        if (Object.prototype.toString.call(err) === '[object Array]') 
+            errors = err;
+        else {    
+            for (let i in err) {
+                errors.push(i + ':' + err[i]);
+            }
+        }
+        return errors;
+    }
     
     get_currentUser() {
         this.currentUser = null;

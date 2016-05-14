@@ -1,9 +1,39 @@
 import { Component, DynamicComponentLoader, ViewContainerRef } from 'angular2/core';
-import { Router, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
+import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import 'rxjs/Rx'
 
 import { AdminAuthService } from './admin.auth'
+
+
+//------------------------------------------------------------------------------
+@Component({
+    selector      : 'profile',
+    templateUrl: 'templates/admin.account.profile.html',
+    directives    : [FORM_DIRECTIVES],
+})
+export class AdminAccountProfile{
+    errors = [];
+    obj_errors = {};
+    user = null;
+    
+    static get parameters() {
+        return [[AdminAuthService], [FormBuilder], [RouteParams]];
+    }
+    constructor(authService, formbuilder, routeparams ) {
+        this._routeParams = routeparams;
+        this._authService = authService;
+    }
+    
+    ngOnInit() {
+        let id = this._routeParams.get('id');
+        console.log(id);
+        this._authService.get(`/api/admin/${id}/`)
+            .subscribe( data => console.log(this.user = data),
+                        err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
+                       ); 
+    }
+}
 
 
 //------------------------------------------------------------------------------
@@ -103,14 +133,12 @@ export class AdminAccountInvite {
         */
         this._authService.post(this.lform.value, '/api/user-invite/')
                 .subscribe( data => { this.show=false;},
-                            err => { this.to_array(err.json()); }, 
+                            err => { this.obj_errors = err; this.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
                  );                                
     }
     
     to_array (err) {
-        this.obj_errors = err;
-        
         if (Object.prototype.toString.call(err) === '[object Array]') 
             this.errors = err;
         else {    
@@ -152,11 +180,13 @@ export class AdminAccount {
         this._router = router;
         this.dcl = dcl;
         this.viewContainerRef = viewContainerRef;
-        
         this._authService = authService;
-        
+    }
+    
+    ngOnInit() {
         this._authService.get('/api/current-user/')
             .subscribe( data => this.currentUser = data );      
+
         this._authService.get('/api/admin/')
             .subscribe( data => this.users = data ); 
         
@@ -212,11 +242,17 @@ export class AdminAccount {
   directives: [ROUTER_DIRECTIVES],
 })
 @RouteConfig([
+
+    {
+        path : '/account/:id',
+        name : 'Profile',
+        component : AdminAccountProfile,
+    },
     {
         path : '/account',
         name : 'Account',
         component : AdminAccount,
-    }
+    },
 ])
 export class AdminSettings {
 }
