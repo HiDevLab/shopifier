@@ -23,13 +23,13 @@ export class AdminAccountProfile{
     constructor(authService, formbuilder, routeparams ) {
         this._routeParams = routeparams;
         this._authService = authService;
+        
     }
     
     ngOnInit() {
         let id = this._routeParams.get('id');
-        console.log(id);
         this._authService.get(`/api/admin/${id}/`)
-            .subscribe( data => console.log(this.user = data),
+            .subscribe( data => this.user = data,
                         err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
                        ); 
     }
@@ -181,12 +181,17 @@ export class AdminAccount {
         this.dcl = dcl;
         this.viewContainerRef = viewContainerRef;
         this._authService = authService;
+        
     }
     
     ngOnInit() {
+        console.log(this._authService.currentUser);
+        console.log(this._authService);
+        
         this._authService.get('/api/current-user/')
-            .subscribe( data => this.currentUser = data );      
-
+            .subscribe( data => { this.currentUser = data; } );      
+        
+        
         this._authService.get('/api/admin/')
             .subscribe( data => this.users = data ); 
         
@@ -226,6 +231,11 @@ export class AdminAccount {
     
     goDeleteSessions() {
         this.delete_sessions.show = true;
+    }
+    
+    goProfile(user) {
+        let link = ['Profile', {'id': user.id }];
+        this._router.navigate(link);
     }
     
     userRefresh() {

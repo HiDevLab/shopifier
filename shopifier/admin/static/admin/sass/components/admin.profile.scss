@@ -5,11 +5,48 @@ profile > div.section-profile {
     max-width: 100%;
     border-top: 1px solid $border-section-color;
     padding: 20px 0 20px 20px;
+    
      
     &:first-of-type {
         border: none;   
     }
     
+    .block-btn {
+        flex: 1 1 0;  
+        display: flex;
+        justify-content: flex-end;
+        padding: 0 20px;
+        
+        a.btn-main {
+            box-sizing: border-box;
+            
+            height: auto;
+            line-height: 1;
+            margin-left: 10px;
+            padding: 8.5px 15px;
+            text-align: center;
+            text-transform: none;
+            vertical-align: middle;
+            white-space: nowrap;
+            border-radius: 3px;
+            border: 1px solid $border-section-color;
+    
+            background: $color-section-ref;
+            color: $background-main-color;
+            
+            &:hover {
+                cursor: pointer; cursor: hand;
+                background: $background-main-btn-enabled;
+            }               
+            &.disabled {
+                background: $background-main-btn-disabled;
+                color:  $border-section-color;
+                &:hover {
+                    cursor: default;
+                }
+            }
+        }
+    }
     > div.section-annotation {
         padding: 20px 0 20px 30px;
         color: $color-section-annotation;
@@ -130,6 +167,7 @@ profile > div.section-profile {
                     font-weight: normal;  
                     display: flex;
                     flex-direction: column;
+                    position: relative;
                     
                      > strong {
                         font-weight: bold;
@@ -147,7 +185,7 @@ profile > div.section-profile {
                         font-weight: normal;
                         
                     }
-                    > input {
+                    > input{
                         text-align: left;
                         border: 1px solid $border-section-tab-color;
                         border-radius: 3px;
@@ -161,9 +199,31 @@ profile > div.section-profile {
                         &:focus {
                           border-color: $background-main-btn-enabled;  
                         }
-                        
                         &.textarea {
                             height: 100px;
+                        }
+                    }
+                    > input[type="checkbox"] {
+                        display: none;
+                        
+                        
+                        & + label > i {
+                            border: 1px solid $border-section-tab-color; 
+                            border-radius: 3px;  
+                            color: $background-main-color;
+                            margin-right: 10px;     
+                            font-weight: 100;                     
+                        }
+                        &:checked + label {
+                            color: $background-main-btn-enabled;
+                            > i {
+                                transition: all .2s;
+                                font-size: 15px;
+                                font-weight: 100; 
+                                color: $background-main-btn-enabled;
+                                border-color: $background-main-btn-enabled;    
+                            }
+                            
                         }
                     }
                     > textarea {

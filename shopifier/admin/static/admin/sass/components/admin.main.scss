@@ -3,6 +3,7 @@ main, profile {
     height: calc(100% - 40px - 40px);
     flex: 1 0 auto;
     overflow-y: auto;
+    overflow-x: auto;
 }    
 main > div.section {
     display: flex;
@@ -151,6 +152,7 @@ main > div.section div.section-content > div.card, profile > div.section-profile
                                         &:hover {
                                             color: $border-section-color;
                                             background: inherit;
+                                            cursor: pointer; cursor: hand;
                                         }
                                     }
                                     
@@ -191,6 +193,7 @@ main > div.section div.section-content > div.card, profile > div.section-profile
                                         
                                         &:hover {
                                             text-decoration: underline;
+                                            cursor: pointer; cursor: hand;
                                         }
                                         &.btn {
                                             padding: 6px 7px;

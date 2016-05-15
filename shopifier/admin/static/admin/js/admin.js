@@ -2,7 +2,7 @@ import { Component } from 'angular2/core';
 import { ROUTER_DIRECTIVES, Router, RouteConfig, CanActivate } from 'angular2/router'
 import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
 
-import { getCurrentUser,AdminAuthService } from './admin.auth'
+import { getCurrentUser, AdminAuthService } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
 
@@ -55,11 +55,11 @@ export class Admin {
     currentUser = null;
 
     static get parameters() {
-        return [[Router]];
+        return [[Router], [AdminAuthService]];
     }
         
-    constructor(router) {
-        this._authService = window.injector.get(AdminAuthService);
+    constructor(router, authService) {
+        this._authService = authService;//window.injector.get(AdminAuthService);
         this._router = router;
         
     }
@@ -68,7 +68,7 @@ export class Admin {
         //this._router.navigate(['Home']);
 
         this._authService.get('/api/current-user/')
-            .subscribe( data => this.currentUser = data );               
+            .subscribe( data => {this.currentUser = data; this._authService.currentUser=data;} );               
     }
  
     onSelect(nav) {
@@ -108,9 +108,8 @@ export class Admin {
             this.onSelectSubNav(this.headerNav[1]);            
     }
     
-    gotoProfile() {
-        let link = [`./settings/account/${this.currentUser.id }/`];
-        console.log(link);
+    goProfile() {
+        let link = ['Settings/Profile', {'id': this.currentUser.id }];
         this._router.navigate(link);        
     } 
 }

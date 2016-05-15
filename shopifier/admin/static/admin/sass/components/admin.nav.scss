@@ -2,7 +2,7 @@ nav {
     position: relative;
     display: flex;
     flex-direction: row;
-    
+    min-width: $nav-width;
     width: $nav-width;
     height: 100%;
     
@@ -15,11 +15,12 @@ nav {
         
     .menu {
         position: relative;
-        //height: 100%;
+        
         width: 100%;
         
-        &:not(.selected-wiht-submenu) {
+        &:not(.selected-with-submenu) {
                 width: 100%;
+                
                 background: $background-nav-color;
                 > li.selected {
                     background: $background-nav-selected-color;

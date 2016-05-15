@@ -67,8 +67,8 @@
                             <tr *ngFor="let user of users">
                                 <td><i>{% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}</i></td>
                                 <td>
-                                    <a *ngIf="user.is_active" href="#">{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}</a>
-                                    <a *ngIf="!user.is_active" href="#">{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %} - invited</a>     
+                                    <a *ngIf="user.is_active" (click)="goProfile(user)" >{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}</a>
+                                    <a *ngIf="!user.is_active" (click)="goProfile(user)">{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %} - invited</a>     
                                 </td>
                                 <td>
                                     <a class="email">

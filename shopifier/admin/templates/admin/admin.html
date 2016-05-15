@@ -40,10 +40,10 @@
                 <div>
                     <ul>
                         <li>
-                            <a  href="settings/account/1/"> Your profile</a>
+                            <a [routerLink]="['Settings/Profile', {'id': currentUser.id }]"> Your profile</a>
                         </li>
                         <li>
-                            <a href="auth/logout"> Log out</a>
+                            <a [routerLink]="['Logout']"> Log out</a>
                         </li>
                     </ul>
                 </div>
