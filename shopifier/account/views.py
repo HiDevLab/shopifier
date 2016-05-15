@@ -327,14 +327,27 @@ class UsersStaffViewSet(mixins.RetrieveModelMixin,
 
 
         
-class SessionsViewSet(mixins.ListModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
+class SessionsViewSet(mixins.RetrieveModelMixin,
                   GenericViewSet):
                       
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = SessionsSerializer
+    
     queryset = UserLog.objects.exclude(session__exact=None)
+
+    def retrieve(self, request, *args, **kwargs):
+
+        """serializer = self.serializer_class(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        pk = serializer.validated_data['pk']        
+        serializer = SessionsSerializer(sessions)
+        """
+        print request['pk']
+        sessions = UserLog.objects.filter(pk=1)
+        
+        return Response({'success': _("New password has been saved.")}, status=HTTP_200_OK)
+        
+
+
 
 
 class SessionsExpire(APIView):

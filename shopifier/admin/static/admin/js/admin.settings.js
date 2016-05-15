@@ -29,10 +29,7 @@ export class AdminAccountProfile{
     ngOnInit() {
         let id = this._routeParams.get('id');
         this._authService.get(`/api/admin/${id}/`)
-            .subscribe( data => {
-                            this.user = data;
-                            this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});                            
-                        },
+            .subscribe( data => this.onInit(data),
                         err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
                        ); 
         
@@ -42,6 +39,21 @@ export class AdminAccountProfile{
         //console.log(this._authService.admin.navs[4]);
         //this._authService.admin.selectedSubNav = this._authService.admin.navs[4].subnav[2];
                        
+    }
+    
+    onInit(data) {
+        this.user = data;
+        this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});   
+        
+        this._authService.admin.headerButtons = [];
+        if (!this.user.is_admin) {
+            this._authService.admin.headerButtons.push({'text': 'Make this user the account owner', 'class': 'btn', 'click': this.btnClick });
+        }
+        this._authService.admin.headerButtons.push({'text': 'Save', 'class': 'btn btn-main disabled', 'click': this.btnClick });
+    }
+    btnClick(btn) {
+        console.log(btn);
+        
     }
 }
 

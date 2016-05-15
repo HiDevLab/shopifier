@@ -53,6 +53,7 @@ export class Admin {
     forcePopupShow = false;
     
     currentUser = null;
+    headerButtons = [];
 
     static get parameters() {
         return [[Router], [AdminAuthService]];
@@ -116,6 +117,9 @@ export class Admin {
     test(i,j, fio) {
          this.selectedNav = this.navs[i]
          this.selectedSubNav = this.selectedNav.submenu[j]
+         fio.icon = this.selectedSubNav.icon
          this.headerNav = [this.selectedNav, this.selectedSubNav, fio];
+         
     }
+
 }

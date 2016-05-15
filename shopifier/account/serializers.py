@@ -135,3 +135,4 @@ class SessionsSerializer(serializers.ModelSerializer):
             return self.geo.city(obj.ip)
         except:
             return None
+
