@@ -60,6 +60,8 @@ export class AdminRouter {
     }
 */
 }
+import {enableProdMode} from 'angular2/core';
+enableProdMode();
 
 bootstrap(AdminRouter, [
     ROUTER_PROVIDERS,

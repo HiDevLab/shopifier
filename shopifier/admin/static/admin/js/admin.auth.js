@@ -8,9 +8,12 @@ import 'rxjs/Rx'
 @Injectable()
 export class AdminAuthService {
     
-    currentUser = null;    
+    //currentUser = null;    
     message = '';
     errors = '';
+    
+    //component instances
+    admin = null; 
     
     static get parameters() {
         return [[Http], [Router]];
@@ -66,12 +69,6 @@ export class AdminAuthService {
         }
         return errors;
     }
-    
-    get_currentUser() {
-        this.currentUser = null;
-        this.get('/api/current-user/')
-            .subscribe( data => this.currentUser = data );                                
-    }
 }
 
 
@@ -126,7 +123,7 @@ export class AdminAuthLogout {
 export class AdminAuthLogin {
     message = '';
     errors = '';
-    currentUser = null;
+    //currentUser = null;
     
     static get parameters() {
         return [[AdminAuthService], [FormBuilder], [Router]];
@@ -154,7 +151,7 @@ export class AdminAuthLogin {
                     .subscribe( data => { this._router.navigate(['/Admin/Home']);},
                                 err => { 
                                             this.errors = err.json(); 
-                                            this._authService.currentUser=null;
+                                            //this._authService.currentUser=null;
                                         } );                                
         }
     }
@@ -194,7 +191,7 @@ export class AdminAuthRecover {
         else {
             this._authService.post(this.lform.value,'/api/recover/' )
                     .subscribe( data => { 
-                                            this._authService.currentUser = data; 
+                                            //this._authService.currentUser = data; 
                                             this._router.navigate(['Login']);
                                         },
                                 err => {this.errors = err.json();});
@@ -239,9 +236,11 @@ export class AdminAuthReset {
           this.token = this._routeParams.get('token');
           let user = {'pk': this.pk, 'token': this.token };
           this._authService.post(user, '/api/check_token2/')
-                .subscribe( data => this._authService.currentUser = data,
+                .subscribe( data => {
+                                     //   this._authService.currentUser = data;
+                                    },
                             err => {
-                                        this._authService.currentUser=null; 
+                                        //this._authService.currentUser=null; 
                                         this._router.navigate(['Recover']);
                                     });          
     }
@@ -274,7 +273,7 @@ export class AdminAuthReset {
                     .subscribe( data => { this._router.navigate(['/Admin/Home']);},
                                 err => {
                                             this.errors = err.json(); 
-                                            this._authService.currentUser=null;
+                                            //this._authService.currentUser=null;
                                         } );
         }
     }   

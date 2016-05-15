@@ -66,7 +66,7 @@ export class Admin {
    
     ngOnInit() {
         //this._router.navigate(['Home']);
-
+        this._authService.admin = this;    
         this._authService.get('/api/current-user/')
             .subscribe( data => {this.currentUser = data; this._authService.currentUser=data;} );               
     }
@@ -112,4 +112,10 @@ export class Admin {
         let link = ['Settings/Profile', {'id': this.currentUser.id }];
         this._router.navigate(link);        
     } 
+    
+    test(i,j, fio) {
+         this.selectedNav = this.navs[i]
+         this.selectedSubNav = this.selectedNav.submenu[j]
+         this.headerNav = [this.selectedNav, this.selectedSubNav, fio];
+    }
 }

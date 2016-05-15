@@ -29,9 +29,19 @@ export class AdminAccountProfile{
     ngOnInit() {
         let id = this._routeParams.get('id');
         this._authService.get(`/api/admin/${id}/`)
-            .subscribe( data => this.user = data,
+            .subscribe( data => {
+                            this.user = data;
+                            this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});                            
+                        },
                         err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
                        ); 
+        
+        
+        //this._authService.admin.onSelect(this._authService.admin.navs[4]);
+        //this._authService.admin.onSelectSubNav(this._authService.admin.navs[4].subnav[2]);               
+        //console.log(this._authService.admin.navs[4]);
+        //this._authService.admin.selectedSubNav = this._authService.admin.navs[4].subnav[2];
+                       
     }
 }
 
@@ -185,15 +195,15 @@ export class AdminAccount {
     }
     
     ngOnInit() {
-        console.log(this._authService.currentUser);
-        console.log(this._authService);
+        
+        this._authService.get('/api/admin/')
+            .subscribe( data => this.users = data ); 
+        
+    
         
         this._authService.get('/api/current-user/')
             .subscribe( data => { this.currentUser = data; } );      
         
-        
-        this._authService.get('/api/admin/')
-            .subscribe( data => this.users = data ); 
         
         this.dcl.loadNextToLocation(AdminAccountInvite,  this.viewContainerRef)
             .then((compRef)=> {
@@ -214,6 +224,7 @@ export class AdminAccount {
             });    
     }
     
+        
     setDate (date) {
         let d = new Date(date);
         return d;
