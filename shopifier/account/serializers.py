@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 
 from rest_framework import serializers
 
+from drf_extra_fields.fields import Base64ImageField
 from easy_thumbnails.files import get_thumbnailer
 
 from account.models import User, UserLog
@@ -69,26 +70,31 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UsersAdminSerializer(serializers.ModelSerializer):
     
-    class Meta:
-        model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 
-                'phone', 'bio', 'www_site', 'date_join', 'avatar_image',
-                'avatar', 'is_admin', 'is_active', 'is_staff', 'visit_datetime')
-
-    is_admin = serializers.BooleanField(read_only=True)
+    avatar_image = Base64ImageField(required=False )
+    is_admin = serializers.BooleanField(read_only=False)
     is_active = serializers.BooleanField(read_only=True)
     is_staff = serializers.BooleanField(read_only=True)
     date_join = serializers.DateTimeField(read_only=True)
     avatar = serializers.SerializerMethodField()
     visit_datetime = serializers.SerializerMethodField()
+ 
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 
+                'phone', 'bio', 'www_site', 'date_join', 'avatar_image',
+                'avatar', 'is_admin', 'is_active', 'is_staff', 'visit_datetime')
+    
     
     def get_avatar(self, obj):
         if obj.avatar_image:
-            return get_thumbnailer(obj.avatar_image)['avatar'].url
+            return "{}/{}".format( settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url)
     
     def get_visit_datetime(self, obj):
         m = UserLog.objects.filter(user=obj).aggregate(Max('visit_datetime'))
         return m['visit_datetime__max']
+
+        
+            
         
 class UsersStaffSerializer(serializers.ModelSerializer):
     
@@ -102,37 +108,39 @@ class UsersStaffSerializer(serializers.ModelSerializer):
     
     def get_avatar(self, obj):
         if obj.avatar_image:
-            return get_thumbnailer(obj.avatar_image)['avatar'].url
+            return '{}/{}'.join( settings.Site, get_thumbnailer(obj.avatar_image)['avatar'].url)
 
 
+class UserSessionSerializer(serializers.ModelSerializer):
+        pk = serializers.PrimaryKeyRelatedField(
+            queryset=User.objects.all())                                            
+            
+                                            
 class SessionsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = UserLog
-        fields=('user', 'full_name', 'visit_datetime', 'ip', 'country', 'city', 'session')
+        exclude=('id','user', 'session')
 
-    full_name = serializers.SerializerMethodField()
     country = serializers.SerializerMethodField()
     city = serializers.SerializerMethodField()
+    isp = serializers.SerializerMethodField()
     
-#    def __init__(self, instance=None, data=empty, **kwargs):
-#        super(SessionsSerializer, self).__init__(instance, data, **kwargs)
-#        self.geo = GeoIP2()
-        
-    def get_full_name(self, obj):
-        return obj.user.get_full_name()
     
     def get_country(self, obj):
         self.geo = GeoIP2()
         try:
             return self.geo.country(obj.ip)
         except:
-            return None
+            return 'Malta'
 
     def get_city(self, obj):
         self.geo = GeoIP2()
         try:
             return self.geo.city(obj.ip)
         except:
-            return None
+            return 'Sliema'
+
+    def get_isp(self, obj):
+        return 'Rostelecom'
 

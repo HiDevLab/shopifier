@@ -24,9 +24,14 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.viewsets import GenericViewSet
 
+import base64
+import os
+from django.core.files import File 
 
 from account.serializers import *
 from account.models import *
+
+
 #import pdb
 #pdb.set_trace()
 
@@ -271,11 +276,40 @@ class UsersAdminViewSet(ModelViewSet):
     permission_classes = (permissions.IsAdminUser,)
     queryset = User.objects.all().order_by('id')
     serializer_class = UsersAdminSerializer
+    
+    @detail_route(methods=['get'])
+    def session(self, request, pk=None):
+        
+        user = self.get_object()
+        log = UserLog.objects.filter(user=user, visit_datetime__isnull=False)[0:5]
+        serializer = SessionsSerializer(log, many=True)
+               
+        serializer.data 
+        return Response(serializer.data , status=HTTP_200_OK)
+    
+"""    
+    def update(self, request, format=None, *args, **kwargs):
+        serializer = UserSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            imgstr64 = serializer.validated_data['avatar_image']
+            imgdata = base64.b64decode(imgstr64)
+            fname = '/tmp/%s.jpg'%(str(myphoto.id))
+            with open(fname,'wb') as f:
+                f.write(imgdata)
+            imgname = '%s.jpg'%(str(myphoto.id))
+            user.avatar_image.save(imgname,File(open(fname,'r')))
+            os.remove(fname)
+        
+        return Response({}, status=HTTP_200_OK)
+"""            
+    
 """    
     permission_classes = (permissions.IsAuthenticated,)
        
     def destroy(self, request, *args, **kwargs):
-        #import pdb
+        #import pdb''
         #pdb.set_trace()
         user = self.get_object()
         if user.id == request.user.id or request.user.is_admin==False:
@@ -285,7 +319,7 @@ class UsersAdminViewSet(ModelViewSet):
         return super(UsersAdminViewSet, self).destroy(request, *args, **kwargs)
         
     def update(self, request, *args, **kwargs):
-        user = self.get_object()
+        user = self.get_object()serializer = UserSerializer(user)
         if user.id <> request.user.id and request.user.is_admin==False:
             content = {'status': _('User can not change this account')}
             return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
@@ -322,33 +356,7 @@ class UsersStaffViewSet(mixins.RetrieveModelMixin,
             raise PermissionDenied
         else:
             super(UsersStaffViewSet, self).check_object_permissions(request, obj)    
-
-
-
-
-        
-class SessionsViewSet(mixins.RetrieveModelMixin,
-                  GenericViewSet):
-                      
-    permission_classes = (permissions.IsAuthenticated,)
-    
-    queryset = UserLog.objects.exclude(session__exact=None)
-
-    def retrieve(self, request, *args, **kwargs):
-
-        """serializer = self.serializer_class(data=request.query_params)
-        serializer.is_valid(raise_exception=True)
-        pk = serializer.validated_data['pk']        
-        serializer = SessionsSerializer(sessions)
-        """
-        print request['pk']
-        sessions = UserLog.objects.filter(pk=1)
-        
-        return Response({'success': _("New password has been saved.")}, status=HTTP_200_OK)
-        
-
-
-
+                  
 
 class SessionsExpire(APIView):
     permission_classes = (permissions.IsAdminUser,)

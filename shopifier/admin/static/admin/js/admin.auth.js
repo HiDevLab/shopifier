@@ -1,8 +1,53 @@
 import { Component, Injectable, Injector } from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import { Router, RouteParams, CanActivate, ROUTER_DIRECTIVES } from 'angular2/router'
-import { Http, Headers } from 'angular2/http'
+import { Http, Headers, XMLHttpRequest } from 'angular2/http'
 import 'rxjs/Rx'
+import {Observable} from 'rxjs/Rx';
+
+
+//------------------------------------------------------------------------------
+@Injectable()
+export class UploadService {
+  
+  constructor () {
+    this.progress$ = Observable.create(observer => {
+                        this.progressObserver = observer
+                    }).share();
+    }
+  
+    makeFileRequest (url, params, files) {
+        return Observable.create(observer => {
+            let formData = new FormData();
+            let xhr = new XMLHttpRequest();
+    
+            for (let i = 0; i < files.length; i++) {
+                formData.append("uploads[]", files[i], files[i].name);
+            }
+    
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        observer.next(JSON.parse(xhr.response));
+                        observer.complete();
+                    } else {
+                        observer.error(xhr.response);
+                    }
+                }
+            };
+    
+            xhr.upload.onprogress = (event) => {
+                this.progress = Math.round(event.loaded / event.total * 100);
+    
+                this.progressObserver.next(this.progress);
+            };
+    
+            xhr.open('POST', url, true);
+            xhr.send(formData);
+        });
+    }
+}
+
 
 //------------------------------------------------------------------------------
 @Injectable()
@@ -40,6 +85,14 @@ export class AdminAuthService {
                         .map(res => res.json());
     }
     
+    
+    put(user, url) {
+        let body = JSON.stringify(user);
+        return this.http.put(url, body,  {headers: this.headers})
+                        .map(res => res.json());
+    }
+    
+
     get(url) {
         return this.http.get(url, {headers: this.headers})
                         .map(res => res.json());

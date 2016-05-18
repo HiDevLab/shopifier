@@ -8,7 +8,11 @@
         <form>
             <div class="section">
                 <div class="input-box">
-                    <i>{% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}</i>
+                    <div class="avatar" *ngIf="user">
+                        {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
+                        <img *ngIf="user.avatar && !avatar_img" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
+                        <img *ngIf="avatar_img"  src="{% verbatim %}{{ avatar_img }}{% endverbatim %}">
+                    </div>
                 </div>
             </div>
             <div class="section">
@@ -19,41 +23,42 @@
             </div>
             <div class="section">
                 <div class="box">
-                    <a class="btn">Upload photo</a>
-                
-                    <a class="btn disabled">Delete photo</a>
+                     <div class="btn">Upload photo
+                        <input type="file"  accept="image/gif, image/jpeg, image/png" (change)="upLoadAvatar($event)">
+                     </div>
+                     <a class="btn" [ngClass]="{disabled: !avatar_img}" (click)="avatar_img=null" >Delete photo</a>
                 </div>
             </div>
             <div class="section">
                 <div class="input-box">
                     <label>First Name</label>
-                    <input>
+                    <input [ngFormControl]="lform.controls['first_name']">
                 </div>    
                 <div class="input-box">
                     <label>Last Name</label>
-                    <input>
+                    <input [ngFormControl]="lform.controls['last_name']">
                 </div>   
             </div>
             <div class="section">
                 <div class="input-box">
                     <p>Email address</p>
-                    <span>ainf23@rambler.ru <a href="#">Change email</a></span>
+                    <span>{% verbatim %}{{ user.email }}{% endverbatim %} <a href="#">Change email</a></span>
                 </div>    
                 <div class="input-box">
                     <label>Phone (optional)</label>
-                    <input>
+                    <input [ngFormControl]="lform.controls['phone']">
                 </div>   
             </div>
             <div class="section">
                 <div class="input-box">
                     <label>Personal website address (optional)</label>
-                    <input>
+                    <input [ngFormControl]="lform.controls['www_site']">
                 </div>   
             </div>
             <div class="section">
                 <div class="input-box">
                     <label>Bio (optional)</label>
-                    <textarea></textarea>
+                    <textarea [ngFormControl]="lform.controls['bio']"></textarea>
                 </div>   
             </div>
             <div class="section">
@@ -88,45 +93,26 @@
                                 <th></th>
                             </tr>
                         </thead> 
-                        <tbody *ngIf="user">
-                            <tr  class="wide">
+                        <tbody *ngIf="sessions">
+                            <tr  class="wide" *ngFor="let session of sessions">
                                  <td>
-                                    Yesterday at 3:20pm     
+                                    {% verbatim %}{{ setDate(session.visit_datetime) | date:'EEEE at jm' }}{% endverbatim %}     
                                 </td>
                                 <td>
-                                    188.233.245.28
+                                    {% verbatim %}{{ session.ip }}{% endverbatim %} 
                                 </td>
                                 <td >
-                                    JSC ER-Telecom Holding
+                                    {% verbatim %}{{ session.isp }}{% endverbatim %}
                                 </td>
                                 <td>
-                                    Omsk, 54, Russia
+                                    {% verbatim %}{{ session.city + ', ' + session.country }}{% endverbatim %}
                                 </td>
                                 
                                 <td>
                                     <a class="btn fa fa-info-circle" aria-hidden="true" title="Firefox 46 on ubuntu">
                                     </a>
                                 </td>
-                            </tr>
-                            <tr  class="wide">
-                                 <td>
-                                    Yesterday at 3:20pm     
-                                </td>
-                                <td>
-                                    188.233.245.28
-                                </td>
-                                <td >
-                                    JSC ER-Telecom Holding
-                                </td>
-                                <td>
-                                    Omsk, 54, Russia
-                                </td>
-                                
-                                <td>
-                                    <a class="btn fa fa-info-circle" aria-hidden="true" title="Firefox 46 on ubuntu">
-                                    </a>
-                                </td>
-                            </tr>
+                            </tr>                            
                         </tbody>                       
                     </table>
                 </div>
@@ -155,6 +141,8 @@
 
 <div class="section-profile ">  
     <div class="block-btn"> 
-        <a class="btn-main">Save</a>
+        <a class="btn-main"
+        [ngClass]="{disabled : !formChange}"
+        (click)="onSave()"> Save</a>
     </div> 
 </div>

@@ -53,7 +53,9 @@ export class Admin {
     forcePopupShow = false;
     
     currentUser = null;
+
     headerButtons = [];
+
 
     static get parameters() {
         return [[Router], [AdminAuthService]];

@@ -1,0 +1,25 @@
+$background-avatar-empty: #ff5d5d;
+$color-avatar-empty: #ffffff;
+.avatar {
+    display: block;
+    text-transform: uppercase;                        
+    background: $background-avatar-empty;
+    color: $color-avatar-empty;
+    font-size: 16px;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 7px;
+    overflow: hidden;
+    z-index: 2;
+    position: relative;
+    
+    > img {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }                                        
+} 

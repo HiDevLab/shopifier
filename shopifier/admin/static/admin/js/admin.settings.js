@@ -3,7 +3,7 @@ import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import 'rxjs/Rx'
 
-import { AdminAuthService } from './admin.auth'
+import { AdminAuthService, UploadService } from './admin.auth'
 
 
 //------------------------------------------------------------------------------
@@ -11,11 +11,15 @@ import { AdminAuthService } from './admin.auth'
     selector      : 'profile',
     templateUrl: 'templates/admin.account.profile.html',
     directives    : [FORM_DIRECTIVES],
+    providers: [ UploadService ]
 })
 export class AdminAccountProfile{
     errors = [];
     obj_errors = {};
     user = null;
+    sessions = [];
+    formChange = false;
+    avatar_img = null;
     
     static get parameters() {
         return [[AdminAuthService], [FormBuilder], [RouteParams]];
@@ -23,7 +27,18 @@ export class AdminAccountProfile{
     constructor(authService, formbuilder, routeparams ) {
         this._routeParams = routeparams;
         this._authService = authService;
-        
+
+        this.lform = formbuilder.group({
+            'first_name': ['', Validators.required],
+            'last_name': ['', Validators.required],
+            'phone': [''],
+            'www_site': [''],
+            'bio': [''],
+            'avatar_image': [''],
+            'email': [''],
+            'is_admin': [''],
+        }); 
+
     }
     
     ngOnInit() {
@@ -33,28 +48,68 @@ export class AdminAccountProfile{
                         err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
                        ); 
         
+        this._authService.get(`/api/admin/${id}/session/`)
+            .subscribe( data => this.sessions = data); 
         
-        //this._authService.admin.onSelect(this._authService.admin.navs[4]);
-        //this._authService.admin.onSelectSubNav(this._authService.admin.navs[4].subnav[2]);               
-        //console.log(this._authService.admin.navs[4]);
-        //this._authService.admin.selectedSubNav = this._authService.admin.navs[4].subnav[2];
-                       
     }
     
     onInit(data) {
         this.user = data;
+        this.avatar_img = null;
         this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});   
         
         this._authService.admin.headerButtons = [];
         if (!this.user.is_admin) {
-            this._authService.admin.headerButtons.push({'text': 'Make this user the account owner', 'class': 'btn', 'click': this.btnClick });
+            this._authService.admin.headerButtons.push({'text': 'Make this user the account owner', 'class': 'btn', 'click': this.setAdmin, 'self': this });
         }
-        this._authService.admin.headerButtons.push({'text': 'Save', 'class': 'btn btn-main disabled', 'click': this.btnClick });
-    }
-    btnClick(btn) {
-        console.log(btn);
+        this._authService.admin.headerButtons.push({'text': 'Save', 'class': 'btn btn-main', 'click': this.onSave, 'self': this });
+        
+        for (let control in this.lform.controls) {
+            if (control != 'avatar_image')
+                this.lform.controls[control].updateValue(this.user[control], true, true);
+        }
         
     }
+    
+    onSave() {
+        this.lform.controls['avatar_image'].updateValue(this.avatar_img);   
+        
+        this._authService.put(this.lform.value, `/api/admin/${this.user.id}/`)
+            .subscribe( data => this.onInit(data),
+                        err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
+                       );  
+    }
+
+    setAdmin() {
+        
+    }
+    
+    upLoadAvatar(event) {
+        let files = event.target.files;
+        if (files && files[0]) {
+            let reader = new FileReader();
+            let self = this;
+            this.formChange = true;
+            
+            reader.onload = (event) => {
+                self.avatar_img =  event.target.result;
+            };
+            
+            reader.readAsDataURL(files[0]);
+        }
+    }
+    
+    deleteAvatar() {
+        
+        
+    }
+    
+    
+    setDate (date) {
+        let d = new Date(date);
+        return d;
+    }
+    
 }
 
 

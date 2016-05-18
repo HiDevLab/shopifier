@@ -65,7 +65,12 @@
                         </thead> 
                         <tbody *ngIf="users">
                             <tr *ngFor="let user of users">
-                                <td><i>{% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}</i></td>
+                                <td>
+                                    <div class="avatar" *ngIf="user">
+                                        {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
+                                        <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
+                                    </div>
+                                </td>
                                 <td>
                                     <a *ngIf="user.is_active" (click)="goProfile(user)" >{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}</a>
                                     <a *ngIf="!user.is_active" (click)="goProfile(user)">{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %} - invited</a>     

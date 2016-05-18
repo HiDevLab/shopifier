@@ -8,7 +8,6 @@ from account.views import *
 
 router = DefaultRouter()
 router.register(r'admin', UsersAdminViewSet)
-router.register(r'sessions', SessionsViewSet)
 router.register(r'staff', UsersStaffViewSet)
 
 
