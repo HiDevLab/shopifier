@@ -10,8 +10,8 @@
                 <div class="input-box">
                     <div class="avatar" *ngIf="user">
                         {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
-                        <img *ngIf="user.avatar && !avatar_img" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
-                        <img *ngIf="avatar_img"  src="{% verbatim %}{{ avatar_img }}{% endverbatim %}">
+                        <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
+                        <img *ngIf="new_avatar"  src="{% verbatim %}{{ new_avatar }}{% endverbatim %}">
                     </div>
                 </div>
             </div>
@@ -26,7 +26,11 @@
                      <div class="btn">Upload photo
                         <input type="file"  accept="image/gif, image/jpeg, image/png" (change)="upLoadAvatar($event)">
                      </div>
-                     <a class="btn" [ngClass]="{disabled: !avatar_img}" (click)="avatar_img=null" >Delete photo</a>
+                     <a class="btn" 
+                        [ngClass]="{disabled: !new_avatar && !user.avatar }" 
+                        (click)="deleteAvatar()">
+                        Delete photo
+                    </a>
                 </div>
             </div>
             <div class="section">

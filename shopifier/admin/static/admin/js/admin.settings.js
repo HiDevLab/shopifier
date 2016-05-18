@@ -19,7 +19,7 @@ export class AdminAccountProfile{
     user = null;
     sessions = [];
     formChange = false;
-    avatar_img = null;
+    new_avatar = null;
     
     static get parameters() {
         return [[AdminAuthService], [FormBuilder], [RouteParams]];
@@ -55,7 +55,7 @@ export class AdminAccountProfile{
     
     onInit(data) {
         this.user = data;
-        this.avatar_img = null;
+        this.new_avatar = null;
         this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});   
         
         this._authService.admin.headerButtons = [];
@@ -71,12 +71,16 @@ export class AdminAccountProfile{
         
     }
     
-    onSave() {
-        this.lform.controls['avatar_image'].updateValue(this.avatar_img);   
+    onSave(btn, self) {
+        if (!self) 
+            self = this;
+                     
+        if (self.new_avatar)
+            self.lform.controls['avatar_image'].updateValue(self.new_avatar);   
         
-        this._authService.put(this.lform.value, `/api/admin/${this.user.id}/`)
-            .subscribe( data => this.onInit(data),
-                        err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
+        self._authService.put(self.lform.value, `/api/admin/${self.user.id}/`)
+            .subscribe( data => self.onInit(data),
+                        err => {self.obj_errors = err; self.errors = self._authService.to_array(err.json()); }, 
                        );  
     }
 
@@ -88,20 +92,23 @@ export class AdminAccountProfile{
         let files = event.target.files;
         if (files && files[0]) {
             let reader = new FileReader();
-            let self = this;
-            this.formChange = true;
+            let self = this;            
             
             reader.onload = (event) => {
-                self.avatar_img =  event.target.result;
+                self.new_avatar =  event.target.result;
+                self.formChange = true;
             };
-            
             reader.readAsDataURL(files[0]);
         }
     }
     
     deleteAvatar() {
+        if (this.user.avatar)
+            this.formChange = true;
         
-        
+        this.new_avatar = null;
+        this.user.avatar = null;
+        this.lform.controls['avatar_image'].updateValue(null);
     }
     
     

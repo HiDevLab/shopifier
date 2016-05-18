@@ -70,7 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UsersAdminSerializer(serializers.ModelSerializer):
     
-    avatar_image = Base64ImageField(required=False )
+    avatar_image = Base64ImageField(required=False, allow_null=True )
     is_admin = serializers.BooleanField(read_only=False)
     is_active = serializers.BooleanField(read_only=True)
     is_staff = serializers.BooleanField(read_only=True)
@@ -105,7 +105,8 @@ class UsersStaffSerializer(serializers.ModelSerializer):
 
     date_join = serializers.DateTimeField(read_only=True)
     avatar = serializers.SerializerMethodField()
-    
+    avatar_image = Base64ImageField(required=False, allow_null=True )
+       
     def get_avatar(self, obj):
         if obj.avatar_image:
             return '{}/{}'.join( settings.Site, get_thumbnailer(obj.avatar_image)['avatar'].url)
