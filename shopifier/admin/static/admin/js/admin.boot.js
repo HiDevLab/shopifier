@@ -8,7 +8,7 @@ import { AdminAuthService, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, Ad
 import { Admin } from './admin'
 
 @Component({
-  selector: "admin",
+  selector: "body",
   template : "<router-outlet></router-outlet>",
   directives: [RouterOutlet, RouterLink],
   providers: [ROUTER_PROVIDERS],

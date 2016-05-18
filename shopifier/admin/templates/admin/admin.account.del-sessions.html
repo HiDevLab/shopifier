@@ -2,22 +2,21 @@
     <form class="input-form">
         {% csrf_token %}
         <div class="modal-header">
-            <div>
+            <h2>
                 Expire User Sessions
-            </div>
+            </h2>
             <a class="fa fa-times" aria-hidden="true"
               (click)="show=false"></a>
         </div>
-         <div class="modal-section">
+         <div class="input-section">
             <div class="input-box">
-                <div>Are you sure you want to force all users to re-login?
-                </div>
+                <div>Are you sure you want to force all users to re-login? </div>
             </div>            
         </div>
         <div class="modal-footer">
-            <a class="btn"
+            <a class="btn mr10"
             (click)="show=false">Cancel</a>
-            <a class="btn-main" (click)="goDeleteSessions()">Yes</a>
+            <a class="btn btn-blue" (click)="goDeleteSessions()">Yes</a>
         </div>
     </form>
 </modal-form>

@@ -2,14 +2,14 @@
     <form class="input-form" [ngFormModel]="lform" novalidate>
         {% csrf_token %}
         <div class="modal-header">
-            <div>
+            <h2>
                 Add staff member
-            </div>
+            </h2>
             <a class="fa fa-times" aria-hidden="true"
               (click)="show=false"></a>
         </div>
         <div  *ngIf="errors.length> 0" class="modal-section">
-            <div class="error">
+            <div class="error-list">
                 <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
                 <div>
                     <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
@@ -22,27 +22,33 @@
             </div>
         </div>
         
-        <div class="modal-section">
-            <div class="input-box" [ngClass]="{err: obj_errors['first_name']}">
-                <div>First Name</div>
-                <input [ngFormControl]="lform.controls['first_name']" (change)="boolInvite=true">
-            </div>
-            <div class="input-box" [ngClass]="{err: obj_errors['last_name']}">
-                <div>Last Name</div>
-                <input [ngFormControl]="lform.controls['last_name']" (change)="boolInvite=true"> 
+        <div class="input-section">
+             <div class="input-box">   
+                <label class="input" [ngClass]="{err: obj_errors['first_name']}">
+                    First Name
+                    <input [ngFormControl]="lform.controls['first_name']" (change)="boolInvite=true">
+                </label>
+            </div>    
+            <div class="input-box">
+                <label class="input" [ngClass]="{err: obj_errors['last_name']}">
+                   Last Name
+                    <input [ngFormControl]="lform.controls['last_name']" (change)="boolInvite=true"> 
+                </label>
             </div>
         </div>
-        <div class="modal-section">
-            <div class="input-box"  [ngClass]="{err: obj_errors['email']}">
-                <div>Email</div>
-                <input [ngFormControl]="lform.controls['email']" (change)="boolInvite=true">
-            </div>        
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['email']}">
+                    Email
+                    <input [ngFormControl]="lform.controls['email']" (change)="boolInvite=true">
+                </label>        
+            </div>    
         </div>
         
         <div class="modal-footer">
-            <a class="btn"
+            <a class="btn mr10"
             (click)="show=false">Cancel</a>
-            <a class="btn-main" type="submit" (click)="goInvite()" [ngClass]="{disabled: !boolInvite}">Send invite</a>
+            <a class="btn btn-blue" (click)="goInvite()" [ngClass]="{disabled: !boolInvite}">Send invite</a>
         </div>
     </form>
 </modal-form>

@@ -4,9 +4,9 @@
         <div>
             <p>
                 An overview of your current plan. Grow your business by upgrading your plan features. View our
-                <a href="#">terms of service</a>
+                <a class="ref" href="#">terms of service</a>
                 and
-                <a href="#">privacy policy</a>
+                <a class="ref" href="#">privacy policy</a>
                 .
             </p>
         </div>
@@ -72,8 +72,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <a *ngIf="user.is_active" (click)="goProfile(user)" >{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}</a>
-                                    <a *ngIf="!user.is_active" (click)="goProfile(user)">{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %} - invited</a>     
+                                    <a class="ref" *ngIf="user.is_active" (click)="goProfile(user)" >{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}</a>
+                                    <a class="ref" *ngIf="!user.is_active" (click)="goProfile(user)">{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %} - invited</a>     
                                 </td>
                                 <td>
                                     <a class="email">
@@ -90,7 +90,7 @@
                                 </td>
                                 
                                 <td>
-                                    <a *ngIf="delete_user" class="btn fa fa-trash" aria-hidden="true" title="Delete user"
+                                    <a *ngIf="delete_user" class="btn trash fa fa-trash" aria-hidden="true" title="Delete user"
                                         [ngClass]="{hide: currentUser.id==user.id || !currentUser.is_admin}"
                                         (click)="goDelete(user)">
                                     </a>

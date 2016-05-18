@@ -138,56 +138,39 @@ nav {
             }
         
             &.account {
+                cursor: pointer; cursor: hand;
+                //line-height: 40px;
+                padding: 0 10px 10px 10px;
+                position: absolute;
+                bottom: 0px;
+                overflow: hidden;
+                white-space: nowrap;
+                display: flex;
                 
-                div {
-                    cursor: pointer; cursor: hand;
-                    line-height: 40px;
-                    padding: 0 10px 0 10px;
-                    position: absolute;
-                    bottom: 0px;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    i {
-                        display: inline-block;
-                        width: 40px;
-                        text-transform: uppercase;                        
-                        background: $background-nav-account-button;
-                        color: $color-nav-selected;
-                        font-size: 16px;
-                        line-height: inherit;
-                        vertical-align: top;
-                        text-align: center;
-                        border-radius: 8px;
-                        margin-right: 5px;
+                > span {
+                    position: relative;
+                    padding: 10px 0 0 0;   
+                    width: $nav-width - 60px;
+                    margin-left: 10px;
+                    > span {
+                        display: block;
+                        &:last-of-type {
+                            line-height: 11px;
+                            font-size: 11px;    
+                        }    
                     }
                     
-                    > span {
-                        position: relative;
-                        display: inline-block;
-                        line-height: 13px;
-                        vertical-align: top;
-                        padding: 10px 0 6px 0;   
-                        width: $nav-width - 60px;
-                        
-                        > span {
-                            display: block;
-                            &:last-of-type {
-                                line-height: 11px;
-                                font-size: 11px;    
-                            }    
-                        }
-                        
-                        &:AFTER {
-                            content: "\f106";
-                            position: absolute;  
-                             
-                            right: 20px;
-                            bottom: 10px;
-                            font-family: FontAwesome;
-                        }
-                    
-                    }    
-                }
+                    &:AFTER {
+                        content: "\f106";
+                        position: absolute;  
+                         
+                        right: 20px;
+                        bottom: 10px;
+                        font-family: FontAwesome;
+                    }
+                
+                }    
+            
             }
         
         } 

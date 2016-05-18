@@ -21,6 +21,7 @@ modal-form {
         display: none;
     } 
 }                       
+
 form.input-form {
     position: relative;
     font-weight: 200;
@@ -30,12 +31,13 @@ form.input-form {
             
     .modal-header {
         border-bottom: 1px solid $border-section-tab-color;
-        padding: 20px;   
+        padding: 20px;  
+        line-height: 20px; 
         display: flex;
         justify-content: space-between;   
         flex: 1 1 0;  
                        
-        > div {
+        > h2 {
             padding: 8.5px 0;
             vertical-align: middle;
             font-size: 18px;
@@ -44,7 +46,7 @@ form.input-form {
         }
 
         > a {
-            font-size: 18px;
+            font-size: 15px;
             padding: 8.5px 0;
             color: $border-section-tab-color;
             text-transform: none;
@@ -62,26 +64,6 @@ form.input-form {
         display: flex;
         
         > .input-box {
-            flex: 1 1 0;
-            padding: 0 10px 0 10px;
-            font-size: 13px;
-            font-weight: normal;  
-            display: block;
-            
-            
-            &.err { 
-                > div {
-                    color: $border-input-error;
-                }
-                > input {
-                    background: $background-input-error;
-                    border-color: $border-input-error;
-                    &:focus {
-                         background-color: $background-input-error;
-                    }  
-                }                
-            }
-            
             > div {
                 text-align: left;
                 margin-bottom: 5px;
@@ -93,58 +75,8 @@ form.input-form {
                     font-weight: bold;
                 }
             }
+        }    
             
-            > input {
-                text-align: left;
-                border: 1px solid $border-section-tab-color;
-                border-radius: 3px;
-                box-sizing: border-box;
-                font-size: 15px;
-                
-                padding: 5px 10px;
-                width: 100%;
-                background: $background-main-color !important;
-                
-                &:focus {
-                  border-color: $background-main-btn-enabled;  
-                }
-            } 
-        }
-        > .error {
-            flex: 1 1 0;
-            padding: 0 10px 0 10px;
-            margin: 0 10px;
-            background-color: $background-main-error;
-            color: $color-section-annotation-title;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 3px;
-            display: flex;
-            justify-content: left;   
-            position: relative;
-            
-            > i {
-                text-transform: none;
-                vertical-align: middle;
-                padding: 15px 20px 15px 0;
-                color: $color-error;
-                font-size: 24px;
-            }
-        
-            > div {
-                flex: 1 1 0;
-                padding: 15px 20px 15px 0;
-                
-                > h2 {
-                    font-size: 15px;
-                    font-weight: 400;
-                    line-height: 1.2em;   
-                }
-                > ul {
-                    margin-top: 10px;
-                    list-style-type: disc;
-                }
-            }
-        }
     }
     
     .modal-footer {
@@ -156,75 +88,6 @@ form.input-form {
         display: flex;
         justify-content: flex-end;
         
-        a.btn {
-            height: auto;
-            line-height: 1;
-            margin-left: 10px;
-            padding: 8.5px 15px;
-            text-align: center;
-            text-transform: none;
-            vertical-align: middle;
-            white-space: nowrap;
-            border-radius: 3px;
-            border: 1px solid $border-section-color;
-            background-color: $background-main-color;
-            color: $color-section-ref;
-                
-            &:hover{
-                background: $background-main-btn-disabled;
-                cursor: pointer; cursor: hand;
-            }
-        }
-
-        a.btn-main {
-            box-sizing: border-box;
-            
-            height: auto;
-            line-height: 1;
-            margin-left: 10px;
-            padding: 8.5px 15px;
-            text-align: center;
-            text-transform: none;
-            vertical-align: middle;
-            white-space: nowrap;
-            border-radius: 3px;
-            border: 1px solid $border-section-color;
-
-            background: $color-section-ref;
-            color: $background-main-color;
-            
-            &:hover {
-                cursor: pointer; cursor: hand;
-                background: $background-main-btn-enabled;
-            }               
-            &.disabled {
-                background: $background-main-btn-disabled;
-                color:  $border-section-color;
-                &:hover {
-                    cursor: default;
-                }
-            }
-        }
-        a.btn-delete {
-            box-sizing: border-box;
-            height: auto;
-            line-height: 1;
-            margin-left: 10px;
-            padding: 8.5px 15px;
-            text-align: center;
-            text-transform: none;
-            vertical-align: middle;
-            white-space: nowrap;
-            border-radius: 3px;
-            border: 1px solid $background-main-btn-delete;
-
-            background: $background-main-btn-delete;
-            color: $background-main-color;
-            
-            &:hover {
-                cursor: pointer; cursor: hand;
-            }               
-        }
     }
 }
 

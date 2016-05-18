@@ -37,36 +37,6 @@ main > div.section {
             padding: 0 20px 20px;
             >  p {
                 margin-bottom: 10px;
-                
-                a {
-                    color: $color-section-ref;
-                    text-decoration: none;    
-                    &:hover {
-                        text-decoration: underline;
-                    }
-                }
-
-                > .btn {
-                    box-sizing: border-box;
-                    display: inline-block;
-                    height: auto;
-                    line-height: 1;
-                    margin: 0;
-                    padding: 8.5px 15px;
-                    position: relative;
-                    text-decoration: none;
-                    vertical-align: middle;
-                    white-space: nowrap;
-                    background-color: $background-main-color;
-                    border-radius: 3px;
-                    border: 1px solid $border-section-color;
-               
-                    &:hover {
-                        background: $background-main-btn-disabled;
-                        cursor: pointer; cursor: hand;
-                        text-decoration: none;     
-                    }                       
-                }
             }
         }
     }   
@@ -174,47 +144,8 @@ main > div.section div.section-content > div.card, profile > div.section-profile
                                         color: inherit;
                                         text-decoration: underline;
                                     }
-                                    i {
-                                        display: block;
-                                        text-transform: uppercase;                        
-                                        background: $background-nav-account-button;
-                                        color: $color-nav-selected;
-                                        font-size: 16px;
-                                        vertical-align: middle;
-                                        text-align: center;
-                                        width: 40px;
-                                        line-height: 40px;
-                                        border-radius: 7px;                                        
-                                    }
-                                    > a {
-                                        color: $color-section-ref;
-                                        text-decoration: none;    
-                                        
-                                        &:hover {
-                                            text-decoration: underline;
-                                            cursor: pointer; cursor: hand;
-                                        }
-                                        &.btn {
-                                            padding: 6px 7px;
-                                            line-height: 14px;
-                                            font-size: 14px;
-                                            width: 14px;
-                                            vertical-align: middle;
-                                            text-align: center;
-                                            border-radius: 3px;
-                                            border: 1px solid $border-section-color;
-                                             
-                                            &:hover {
-                                               background: $background-main-sel-btn-color;
-                                               cursor: pointer; cursor: hand;
-                                            }
-                                             
-                                            &.hide {
-                                                display: none;
-                                            }                                   
-                                        }
-                                        
-                                    }
+                                    
+                                                                    
                                 }
                                 &:last-child > td {
                                    border-bottom: medium none;

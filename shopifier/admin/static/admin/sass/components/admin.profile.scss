@@ -16,40 +16,13 @@ profile > div.section-profile {
         display: flex;
         justify-content: flex-end;
         padding: 0 20px;
-        
-        a.btn-main {
-            box-sizing: border-box;
-            
-            height: auto;
-            line-height: 1;
-            margin-left: 10px;
-            padding: 8.5px 15px;
-            text-align: center;
-            text-transform: none;
-            vertical-align: middle;
-            white-space: nowrap;
-            border-radius: 3px;
-            border: 1px solid $border-section-color;
-    
-            background: $color-section-ref;
-            color: $background-main-color;
-            
-            &:hover {
-                cursor: pointer; cursor: hand;
-                background: $background-main-btn-enabled;
-            }               
-            &.disabled {
-                background: $background-main-btn-disabled;
-                color:  $border-section-color;
-                &:hover {
-                    cursor: default;
-                }
-            }
-        }
     }
+
     > div.section-annotation {
         padding: 20px 0 20px 30px;
         color: $color-section-annotation;
+        display: flex;
+        flex-direction: column;
         flex: 1 1 0;
         text-align: left;
                 
@@ -61,40 +34,8 @@ profile > div.section-profile {
             line-height: 1.35em;   
         }
  
-         p {
+        > p {
             margin-bottom: 15px;
-                       
-            a {
-                color: $color-section-ref;
-                text-decoration: none;    
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-
-            > .btn {
-                box-sizing: border-box;
-                display: inline-block;
-                height: auto;
-                line-height: 1;
-                margin: 0;
-                padding: 8.5px 15px;
-                position: relative;
-                text-decoration: none;
-                vertical-align: middle;
-                white-space: nowrap;
-                background-color: $background-main-color;
-                color: $color-section-ref;
-                border-radius: 3px;
-                border: 1px solid $border-section-color;
-           
-                &:hover {
-                    background: $background-main-btn-disabled;
-                    cursor: pointer; cursor: hand;
-                    text-decoration: none;     
-                }                       
-
-            }
         }
     }   
     
@@ -128,47 +69,7 @@ profile > div.section-profile {
                     font-size: 13px;
                     font-weight: normal;  
                     display: flex;
-                    
-                   
-                    > .btn {
-                        color: $color-section-ref;
-                        text-decoration: none;    
-                        height: auto;
-                        line-height: 1;
-                        margin-right: 10px;
-                        padding: 8.5px 15px;
-                        
-                        text-decoration: none;
-                        white-space: nowrap;
-                        background-color: $background-main-color;
-                        border-radius: 3px;
-                        border: 1px solid $border-section-color;
-                        position: relative;
-                        overflow: hidden;
-                                          
-                        &:hover {
-                            background: $background-main-btn-disabled;
-                            cursor: pointer; cursor: hand;
-                            text-decoration: none;     
-                        } 
-                        &.disabled {
-                            background: $background-main-btn-disabled;
-                            color:  $border-section-color;
-                            &:hover {
-                                cursor: default;
-                            }
-                        }
-                         >  input[type="file"] {
-                            position: absolute;
-                            top: 0; right: 0;
-                            opacity: 0;
-                            filter: alpha(opacity=0);
-                            cursor: pointer; 
-                        }    
-                    }
-                   
-                                       
-            
+
                 }
             
             
@@ -266,14 +167,6 @@ profile > div.section-profile {
                         line-height: 40px;
                         border-radius: 7px;                                        
                     } 
-                    a {
-                        color: $color-section-ref;
-                        text-decoration: none;    
-                        &:hover {
-                            text-decoration: underline;
-                        }
-                    }
-        
                 }   
             }
         }

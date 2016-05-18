@@ -6,6 +6,7 @@
     
     <div class="section-content">
         <form>
+        {% csrf_token %}
             <div class="section">
                 <div class="input-box">
                     <div class="avatar" *ngIf="user">
@@ -15,17 +16,18 @@
                     </div>
                 </div>
             </div>
-            <div class="section">
+            <div class="input-section">
                 <div class="input-box">
                     <strong>Profile photo</strong>
                     <p>Shown whenever you comment or perform an action within Shopify. </p>
                 </div>
             </div>
-            <div class="section">
+            <div class="input-section">
                 <div class="box">
-                     <div class="btn">Upload photo
+                     <div class="btn mr10">Upload photo
                         <input type="file"  accept="image/gif, image/jpeg, image/png" (change)="upLoadAvatar($event)">
                      </div>
+                    
                      <a class="btn" 
                         [ngClass]="{disabled: !new_avatar && !user.avatar }" 
                         (click)="deleteAvatar()">
@@ -33,41 +35,51 @@
                     </a>
                 </div>
             </div>
-            <div class="section">
+            <div class="input-section">
+                <div class="input-box">                
+                    <label class="input">
+                        First Name
+                        <input [ngFormControl]="lform.controls['first_name']">
+                    </label>    
+                </div>
                 <div class="input-box">
-                    <label>First Name</label>
-                    <input [ngFormControl]="lform.controls['first_name']">
-                </div>    
-                <div class="input-box">
-                    <label>Last Name</label>
-                    <input [ngFormControl]="lform.controls['last_name']">
-                </div>   
+                    <label class="input">
+                        Last Name
+                        <input [ngFormControl]="lform.controls['last_name']">
+                    </label>   
+                </div>
             </div>
-            <div class="section">
+            <div class="input-section">
                 <div class="input-box">
                     <p>Email address</p>
-                    <span>{% verbatim %}{{ user.email }}{% endverbatim %} <a href="#">Change email</a></span>
+                    <span>{% verbatim %}{{ user.email }}{% endverbatim %} <a class="ref" href="#">Change email</a></span>
                 </div>    
                 <div class="input-box">
-                    <label>Phone (optional)</label>
-                    <input [ngFormControl]="lform.controls['phone']">
+                    <label class="input">
+                        Phone (optional)
+                        <input [ngFormControl]="lform.controls['phone']">
+                    </label>
                 </div>   
             </div>
-            <div class="section">
+            <div class="input-section">
                 <div class="input-box">
-                    <label>Personal website address (optional)</label>
-                    <input [ngFormControl]="lform.controls['www_site']">
+                    <label class="input">
+                        Personal website address (optional)
+                        <input [ngFormControl]="lform.controls['www_site']">
+                    </label>
                 </div>   
             </div>
-            <div class="section">
+            <div class="input-section">
                 <div class="input-box">
-                    <label>Bio (optional)</label>
-                    <textarea [ngFormControl]="lform.controls['bio']"></textarea>
+                    <label class="input">
+                        Bio (optional)
+                        <textarea [ngFormControl]="lform.controls['bio']"></textarea>
+                    </label>
                 </div>   
             </div>
-            <div class="section">
+            <div class="input-section">
                 <div class="input-box">
-                    <a href="#">Change password</a>
+                    <a class="ref" href="#">Change password</a>
                 </div>   
             </div>
         </form>
@@ -78,9 +90,8 @@
     <div class="section-annotation">
         <h3>Recent login history</h3>
         <p>Access from an ISP, Location, or IP address you don't recognize may indicate that the account has been compromised and should be reviewed further.</p>
-        <p>
-            <a class="btn">Expire user's sessions</a>
-        </p>
+        <p><a class="btn"> Expire user's sessions </a></p>
+   
     </div>
     
      <div class="section-content">
@@ -135,8 +146,10 @@
         <form>
             <div class="section">
                 <div class="input-box">
-                    <input type="checkbox" id="checkbox-id">
-                    <label for="checkbox-id"><i class="fa fa-check" aria-hidden="true"></i>Limit admin access for Ivan Tuleev</label>
+                    <div class="input">
+                        <input type="checkbox" id="checkbox-id">
+                        <label for="checkbox-id"><i class="fa fa-check" aria-hidden="true"></i>Limit admin access for Ivan Tuleev</label>
+                    </div>
                 </div>    
             </div>
         </form>
@@ -145,7 +158,7 @@
 
 <div class="section-profile ">  
     <div class="block-btn"> 
-        <a class="btn-main"
+        <a class="btn btn-blue"
         [ngClass]="{disabled : !formChange}"
         (click)="onSave()"> Save</a>
     </div> 

@@ -14,16 +14,17 @@
         </li>
         <li class="account"  *ngIf="currentUser"
             (click)="forcePopupShow=true">
-            <div>
-                <i>
+            
+            <div class="avatar" *ngIf="currentUser">
                 {% verbatim %}{{ currentUser.first_name[0] + currentUser.last_name[0] }}{% endverbatim %}
-                </i>
-                <span>
-                    <span> Shopifier</span>
-                     <span> {% verbatim %}{{ currentUser.first_name + ' ' + currentUser.last_name }}{% endverbatim %}</span>       
-                </span>
-                
+                <img *ngIf="currentUser.avatar" src="{% verbatim %}{{ currentUser.avatar }}{% endverbatim %}">                
             </div>
+            <span>
+                <span> Shopifier</span>
+                 <span> {% verbatim %}{{ currentUser.first_name + ' ' + currentUser.last_name }}{% endverbatim %}</span>       
+            </span>
+            
+        
         </li>
         
         <popup *ngIf="currentUser" [ngClass]="{show: forcePopupShow }">            
@@ -77,9 +78,9 @@
         </ul>        
       </h1>
       <div *ngIf="headerButtons">
-         <a  *ngFor="let btn of headerButtons" 
+         <a *ngFor="let btn of headerButtons" 
                 class="{% verbatim %}{{ btn.class }}{% endverbatim %}"
-                [ngClass]="{disabled : !btn.self.formChange}"
+                [ngClass]="{disabled : !btn.self.formChange && btn.text=='Save'}"
                 (click)="btn.click(btn, btn.self)">
                 {% verbatim %}{{ btn.text }}{% endverbatim %}
         </a> 

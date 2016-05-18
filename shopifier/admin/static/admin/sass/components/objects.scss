@@ -1,3 +1,5 @@
+
+//avatar
 $background-avatar-empty: #ff5d5d;
 $color-avatar-empty: #ffffff;
 .avatar {
@@ -10,11 +12,12 @@ $color-avatar-empty: #ffffff;
     width: 40px;
     height: 40px;
     line-height: 40px;
+    padding: 0;
     border-radius: 7px;
     overflow: hidden;
-    z-index: 2;
+    z-index: inherit;
     position: relative;
-    
+        
     > img {
         height: 100%;
         width: 100%;
@@ -23,3 +26,270 @@ $color-avatar-empty: #ffffff;
         top: 0;
     }                                        
 } 
+
+
+//buttons
+$btn-blue-background: #479ccf;
+$btn-blue-hover-background: #4293c2;
+$btn-blue-color: #ffffff;
+
+$btn-red-color: #ffffff;
+$btn-red-background:  #ff5d5d;
+$btn-red-hover-background:  #d83e3e;
+
+$btn-color: #479ccf;
+$btn-background: #ffffff;
+$btn-border: #d3dbe2;
+$btn-disabled-background: #fafbfc;
+$btn-disabled-color: #d3dbe2;
+
+
+.btn {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    height: auto;
+    line-height: 1;
+    
+    padding: 8.5px 15px;
+    
+    text-align: center;
+    text-transform: none;
+    vertical-align: middle;
+    white-space: nowrap;
+          
+    color: $btn-color;
+    background: $btn-background;
+    border-radius: 3px;
+    border: 1px solid $btn-border;
+    
+    
+    
+    &:hover {
+        cursor: pointer; cursor: hand;
+        background: $btn-disabled-background;
+    }               
+    
+    &.disabled {
+        background: $btn-disabled-background;
+        color:  $btn-disabled-color;
+        border-color: $btn-border;
+        
+        &:hover {
+            cursor: default;
+        }
+    }
+
+    &.btn-blue {
+        background: $btn-blue-background;
+        border-color: $btn-blue-background;
+        color: $btn-blue-color;
+        &:hover {
+            background: $btn-blue-hover-background;
+            border-color: $btn-blue-hover-background;
+        }
+        
+        &.disabled {
+            background: $btn-disabled-background;
+            border-color: $btn-border;
+            color:  $btn-disabled-color;
+            
+            &:hover {
+                cursor: default;
+            }
+        }               
+    }
+    
+    &.btn-red {
+        background: $btn-red-background;
+        border-color: $btn-red-background;
+        color: $btn-red-color;
+        
+        &:hover {
+            background: $btn-red-hover-background;
+            border-color: $btn-red-hover-background;
+        }
+     
+    }
+    
+    &.trash {
+        padding: 6px 7px;
+        line-height: 14px;
+        font-size: 14px;
+        width: auto;
+        
+        &.hide {
+            display: none;
+        }                                   
+    }
+    
+    >  input[type="file"] {
+        position: absolute;
+        top: 0; right: 0;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        cursor: pointer; 
+    }
+
+}
+
+//ref
+$color-ref: #479ccf;
+
+.ref {
+    color: $color-ref;
+    text-decoration: none;    
+    &:hover {
+        text-decoration: underline;
+        cursor: pointer; cursor: hand;
+    }
+}
+
+
+
+//input
+
+$input-border: #ebeef0;
+$input-background: #ffffff;
+$input-focus-border: #4293c2;
+$input-color: #31373d;
+$input-error-color: #ff5d5d;
+$input-error-border: #ff5d5d;
+$input-error-background: #fef6f5;
+
+
+.input-section {
+    padding: 8px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+.input-box {
+    flex: 1 1 0;
+    padding: 0 10px 0 10px;
+    font-size: 13px;
+    font-weight: normal;  
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    flex: 1 1 0;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+    font-size: 13px;
+    font-weight: normal;
+    background: $input-background;
+    color: $input-color; 
+    position: relative;      
+    
+    &.err { 
+        color: $input-error-border;
+        > input {
+            background: $input-error-background;
+            border-color: $input-error-border;
+     
+            &:focus {
+                border-color: $input-error-border;
+            }  
+        }                
+    }
+    > strong {
+        font-weight: bold;
+    }
+    
+    > input, > textarea {
+        margin-top: 5px;
+        border: 1px solid $input-border;
+        border-radius: 3px;
+        box-sizing: border-box;
+        line-height: 20px;
+        font-size: 15px;
+        padding: 5px 10px;
+        width: 100%;
+            
+        &:focus {
+            border-color: $input-focus-border;
+        }  
+        
+        &[type="checkbox"] {
+            display: none;
+            & + label {
+                font-weight: 100;
+                cursor: pointer; cursor: hand;
+                > i {
+                    border: 1px solid $input-color; 
+                    border-radius: 3px;  
+                    color: $input-background; 
+                    margin-right: 10px;     
+                    
+                }                     
+            }
+            &:checked + label {
+
+                cursor: pointer; cursor: hand;
+                color: $color-ref;
+                > i {
+                    transition: all .2s;
+                    color: $color-ref;
+                    border-color: $color-ref;   
+                }
+            }
+        }
+    }
+}
+
+
+$error-list-background: #ff9797;
+$error-list-color: #31373d;
+$error-list-border: rgba(0, 0, 0, 0.1);
+$error-list-icon-color: #d83e3e;
+
+.error-list {
+     flex: 1 1 0;
+     padding: 0 10px 0 10px;
+
+     background-color: $error-list-background;
+     color: $error-list-color;
+     border: 1px solid $error-list-border;
+     border-radius: 3px;
+     display: flex;
+     justify-content: left;   
+     position: relative;
+     
+     > i {
+         text-transform: none;
+         vertical-align: middle;
+         padding: 15px 20px 15px 0;
+         color: $error-list-icon-color;
+         font-size: 24px;
+     }
+     > div {
+         flex: 1 1 0;
+         padding: 15px 20px 15px 0;
+         
+         > h2 {
+             font-size: 15px;
+             font-weight: 400;
+             line-height: 1.2em;   
+         }
+         > ul {
+             margin-top: 10px;
+             list-style-type: disc;
+         }
+     }
+}
+
+
+
+
+
+
+
+
+.mr10 {
+    margin-right: 10px;
+}

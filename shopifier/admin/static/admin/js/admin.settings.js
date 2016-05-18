@@ -60,9 +60,9 @@ export class AdminAccountProfile{
         
         this._authService.admin.headerButtons = [];
         if (!this.user.is_admin) {
-            this._authService.admin.headerButtons.push({'text': 'Make this user the account owner', 'class': 'btn', 'click': this.setAdmin, 'self': this });
+            this._authService.admin.headerButtons.push({'text': 'Make this user the account owner', 'class': 'btn mr10', 'click': this.setAdmin, 'self': this });
         }
-        this._authService.admin.headerButtons.push({'text': 'Save', 'class': 'btn btn-main', 'click': this.onSave, 'self': this });
+        this._authService.admin.headerButtons.push({'text': 'Save', 'class': 'btn btn-blue', 'click': this.onSave, 'self': this });
         
         for (let control in this.lform.controls) {
             if (control != 'avatar_image')
@@ -217,7 +217,7 @@ export class AdminAccountInvite {
         */
         this._authService.post(this.lform.value, '/api/user-invite/')
                 .subscribe( data => { this.show=false;},
-                            err => { this.obj_errors = err; this.to_array(err.json()); }, 
+                            err => { this.obj_errors = err.json(); this.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
                  );                                
     }
@@ -332,7 +332,7 @@ export class AdminAccount {
 
 //------------------------------------------------------------------------------ 
 @Component({
-  selector: 'section',
+  selector: 'main',
   template : '<router-outlet></router-outlet>',
   directives: [ROUTER_DIRECTIVES],
 })

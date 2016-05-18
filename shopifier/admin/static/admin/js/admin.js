@@ -18,7 +18,7 @@ export class AdminHome {
 //------------------------------------------------------------------------------
 @CanActivate(() => getCurrentUser(true, 'Login'))
 @Component({
-    selector: 'admin-form',
+    selector: 'admin',
     templateUrl: 'templates/admin.html',
     directives: [ROUTER_DIRECTIVES],
 })

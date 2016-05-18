@@ -62,11 +62,17 @@ class UserActivateSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar_image = Base64ImageField(required=False, allow_null=True )
+    avatar = serializers.SerializerMethodField()
     
     class Meta:
         model = User
         exclude = ('password',)
 
+    def get_avatar(self, obj):
+        if obj.avatar_image:
+            return "{}/{}".format( settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url)
+    
 
 class UsersAdminSerializer(serializers.ModelSerializer):
     
