@@ -8,8 +8,46 @@ import { AdminAuthService, UploadService } from './admin.auth'
 
 //------------------------------------------------------------------------------
 @Component({
+    selector      : 'confirm',
+    templateUrl: 'templates/account/confirm-password.html',
+    directives    : [FORM_DIRECTIVES],
+})
+export class AdminAccountConfirmPassword {
+    
+    show = false;
+    parrent = null;
+    passwordChange = false;
+                
+    static get parameters() {
+        return [[AdminAuthService], [FormBuilder]];
+    }
+    constructor(authService, formbuilder) {
+        this._authService = authService;
+        this.lform = formbuilder.group({
+                    'email': [''],
+                    'password':    ['',],
+                }); 
+    }
+    
+    ngOnInit(){
+        this.lform.controls['email'].updateValue(this._authService.admin.currentUser.email); 
+        this.lform.controls['password'].updateValue(null);   
+    }
+    
+    goConfirmPassword () {
+        this.show=false;
+        this._authService.post(this.lform.value, `/api/admin/${this._authService.admin.currentUser.id}/checkpassword/`)
+                .subscribe( () => this.parrent.onSaveAdmin(this.parrent),
+                            err => {this.parrent.obj_errors = err.json(); this.parrent.errors = this._authService.to_array(err.json()); }, 
+                           );                                        
+    }
+}
+
+
+//------------------------------------------------------------------------------
+@Component({
     selector      : 'profile',
-    templateUrl: 'templates/admin.account.profile.html',
+    templateUrl: 'templates/account/profile.html',
     directives    : [FORM_DIRECTIVES],
     providers: [ UploadService ]
 })
@@ -18,16 +56,25 @@ export class AdminAccountProfile{
     obj_errors = {};
     user = null;
     sessions = [];
-    formChange = false;
     new_avatar = null;
     
+    formChange = false;
+    emailChange = false;
+    passwordChange = false;
+
+//modal
+    confirm_password = null;
+    
     static get parameters() {
-        return [[AdminAuthService], [FormBuilder], [RouteParams]];
+        return [[AdminAuthService], [FormBuilder], [RouteParams], [DynamicComponentLoader], [ViewContainerRef]];
     }
-    constructor(authService, formbuilder, routeparams ) {
+    constructor(authService, formbuilder, routeparams, dcl, viewContainerRef ) {
         this._routeParams = routeparams;
         this._authService = authService;
-
+        
+        this.dcl = dcl;
+        this.viewContainerRef = viewContainerRef;
+        
         this.lform = formbuilder.group({
             'first_name': ['', Validators.required],
             'last_name': ['', Validators.required],
@@ -37,8 +84,10 @@ export class AdminAccountProfile{
             'avatar_image': [''],
             'email': [''],
             'is_admin': [''],
+            'password1': [''],
+            'password2': [''],
         }); 
-
+    
     }
     
     ngOnInit() {
@@ -51,11 +100,20 @@ export class AdminAccountProfile{
         this._authService.get(`/api/admin/${id}/session/`)
             .subscribe( data => this.sessions = data); 
         
+        this.dcl.loadNextToLocation(AdminAccountConfirmPassword,  this.viewContainerRef)
+            .then((compRef)=> {
+                this.confirm_password = compRef.instance;
+                this.confirm_password.parrent = this; 
+            });      
     }
     
     onInit(data) {
         this.user = data;
         this.new_avatar = null;
+        this.formChange = false;
+        this.emailChange = false;
+        this.passwordChange = false;
+        
         this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});   
         
         this._authService.admin.headerButtons = [];
@@ -71,20 +129,40 @@ export class AdminAccountProfile{
         
     }
     
-    onSave(btn, self) {
+    onSave(self) {
         if (!self) 
             self = this;
-                     
+               
+        if (self.lform.controls['email'].value != self.user.email) { 
+            self.confirm_password.passwordChange = self.passwordChange; 
+            self.confirm_password.show = true;        
+        }
+        else {
+            self.onSaveAdmin(self);
+        }
+    }
+    
+    onSaveAdmin(self) { // admin permissions
+     
         if (self.new_avatar)
             self.lform.controls['avatar_image'].updateValue(self.new_avatar);   
         
-        self._authService.put(self.lform.value, `/api/admin/${self.user.id}/`)
-            .subscribe( data => self.onInit(data),
-                        err => {self.obj_errors = err; self.errors = self._authService.to_array(err.json()); }, 
-                       );  
+        if (self.passwordChange) {
+            self._authService.put(self.lform.value, `/api/admin/${self.user.id}/pluspassword/`)
+                .subscribe( data => self.onInit(data),
+                            err => {self.obj_errors = err.json(); self.errors = self._authService.to_array(err.json()); }, 
+                            );  
+        }
+        else {    
+            self._authService.put(self.lform.value, `/api/admin/${self.user.id}/`)
+                .subscribe( data => self.onInit(data),
+                            err => {self.obj_errors = err.json(); self.errors = self._authService.to_array(err.json()); }, 
+                            );  
+        }
     }
+    
 
-    setAdmin() {
+    setAdmin(self) {
         
     }
     
@@ -123,7 +201,7 @@ export class AdminAccountProfile{
 //------------------------------------------------------------------------------
 @Component({
     selector      : 'sessions',
-    templateUrl: 'templates/admin.account.del-sessions.html',
+    templateUrl: 'templates/account/del-sessions.html',
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccountDeleteSessions {
@@ -152,7 +230,7 @@ export class AdminAccountDeleteSessions {
 //------------------------------------------------------------------------------
 @Component({
     selector      : 'delete',
-    templateUrl: 'templates/admin.account.delete.html',
+    templateUrl: 'templates/account/delete.html',
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccountDelete {
@@ -182,7 +260,7 @@ export class AdminAccountDelete {
 //------------------------------------------------------------------------------
 @Component({
     selector      : 'invite',
-    templateUrl: 'templates/admin.account.invaite.html',
+    templateUrl: 'templates/account/invaite.html',
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccountInvite {
@@ -246,12 +324,14 @@ export class AdminAccountInvite {
 //------------------------------------------------------------------------------
 @Component({
     selector      : 'main',
-    templateUrl: 'templates/admin.account.html',
+    templateUrl: 'templates/account/account.html',
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccount {
     currentUser = null;
     users = [];    
+
+//modal
     invite_user = null;
     delete_user = null;
     delete_sessions = null;
@@ -272,8 +352,6 @@ export class AdminAccount {
         
         this._authService.get('/api/admin/')
             .subscribe( data => this.users = data ); 
-        
-    
         
         this._authService.get('/api/current-user/')
             .subscribe( data => { this.currentUser = data; } );      

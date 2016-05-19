@@ -134,6 +134,21 @@ $btn-disabled-color: #d3dbe2;
 
 }
 
+$btn-cross-color: #ebeef0;
+
+.cross {
+    font-size: 15px;
+    padding: 8.5px 0;
+    color: $btn-cross-color;
+    text-transform: none;
+    vertical-align: middle;
+    &:hover{                   
+        cursor: pointer; cursor: hand;
+    }
+}
+
+
+
 //ref
 $color-ref: #479ccf;
 
@@ -173,6 +188,14 @@ $input-error-background: #fef6f5;
     font-weight: normal;  
     display: flex;
     flex-direction: column;
+    
+    &.row {
+        flex-direction: row;
+        
+        &.end {
+            justify-content: flex-end;    
+        }
+    }
 }
 
 .input {
@@ -250,7 +273,8 @@ $error-list-icon-color: #d83e3e;
 
 .error-list {
      flex: 1 1 0;
-     padding: 0 10px 0 10px;
+     width: 100%;
+     padding: 0 10px;
 
      background-color: $error-list-background;
      color: $error-list-color;
@@ -271,12 +295,7 @@ $error-list-icon-color: #d83e3e;
          flex: 1 1 0;
          padding: 15px 20px 15px 0;
          
-         > h2 {
-             font-size: 15px;
-             font-weight: 400;
-             line-height: 1.2em;   
-         }
-         > ul {
+        > ul {
              margin-top: 10px;
              list-style-type: disc;
          }
@@ -284,12 +303,32 @@ $error-list-icon-color: #d83e3e;
 }
 
 
-
-
-
-
-
+.separator {
+    border-top: 1px solid $border-section-color;
+    width: 100%;
+    height: 1px;
+    padding: 0 20px;
+}
 
 .mr10 {
     margin-right: 10px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+strong {
+    font-weight: bold;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.2em;
+}
+
+h3 {
+     font-size: 15px;
+     font-weight: 400;
+     line-height: 1.2em;   
 }

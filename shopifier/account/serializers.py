@@ -83,12 +83,12 @@ class UsersAdminSerializer(serializers.ModelSerializer):
     date_join = serializers.DateTimeField(read_only=True)
     avatar = serializers.SerializerMethodField()
     visit_datetime = serializers.SerializerMethodField()
- 
+    password1 = serializers.CharField(max_length=128, allow_null=True )
+    password2 = serializers.CharField(max_length=128, allow_null=True )
+    
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 
-                'phone', 'bio', 'www_site', 'date_join', 'avatar_image',
-                'avatar', 'is_admin', 'is_active', 'is_staff', 'visit_datetime')
+        exclude = ('password',)
     
     
     def get_avatar(self, obj):

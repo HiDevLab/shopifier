@@ -1,11 +1,11 @@
 <modal-form [ngClass]="{hideDelete: !show}">
-    <form class="input-form" novalidate>
+    <form class="input-form up" novalidate>
         {% csrf_token %}
         <div class="modal-header">
             <h2>
                 Remove user account for {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}?
             </h2>
-            <a class="fa fa-times" aria-hidden="true"
+            <a class="cross fa fa-times" aria-hidden="true"
               (click)="show=false"></a>
         </div>
          <div class="input-section">

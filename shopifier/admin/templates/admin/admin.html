@@ -81,12 +81,12 @@
          <a *ngFor="let btn of headerButtons" 
                 class="{% verbatim %}{{ btn.class }}{% endverbatim %}"
                 [ngClass]="{disabled : !btn.self.formChange && btn.text=='Save'}"
-                (click)="btn.click(btn, btn.self)">
+                (click)="btn.click(btn.self)">
                 {% verbatim %}{{ btn.text }}{% endverbatim %}
         </a> 
       </div>  
   </header>
   
 <router-outlet></router-outlet>
-  
+
 </section>

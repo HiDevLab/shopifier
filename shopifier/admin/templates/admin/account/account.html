@@ -1,7 +1,8 @@
 <div class="section">
     <div class="section-annotation">
-        <h3>Account overview</h3>
         <div>
+            <h2>Account overview</h2>   
+            <p></p> 
             <p>
                 An overview of your current plan. Grow your business by upgrading your plan features. View our
                 <a class="ref" href="#">terms of service</a>
@@ -33,8 +34,9 @@
 
 <div class="section" *ngIf="currentUser">
     <div class="section-annotation">
-        <h3>Staff members</h3>
         <div *ngIf="currentUser.is_admin">
+            <h2>Staff members</h2>
+            <p></p>
             <p>You can give other people admin access to your Shopifier store.</p>
             <p>
                 <a *ngIf="invite_user" class="btn" 

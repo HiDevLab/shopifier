@@ -1,24 +1,13 @@
-profile > div.section-profile {
+.section-profile {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    flex: 1 1 0;
+    width: 100%;
+    padding: 20px;
     max-width: 100%;
-    border-top: 1px solid $border-section-color;
-    padding: 20px 0 20px 20px;
     
-     
-    &:first-of-type {
-        border: none;   
-    }
-    
-    .block-btn {
-        flex: 1 1 0;  
-        display: flex;
-        justify-content: flex-end;
-        padding: 0 20px;
-    }
-
-    > div.section-annotation {
+    > .section-annotation {
         padding: 20px 0 20px 30px;
         color: $color-section-annotation;
         display: flex;
@@ -39,11 +28,9 @@ profile > div.section-profile {
         }
     }   
     
-    > div.section-content {
-        padding: 0 20px;
+    > .section-content {
+        padding: 0;
         width: 1148px;
-        
-           
         > form {
             padding: 10px 0;
             align-items: center;
@@ -55,120 +42,6 @@ profile > div.section-profile {
             background-color :$background-main-color;
             border-radius: 3px;
             box-shadow:  rgba(0,0,0,0.1) 0px 2px 4px 0px;    
-           
-            
-            > div.section {
-                padding: 8px 10px;
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: left;
-
-                > .box {
-                    flex: 1 1 0;
-                    padding: 0 10px;
-                    font-size: 13px;
-                    font-weight: normal;  
-                    display: flex;
-
-                }
-            
-            
-                > .input-box {
-                    flex: 1 1 0;
-                    padding: 0 10px;
-                    font-size: 13px;
-                    font-weight: normal;  
-                    display: flex;
-                    flex-direction: column;
-                    position: relative;
-                    
-                     > strong {
-                        font-weight: bold;
-                        margin-bottom: 5px;
-                    }                    
-                    > p {
-                        margin-bottom: 5px;
-                    }
-                 
-                    > label {
-                        text-align: left;
-                        margin-bottom: 5px;
-                        cursor: pointer;
-                        font-size: 13px;
-                        font-weight: normal;
-                        
-                    }
-                    > input{
-                        text-align: left;
-                        border: 1px solid $border-section-tab-color;
-                        border-radius: 3px;
-                        box-sizing: border-box;
-                        font-size: 15px;
-                        
-                        padding: 5px 10px;
-                        width: 100%;
-                        background: $background-main-color !important;
-                        
-                        &:focus {
-                          border-color: $background-main-btn-enabled;  
-                        }
-                        &.textarea {
-                            height: 100px;
-                        }
-                    }
-                    > input[type="checkbox"] {
-                        display: none;
-                        
-                        
-                        & + label > i {
-                            border: 1px solid $border-section-tab-color; 
-                            border-radius: 3px;  
-                            color: $background-main-color;
-                            margin-right: 10px;     
-                            font-weight: 100;                     
-                        }
-                        &:checked + label {
-                            color: $background-main-btn-enabled;
-                            > i {
-                                transition: all .2s;
-                                font-size: 15px;
-                                font-weight: 100; 
-                                color: $background-main-btn-enabled;
-                                border-color: $background-main-btn-enabled;    
-                            }
-                            
-                        }
-                    }
-                    > textarea {
-                        text-align: left;
-                        border: 1px solid $border-section-tab-color;
-                        border-radius: 3px;
-                        box-sizing: border-box;
-                        font-size: 15px;
-                        
-                        padding: 5px 10px;
-                        width: 100%;
-                        height: 100px;
-                        background: $background-main-color !important;
-                        
-                        &:focus {
-                          border-color: $background-main-btn-enabled;  
-                        }
-                    }
-                    > i {
-                        display: block;
-                        text-transform: uppercase;                        
-                        background: $background-nav-account-button;
-                        color: $color-nav-selected;
-                        font-size: 16px;
-                        vertical-align: middle;
-                        text-align: center;
-                        width: 40px;
-                        line-height: 40px;
-                        border-radius: 7px;                                        
-                    } 
-                }   
-            }
         }
     }
 }

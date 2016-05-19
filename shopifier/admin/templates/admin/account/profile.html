@@ -1,4 +1,20 @@
-<div *ngIf="user" class="section-profile ">
+<div *ngIf="errors.length> 0" class="section-profile ">
+    <div  class="input-box">
+        <div class="error-list">
+            <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
+            <div>
+                <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                <ul>
+                    <li *ngFor="let error of errors">
+                        {% verbatim %}{{ error }}{% endverbatim %}
+                    </li>                        
+                </ul>
+            </div>                
+        </div>
+    </div>    
+</div>
+    
+<div *ngIf="user" class="section-profile ">      
     <div class="section-annotation">
         <h3>Account information</h3>
         <p>All information relevant to the account.</p>
@@ -7,7 +23,7 @@
     <div class="section-content">
         <form>
         {% csrf_token %}
-            <div class="section">
+            <div class="input-section">
                 <div class="input-box">
                     <div class="avatar" *ngIf="user">
                         {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
@@ -23,7 +39,7 @@
                 </div>
             </div>
             <div class="input-section">
-                <div class="box">
+                <div class="input-box row">
                      <div class="btn mr10">Upload photo
                         <input type="file"  accept="image/gif, image/jpeg, image/png" (change)="upLoadAvatar($event)">
                      </div>
@@ -37,27 +53,33 @@
             </div>
             <div class="input-section">
                 <div class="input-box">                
-                    <label class="input">
+                    <label class="input" [ngClass]="{err: obj_errors['first_name']}">
                         First Name
-                        <input [ngFormControl]="lform.controls['first_name']">
+                        <input [ngFormControl]="lform.controls['first_name']"  (input)="formChange=true">
                     </label>    
                 </div>
                 <div class="input-box">
-                    <label class="input">
+                    <label class="input" [ngClass]="{err: obj_errors['last_name']}">
                         Last Name
-                        <input [ngFormControl]="lform.controls['last_name']">
+                        <input [ngFormControl]="lform.controls['last_name']" (input)="formChange=true">
                     </label>   
                 </div>
             </div>
             <div class="input-section">
-                <div class="input-box">
+                <div class="input-box" *ngIf="!emailChange">
                     <p>Email address</p>
-                    <span>{% verbatim %}{{ user.email }}{% endverbatim %} <a class="ref" href="#">Change email</a></span>
+                    <span>{% verbatim %}{{ user.email }}{% endverbatim %} <a class="ref" (click)="emailChange=true">Change email</a></span>
                 </div>    
+                <div class="input-box" *ngIf="emailChange">
+                    <label class="input" [ngClass]="{err: obj_errors['email']}">
+                        Email address
+                        <input [ngFormControl]="lform.controls['email']" (input)="formChange=true">
+                    </label>   
+                </div>
                 <div class="input-box">
                     <label class="input">
                         Phone (optional)
-                        <input [ngFormControl]="lform.controls['phone']">
+                        <input [ngFormControl]="lform.controls['phone']" (input)="formChange=true">
                     </label>
                 </div>   
             </div>
@@ -65,7 +87,7 @@
                 <div class="input-box">
                     <label class="input">
                         Personal website address (optional)
-                        <input [ngFormControl]="lform.controls['www_site']">
+                        <input [ngFormControl]="lform.controls['www_site']" (input)="formChange=true">
                     </label>
                 </div>   
             </div>
@@ -73,18 +95,34 @@
                 <div class="input-box">
                     <label class="input">
                         Bio (optional)
-                        <textarea [ngFormControl]="lform.controls['bio']"></textarea>
+                        <textarea [ngFormControl]="lform.controls['bio']" (input)="formChange=true"></textarea>
                     </label>
                 </div>   
             </div>
-            <div class="input-section">
+            <div class="input-section" *ngIf="!passwordChange">
                 <div class="input-box">
-                    <a class="ref" href="#">Change password</a>
+                    <a class="ref" (click)="passwordChange=true" >Change password</a>
                 </div>   
+            </div>
+            <div class="input-section"  *ngIf="passwordChange">
+                <div class="input-box">                
+                    <label class="input" [ngClass]="{err: obj_errors['password1']}">
+                        New password
+                        <input type="password" [ngFormControl]="lform.controls['password1']"  (input)="formChange=true">
+                    </label>    
+                </div>
+                <div class="input-box">
+                    <label class="input" [ngClass]="{err: obj_errors['password2']}">
+                        Confirm new password
+                        <input type="password" [ngFormControl]="lform.controls['password2']" (input)="formChange=true">
+                    </label>   
+                </div>
             </div>
         </form>
     </div>
 </div>
+
+<div class="separator"></div>
 
 <div *ngIf="user" class="section-profile ">    
     <div class="section-annotation">
@@ -135,7 +173,7 @@
         </div>    
     </div>
 </div>
-
+<div class="separator"></div>
 <div *ngIf="user" class="section-profile ">
     <div class="section-annotation">
         <h3>Admin Access</h3>
@@ -144,7 +182,7 @@
     
     <div class="section-content">
         <form>
-            <div class="section">
+            <div class="input-section">
                 <div class="input-box">
                     <div class="input">
                         <input type="checkbox" id="checkbox-id">
@@ -155,11 +193,13 @@
         </form>
     </div>
 </div>
-
+<div class="separator"></div>
 <div class="section-profile ">  
-    <div class="block-btn"> 
-        <a class="btn btn-blue"
-        [ngClass]="{disabled : !formChange}"
-        (click)="onSave()"> Save</a>
+    <div class="input-box row end">
+          
+            <a class="btn btn-blue"
+            [ngClass]="{disabled : !formChange}"
+            (click)="onSave()"> Save</a>
+       
     </div> 
 </div>

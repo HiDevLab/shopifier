@@ -5,34 +5,36 @@
             <h2>
                 Add staff member
             </h2>
-            <a class="fa fa-times" aria-hidden="true"
+            <a class="cross fa fa-times" aria-hidden="true"
               (click)="show=false"></a>
         </div>
-        <div  *ngIf="errors.length> 0" class="modal-section">
-            <div class="error-list">
-                <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
-                <div>
-                    <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
-                    <ul *ngFor="let error of errors">
-                        <li>
-                            {% verbatim %}{{ error }}{% endverbatim %}
-                        </li>                        
-                    </ul>
-                </div>                
-            </div>
+        <div  *ngIf="errors.length> 0" class="input-section">
+            <div  class="input-box">
+                <div class="error-list">
+                    <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
+                    <div>
+                        <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                        <ul>
+                            <li *ngFor="let error of errors">
+                                {% verbatim %}{{ error }}{% endverbatim %}
+                            </li>                        
+                        </ul>
+                    </div>                
+                </div>
+            </div>    
         </div>
         
         <div class="input-section">
              <div class="input-box">   
                 <label class="input" [ngClass]="{err: obj_errors['first_name']}">
                     First Name
-                    <input [ngFormControl]="lform.controls['first_name']" (change)="boolInvite=true">
+                    <input [ngFormControl]="lform.controls['first_name']" (input)="boolInvite=true">
                 </label>
             </div>    
             <div class="input-box">
                 <label class="input" [ngClass]="{err: obj_errors['last_name']}">
                    Last Name
-                    <input [ngFormControl]="lform.controls['last_name']" (change)="boolInvite=true"> 
+                    <input [ngFormControl]="lform.controls['last_name']" (input)="boolInvite=true"> 
                 </label>
             </div>
         </div>
@@ -40,7 +42,7 @@
             <div class="input-box">    
                 <label class="input" [ngClass]="{err: obj_errors['email']}">
                     Email
-                    <input [ngFormControl]="lform.controls['email']" (change)="boolInvite=true">
+                    <input [ngFormControl]="lform.controls['email']" (input)="boolInvite=true">
                 </label>        
             </div>    
         </div>

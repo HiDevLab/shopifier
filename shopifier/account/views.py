@@ -287,6 +287,42 @@ class UsersAdminViewSet(ModelViewSet):
         serializer.data 
         return Response(serializer.data , status=HTTP_200_OK)
     
+    @detail_route(methods=['get'])
+    def session(self, request, pk=None):
+        user = self.get_object()
+        log = UserLog.objects.filter(user=user, visit_datetime__isnull=False)[0:5]
+        serializer = SessionsSerializer(log, many=True)
+               
+        serializer.data 
+        return Response(serializer.data , status=HTTP_200_OK)
+    
+    
+    @detail_route(methods=['post'])
+    def checkpassword(self, request, pk=None):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        if not request.user.check_password(serializer.data['password']):
+            content = {'status': _('Current password did not match records')}
+            return Response(content, status=HTTP_400_BAD_REQUEST)
+        
+        return Response({"success": _("Password matches.")}, status=HTTP_200_OK)
+    
+    
+    @detail_route(methods=['post'])
+    def pluspassword(self, request, pk=None):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        if serializer.data['password1'] != serializer.data['password2']:
+            content = {'password': _("Password confirmation doesn't match Password")}
+            return Response(content, status=HTTP_400_BAD_REQUEST)
+        
+        user = self.get_object()
+        user.set_password(serializer.data['password1'])
+        user.save(update_fields=('password',))
+        return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
+    
 """    
     def update(self, request, format=None, *args, **kwargs):
         serializer = UserSerializer(data=request.data)

@@ -1,11 +1,11 @@
 <modal-form [ngClass]="{hideDeleteSessions: !show}">
-    <form class="input-form">
+    <form class="input-form up">
         {% csrf_token %}
         <div class="modal-header">
             <h2>
                 Expire User Sessions
             </h2>
-            <a class="fa fa-times" aria-hidden="true"
+            <a class="cross fa fa-times" aria-hidden="true"
               (click)="show=false"></a>
         </div>
          <div class="input-section">

@@ -19,7 +19,10 @@ modal-form {
     }
     &.hideDeleteSessions {
         display: none;
-    } 
+    }
+    &.hideConfirmPassword {
+        display: none;
+    }  
 }                       
 
 form.input-form {
@@ -28,61 +31,25 @@ form.input-form {
     width: 620px; 
     color: $color-section-annotation-title;       
     background: $background-main-color;
-            
+    transition: box-shadow 0.3s ease-in-out 0s;
+    
+    &.up {
+        transform: translateY(-50%);
+    }        
     .modal-header {
         border-bottom: 1px solid $border-section-tab-color;
         padding: 20px;  
+        margin-bottom: 14px;
         line-height: 20px; 
         display: flex;
         justify-content: space-between;   
-        flex: 1 1 0;  
-                       
-        > h2 {
-            padding: 8.5px 0;
-            vertical-align: middle;
-            font-size: 18px;
-            font-weight: 400;
-            line-height: 1.2em;
-        }
-
-        > a {
-            font-size: 15px;
-            padding: 8.5px 0;
-            color: $border-section-tab-color;
-            text-transform: none;
-            vertical-align: middle;
-            &:hover{                   
-                cursor: pointer; cursor: hand;
-            }
-        }
-    }
-    
-    .modal-section {
-        transition: box-shadow 0.3s ease-in-out 0s;
-        padding: 0 10px 0 10px;
-        margin: 20px 0 0 0;
-        display: flex;
-        
-        > .input-box {
-            > div {
-                text-align: left;
-                margin-bottom: 5px;
-                cursor: pointer;
-                display: block;
-                font-size: 13px;
-                font-weight: normal;
-                > strong {
-                    font-weight: bold;
-                }
-            }
-        }    
-            
+        flex: 1 1 0;                        
     }
     
     .modal-footer {
         border-top: 1px solid $border-section-tab-color;
         padding: 20px;
-        margin-top: 20px;   
+        margin-top: 14px;   
         height: 32px;
         flex: 1 1 0;  
         display: flex;
