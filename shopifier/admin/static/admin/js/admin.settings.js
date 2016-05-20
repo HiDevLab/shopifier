@@ -3,7 +3,7 @@ import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import 'rxjs/Rx'
 
-import { AdminAuthService, UploadService } from './admin.auth'
+import { AdminAuthService } from './admin.auth'
 
 
 //------------------------------------------------------------------------------
@@ -24,19 +24,16 @@ export class AdminAccountProfile{
     emailChange = false;
     passwordChange = false;
     confirmPassword = false;
+    expireSessions = false;
+    showSetAdmin = false;
 
-//modal
-    confirm_password = null;
-    
     static get parameters() {
-        return [[AdminAuthService], [FormBuilder], [RouteParams], [DynamicComponentLoader], [ViewContainerRef]];
+        return [[AdminAuthService], [FormBuilder], [RouteParams] ];
     }
-    constructor(authService, formbuilder, routeparams, dcl, viewContainerRef ) {
+    constructor(authService, formbuilder, routeparams ) {
         this._routeParams = routeparams;
         this._authService = authService;
         
-        this.dcl = dcl;
-        this.viewContainerRef = viewContainerRef;
         
         this.lform = formbuilder.group({
             'first_name': ['', Validators.required],
@@ -56,20 +53,17 @@ export class AdminAccountProfile{
     
     ngOnInit() {
         let id = this._routeParams.get('id');
-        this._authService.get(`/api/admin/${id}/`)
-            .subscribe( data => this.onInit(data),
-                        err => {this.obj_errors = err; this.errors = this._authService.to_array(err.json()); }, 
+        this._authService
+            .get(`/api/admin/${id}/`)
+            .subscribe( data => { this.onInit(data); },
+                        err => {
+                                    this.obj_errors = err; 
+                                    this.errors = this._authService.to_array(err.json()); 
+                                }, 
                        ); 
-        
-        this._authService.get(`/api/admin/${id}/session/`)
-            .subscribe( data => this.sessions = data); 
-    /*    
-        this.dcl.loadNextToLocation(AdminAccountConfirmPassword,  this.viewContainerRef)
-            .then((compRef)=> {
-                this.confirm_password = compRef.instance;
-                this.confirm_password.parrent = this; 
-            });*/      
+        this.getSessions(id);
     }
+    
     
     onInit(data) {
         this.user = data;
@@ -78,14 +72,28 @@ export class AdminAccountProfile{
         this.emailChange = false;
         this.passwordChange = false;
         this.confirmPassword = false;
-        
-        this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});   
+        this.expireSessions = false;
+        this.showSetAdmin = false;
+         
+        this._authService.admin.test(4, 2, 
+            {
+                'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
+            });   
         
         this._authService.admin.headerButtons = [];
         if (!this.user.is_admin) {
-            this._authService.admin.headerButtons.push({'text': 'Make this user the account owner', 'class': 'btn mr10', 'click': this.setAdmin, 'self': this });
+            this._authService.admin.headerButtons.push(
+                {
+                    'text': 'Make this user the account owner', 
+                    'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
+                });
         }
-        this._authService.admin.headerButtons.push({'text': 'Save', 'class': 'btn btn-blue', 'click': this.onSave, 'self': this });
+        
+        this._authService.admin.headerButtons.push(
+            {
+                'text': 'Save', 'class': 'btn btn-blue', 
+                'click': this.onSave, 'self': this 
+            });
         
         for (let control in this.lform.controls) {
             if (control != 'avatar_image') {
@@ -105,7 +113,6 @@ export class AdminAccountProfile{
             }
         }
     }
-    
     
     onSave(self) {
         if (!self) 
@@ -140,9 +147,15 @@ export class AdminAccountProfile{
             );  
     }
     
-
-    setAdmin(self) {
         
+    setAdmin(self) {    
+        self.showSetAdmin = true;
+    }
+    
+    addOwnership() {
+        this._authService
+            .post({}, `/api/admin/${this.user.id}/setadmin/`)
+            .subscribe( () => this.ngOnInit());  
     }
     
     upLoadAvatar(event) {
@@ -168,6 +181,17 @@ export class AdminAccountProfile{
         this.lform.controls['avatar_image'].updateValue(null);
     }
     
+    getSessions(id) {
+        this._authService
+            .get(`/api/admin/${id}/session/`)
+            .subscribe( data => this.sessions = data);        
+    }
+    
+    deleteSessions() {
+        this._authService
+            .delete(`/api/admin/${this.user.id}/deletesession/`)
+            .subscribe( () => this.getSessions(this.user.id) );   
+    }
     
     setDate (date) {
         let d = new Date(date);
@@ -334,8 +358,7 @@ export class AdminAccount {
         
         this._authService.get('/api/current-user/')
             .subscribe( data => { this.currentUser = data; } );      
-        
-        
+              
         this.dcl.loadNextToLocation(AdminAccountInvite,  this.viewContainerRef)
             .then((compRef)=> {
                 this.invite_user = compRef.instance;
@@ -354,7 +377,6 @@ export class AdminAccount {
                 this.delete_sessions.parrent = this; 
             });    
     }
-    
         
     setDate (date) {
         let d = new Date(date);

@@ -124,11 +124,11 @@
 
 <div class="separator"></div>
 
-<div *ngIf="user" class="section-profile ">    
+<div *ngIf="user" class="section-profile">    
     <div class="section-annotation">
         <h3>Recent login history</h3>
         <p>Access from an ISP, Location, or IP address you don't recognize may indicate that the account has been compromised and should be reviewed further.</p>
-        <p><a class="btn"> Expire user's sessions </a></p>
+        <p><a class="btn" (click)="expireSessions=true"> Expire user's sessions </a></p>
    
     </div>
     
@@ -212,13 +212,13 @@
                 Please confirm your password
             </h2>
             <a class="cross fa fa-times" aria-hidden="true"
-              (click)="confirmPassword=true"></a>
+              (click)="confirmPassword=false"></a>
         </div>
         <div class="input-section">
              <div class="input-box">   
                 <label class="input">
                     Enter your current password to save changes to {% verbatim %}{{ user.first_name }}{% endverbatim %}'s account.
-                    <input type="password" [ngFormControl]="lform.controls['admin_password']" (input)="boolInvite=true">
+                    <input type="password" [ngFormControl]="lform.controls['admin_password']">
                 </label>
             </div>    
         </div>        
@@ -233,8 +233,74 @@
         </div>        
         <div class="modal-footer">
             <a class="btn mr10"
-            (click)="confirmPassword = true">Cancel</a>
+            (click)="confirmPassword=false">Cancel</a>
             <a class="btn btn-blue" (click)="onSaveAdmin()">Confirm</a>
+        </div>
+    </form>
+</modal-form>
+
+
+<modal-form *ngIf="expireSessions">
+    <form class="input-form up">
+        {% csrf_token %}
+        <div class="modal-header">
+            <h2>
+                Expire Current User's Sessions
+            </h2>
+            <a class="cross fa fa-times" aria-hidden="true"
+              (click)="expireSessions=false"></a>
+        </div>
+         <div class="input-section">
+            <div class="input-box">
+                <div>Are you sure you want to force <strong>{% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %}</strong> to re-login?</div>
+            </div>            
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="expireSessions=false">Cancel</a>
+            <a class="btn btn-blue" (click)="deleteSessions(); expireSessions=false;">Yes</a>
+        </div>
+    </form>
+</modal-form>
+
+<modal-form *ngIf="showSetAdmin">
+    <form class="input-form up">
+        {% csrf_token %}
+        <div class="modal-header">
+            <h2>
+                Confirm Account Ownership Granting
+            </h2>
+            <a class="cross fa fa-times" aria-hidden="true"
+              (click)="showSetAdmin=false"></a>
+        </div>
+         
+         <div class="input-section">
+            <div class="input-box">
+                You are granting ownership of your store to another user:
+            </div>            
+        </div>
+        
+         <div class="input-section">
+            <div class="input-box">
+                <div class="input-box">
+                    <ul class="input-box"> 
+                        <li type="disc">They will have complete control of the shop, including billing.</li>
+                        <li type="disc">Your account will be admin account.</li>
+                        <li type="disc">This action can be undone.</li>
+                    </ul>
+                </div>    
+            </div>            
+        </div>
+        <div class="input-section">
+            <div class="input-box">
+               Are you sure you want to granting ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
+            </div>                  
+        </div>
+        
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="showSetAdmin=false">Cancel</a>
+            <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, granting ownership</a>
         </div>
     </form>
 </modal-form>

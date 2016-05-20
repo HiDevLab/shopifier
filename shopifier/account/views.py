@@ -279,24 +279,30 @@ class UsersAdminViewSet(ModelViewSet):
     
     @detail_route(methods=['get'])
     def session(self, request, pk=None):
-        
         user = self.get_object()
         log = UserLog.objects.filter(user=user, visit_datetime__isnull=False)[0:5]
-        serializer = SessionsSerializer(log, many=True)
-               
-        serializer.data 
+        serializer = SessionsSerializer(log, many=True) 
         return Response(serializer.data , status=HTTP_200_OK)
     
-    @detail_route(methods=['get'])
-    def session(self, request, pk=None):
+    @detail_route(methods=['delete'])
+    def deletesession(self, request, pk=None):
         user = self.get_object()
-        log = UserLog.objects.filter(user=user, visit_datetime__isnull=False)[0:5]
-        serializer = SessionsSerializer(log, many=True)
-               
-        serializer.data 
-        return Response(serializer.data , status=HTTP_200_OK)
+        [s.delete() for s in Session.objects.all() if int(s.get_decoded().get('_auth_user_id')) == user.id]      
+        content = {'success': 'Sessions Expired.'}
+        return Response(content, status=HTTP_200_OK)
    
+    @detail_route(methods=['post'])
+    def setadmin(self, request, pk=None):
+        user = self.get_object()
+        user.is_admin = True
+        user.save(update_fields=('is_admin',))
+        content = {'success': 'Ownership granted.'}
+        return Response(content, status=HTTP_200_OK)
+    
     def update(self, request, format=None, *args, **kwargs):
+        import pdb
+        pdb.set_trace()
+
         serializer = UsersAdminSerializer2(data=request.data)
         serializer.is_valid(raise_exception=True)
         
@@ -311,6 +317,7 @@ class UsersAdminViewSet(ModelViewSet):
             user.save(update_fields=('password',))
         
         return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
+    
     
 """    
     permission_classes = (permissions.IsAuthenticated,)
@@ -371,7 +378,7 @@ class SessionsExpire(APIView):
     
     def delete(self, request, format=None):
         user = request.user
-        [s.delete() for s in Session.objects.all() if s.get_decoded().get('_auth_user_id') != user.id]      
+        [s.delete() for s in Session.objects.all() if int(s.get_decoded().get('_auth_user_id')) != user.id]      
                 
         content = {'success': 'Sessions Expired.'}
         return Response(content, status=HTTP_200_OK)
