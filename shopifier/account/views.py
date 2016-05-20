@@ -295,51 +295,22 @@ class UsersAdminViewSet(ModelViewSet):
                
         serializer.data 
         return Response(serializer.data , status=HTTP_200_OK)
-    
-    
-    @detail_route(methods=['post'])
-    def checkpassword(self, request, pk=None):
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        if not request.user.check_password(serializer.data['password']):
-            content = {'status': _('Current password did not match records')}
-            return Response(content, status=HTTP_400_BAD_REQUEST)
-        
-        return Response({"success": _("Password matches.")}, status=HTTP_200_OK)
-    
-    
-    @detail_route(methods=['post'])
-    def pluspassword(self, request, pk=None):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        if serializer.data['password1'] != serializer.data['password2']:
-            content = {'password': _("Password confirmation doesn't match Password")}
-            return Response(content, status=HTTP_400_BAD_REQUEST)
-        
-        user = self.get_object()
-        user.set_password(serializer.data['password1'])
-        user.save(update_fields=('password',))
-        return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
-    
-"""    
+   
     def update(self, request, format=None, *args, **kwargs):
-        serializer = UserSerializer(data=request.data)
-        serializer = UserSerializer(data=request.data)
+        serializer = UsersAdminSerializer2(data=request.data)
+        serializer.is_valid(raise_exception=True)
         
-        if serializer.is_valid():
-            imgstr64 = serializer.validated_data['avatar_image']
-            imgdata = base64.b64decode(imgstr64)
-            fname = '/tmp/%s.jpg'%(str(myphoto.id))
-            with open(fname,'wb') as f:
-                f.write(imgdata)
-            imgname = '%s.jpg'%(str(myphoto.id))
-            user.avatar_image.save(imgname,File(open(fname,'r')))
-            os.remove(fname)
+        if 'admin_password' in serializer.data:
+            if not request.user.check_password(serializer.data['admin_password']):
+                content = {'admin_password': _('Current password did not match records')}
+                return Response(content, status=HTTP_400_BAD_REQUEST)
         
-        return Response({}, status=HTTP_200_OK)
-"""            
+        if 'password1' in serializer.data:
+            user = self.get_object()
+            user.set_password(serializer.data['password1'])
+            user.save(update_fields=('password',))
+        
+        return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
     
 """    
     permission_classes = (permissions.IsAuthenticated,)
@@ -363,7 +334,7 @@ class UsersAdminViewSet(ModelViewSet):
         return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
     
     def retrieve(self, request, *args, **kwargs):
-        user = self.get_object()
+        user = self.get_object()&&
         if user.id <> request.user.id and request.user.is_admin==False:
             content = {'status': _('User can not view this account information')}
             return Response(content, status=HTTP_405_METHOD_NOT_ALLOWED)
@@ -378,6 +349,7 @@ class UsersAdminViewSet(ModelViewSet):
        
         return super(UsersAdminViewSet, self).list(request, *args, **kwargs)
 """    
+    
     
 class UsersStaffViewSet(mixins.RetrieveModelMixin,
                       mixins.UpdateModelMixin,

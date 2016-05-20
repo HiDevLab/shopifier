@@ -5,34 +5,27 @@ nav {
     min-width: $nav-width;
     width: $nav-width;
     height: 100%;
-    
     overflow-x: hidden;
     overflow-y: auto;
-    
     color: $color-nav;
     background: $background-nav-color;
-    
         
     .menu {
         position: relative;
-        
         width: 100%;
-        
         &:not(.selected-with-submenu) {
-                width: 100%;
-                
-                background: $background-nav-color;
-                > li.selected {
-                    background: $background-nav-selected-color;
-                }
-                
-                &.submenu {
-                    overflow-x: hidden;
-                    height: 100%;
-                    width: auto;
-                    flex: 1 1 0;
-                    position: relative;
-                }
+            width: 100%;
+            background: $background-nav-color;
+            > li.selected {
+                background: $background-nav-selected-color;
+            }
+            &.submenu {
+                overflow-x: hidden;
+                height: 100%;
+                width: auto;
+                flex: 1 1 0;
+                position: relative;
+            }
         }
         
         &.selected-with-submenu {
@@ -54,12 +47,12 @@ nav {
             }
             
             &.force-submenu-show, &:not(:hover) {
-                    background: $background-nav-icon-color;                                                     
-                    width: 56px;
-                    transition-duration: 300ms;
-                    > li.selected {
-                        background: $background-nav-icon-color;
-                    }
+                background: $background-nav-icon-color;                                                     
+                width: 56px;
+                transition-duration: 300ms;
+                > li.selected {
+                    background: $background-nav-icon-color;
+                }
             }
         }
         
@@ -78,7 +71,7 @@ nav {
                 white-space: nowrap;
                 
                 i {
-                    display: inline-block;
+                    display: inline-block;        
                     width: 26px + 15px;
                     color: $shopify-color;
                     font-size: 26px;
@@ -103,7 +96,10 @@ nav {
                 font-size: 13px;
                 text-decoration: none;
                 line-height: 40px;
-                display: block;
+                display: block;        i {
+            //color: $color-header-ref;
+        }
+
                 padding: 0 10px 0 20px;
                 color: inherit;
                 overflow: hidden;

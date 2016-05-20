@@ -2,59 +2,45 @@ header {
     background: $background-header-color;
     color: $color-header-text;
     display: flex;
-    
     height: 56px;
     padding: 0 20px 0 20px;
     font-size: 24px;
     border-bottom: 1px solid $border-section-color;
-        
+
     > h1 {
         line-height: 24px;
         padding: 14px 0 14px 0;
         flex: 1 1 0;
-        i {
-            color: $color-header-ref;
-        }
-        
+        display: flex;
+        color: $color-header-ref;
         ul {
-            display: inline-block;
-                        
+            display: flex;
             > li {
-                display: inline-block;                
                 padding: 0 0 0 10px;
-                 
                 a {
                     text-decoration: none;
                     color: $color-header-ref;
-                    
                     &:hover {
                         text-decoration: underline;
                     }
                 }        
-                
                 span {
                     text-decoration: none;
                     color: $color-header-ref;
                 }
-                
                 div { 
                     display: none;                    
                 }        
-                
                 &:last-of-type {
-                    
                     a, span {
                         display: none;
                     }
-            
                     div {
-                        vertical-align: top;
+                        color: $color-header-text;
                         display: inline-block;  
                     }
                 }
-        
             }
-            
         }  
     }
     > div {

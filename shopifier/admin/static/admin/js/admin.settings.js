@@ -8,44 +8,6 @@ import { AdminAuthService, UploadService } from './admin.auth'
 
 //------------------------------------------------------------------------------
 @Component({
-    selector      : 'confirm',
-    templateUrl: 'templates/account/confirm-password.html',
-    directives    : [FORM_DIRECTIVES],
-})
-export class AdminAccountConfirmPassword {
-    
-    show = false;
-    parrent = null;
-    passwordChange = false;
-                
-    static get parameters() {
-        return [[AdminAuthService], [FormBuilder]];
-    }
-    constructor(authService, formbuilder) {
-        this._authService = authService;
-        this.lform = formbuilder.group({
-                    'email': [''],
-                    'password':    ['',],
-                }); 
-    }
-    
-    ngOnInit(){
-        this.lform.controls['email'].updateValue(this._authService.admin.currentUser.email); 
-        this.lform.controls['password'].updateValue(null);   
-    }
-    
-    goConfirmPassword () {
-        this.show=false;
-        this._authService.post(this.lform.value, `/api/admin/${this._authService.admin.currentUser.id}/checkpassword/`)
-                .subscribe( () => this.parrent.onSaveAdmin(this.parrent),
-                            err => {this.parrent.obj_errors = err.json(); this.parrent.errors = this._authService.to_array(err.json()); }, 
-                           );                                        
-    }
-}
-
-
-//------------------------------------------------------------------------------
-@Component({
     selector      : 'profile',
     templateUrl: 'templates/account/profile.html',
     directives    : [FORM_DIRECTIVES],
@@ -61,6 +23,7 @@ export class AdminAccountProfile{
     formChange = false;
     emailChange = false;
     passwordChange = false;
+    confirmPassword = false;
 
 //modal
     confirm_password = null;
@@ -84,6 +47,7 @@ export class AdminAccountProfile{
             'avatar_image': [''],
             'email': [''],
             'is_admin': [''],
+            'admin_password': [''],
             'password1': [''],
             'password2': [''],
         }); 
@@ -99,12 +63,12 @@ export class AdminAccountProfile{
         
         this._authService.get(`/api/admin/${id}/session/`)
             .subscribe( data => this.sessions = data); 
-        
+    /*    
         this.dcl.loadNextToLocation(AdminAccountConfirmPassword,  this.viewContainerRef)
             .then((compRef)=> {
                 this.confirm_password = compRef.instance;
                 this.confirm_password.parrent = this; 
-            });      
+            });*/      
     }
     
     onInit(data) {
@@ -113,6 +77,7 @@ export class AdminAccountProfile{
         this.formChange = false;
         this.emailChange = false;
         this.passwordChange = false;
+        this.confirmPassword = false;
         
         this._authService.admin.test(4, 2, {'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`});   
         
@@ -123,42 +88,56 @@ export class AdminAccountProfile{
         this._authService.admin.headerButtons.push({'text': 'Save', 'class': 'btn btn-blue', 'click': this.onSave, 'self': this });
         
         for (let control in this.lform.controls) {
-            if (control != 'avatar_image')
+            if (control != 'avatar_image') {
+                this.lform.controls[control].updateValue(undefined);
                 this.lform.controls[control].updateValue(this.user[control], true, true);
+            }
         }
         
     }
+    
+    cls() {
+        this.confirmPassword = false;
+        for (let control in this.lform.controls) {
+            if (control != 'avatar_image') {
+                this.lform.controls[control].updateValue(undefined);
+                this.lform.controls[control].updateValue(this.user[control], true, true);
+            }
+        }
+    }
+    
     
     onSave(self) {
         if (!self) 
             self = this;
                
-        if (self.lform.controls['email'].value != self.user.email) { 
-            self.confirm_password.passwordChange = self.passwordChange; 
-            self.confirm_password.show = true;        
-        }
-        else {
-            self.onSaveAdmin(self);
-        }
+        if  (
+                self.lform.controls['email'].value != self.user.email || 
+                self.lform.controls['password1'].value  || 
+                self.lform.controls['password2'].value 
+            ) { 
+            
+            self.lform.controls['admin_password'].updateValue('');
+            self.confirmPassword = true;
+        }        
+        else 
+            self.onSaveAdmin();
     }
     
-    onSaveAdmin(self) { // admin permissions
+    onSaveAdmin() { // admin permissions
      
-        if (self.new_avatar)
-            self.lform.controls['avatar_image'].updateValue(self.new_avatar);   
+        if (this.new_avatar)
+            this.lform.controls['avatar_image'].updateValue(this.new_avatar);   
         
-        if (self.passwordChange) {
-            self._authService.put(self.lform.value, `/api/admin/${self.user.id}/pluspassword/`)
-                .subscribe( data => self.onInit(data),
-                            err => {self.obj_errors = err.json(); self.errors = self._authService.to_array(err.json()); }, 
-                            );  
-        }
-        else {    
-            self._authService.put(self.lform.value, `/api/admin/${self.user.id}/`)
-                .subscribe( data => self.onInit(data),
-                            err => {self.obj_errors = err.json(); self.errors = self._authService.to_array(err.json()); }, 
-                            );  
-        }
+        this._authService
+            .put(this.lform.value, `/api/admin/${this.user.id}/`)
+            .subscribe( data => this.onInit(data),
+                        err => { 
+                                this.obj_errors = err.json(); 
+                                this.errors = this._authService.to_array(err.json()); 
+                                this.cls();
+                        }, 
+            );  
     }
     
 

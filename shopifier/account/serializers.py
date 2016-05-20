@@ -5,6 +5,7 @@ from django.contrib.auth import password_validation
 from django.contrib.gis.geoip2 import GeoIP2
 from django.db.models import Max
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 
@@ -83,8 +84,6 @@ class UsersAdminSerializer(serializers.ModelSerializer):
     date_join = serializers.DateTimeField(read_only=True)
     avatar = serializers.SerializerMethodField()
     visit_datetime = serializers.SerializerMethodField()
-    password1 = serializers.CharField(max_length=128, allow_null=True )
-    password2 = serializers.CharField(max_length=128, allow_null=True )
     
     class Meta:
         model = User
@@ -99,8 +98,26 @@ class UsersAdminSerializer(serializers.ModelSerializer):
         m = UserLog.objects.filter(user=obj).aggregate(Max('visit_datetime'))
         return m['visit_datetime__max']
 
+class UsersAdminSerializer2(serializers.Serializer):
+    
+    admin_password = serializers.CharField(required = False)
+    password1 = serializers.CharField(min_length=6, required = False)
+    password2 = serializers.CharField(min_length=6, required = False)
+    
+ 
+    def validate(self, data):
+        err = {'password1': _("Password confirmation doesn't match Password"),
+               'password2': _("Password confirmation doesn't match Password")}
         
+        if 'password1' in data or 'password2' in data:
+            if not 'password1' in data and 'password2' in data:
+                raise serializers.ValidationError(err)
+
+            if data['password1'] != data['password2']:
+                raise serializers.ValidationError(err)
             
+        return super(UsersAdminSerializer2, self).validate(data)
+
         
 class UsersStaffSerializer(serializers.ModelSerializer):
     
