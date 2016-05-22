@@ -1,64 +1,19 @@
 import { Component, Injectable, Injector } from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import { Router, RouteParams, CanActivate, ROUTER_DIRECTIVES } from 'angular2/router'
-import { Http, Headers, XMLHttpRequest } from 'angular2/http'
+import { Http } from 'angular2/http'
 import 'rxjs/Rx'
-import {Observable} from 'rxjs/Rx';
-
-
-//------------------------------------------------------------------------------
-@Injectable()
-export class UploadService {
-  
-  constructor () {
-    this.progress$ = Observable.create(observer => {
-                        this.progressObserver = observer
-                    }).share();
-    }
-  
-    makeFileRequest (url, params, files) {
-        return Observable.create(observer => {
-            let formData = new FormData();
-            let xhr = new XMLHttpRequest();
-    
-            for (let i = 0; i < files.length; i++) {
-                formData.append("uploads[]", files[i], files[i].name);
-            }
-    
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        observer.next(JSON.parse(xhr.response));
-                        observer.complete();
-                    } else {
-                        observer.error(xhr.response);
-                    }
-                }
-            };
-    
-            xhr.upload.onprogress = (event) => {
-                this.progress = Math.round(event.loaded / event.total * 100);
-    
-                this.progressObserver.next(this.progress);
-            };
-    
-            xhr.open('POST', url, true);
-            xhr.send(formData);
-        });
-    }
-}
 
 
 //------------------------------------------------------------------------------
 @Injectable()
 export class AdminAuthService {
     
-    //currentUser = null;    
     message = '';
     errors = '';
     
     //component instances
-    admin = null; 
+    admin = undefined; 
     
     static get parameters() {
         return [[Http], [Router]];
@@ -67,41 +22,73 @@ export class AdminAuthService {
     constructor(http, router) {
         this.http = http;
         this.router = router;
-        this.headers = new Headers({'Accept': 'application/json; charset=utf-8',
-                'Content-Type': 'application/json; charset=utf-8',
-                'X-CSRFToken': this.getCookie('csrftoken')});
     }
     
-    getCookie(name) {
-        let value = "; " + document.cookie;
-        let parts = value.split("; " + name + "=");
-        if (parts.length == 2) 
-            return parts.pop().split(";").shift();
-    }
-    
+/*       
     post(user, url) {
-        let body = JSON.stringify(user);
-        return this.http.post(url, body,  {headers: this.headers})
-                        .map(res => res.json());
+        //let body = JSON.stringify(user);
+        return this.http.post(url, user);
+                        //.map(res => res.json());
     }
     
     
     put(user, url) {
-        let body = JSON.stringify(user);
-        return this.http.put(url, body,  {headers: this.headers})
-                        .map(res => res.json());
+        //let body = JSON.stringify(user);
+        return this.http.put(url, user);
+                        //.map(res => res.json());
     }
     
 
     get(url) {
-        return this.http.get(url, {headers: this.headers})
-                        .map(res => res.json());
+        return this.http.get(url);
+                        //.map(res => res.json());
     }
      
     delete(url) {
-        return this.http.delete(url, {headers: this.headers});
+        return this.http.delete(url);
     }
-       
+*/    
+    getCurrentUser() {
+        if (this._currentUser) {
+            return new Promise((resolve, reject) => resolve(this._currentUser));
+        }
+        
+        this._userPromise = this._userPromise || this.http.get('/api/current-user/')
+            //.map(res => res.json())
+            .toPromise()
+            .then(data => this._currentUser = data);
+        return this._userPromise;
+    }
+    
+    logOut() {
+        return this.http
+                .get('/api/logout/')
+                .toPromise()
+                .then(() => { 
+                                this._currentUser = undefined; 
+                                this._userPromise = undefined;  
+                        }, 
+                        () => { 
+                                this._currentUser = undefined; 
+                                this._userPromise = undefined;  
+                        },);
+    }
+    
+    logIn(data) {
+        return this.http
+                .post('/api/login/', data)
+                .toPromise()
+                .then(() => { 
+                                this._currentUser = undefined; 
+                                this._userPromise = undefined;  
+                        }, 
+                        () => { 
+                                this._currentUser = undefined; 
+                                this._userPromise = undefined;  
+                        });
+    }
+    
+
     emailValidator(control) {
         if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
@@ -126,6 +113,7 @@ export class AdminAuthService {
 
 
 //------------------------------------------------------------------------------
+/*
 export function getCurrentUser(_found, _re_direct) {
     let _authService = window.injector.get(AdminAuthService);
     let router = window.injector.get(Router);
@@ -139,7 +127,27 @@ export function getCurrentUser(_found, _re_direct) {
             });
     });
 }
+*/
 
+export function getCurrentUser(_found, _re_direct) {
+    let _authService = window.injector.get(AdminAuthService);
+    let router = window.injector.get(Router);
+    return _authService.getCurrentUser()
+        .then(() => 
+        {
+            let _u = false;
+            let _ret = _found ? !_u : _u;
+            if(!_ret) { router.navigate([_re_direct]); }
+            return _ret;
+        },
+        ()=>
+        {
+            let _u = true;
+            let _ret = _found ? !_u : _u;
+            if(!_ret) { router.navigate([_re_direct]); }
+            return _ret;
+        });        
+}
 
 //------------------------------------------------------------------------------
 @Component({
@@ -159,8 +167,13 @@ export class AdminAuthLogout {
     }
    
     ngOnInit() {
+        this._authService.logOut()
+            .then( () => this._router.navigate(['/Login']) )
+            
+    /*
         this._authService.get('/api/logout/')
                          .subscribe( data => this._router.navigate(['Login']) );                                
+    */
     }
 
 }
@@ -200,12 +213,17 @@ export class AdminAuthLogin {
             this.lform.controls['email'].updateValue('', true, true);
         }
         else {
+            this._authService
+                .logIn(this.lform.value)
+                .then(  () => this._router.navigate(['/Admin/Home']),
+                        err => this.errors = err.json() );
+            /*
             this._authService.post(this.lform.value, '/api/login/')
-                    .subscribe( data => { this._router.navigate(['/Admin/Home']);},
-                                err => { 
-                                            this.errors = err.json(); 
-                                            //this._authService.currentUser=null;
-                                        } );                                
+                    .subscribe( () => {},
+                                err => { this.errors = err.json();}, 
+                                () => { this._router.navigate(['/Admin/Home']);}
+                            );
+            */                                
         }
     }
 }
@@ -224,10 +242,11 @@ export class AdminAuthRecover {
     currentUser = ''
     
     static get parameters() {
-        return [[AdminAuthService], [FormBuilder], [Router]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router]];
     }
     
-    constructor(authService, formbuilder, router) {
+    constructor(http, authService, formbuilder, router) {
+        this.http = http;
         this._authService = authService;
         this._router = router;
         this.lform = formbuilder.group({
@@ -242,11 +261,8 @@ export class AdminAuthRecover {
             this.lform.controls['email'].updateValue('', true, true);            
         }
         else {
-            this._authService.post(this.lform.value,'/api/recover/' )
-                    .subscribe( data => { 
-                                            //this._authService.currentUser = data; 
-                                            this._router.navigate(['Login']);
-                                        },
+            this.http.post('/api/recover/', this.lform.value )
+                    .subscribe( () =>  this._router.navigate(['Login']),
                                 err => {this.errors = err.json();});
         }
     }
@@ -269,10 +285,11 @@ export class AdminAuthReset {
     currentUser = ''
     
     static get parameters() {
-        return [[AdminAuthService], [FormBuilder], [Router], [RouteParams]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], [RouteParams]];
     }
     
-    constructor(authService, formbuilder, router, routeparams) {
+    constructor(http, authService, formbuilder, router, routeparams) {
+        this.http = http;
         this._authService = authService;
         this._router = router;
         this._routeParams = routeparams;
@@ -288,14 +305,9 @@ export class AdminAuthReset {
           this.pk = this._routeParams.get('pk');
           this.token = this._routeParams.get('token');
           let user = {'pk': this.pk, 'token': this.token };
-          this._authService.post(user, '/api/check_token2/')
-                .subscribe( data => {
-                                     //   this._authService.currentUser = data;
-                                    },
-                            err => {
-                                        //this._authService.currentUser=null; 
-                                        this._router.navigate(['Recover']);
-                                    });          
+          this.http.post('/api/check_token2/', user)
+                .subscribe( () => {},
+                            err => this._router.navigate(['Recover']));          
     }
     
     goReset() {
@@ -322,12 +334,9 @@ export class AdminAuthReset {
                             'password': this.lform.controls['password1'].value 
                         };       
             
-            this._authService.post(user, '/api/reset/')
-                    .subscribe( data => { this._router.navigate(['/Admin/Home']);},
-                                err => {
-                                            this.errors = err.json(); 
-                                            //this._authService.currentUser=null;
-                                        } );
+            this.http.post('/api/reset/', user)
+                    .subscribe( () => { this._router.navigate(['/Admin/Home']);},
+                                err => { this.errors = err.json();} );
         }
     }   
 }

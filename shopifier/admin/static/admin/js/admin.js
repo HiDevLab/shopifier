@@ -70,8 +70,11 @@ export class Admin {
     ngOnInit() {
         //this._router.navigate(['Home']);
         this._authService.admin = this;    
+        this._authService.getCurrentUser().then(data => this.currentUser = data );
+        /*
         this._authService.get('/api/current-user/')
-            .subscribe( data => {this.currentUser = data; this._authService.currentUser=data;} );               
+            .subscribe( data => {this.currentUser = data; this._authService.currentUser=data;} );
+        */               
     }
  
     onSelect(nav) {

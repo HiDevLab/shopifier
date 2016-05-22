@@ -1,6 +1,7 @@
 import { Component, DynamicComponentLoader, ViewContainerRef } from 'angular2/core';
 import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
+import { Http } from 'angular2/http'
 import 'rxjs/Rx'
 
 import { AdminAuthService } from './admin.auth'
@@ -11,12 +12,12 @@ import { AdminAuthService } from './admin.auth'
     selector      : 'profile',
     templateUrl: 'templates/account/profile.html',
     directives    : [FORM_DIRECTIVES],
-    providers: [ UploadService ]
 })
 export class AdminAccountProfile{
     errors = [];
     obj_errors = {};
     user = null;
+    currentUser = null;
     sessions = [];
     new_avatar = null;
     
@@ -28,9 +29,10 @@ export class AdminAccountProfile{
     showSetAdmin = false;
 
     static get parameters() {
-        return [[AdminAuthService], [FormBuilder], [RouteParams] ];
+        return [[Http], [AdminAuthService], [FormBuilder], [RouteParams] ];
     }
-    constructor(authService, formbuilder, routeparams ) {
+    constructor(http, authService, formbuilder, routeparams ) {
+        this.http = http;
         this._routeParams = routeparams;
         this._authService = authService;
         
@@ -53,7 +55,7 @@ export class AdminAccountProfile{
     
     ngOnInit() {
         let id = this._routeParams.get('id');
-        this._authService
+        this.http
             .get(`/api/admin/${id}/`)
             .subscribe( data => { this.onInit(data); },
                         err => {
@@ -62,6 +64,8 @@ export class AdminAccountProfile{
                                 }, 
                        ); 
         this.getSessions(id);
+        this._authService.getCurrentUser().then(data => this.currentUser = data );
+         
     }
     
     
@@ -101,7 +105,6 @@ export class AdminAccountProfile{
                 this.lform.controls[control].updateValue(this.user[control], true, true);
             }
         }
-        
     }
     
     cls() {
@@ -136,8 +139,8 @@ export class AdminAccountProfile{
         if (this.new_avatar)
             this.lform.controls['avatar_image'].updateValue(this.new_avatar);   
         
-        this._authService
-            .put(this.lform.value, `/api/admin/${this.user.id}/`)
+        this.http
+            .put(`/api/admin/${this.user.id}/`, this.lform.value )
             .subscribe( data => this.onInit(data),
                         err => { 
                                 this.obj_errors = err.json(); 
@@ -153,8 +156,8 @@ export class AdminAccountProfile{
     }
     
     addOwnership() {
-        this._authService
-            .post({}, `/api/admin/${this.user.id}/setadmin/`)
+        this.http
+            .post(`/api/admin/${this.user.id}/setadmin/`, {} )
             .subscribe( () => this.ngOnInit());  
     }
     
@@ -182,13 +185,13 @@ export class AdminAccountProfile{
     }
     
     getSessions(id) {
-        this._authService
+        this.http
             .get(`/api/admin/${id}/session/`)
             .subscribe( data => this.sessions = data);        
     }
     
     deleteSessions() {
-        this._authService
+        this.http
             .delete(`/api/admin/${this.user.id}/deletesession/`)
             .subscribe( () => this.getSessions(this.user.id) );   
     }
@@ -214,14 +217,14 @@ export class AdminAccountDeleteSessions {
     obj_errors = {};
     
     static get parameters() {
-        return [[AdminAuthService]];
+        return [[Http]];
     }
-    constructor(authService) {
-        this._authService = authService;
+    constructor(http) {
+        this.http = http;
     }
     
     goDeleteSessions() {
-        this._authService.delete('/api/sessions-expire/')
+        this.http.delete('/api/sessions-expire/')
                 .subscribe( () => {},
                             () => {}, 
                             () =>  {this.show=false;} 
@@ -244,14 +247,14 @@ export class AdminAccountDelete {
     obj_errors = {};
     
     static get parameters() {
-        return [[AdminAuthService]];
+        return [[Http]];
     }
-    constructor(authService) {
-        this._authService = authService;
+    constructor(http) {
+        this.http = http;
     }
     
     goDelete() {
-        this._authService.delete(`/api/admin/${this.user.id}/`)
+        this.http.delete(`/api/admin/${this.user.id}/`)
                 .subscribe( () => { this.show=false;},
                             () => {}, 
                             () => this.parrent.userRefresh() 
@@ -275,10 +278,10 @@ export class AdminAccountInvite {
     boolInvite = false;
     
     static get parameters() {
-        return [[AdminAuthService], [FormBuilder]];
+        return [[Http], [AdminAuthService], [FormBuilder]];
     }
-    constructor(authService, formbuilder) {
-        
+    constructor(http, authService, formbuilder) {
+        this.http = http;
         this._authService = authService;
         this.lform = formbuilder.group({
                     'email':    ['', this._authService.emailValidator],
@@ -296,7 +299,7 @@ export class AdminAccountInvite {
             return;
         }
         */
-        this._authService.post(this.lform.value, '/api/user-invite/')
+        this.http.post('/api/user-invite/', this.lform.value)
                 .subscribe( data => { this.show=false;},
                             err => { this.obj_errors = err.json(); this.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
@@ -340,10 +343,11 @@ export class AdminAccount {
     delete_sessions = null;
         
     static get parameters() {
-        return [[AdminAuthService], [FormBuilder], [Router], [DynamicComponentLoader], [ViewContainerRef]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], [DynamicComponentLoader], [ViewContainerRef]];
     }
      
-    constructor(authService, formbuilder, router, dcl, viewContainerRef) {
+    constructor(http, authService, formbuilder, router, dcl, viewContainerRef) {
+        this.http = http;
         this._router = router;
         this.dcl = dcl;
         this.viewContainerRef = viewContainerRef;
@@ -353,11 +357,15 @@ export class AdminAccount {
     
     ngOnInit() {
         
-        this._authService.get('/api/admin/')
+        this.http.get('/api/admin/')
             .subscribe( data => this.users = data ); 
         
+        this._authService.getCurrentUser().then(data => this.currentUser = data );
+        
+        /*
         this._authService.get('/api/current-user/')
             .subscribe( data => { this.currentUser = data; } );      
+        */
               
         this.dcl.loadNextToLocation(AdminAccountInvite,  this.viewContainerRef)
             .then((compRef)=> {
@@ -403,7 +411,7 @@ export class AdminAccount {
     }
     
     userRefresh() {
-       this._authService.get('/api/admin/')
+       this.http.get('/api/admin/')
             .subscribe( data => this.users = data );  
     }
 }

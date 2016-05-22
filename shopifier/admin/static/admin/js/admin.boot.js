@@ -1,11 +1,13 @@
 import { bootstrap }    from 'angular2/platform/browser';
+
 import { ROUTER_BINDINGS, RouteConfig, Router, RouterOutlet, RouterLink,  ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
-import { HTTP_PROVIDERS } from 'angular2/http';
+import { HTTP_PROVIDERS, ConnectionBackend, Http, Headers, BaseRequestOptions, RequestOptions, XHRBackend} from 'angular2/http';
 import { FORM_PROVIDERS, COMMON_DIRECTIVES } from 'angular2/common';
-import { Component } from 'angular2/core';
+import { Component, provide, Injectable, Injector } from 'angular2/core';
+import 'rxjs/Rx'
 
 import { AdminAuthService, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset } from './admin.auth'
-import { Admin } from './admin'
+import { Admin  } from './admin'
 
 @Component({
   selector: "body",
@@ -46,26 +48,74 @@ import { Admin } from './admin'
     
 ])
 export class AdminRouter {
-    
-    static get parameters() {
-        return [[Router]];
-    }
-
-    constructor(router) {
-        this._router = router;
-    }
-/*
-    ngOnInit() {
-        this._router.navigate(['Login']);
-    }
-*/
 }
+
 import {enableProdMode} from 'angular2/core';
 enableProdMode();
+
+
+@Injectable()
+export class DefaultRequestOptions extends BaseRequestOptions{
+    
+    constructor(http, router) {
+        super();
+        this.headers = new Headers({'Accept': 'application/json; charset=utf-8',
+                'Content-Type': 'application/json; charset=utf-8',
+                'X-CSRFToken': this.getCookie('csrftoken')});
+    }
+    
+    getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+        if (parts.length == 2) 
+            return parts.pop().split(";").shift();
+    }
+    
+}
+
+@Injectable()
+export class SuperHttp extends Http {
+  
+    static get parameters() {
+            return [[ConnectionBackend], [RequestOptions]];
+    }
+    constructor(backend, defaultOptions) {
+        super(backend, defaultOptions);
+    }
+
+    request(url, options){
+        return super.request(url, options);        
+    }
+
+    post(url, data) {
+        let body = JSON.stringify(data);
+        return super.post(url, body).map(res => res.json());
+    }
+    
+    put(url, data) {
+        let body = JSON.stringify(data);
+        return super.put(url, body).map(res => res.json());
+    }
+    
+
+    get(url) {
+        return super.get(url).map(res => res.json());
+    }
+     
+    delete(url) {
+        return super.delete(url);
+    }
+}
+
 
 bootstrap(AdminRouter, [
     ROUTER_PROVIDERS,
     HTTP_PROVIDERS,
+    provide( RequestOptions, { useClass: DefaultRequestOptions }),
+    provide(Http, {
+        useFactory: (backend, defaultOptions) => new SuperHttp(backend, defaultOptions),
+        deps: [XHRBackend, RequestOptions]
+    }),
     FORM_PROVIDERS,
     AdminAuthService
 ]).then((appRef) => window.injector = appRef.injector);

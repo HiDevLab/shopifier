@@ -181,7 +181,9 @@ class  CurrentUserView(APIView):
         
     def get(self, request, format=None):
         if request.user.is_anonymous():
-            return Response({'id': 0}, status=HTTP_200_OK)
+            content = {'detail': 'user is anonymous'}
+            return Response(content, status=HTTP_401_UNAUTHORIZED)
+        
         else:
             serializer = UserSerializer(request.user)
             return Response(serializer.data, status=HTTP_200_OK)
@@ -300,9 +302,7 @@ class UsersAdminViewSet(ModelViewSet):
         return Response(content, status=HTTP_200_OK)
     
     def update(self, request, format=None, *args, **kwargs):
-        import pdb
-        pdb.set_trace()
-
+        
         serializer = UsersAdminSerializer2(data=request.data)
         serializer.is_valid(raise_exception=True)
         
