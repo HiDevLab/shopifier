@@ -79,7 +79,7 @@ class UsersAdminSerializer(serializers.ModelSerializer):
     
     avatar_image = Base64ImageField(required=False, allow_null=True )
     is_admin = serializers.BooleanField(read_only=False)
-    is_active = serializers.BooleanField(read_only=True)
+    is_active = serializers.BooleanField(read_only=False)
     is_staff = serializers.BooleanField(read_only=True)
     date_join = serializers.DateTimeField(read_only=True)
     avatar = serializers.SerializerMethodField()

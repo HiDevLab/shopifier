@@ -1,10 +1,10 @@
 import { bootstrap }    from 'angular2/platform/browser';
 
-import { ROUTER_BINDINGS, RouteConfig, Router, RouterOutlet, RouterLink,  ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
+import { ROUTER_BINDINGS, RouteConfig, Router, RouterOutlet, RouterLink, ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
 import { HTTP_PROVIDERS, ConnectionBackend, Http, Headers, BaseRequestOptions, RequestOptions, XHRBackend} from 'angular2/http';
 import { FORM_PROVIDERS, COMMON_DIRECTIVES } from 'angular2/common';
 import { Component, provide, Injectable, Injector } from 'angular2/core';
-import 'rxjs/Rx'
+import 'rxjs/Rx';
 
 import { AdminAuthService, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset } from './admin.auth'
 import { Admin  } from './admin'
@@ -84,7 +84,7 @@ export class SuperHttp extends Http {
     }
 
     request(url, options){
-        return super.request(url, options);        
+        return super.request(url, options);
     }
 
     post(url, data) {
@@ -97,6 +97,10 @@ export class SuperHttp extends Http {
         return super.put(url, body).map(res => res.json());
     }
     
+    patch(url, data) {
+        let body = JSON.stringify(data);
+        return super.patch(url, body).map(res => res.json());
+    }
 
     get(url) {
         return super.get(url).map(res => res.json());

@@ -17,7 +17,6 @@ export class AdminAccountProfile{
     errors = [];
     obj_errors = {};
     user = null;
-    currentUser = null;
     sessions = [];
     new_avatar = null;
     
@@ -27,6 +26,11 @@ export class AdminAccountProfile{
     confirmPassword = false;
     expireSessions = false;
     showSetAdmin = false;
+    showCreateAccount = false;
+    canDeactivate = undefined;
+    
+    isUser = false;    //currentUser is this user
+    isAdmin = false;    //currentUser is admin
 
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], [RouteParams] ];
@@ -67,10 +71,14 @@ export class AdminAccountProfile{
         this._authService.getCurrentUser().then(data => this.currentUser = data );
          
     }
-    
-    
+
     onInit(data) {
         this.user = data;
+        this.errors = [];
+        this.obj_errors = {};
+        
+        this.showCreateAccount = !this.user.is_active;
+        
         this.new_avatar = null;
         this.formChange = false;
         this.emailChange = false;
@@ -78,21 +86,34 @@ export class AdminAccountProfile{
         this.confirmPassword = false;
         this.expireSessions = false;
         this.showSetAdmin = false;
+        this.canDeactivate = undefined;
+        
+        this.isUser = this.user.id == this._authService._currentUser.id;
+        this.isAdmin = this._authService._currentUser.is_admin;
          
         this._authService.admin.test(4, 2, 
             {
                 'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
-            });   
-        
+            });
+
         this._authService.admin.headerButtons = [];
-        if (!this.user.is_admin) {
-            this._authService.admin.headerButtons.push(
-                {
-                    'text': 'Make this user the account owner', 
-                    'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
-                });
+        if (this.isAdmin && !this.isUser) {
+            if (!this.user.is_admin) {
+                this._authService.admin.headerButtons.push(
+                    {
+                        'text': 'Make this user the account owner', 
+                        'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
+                    });
+            }
+            else {
+                this._authService.admin.headerButtons.push(
+                    {
+                        'text': 'Take away this user the account owner rights', 
+                        'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
+                    });
+            }
         }
-        
+
         this._authService.admin.headerButtons.push(
             {
                 'text': 'Save', 'class': 'btn btn-blue', 
@@ -117,6 +138,17 @@ export class AdminAccountProfile{
         }
     }
     
+
+    routerCanDeactivate() {
+        if (!this.formChange)
+            return true;
+        this.close  = false;
+        this.canDeactivate = new Promise((resolve) => {
+            this.unloadPage = resolve;
+        });
+        return this.canDeactivate;
+    }
+
     onSave(self) {
         if (!self) 
             self = this;
@@ -149,23 +181,29 @@ export class AdminAccountProfile{
                         }, 
             );  
     }
-    
-        
-    setAdmin(self) {    
+
+    setAdmin(self) {
         self.showSetAdmin = true;
     }
-    
+
     addOwnership() {
+        this.user.is_admin = !this.user.is_admin;
         this.http
-            .post(`/api/admin/${this.user.id}/setadmin/`, {} )
-            .subscribe( () => this.ngOnInit());  
+            .patch(`/api/admin/${this.user.id}/`, {'is_admin': this.user.is_admin} )
+            .subscribe( data => this.onInit(data),
+                        err => { 
+                                this.obj_errors = err.json(); 
+                                this.errors = this._authService.to_array(err.json());
+                                this.cls();
+                        }, 
+            );  
     }
-    
+
     upLoadAvatar(event) {
         let files = event.target.files;
         if (files && files[0]) {
             let reader = new FileReader();
-            let self = this;            
+            let self = this;
             
             reader.onload = (event) => {
                 self.new_avatar =  event.target.result;
@@ -258,8 +296,8 @@ export class AdminAccountDelete {
                 .subscribe( () => { this.show=false;},
                             () => {}, 
                             () => this.parrent.userRefresh() 
-                 );                                
-    }   
+                 );
+    }
 }
 
 

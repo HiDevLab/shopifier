@@ -20,7 +20,10 @@ modal-form {
     &.hideDeleteSessions {
         display: none;
     }
-}                       
+    &.notransparent{
+        background: $shopify-background;
+    }
+}
 
 form.input-form {
     position: relative;
@@ -32,7 +35,12 @@ form.input-form {
     
     &.up {
         transform: translateY(-50%);
-    }        
+    }
+
+    &.minus40 {
+        width: 580px;
+    }
+
     .modal-header {
         border-bottom: 1px solid $border-section-tab-color;
         padding: 20px;  

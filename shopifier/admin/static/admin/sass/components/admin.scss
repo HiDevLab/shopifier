@@ -6,7 +6,7 @@ body {
     background-color: #ebeef0;
     color: #444444;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 13px;
+    font-size: $shopify-font-size;
     line-height: 18px;
 }
 
@@ -18,7 +18,7 @@ admin {
     background-color: #ebeef0;
     color: #444444;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 13px;
+    font-size: $shopify-font-size;
     line-height: 18px;
     position: relative;
 }

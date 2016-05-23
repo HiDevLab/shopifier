@@ -82,17 +82,17 @@ export class Admin {
         this.forceSubmenuShow=true;
                
         if (nav.submenu.length > 0) {
-            this.selectedSubNav = nav.submenu[0];            
+            this.selectedSubNav = nav.submenu[0];
             this.onSelectSubNav(this.selectedSubNav);
         }
         else {
             this.selectedSubNav = null;
             this.headerNav =[this.selectedNav];
              if (nav.url != '#')
-                this._router.navigate([nav.url])        
+                this._router.navigate([nav.url]);
         }
                 
-        setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this);   
+        setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this); 
     }
     
     onSelectSubNav(subnav) {

@@ -272,8 +272,6 @@ class UserPasswordRecoverView(APIView):
         
         return Response({}, status=HTTP_200_OK)
 
-
-
 class UsersAdminViewSet(ModelViewSet):
     permission_classes = (permissions.IsAdminUser,)
     queryset = User.objects.all().order_by('id')
@@ -289,18 +287,10 @@ class UsersAdminViewSet(ModelViewSet):
     @detail_route(methods=['delete'])
     def deletesession(self, request, pk=None):
         user = self.get_object()
-        [s.delete() for s in Session.objects.all() if int(s.get_decoded().get('_auth_user_id')) == user.id]      
+        [s.delete() for s in Session.objects.all() if int(s.get_decoded().get('_auth_user_id')) == user.id]
         content = {'success': 'Sessions Expired.'}
         return Response(content, status=HTTP_200_OK)
-   
-    @detail_route(methods=['post'])
-    def setadmin(self, request, pk=None):
-        user = self.get_object()
-        user.is_admin = True
-        user.save(update_fields=('is_admin',))
-        content = {'success': 'Ownership granted.'}
-        return Response(content, status=HTTP_200_OK)
-    
+
     def update(self, request, format=None, *args, **kwargs):
         
         serializer = UsersAdminSerializer2(data=request.data)
@@ -315,10 +305,9 @@ class UsersAdminViewSet(ModelViewSet):
             user = self.get_object()
             user.set_password(serializer.data['password1'])
             user.save(update_fields=('password',))
-        
+
         return super(UsersAdminViewSet, self).update(request, *args, **kwargs)
-    
-    
+
 """    
     permission_classes = (permissions.IsAuthenticated,)
        

@@ -7,9 +7,9 @@
                 <ul>
                     <li *ngFor="let error of errors">
                         {% verbatim %}{{ error }}{% endverbatim %}
-                    </li>                        
+                    </li>
                 </ul>
-            </div>                
+            </div>
         </div>
     </div>    
 </div>
@@ -19,8 +19,36 @@
         <h3>Account information</h3>
         <p>All information relevant to the account.</p>
     </div>
-     
-    <div class="section-content">
+    <div *ngIf="!isAdmin && !isUser"class="section-content">
+        <form>
+            <div class="input-section">
+                <div class="input-box">
+                    <h3> <strong>Name</strong></h3>
+                    <p class="p5"></p>
+                    <h3>{% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</h3>
+                    <p></p>
+                    <h3> <strong>Email address</strong></h3>
+                    <p class="p5"></p>
+                    <h3>{% verbatim %}{{user.email}}{% endverbatim %}</h3>
+                    <p></p>
+                    <h3> <strong>Phone</strong></h3>
+                    <p class="p5"></p>
+                    <h3>{% verbatim %}{{user.phone}}{% endverbatim %}</h3>
+                    <p></p>
+                    <h3> <strong>Personal website address</strong></h3>
+                    <p class="p5"></p>
+                    <h3>{% verbatim %}{{user.www_site}}{% endverbatim %}</h3>
+                    <p></p>
+                    <h3> <strong>Bio</strong></h3>
+                    <p class="p5"></p>
+                    <h3>{% verbatim %}{{user.bio}}{% endverbatim %}</h3>
+                    <p></p>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div *ngIf="isAdmin || isUser"class="section-content">
         <form>
         {% csrf_token %}
             <div class="input-section">
@@ -122,9 +150,9 @@
     </div>
 </div>
 
-<div class="separator"></div>
+<div *ngIf="isAdmin || isUser" class="separator"></div>
 
-<div *ngIf="user" class="section-profile">    
+<div *ngIf="user && isAdmin" class="section-profile">    
     <div class="section-annotation">
         <h3>Recent login history</h3>
         <p>Access from an ISP, Location, or IP address you don't recognize may indicate that the account has been compromised and should be reviewed further.</p>
@@ -149,7 +177,7 @@
                         <tbody *ngIf="sessions">
                             <tr  class="wide" *ngFor="let session of sessions">
                                  <td>
-                                    {% verbatim %}{{ setDate(session.visit_datetime) | date:'EEEE at jm' }}{% endverbatim %}     
+                                    {% verbatim %}{{ setDate(session.visit_datetime) | date:'EEEE at jm' }}{% endverbatim %}
                                 </td>
                                 <td>
                                     {% verbatim %}{{ session.ip }}{% endverbatim %} 
@@ -173,8 +201,10 @@
         </div>    
     </div>
 </div>
-<div class="separator"></div>
-<div *ngIf="user" class="section-profile ">
+
+<div *ngIf="isAdmin" class="separator"></div>
+
+<div *ngIf="user && isAdmin" class="section-profile ">
     <div class="section-annotation">
         <h3>Admin Access</h3>
         <p>Select the sections that Ivan should have access to.</p>
@@ -193,14 +223,14 @@
         </form>
     </div>
 </div>
-<div class="separator"></div>
-<div class="section-profile ">  
+
+<div *ngIf="isAdmin" class="separator"></div>
+
+<div *ngIf="isAdmin || isUser" class="section-profile ">  
     <div class="input-box row end">
-          
             <a class="btn btn-blue"
             [ngClass]="{disabled : !formChange}"
             (click)="onSave()"> Save</a>
-       
     </div> 
 </div>
 
@@ -264,19 +294,20 @@
 </modal-form>
 
 <modal-form *ngIf="showSetAdmin">
-    <form class="input-form up">
+    <form *ngIf="!user.is_admin" class="input-form up">
         {% csrf_token %}
         <div class="modal-header">
             <h2>
                 Confirm Account Ownership Granting
             </h2>
+            
             <a class="cross fa fa-times" aria-hidden="true"
               (click)="showSetAdmin=false"></a>
         </div>
          
          <div class="input-section">
             <div class="input-box">
-                You are granting ownership of your store to another user:
+                You are granting ownership of your store from another user:
             </div>            
         </div>
         
@@ -303,4 +334,198 @@
             <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, granting ownership</a>
         </div>
     </form>
+    
+    <form *ngIf="user.is_admin" class="input-form up">
+        {% csrf_token %}
+        <div class="modal-header">
+            <h2>
+                Confirm Account Ownership taking away
+            </h2>
+            
+            <a class="cross fa fa-times" aria-hidden="true"
+              (click)="showSetAdmin=false"></a>
+        </div>
+         
+         <div class="input-section">
+            <div class="input-box">
+                You are taking away ownership of your store to another user:
+            </div>            
+        </div>
+        
+         <div class="input-section">
+            <div class="input-box">
+                <div class="input-box">
+                    <ul class="input-box"> 
+                        <li type="disc">They will not have complete control of the shop, including billing.</li>
+                        <li type="disc">Your account will be admin account.</li>
+                        <li type="disc">This action can be undone.</li>
+                    </ul>
+                </div>    
+            </div>            
+        </div>
+        <div class="input-section">
+            <div class="input-box">
+               Are you sure you want to taking away ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
+            </div>                  
+        </div>
+        
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="showSetAdmin=false">Cancel</a>
+            <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, taking away ownership</a>
+        </div>
+    </form>
 </modal-form>
+
+
+<modal-form class="notransparent" *ngIf="showCreateAccount">
+    <form class="input-form minus40" [ngFormModel]="lform" novalidate>
+        {% csrf_token %}
+        <div class="modal-header">
+            <h1>
+                <strong>Create an account for shopifier</strong>
+            </h1>
+        </div>
+        
+        <div class="modal-header">
+            <div>
+                Hi {% verbatim %}{{user.first_name}}{% endverbatim %},
+                <br>
+                You have been invited to create an account with hdl-shop. Please finalize your account details here. 
+                <strong>Once completed you will have full access to this Shopifier store.</strong>
+            </div>
+        </div>
+        <div  *ngIf="errors.length> 0" class="input-section">
+            <div  class="input-box">
+                <div class="error-list">
+                    <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
+                    <div>
+                        <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                        <ul>
+                            <li *ngFor="let error of errors">
+                                {% verbatim %}{{ error }}{% endverbatim %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['email']}">
+                    Email
+                    <input [ngFormControl]="lform.controls['email']" (input)="formChange=true">
+                </label>
+            </div>
+        </div>
+        <div class="input-section">
+             <div class="input-box">   
+                <label class="input" [ngClass]="{err: obj_errors['first_name']}">
+                    First Name
+                    <input [ngFormControl]="lform.controls['first_name']" (input)="formChange=true">
+                </label>
+            </div>    
+            <div class="input-box">
+                <label class="input" [ngClass]="{err: obj_errors['last_name']}">
+                   Last Name
+                    <input [ngFormControl]="lform.controls['last_name']" (input)="formChange=true"> 
+                </label>
+            </div>
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['phone']}">
+                    Phone <span class="note">(optional)</span>
+                    <input [ngFormControl]="lform.controls['phone']" (input)="formChange=true">
+                </label>        
+            </div>    
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['password1']}">
+                    Password
+                    <input [ngFormControl]="lform.controls['password1']" (input)="formChange=true">
+                </label>        
+            </div>    
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['password2']}">
+                    Confirm password
+                    <input [ngFormControl]="lform.controls['password2']" (input)="formChange=true">
+                </label>        
+            </div>    
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <div>
+                    <span class="note">By proceeding, you are agreeing to the </span><a class="ref">Terms & Conditions</a>
+                </div>        
+            </div>    
+        </div>
+        
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="declineInvitation=true">Decline invitation</a>
+            <a class="btn btn-blue" (click)="createAccount()">Create account</a>
+        </div>
+    </form>
+</modal-form>
+
+<modal-form class="notransparent" *ngIf="declineInvitation">
+    <form class="input-form minus40" novalidate>
+        <div class="modal-header">
+            <h1>
+                <strong>Decline invitation</strong>
+            </h1>
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                If you leave this page, all unsaved changes will be lost. Are you sure you want to leave this page?
+            </div>
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input">
+                    Please specify a reason for declining this invitation. <span class="note">This will be sent to the Shopify account holder.</span>
+                    <textarea (input)="formChange=true"></textarea>
+                </label>
+            </div>
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <div>
+                    <span class="note">By proceeding, you are agreeing to the </span><a class="ref">Terms & Conditions</a>
+                </div>        
+            </div>    
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="declineInvitation=false">Cancel</a>
+            <a class="btn btn-blue" (click)="declineInvitationt()">Submit</a>
+        </div>
+    </form>
+</modal-form>
+
+<modal-form *ngIf="canDeactivate">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h1>
+                You have unsaved changes on this page
+            </h1>
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                If you leave this page, all unsaved changes will be lost. Are you sure you want to leave this page?
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="unloadPage(false); canDeactivate=undefined;"
+            >Cancel</a>
+            <a class="btn btn-red" (click)= "unloadPage(true)">Leav page</a>
+        </div>
+    </form>
+</modal-form>
+

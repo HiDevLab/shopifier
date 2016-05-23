@@ -51,7 +51,7 @@ $btn-disabled-color: #d3dbe2;
     box-sizing: border-box;
     height: auto;
     line-height: 1;
-    
+    font-size: $shopify-btn-font-size;
     padding: 8.5px 15px;
     
     text-align: center;
@@ -184,7 +184,7 @@ $input-error-background: #fef6f5;
 .input-box {
     flex: 1 1 0;
     padding: 0 10px 0 10px;
-    font-size: 13px;
+    font-size: $shopify-font-size;
     font-weight: normal;  
     display: flex;
     flex-direction: column;
@@ -203,7 +203,7 @@ $input-error-background: #fef6f5;
     text-align: left;
     cursor: pointer;
     display: block;
-    font-size: 13px;
+    font-size: $shopify-font-size;
     font-weight: normal;
     background: $input-background;
     color: $input-color; 
@@ -302,6 +302,10 @@ $error-list-icon-color: #d83e3e;
      }
 }
 
+$note-color:    #888888;
+.note {
+        color: $note-color;
+}
 
 .separator {
     border-top: 1px solid $border-section-color;
@@ -317,8 +321,22 @@ $error-list-icon-color: #d83e3e;
 p {
     margin-bottom: 15px;
 }
+p.p10 {
+    margin-bottom: 10px;
+}
+
+p.p5 {
+    margin-bottom: 5px;
+}
+
 strong {
     font-weight: bold;
+}
+
+h1 {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.2em;
 }
 
 h2 {
