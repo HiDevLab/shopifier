@@ -13,7 +13,7 @@
               <table cellpadding="0" cellspacing="0">
                 <tbody><tr>
                   <td style="padding:0 10px;" width="580">
-                    <h1 style="color:#fff; font-style: italic; text-align:left; margin:0; padding:0; font-family:Helvetica, Arial, sans-serif; font-size:24px; font-weight:300; line-height: 1.2 ">
+                    <h1  style="color:#fff; font-style: italic; text-align:left; margin:0; padding:0; font-family:Helvetica, Arial, sans-serif; font-size:24px; font-weight:300; line-height: 1.2 ">
                       Shopifier
                     </h1>
                   </td>
@@ -26,14 +26,14 @@
         <table style="background:#f2f7fa; padding:35px 0; border-bottom:1px solid #e9edf0;" cellpadding="0" cellspacing="0" width="100%">
           <tbody><tr>
             <td align="center">
-              <table cellpadding="0" cellspacing="0">
+              <table cellpadding="0" cellspacing="0">font-style: italic;
                 <tbody><tr>
                   <td style="padding:0 10px;" width="580">
                     <h1 style="text-align:left; margin:0; padding:0; color:#000; font-family:Helvetica, Arial, sans-serif; font-size:32px; font-weight:300; line-height: 1.2">
-                        {% block h1 %}{% endblock %}
+                        Create staff account
                     </h1>
                     <h3 style="text-align:left; margin:0; padding: 10px 0 0 0; color:#585858; font-family:Helvetica, Arial, sans-serif; font-size:16px; font-weight:300;">
-                        For the store <a target="_blank" href="{{ store_ref }}" href="#" style="color:#3084ca;">{{ store_name }}</a>
+                        For the store <a target="_blank" data-href="#" href="#" style="color:#3084ca;">hdl-shop</a>
                     </h3>
                   </td>
                 </tr>
@@ -48,17 +48,14 @@
               <table cellpadding="0" cellspacing="0">
                 <tbody><tr>
                   <td style="text-align:left; padding:0 10px;" width="580">
-                    <h2 style="margin:0;padding:0;color:#000;font-family:'Proxima Nova',Helvetica,Arial,sans-serif;font-size:18px;font-weight:300">
-                        {% block h2 %}{% endblock %}
-                    </h2>
                     <p style="line-height:24px; font-size:13px; color:#585656; font-family:Helvetica, Arial, sans-serif;">
-                      {% block h3 %}{% endblock %}
+                      You've been added to hdl-shop staff by Victor Nazarov.
                     </p>
                     <div>
-                      <a target="_blank" href="{{ reference }}" style="display:inline-block; font-family:Helvetica, Arial, sans-serif; font-size:13px; font-weight:700; cursor:pointer; line-height:30px; padding:0 10px; color:#fff; border:1px solid #7ea13d; background:#96bf48; text-shadow:1px 1px 0px rgba(0,0,0,0.3); text-decoration:none; border-radius:3px;">{% block button %}{% endblock %}</a>
+                      <a target="_blank" href="https://hdl-shop.myshopify.com/admin/auth/accept/78024135/685489a4967182edbbd332f4e00124e8&amp;hash=15f6b3efd9e77459d0903c682e031058" style="display:inline-block; font-family:Helvetica, Arial, sans-serif; font-size:13px; font-weight:700; cursor:pointer; line-height:30px; padding:0 10px; color:#fff; border:1px solid #7ea13d; background:#96bf48; text-shadow:1px 1px 0px rgba(0,0,0,0.3); text-decoration:none; border-radius:3px;">Create staff account</a>
                     </div>
                     <p style="line-height:24px; font-size:13px; color:#585656; font-family:Helvetica, Arial, sans-serif;">
-                      {% block h4 %}{% endblock %}
+                      If you're not a staff member at hdl-shop, please ignore this email.
                     </p>
                   </td>
                 </tr>
@@ -92,3 +89,4 @@
         </tbody></table>
     </body>
 </html>
+

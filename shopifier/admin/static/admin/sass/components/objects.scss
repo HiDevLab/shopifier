@@ -230,7 +230,7 @@ $input-error-background: #fef6f5;
         border-radius: 3px;
         box-sizing: border-box;
         line-height: 20px;
-        font-size: 15px;
+        font-size: $shopify-input-font-size;
         padding: 5px 10px;
         width: 100%;
             
@@ -275,13 +275,13 @@ $error-list-icon-color: #d83e3e;
      flex: 1 1 0;
      width: 100%;
      padding: 0 10px;
-
+     box-sizing: border-box;
      background-color: $error-list-background;
      color: $error-list-color;
      border: 1px solid $error-list-border;
      border-radius: 3px;
      display: flex;
-     justify-content: left;   
+     justify-content: left;
      position: relative;
      
      > i {
@@ -304,7 +304,8 @@ $error-list-icon-color: #d83e3e;
 
 $note-color:    #888888;
 .note {
-        color: $note-color;
+    color: $note-color;
+    font-size: $shopify-note-font-size;
 }
 
 .separator {
@@ -334,7 +335,7 @@ strong {
 }
 
 h1 {
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 400;
     line-height: 1.2em;
 }

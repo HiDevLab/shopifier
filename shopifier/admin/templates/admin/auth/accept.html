@@ -1,0 +1,124 @@
+<modal-form *ngIf="user" class="notransparent">
+    <form class="input-form up10 minus40" [ngFormModel]="lform" novalidate>
+        {% csrf_token %}
+        <div class="modal-header">
+            <h1>
+                <strong>Create an account for shopifier</strong>
+            </h1>
+        </div>
+        
+        <div class="modal-header">
+            <div>
+                Hi {% verbatim %}{{user.first_name}}{% endverbatim %},
+                <br>
+                You have been invited to create an account with {% verbatim %}{{ user.store_name }}{% endverbatim %}. Please finalize your account details here. 
+                <strong>Once completed you will have full access to this Shopifier store {% verbatim %}{{ user.store_name }}{% endverbatim %}.</strong>
+            </div>
+        </div>
+        <div  *ngIf="errors.length> 0" class="input-section">
+            <div  class="input-box">
+                <div class="error-list">
+                    <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
+                    <div>
+                        <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                        <ul>
+                            <li *ngFor="let error of errors">
+                                {% verbatim %}{{ error }}{% endverbatim %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['email']}">
+                    Email
+                    <input [ngFormControl]="lform.controls['email']" (input)="formChange=true">
+                </label>
+            </div>
+        </div>
+        <div class="input-section">
+             <div class="input-box">   
+                <label class="input" [ngClass]="{err: obj_errors['first_name']}">
+                    First Name
+                    <input [ngFormControl]="lform.controls['first_name']" (input)="formChange=true">
+                </label>
+            </div>    
+            <div class="input-box">
+                <label class="input" [ngClass]="{err: obj_errors['last_name']}">
+                   Last Name
+                    <input [ngFormControl]="lform.controls['last_name']" (input)="formChange=true"> 
+                </label>
+            </div>
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['phone']}">
+                    Phone <span class="note">(optional)</span>
+                    <input [ngFormControl]="lform.controls['phone']" (input)="formChange=true">
+                </label>        
+            </div>    
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['password1']}">
+                    Password
+                    <input type="password" [ngFormControl]="lform.controls['password1']" (input)="formChange=true">
+                </label>        
+            </div>    
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <label class="input" [ngClass]="{err: obj_errors['password2']}">
+                    Confirm password
+                    <input type="password" [ngFormControl]="lform.controls['password2']" (input)="formChange=true">
+                </label>        
+            </div>    
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <div>
+                    <span class="note">By proceeding, you are agreeing to the </span><a class="ref">Terms & Conditions</a>
+                </div>        
+            </div>    
+        </div>
+        
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="declineInvitation=true">Decline invitation</a>
+            <a class="btn btn-blue" (click)="createAccount()">Create account</a>
+        </div>
+    </form>
+</modal-form>
+
+<modal-form class="notransparent" *ngIf="declineInvitation">
+    <form class="input-form up minus40" novalidate>
+        <div class="modal-header">
+            <h1>
+                <strong>Decline invitation</strong>
+            </h1>
+        </div>
+         <div class="input-section">
+            <div class="input-box">    
+                <label class="input">
+                    Please specify a reason for declining this invitation. <span class="note">This will be sent to the Shopify account holder.</span>
+                    <textarea (input)="formChange=true"></textarea>
+                </label>
+            </div>
+        </div>
+        <div class="input-section">
+            <div class="input-box">    
+                <div>
+                    <span class="note">By proceeding, you are agreeing to the </span><a class="ref">Terms & Conditions</a>
+                </div>        
+            </div>    
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="declineInvitation=false">Cancel</a>
+            <a class="btn btn-blue" (click)="declineInvitationt()">Submit</a>
+        </div>
+    </form>
+</modal-form>

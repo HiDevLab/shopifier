@@ -107,28 +107,49 @@ class  UserInviteView(CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserInviteSerializer
     
-    email_html_template_name = 'admin/emails/invite_email.html'    
+    email_html_template_name = 'admin/emails/invite_email.html'
     email_text_template_name = 'admin/emails/invite_email.txt'
 
     def perform_create(self, serializer):
-        user = serializer.save()          
-        ref_url = '{}/api/user-activate/?pk={}&token={}'.format(settings.SITE, user.id, get_token(user.email))
-        txt_body = render_to_string(self.email_text_template_name,
-                                    {'reference': ref_url})
-        html_body = render_to_string(self.email_html_template_name,
-                                    {'reference': ref_url})
+        user = serializer.save()
+        current_user = self.request.user
+        ref_url = '{}/auth/accept/{}/{}/'.format(settings.SITE, user.id, get_token(user.email))
+        store_name = settings.STORE_NAME
+        
+        context = {
+            'user': '{} {}'.format(user.first_name, user.last_name),
+            'current_user': '{} {}'.format(current_user.first_name, current_user.last_name),
+            'reference': ref_url,
+            'store_name': store_name,
+            'store_ref': settings.SITE
+        }
+
         send_mail(
-            recipient_list = [user.email],
-            subject = 'Welcome to Shopifier', 
-            message=txt_body,
-            html_message=html_body,
-            from_email = settings.DEFAULT_FROM_EMAIL ,
-            fail_silently = True,
+            subject = 'Welcome to Shopifier',
+            message=render_to_string(self.email_text_template_name, context),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            html_message=render_to_string(self.email_html_template_name, context),
         )
+
         user.is_active = False
         user.is_admin = False
         user.save()
         return user    
+
+class  UserDeclineInviteView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = UserCheckTokenSerializer
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['pk']
+        if get_token(user.email) != serializer.validated_data['token']:
+            return Response({'details': _('Wrong Token')}, status=HTTP_400_BAD_REQUEST)
+        user.delete()
+        content = {'success': 'Invitation declined.'}
+        return Response(content, status=HTTP_200_OK)
 
 
 class UserActivateView(APIView):
@@ -137,15 +158,18 @@ class UserActivateView(APIView):
         
     def post(self, request, format=None):
         
+        serializer = UsersAdminSerializer2(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        user = serializer.validated_data['pk']
+        user = serializer.validated_data['id']
         
         if get_token(user.email) != serializer.validated_data['token']:
             return Response({'details': _('Wrong Token')}, status=HTTP_400_BAD_REQUEST)
-        
-        user.set_password(serializer.validated_data['password'])
+
+        user.set_password(serializer.validated_data['password1'])
         user.is_active = True
         user.is_staff = True
         user.save()
@@ -189,9 +213,27 @@ class  CurrentUserView(APIView):
             return Response(serializer.data, status=HTTP_200_OK)
 
 
+class  UserCheckToken1View(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = UserCheckTokenSerializer
+
+    def post(self, request, format=None):
+
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data['pk']
+
+        if get_token(user.email) != serializer.validated_data['token']:
+            return Response({'details': _('The link to reset your password is no longer valid.')}, status=HTTP_400_BAD_REQUEST)
+        
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=HTTP_200_OK)
+
+
 class  UserCheckToken2View(APIView):
     permission_classes = (permissions.AllowAny,)
-    serializer_class = UserCheckToken2Serializer    
+    serializer_class = UserCheckTokenSerializer    
     token_generator = default_token_generator
     
     def post(self, request, format=None):
@@ -242,9 +284,11 @@ class UserPasswordRecoverView(APIView):
     token_generator = default_token_generator
     
     def send_email(self, user):
-
         context = {
-            'reference': '{}/admin/auth/reset/{}/{}'.format(settings.SITE, user.id, self.token_generator.make_token(user)),            
+            'current_user': '{} {}'.format(user.first_name, user.last_name),
+            'reference': '{}/admin/auth/reset/{}/{}'.format(settings.SITE, user.id, self.token_generator.make_token(user)),
+            'store_name': settings.STORE_NAME,
+            'store_ref': settings.SITE
         }
        
         subject = render_to_string(self.subject_template_name, context)

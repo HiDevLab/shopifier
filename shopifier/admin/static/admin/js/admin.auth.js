@@ -24,30 +24,6 @@ export class AdminAuthService {
         this.router = router;
     }
     
-/*       
-    post(user, url) {
-        //let body = JSON.stringify(user);
-        return this.http.post(url, user);
-                        //.map(res => res.json());
-    }
-    
-    
-    put(user, url) {
-        //let body = JSON.stringify(user);
-        return this.http.put(url, user);
-                        //.map(res => res.json());
-    }
-    
-
-    get(url) {
-        return this.http.get(url);
-                        //.map(res => res.json());
-    }
-     
-    delete(url) {
-        return this.http.delete(url);
-    }
-*/    
     getCurrentUser() {
         if (this._currentUser) {
             return new Promise((resolve, reject) => resolve(this._currentUser));
@@ -183,7 +159,7 @@ export class AdminAuthLogout {
 @CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
     selector      : 'section',
-    templateUrl   : 'templates/admin-auth-login.html',
+    templateUrl   : 'templates/auth/login.html',
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAuthLogin {
@@ -233,7 +209,7 @@ export class AdminAuthLogin {
 @CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
     selector      : 'section',
-    templateUrl   : 'templates/admin-auth-recover.html',
+    templateUrl   : 'templates/auth/recover.html',
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAuthRecover {
@@ -273,7 +249,7 @@ export class AdminAuthRecover {
 @CanActivate(() => getCurrentUser(false, '/Admin/Home'))
 @Component({
     selector      : 'section',
-    templateUrl   : 'templates/admin-auth-reset.html',
+    templateUrl   : 'templates/auth/reset.html',
     directives    : [FORM_DIRECTIVES],
 })
 export class AdminAuthReset {
@@ -339,4 +315,97 @@ export class AdminAuthReset {
                                 err => { this.errors = err.json();} );
         }
     }   
+}
+
+
+//------------------------------------------------------------------------------
+//@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
+@Component({
+    selector      : 'section',
+    templateUrl   : 'templates/auth/accept.html',
+    directives    : [FORM_DIRECTIVES, ROUTER_DIRECTIVES],
+})
+export class AdminAuthAccept {
+    errors = [];
+    obj_errors = {};
+    
+    user = undefined;
+
+    declineInvitation = undefined;
+    
+    
+    static get parameters() {
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], [RouteParams]];
+    }
+    
+    constructor(http, authService, formbuilder, router, routeparams) {
+        this.http = http;
+        this._authService = authService;
+        this._router = router;
+        this._routeParams = routeparams;
+
+        this.lform = formbuilder.group({
+            'first_name': ['', Validators.required],
+            'last_name': ['', Validators.required],
+            'phone': [''],
+            'email': [''],
+            'password1': [''],
+            'password2': [''],
+            'token': [''],
+            'id': [''],
+        }); 
+    }
+    
+    ngOnInit() {
+        let id = this._routeParams.get('id');
+        this.token = this._routeParams.get('token');
+        let data = {'pk': id, 'token': this.token };
+        this.http.post('/api/check_token1/', data)
+                .subscribe( data => this.onInit(data),
+                            err => this._router.navigate(['WrongToken']));
+    }
+
+    onInit(data) {
+        this.user = data;
+        this.errors = [];
+        this.obj_errors = {};
+
+        for (let control in this.lform.controls) {
+            this.lform.controls[control].updateValue(undefined);
+            this.lform.controls[control].updateValue(this.user[control], true, true);
+        }
+        this.lform.controls['token'].updateValue(this.token);
+        this.lform.controls['password1'].updateValue('');
+    }
+
+    createAccount(){
+        this.http
+            .post('/api/user-activate/', this.lform.value )
+            .subscribe( () => this._router.navigate(['/Admin/Home']),
+                        err => { 
+                                this.obj_errors = err.json(); 
+                                this.errors = this._authService.to_array(err.json()); 
+                        }, 
+            );  
+    }
+    
+    declineInvitationt() {
+        let data = {'pk': this.user.id, 'token': this.token };
+        this.http
+            .post('/api/user-decline/', data )
+            .subscribe( () => this._router.navigate(['Login']),
+                        () => this._router.navigate(['Login']), 
+            );
+        
+    }
+}
+
+
+//------------------------------------------------------------------------------
+@Component({
+    selector      : 'section',
+    templateUrl   : 'templates/auth/wrong-token.html',
+    directives: [ROUTER_DIRECTIVES],
+})
+export class AdminAuthWrongToken {
 }

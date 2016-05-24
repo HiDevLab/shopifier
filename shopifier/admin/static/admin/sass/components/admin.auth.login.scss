@@ -110,7 +110,7 @@
 
         
         .login-btn {
-            margin: 0 0 0;
+            margin: 0;
             width: 350px;
             color: rgb(255,255,255);
             background-color: rgb(71,156,207);
@@ -123,7 +123,24 @@
             border-color: transparent;
             cursor: pointer; cursor: hand;
         }
-
+    
+        .login-note {
+            width: 328px;
+            font-size: 13px;
+            padding: 10px;
+            border-style: solid;
+            background-color: #ffffff;
+            border-radius: 0 0 8px 8px;
+            border-color: transparent;
+            > ul {
+                padding-left: 20px;
+                
+                > li {
+                    padding-left:    5px;
+                    list-style-type: disc;
+                }
+            }
+        }
     }
     
    

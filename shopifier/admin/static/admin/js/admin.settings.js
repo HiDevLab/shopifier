@@ -16,7 +16,7 @@ import { AdminAuthService } from './admin.auth'
 export class AdminAccountProfile{
     errors = [];
     obj_errors = {};
-    user = null;
+    user = undefined;
     sessions = [];
     new_avatar = null;
     
@@ -26,7 +26,6 @@ export class AdminAccountProfile{
     confirmPassword = false;
     expireSessions = false;
     showSetAdmin = false;
-    showCreateAccount = false;
     canDeactivate = undefined;
     
     isUser = false;    //currentUser is this user
@@ -39,7 +38,6 @@ export class AdminAccountProfile{
         this.http = http;
         this._routeParams = routeparams;
         this._authService = authService;
-        
         
         this.lform = formbuilder.group({
             'first_name': ['', Validators.required],
@@ -76,8 +74,6 @@ export class AdminAccountProfile{
         this.user = data;
         this.errors = [];
         this.obj_errors = {};
-        
-        this.showCreateAccount = !this.user.is_active;
         
         this.new_avatar = null;
         this.formChange = false;
@@ -390,9 +386,8 @@ export class AdminAccount {
         this.dcl = dcl;
         this.viewContainerRef = viewContainerRef;
         this._authService = authService;
-        
     }
-    
+
     ngOnInit() {
         
         this.http.get('/api/admin/')
@@ -444,7 +439,11 @@ export class AdminAccount {
     }
     
     goProfile(user) {
-        let link = ['Profile', {'id': user.id }];
+        let link;
+        if (user.token && this.currentUser.is_admin)
+            link = ['/Accept', {'id': user.id, 'token': user.token }];
+        else
+            link = ['Profile', {'id': user.id }];
         this._router.navigate(link);
     }
     

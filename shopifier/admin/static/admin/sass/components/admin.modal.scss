@@ -36,6 +36,10 @@ form.input-form {
     &.up {
         transform: translateY(-50%);
     }
+    
+    &.up10 {
+        transform: translateY(-10%);
+    }
 
     &.minus40 {
         width: 580px;

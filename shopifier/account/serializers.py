@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth import password_validation
 from django.contrib.gis.geoip2 import GeoIP2
 from django.db.models import Max
+from django.core.signing import Signer
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -43,28 +44,28 @@ class UserInviteSerializer(serializers.ModelSerializer):
         model = User
         fields = ('first_name', 'last_name', 'email')
 
-
-
-class UserCheckToken2Serializer(serializers.Serializer):
+class UserCheckTokenSerializer(serializers.Serializer):
     pk = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all())
     token = serializers.CharField(max_length=32)
 
 
 class UserActivateSerializer(serializers.Serializer):
-    pk = serializers.PrimaryKeyRelatedField(
+    id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.exclude(is_active=True))
-    email = serializers.EmailField(max_length=255)
-    first_name = serializers.CharField(max_length=128)
-    last_name = serializers.CharField(max_length=128)
-    phone = serializers.CharField(max_length=128)
-    password = serializers.CharField(max_length=128)
-    token = serializers.CharField(max_length=32)
+    email = serializers.EmailField(max_length=255, required=True, allow_null=False )
+    first_name = serializers.CharField(max_length=128, required=True, allow_null=False)
+    last_name = serializers.CharField(max_length=128, required=True, allow_null=False)
+    phone = serializers.CharField(max_length=128, required=False, allow_blank=True)
+    password1 = serializers.CharField(max_length=128, required=True, allow_null=False)
+    password2 = serializers.CharField(max_length=128,  required=True, allow_null=False)
+    token = serializers.CharField(max_length=32, required=True, allow_null=False)
 
 
 class UserSerializer(serializers.ModelSerializer):
     avatar_image = Base64ImageField(required=False, allow_null=True )
     avatar = serializers.SerializerMethodField()
+    store_name = serializers.SerializerMethodField()
     
     class Meta:
         model = User
@@ -74,6 +75,8 @@ class UserSerializer(serializers.ModelSerializer):
         if obj.avatar_image:
             return "{}/{}".format( settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url)
     
+    def get_store_name(self, obj):
+        return settings.STORE_NAME
 
 class UsersAdminSerializer(serializers.ModelSerializer):
     
@@ -84,11 +87,11 @@ class UsersAdminSerializer(serializers.ModelSerializer):
     date_join = serializers.DateTimeField(read_only=True)
     avatar = serializers.SerializerMethodField()
     visit_datetime = serializers.SerializerMethodField()
+    token = serializers.SerializerMethodField()
     
     class Meta:
         model = User
         exclude = ('password',)
-    
     
     def get_avatar(self, obj):
         if obj.avatar_image:
@@ -97,6 +100,13 @@ class UsersAdminSerializer(serializers.ModelSerializer):
     def get_visit_datetime(self, obj):
         m = UserLog.objects.filter(user=obj).aggregate(Max('visit_datetime'))
         return m['visit_datetime__max']
+    
+    def get_token(self, obj):
+        if obj.is_active:
+            return None 
+        signer = Signer()
+        return signer.signature(obj.email)
+
 
 class UsersAdminSerializer2(serializers.Serializer):
     

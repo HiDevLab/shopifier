@@ -6,7 +6,7 @@ import { FORM_PROVIDERS, COMMON_DIRECTIVES } from 'angular2/common';
 import { Component, provide, Injectable, Injector } from 'angular2/core';
 import 'rxjs/Rx';
 
-import { AdminAuthService, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset } from './admin.auth'
+import { AdminAuthService, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset, AdminAuthAccept, AdminAuthWrongToken } from './admin.auth'
 import { Admin  } from './admin'
 
 @Component({
@@ -38,7 +38,19 @@ import { Admin  } from './admin'
         path : '/auth/reset/:pk/:token/',
         name : 'Reset',
         component : AdminAuthReset,
-    }, 
+    },
+    
+    {
+        path : '/auth/accept/:id/:token/',
+        name : 'Accept',
+        component : AdminAuthAccept,
+    },
+    
+    {
+        path : '/auth/wrong_token/',
+        name : 'WrongToken',
+        component : AdminAuthWrongToken,
+    },
     
     {
         path : '/...',
