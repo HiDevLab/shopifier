@@ -280,26 +280,36 @@ $error-list-icon-color: #d83e3e;
      color: $error-list-color;
      border: 1px solid $error-list-border;
      border-radius: 3px;
-     display: flex;
+     display: block;
      justify-content: left;
      position: relative;
      
      > i {
          text-transform: none;
-         vertical-align: middle;
-         padding: 15px 20px 15px 0;
+         vertical-align: top;
+         padding: 15px 10px 15px 10px;
          color: $error-list-icon-color;
          font-size: 24px;
+         display: inline-block;
      }
-     > div {
-         flex: 1 1 0;
-         padding: 15px 20px 15px 0;
-         
+    > div {
+        padding: 15px 20px 15px 0;
+        display: inline-block;
+        
+        >  h2 {
+            display: block;
+            font-weight: bold;
+        }
         > ul {
+            flex: 1 1 0;
+             display: block;
              margin-top: 10px;
-             list-style-type: disc;
-         }
-     }
+        > li {
+                margin-left: 15px;
+                list-style-type: disc;
+            }
+        }
+    }
 }
 
 $note-color:    #888888;

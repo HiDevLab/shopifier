@@ -4,8 +4,8 @@ import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators } from 'angula
 import { Http } from 'angular2/http'
 import 'rxjs/Rx'
 
-import { AdminAuthService } from './admin.auth'
-
+import { AdminAuthService, AdminUtils } from './admin.auth'
+import { Admin } from './admin'
 
 //------------------------------------------------------------------------------
 @Component({
@@ -32,12 +32,15 @@ export class AdminAccountProfile{
     isAdmin = false;    //currentUser is admin
 
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder], [RouteParams] ];
+        return [[Http], [AdminAuthService], [FormBuilder], 
+            [RouteParams], [Admin], [AdminUtils] ];
     }
-    constructor(http, authService, formbuilder, routeparams ) {
-        this.http = http;
+    constructor(http, authService, formbuilder, routeparams, admin, utils ) {
+        this._http = http;
+        this._admin = admin;
         this._routeParams = routeparams;
-        this._authService = authService;
+        this._auth = authService;
+        this._utils = utils;
         
         this.lform = formbuilder.group({
             'first_name': ['', Validators.required],
@@ -57,16 +60,16 @@ export class AdminAccountProfile{
     
     ngOnInit() {
         let id = this._routeParams.get('id');
-        this.http
+        this._http
             .get(`/api/admin/${id}/`)
             .subscribe( data => { this.onInit(data); },
                         err => {
                                     this.obj_errors = err; 
-                                    this.errors = this._authService.to_array(err.json()); 
+                                    this.errors = this._utils.to_array(err.json()); 
                                 }, 
                        ); 
         this.getSessions(id);
-        this._authService.getCurrentUser().then(data => this.currentUser = data );
+        this._auth.getCurrentUser().then(data => this.currentUser = data );
          
     }
 
@@ -74,7 +77,6 @@ export class AdminAccountProfile{
         this.user = data;
         this.errors = [];
         this.obj_errors = {};
-        
         this.new_avatar = null;
         this.formChange = false;
         this.emailChange = false;
@@ -84,25 +86,29 @@ export class AdminAccountProfile{
         this.showSetAdmin = false;
         this.canDeactivate = undefined;
         
-        this.isUser = this.user.id == this._authService._currentUser.id;
-        this.isAdmin = this._authService._currentUser.is_admin;
-         
-        this._authService.admin.test(4, 2, 
+        this.isUser = this.user.id == this._auth._currentUser.id;// no correct
+        this.isAdmin = this._auth._currentUser.is_admin;
+        /* 
+        this._admin.test(4, 2, 
             {
                 'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
             });
+        */
+        this._admin.currentUrl({
+                'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
+                });
 
-        this._authService.admin.headerButtons = [];
+        this._admin.headerButtons = [];
         if (this.isAdmin && !this.isUser) {
             if (!this.user.is_admin) {
-                this._authService.admin.headerButtons.push(
+                this._admin.headerButtons.push(
                     {
                         'text': 'Make this user the account owner', 
                         'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
                     });
             }
             else {
-                this._authService.admin.headerButtons.push(
+                this._admin.headerButtons.push(
                     {
                         'text': 'Take away this user the account owner rights', 
                         'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
@@ -110,7 +116,7 @@ export class AdminAccountProfile{
             }
         }
 
-        this._authService.admin.headerButtons.push(
+        this._admin.headerButtons.push(
             {
                 'text': 'Save', 'class': 'btn btn-blue', 
                 'click': this.onSave, 'self': this 
@@ -167,12 +173,12 @@ export class AdminAccountProfile{
         if (this.new_avatar)
             this.lform.controls['avatar_image'].updateValue(this.new_avatar);   
         
-        this.http
+        this._http
             .put(`/api/admin/${this.user.id}/`, this.lform.value )
             .subscribe( data => this.onInit(data),
                         err => { 
                                 this.obj_errors = err.json(); 
-                                this.errors = this._authService.to_array(err.json()); 
+                                this.errors = this._utils.to_array(err.json()); 
                                 this.cls();
                         }, 
             );  
@@ -184,12 +190,12 @@ export class AdminAccountProfile{
 
     addOwnership() {
         this.user.is_admin = !this.user.is_admin;
-        this.http
+        this._http
             .patch(`/api/admin/${this.user.id}/`, {'is_admin': this.user.is_admin} )
             .subscribe( data => this.onInit(data),
                         err => { 
                                 this.obj_errors = err.json(); 
-                                this.errors = this._authService.to_array(err.json());
+                                this.errors = this._utils.to_array(err.json());
                                 this.cls();
                         }, 
             );  
@@ -219,13 +225,13 @@ export class AdminAccountProfile{
     }
     
     getSessions(id) {
-        this.http
+        this._http
             .get(`/api/admin/${id}/session/`)
             .subscribe( data => this.sessions = data);        
     }
     
     deleteSessions() {
-        this.http
+        this._http
             .delete(`/api/admin/${this.user.id}/deletesession/`)
             .subscribe( () => this.getSessions(this.user.id) );   
     }
@@ -254,11 +260,11 @@ export class AdminAccountDeleteSessions {
         return [[Http]];
     }
     constructor(http) {
-        this.http = http;
+        this._http = http;
     }
     
     goDeleteSessions() {
-        this.http.delete('/api/sessions-expire/')
+        this._http.delete('/api/sessions-expire/')
                 .subscribe( () => {},
                             () => {}, 
                             () =>  {this.show=false;} 
@@ -284,11 +290,11 @@ export class AdminAccountDelete {
         return [[Http]];
     }
     constructor(http) {
-        this.http = http;
+        this._http = http;
     }
     
     goDelete() {
-        this.http.delete(`/api/admin/${this.user.id}/`)
+        this._http.delete(`/api/admin/${this.user.id}/`)
                 .subscribe( () => { this.show=false;},
                             () => {}, 
                             () => this.parrent.userRefresh() 
@@ -312,13 +318,13 @@ export class AdminAccountInvite {
     boolInvite = false;
     
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder]];
+        return [[Http], [FormBuilder], [AdminUtils]];
     }
-    constructor(http, authService, formbuilder) {
-        this.http = http;
-        this._authService = authService;
+    constructor(http, formbuilder, utils) {
+        this._http = http;
+        this._utils = utils;
         this.lform = formbuilder.group({
-                    'email':    ['', this._authService.emailValidator],
+                    'email':    ['', this._utils.emailValidator],
                     'first_name': ['', Validators.required],
                     'last_name': ['', Validators.required],
                 }); 
@@ -333,23 +339,13 @@ export class AdminAccountInvite {
             return;
         }
         */
-        this.http.post('/api/user-invite/', this.lform.value)
+        this._http.post('/api/user-invite/', this.lform.value)
                 .subscribe( data => { this.show=false;},
-                            err => { this.obj_errors = err.json(); this.to_array(err.json()); }, 
+                            err => { this.obj_errors = err.json(); this._utils.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
                  );                                
     }
     
-    to_array (err) {
-        if (Object.prototype.toString.call(err) === '[object Array]') 
-            this.errors = err;
-        else {    
-            this.errors = [];
-            for (let i in err) {
-                this.errors.push(i + ':' + err[i]);
-            }
-        }
-    }
     
     cls () {
         for (let control in this.lform.controls) {
@@ -377,26 +373,30 @@ export class AdminAccount {
     delete_sessions = null;
         
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder], [Router], [DynamicComponentLoader], [ViewContainerRef]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], 
+        [DynamicComponentLoader], [ViewContainerRef], [Admin]];
     }
      
-    constructor(http, authService, formbuilder, router, dcl, viewContainerRef) {
-        this.http = http;
+    constructor(http, authService, formbuilder, router, dcl, viewContainerRef, admin) {
+        this._http = http;
         this._router = router;
         this.dcl = dcl;
         this.viewContainerRef = viewContainerRef;
-        this._authService = authService;
+        this._auth = authService;
+        this._admin = admin;
     }
 
     ngOnInit() {
         
-        this.http.get('/api/admin/')
+        this._admin.currentUrl();
+        
+        this._http.get('/api/admin/')
             .subscribe( data => this.users = data ); 
         
-        this._authService.getCurrentUser().then(data => this.currentUser = data );
+        this._auth.getCurrentUser().then(data => this.currentUser = data );
         
         /*
-        this._authService.get('/api/current-user/')
+        this._auth.get('/api/current-user/')
             .subscribe( data => { this.currentUser = data; } );      
         */
               
@@ -448,7 +448,7 @@ export class AdminAccount {
     }
     
     userRefresh() {
-       this.http.get('/api/admin/')
+       this._http.get('/api/admin/')
             .subscribe( data => this.users = data );  
     }
 }

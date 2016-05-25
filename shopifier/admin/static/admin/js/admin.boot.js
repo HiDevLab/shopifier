@@ -6,8 +6,8 @@ import { FORM_PROVIDERS, COMMON_DIRECTIVES } from 'angular2/common';
 import { Component, provide, Injectable, Injector } from 'angular2/core';
 import 'rxjs/Rx';
 
-import { AdminAuthService, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset, AdminAuthAccept, AdminAuthWrongToken } from './admin.auth'
-import { Admin  } from './admin'
+import { AdminAuthService, AdminUtils, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset, AdminAuthAccept, AdminAuthWrongToken } from './admin.auth'
+import { Admin } from './admin'
 
 @Component({
   selector: "body",
@@ -133,5 +133,6 @@ bootstrap(AdminRouter, [
         deps: [XHRBackend, RequestOptions]
     }),
     FORM_PROVIDERS,
-    AdminAuthService
+    AdminAuthService,
+    AdminUtils
 ]).then((appRef) => window.injector = appRef.injector);

@@ -1,8 +1,9 @@
 import { Component } from 'angular2/core';
 import { ROUTER_DIRECTIVES, Router, RouteConfig, CanActivate } from 'angular2/router'
 import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
+import { Location } from 'angular2/platform/common';
 
-import { getCurrentUser, AdminAuthService } from './admin.auth'
+import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
 
@@ -11,7 +12,16 @@ import { AdminSettings, AdminAccountInvite } from './admin.settings'
     selector:   'main',
     template:   '',
 })
-export class AdminHome {  
+export class AdminHome {
+        static get parameters() {
+        return [[Admin]];
+    }
+    constructor(admin) {
+        this._admin = admin;
+    }
+    ngOnInit() {
+        this._admin.currentUrl();
+    }
 }
 
 
@@ -56,24 +66,23 @@ export class Admin {
 
     headerButtons = [];
 
-
     static get parameters() {
-        return [[Router], [AdminAuthService]];
+        return [[Router], [AdminAuthService], [Location]];
     }
         
-    constructor(router, authService) {
-        this._authService = authService;//window.injector.get(AdminAuthService);
+    constructor(router, authService, location) {
+        this._auth = authService;//window.injector.get(AdminAuthService);
         this._router = router;
+        this._location = location;
         
     }
    
     ngOnInit() {
         //this._router.navigate(['Home']);
-        this._authService.admin = this;    
-        this._authService.getCurrentUser().then(data => this.currentUser = data );
+        this._auth.getCurrentUser().then(data => this.currentUser = data );
         /*
-        this._authService.get('/api/current-user/')
-            .subscribe( data => {this.currentUser = data; this._authService.currentUser=data;} );
+        this._auth.get('/api/current-user/')
+            .subscribe( data => {this.currentUser = data; this._auth.currentUser=data;} );
         */               
     }
  
@@ -116,15 +125,45 @@ export class Admin {
     
     goProfile() {
         let link = ['Settings/Profile', {'id': this.currentUser.id }];
-        this._router.navigate(link);        
+        this._router.navigate(link);
     } 
     
     test(i,j, fio) {
-         this.selectedNav = this.navs[i]
-         this.selectedSubNav = this.selectedNav.submenu[j]
-         fio.icon = this.selectedSubNav.icon
-         this.headerNav = [this.selectedNav, this.selectedSubNav, fio];
-         
+        this.selectedNav = this.navs[i];
+        this.selectedSubNav = this.selectedNav.submenu[j]
+        fio.icon = this.selectedSubNav.icon;
+        this.headerNav = [this.selectedNav, this.selectedSubNav, fio]; 
     }
 
+    currentUrl (addition) {
+        let url = '/admin' + this._location.path();
+        url = url.toUpperCase()
+        let s;
+        for (let i = 0; i < this.navs.length; i++) {
+            if (this.navs[i].submenu.length > 0) {
+                for (let j = 0; j < this.navs[i].submenu.length; j++) {
+                    s = this.navs[i].submenu[j].url.toUpperCase();
+                    if (url.indexOf(s) + 1 ) {
+                        this.selectedNav = this.navs[i];
+                        this.selectedSubNav = this.selectedNav.submenu[j];
+                        this.headerNav = [this.selectedNav, this.selectedSubNav];
+                    }
+                }
+            }
+            else {
+                s = this.navs[i].url.toUpperCase();
+                if (url.indexOf(s) + 1 ) {
+                    this.selectedNav = this.navs[i]
+                    this.selectedSubNav = null;
+                    this.headerNav = [this.selectedNav];
+                }
+            }
+        }
+        
+        if (addition) {
+            addition.icon = this.headerNav[this.headerNav.length-1].icon;
+            this.headerNav.push(addition);
+        }
+        
+    }
 }
