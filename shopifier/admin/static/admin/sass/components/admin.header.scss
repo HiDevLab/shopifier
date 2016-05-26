@@ -21,6 +21,7 @@ header {
                     text-decoration: none;
                     color: $color-header-ref;
                     &:hover {
+                        cursor: pointer; cursor: hand;
                         text-decoration: underline;
                     }
                 }        

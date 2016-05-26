@@ -27,7 +27,7 @@ nav {
                 position: relative;
             }
         }
-        
+
         &.selected-with-submenu {
             background: $background-nav-icon-color;
             width: 56px;
@@ -45,7 +45,7 @@ nav {
                     background: $background-nav-selected-color;
                 }
             }
-            
+        
             &.force-submenu-show, &:not(:hover) {
                 background: $background-nav-icon-color;                                                     
                 width: 56px;

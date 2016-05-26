@@ -56,13 +56,13 @@ export class Admin {
     navs = Nav;
     popups = PopUpMenu;
     selectedNav = Nav[1];
-    selectedSubNav = null;
+    selectedSubNav = undefined;
     headerNav = [Nav[1]];
     
     forceSubmenuShow = false;
     forcePopupShow = false;
     
-    currentUser = null;
+    currentUser = undefined;
 
     headerButtons = [];
 
@@ -90,17 +90,17 @@ export class Admin {
         this.selectedNav = nav;
         this.forceSubmenuShow=true;
                
-        if (nav.submenu.length > 0) {
-            this.selectedSubNav = nav.submenu[0];
+        if (this.selectedNav.submenu.length > 0) {
+            this.selectedSubNav = this.selectedNav.submenu[0];
             this.onSelectSubNav(this.selectedSubNav);
         }
         else {
-            this.selectedSubNav = null;
+            this.selectedSubNav = undefined;
             this.headerNav =[this.selectedNav];
-             if (nav.url != '#')
-                this._router.navigate([nav.url]);
+            if (this.selectedNav.url.indexOf('#') < 0) {
+                this._router.navigate([this.selectedNav.url]);
+            }
         }
-                
         setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this); 
     }
     
@@ -112,15 +112,18 @@ export class Admin {
         else 
             this.headerNav = [this.selectedNav, this.selectedSubNav];
         
-        if (subnav.url != '#')
-            this._router.navigate([subnav.url])
+        if (subnav.url.indexOf('#') < 0) {
+            let link = 
+            this._router.navigate([subnav.url]);
+        }
     }
     
     onSelectHeader(headnav) {
-        let i = this.headerNav.indexOf(headnav);
-        this.onSelect(this.headerNav[0]);
-        if (i > 0)
-            this.onSelectSubNav(this.headerNav[1]);            
+        let b = Object.is(headnav, this.selectedSubNav);
+        this.onSelect(this.selectedNav);
+        if (b) {
+            this.onSelectSubNav(headnav);
+        }
     }
     
     goProfile() {
@@ -128,12 +131,6 @@ export class Admin {
         this._router.navigate(link);
     } 
     
-    test(i,j, fio) {
-        this.selectedNav = this.navs[i];
-        this.selectedSubNav = this.selectedNav.submenu[j]
-        fio.icon = this.selectedSubNav.icon;
-        this.headerNav = [this.selectedNav, this.selectedSubNav, fio]; 
-    }
 
     currentUrl (addition) {
         let url = '/admin' + this._location.path();
@@ -153,9 +150,10 @@ export class Admin {
             else {
                 s = this.navs[i].url.toUpperCase();
                 if (url.indexOf(s) + 1 ) {
-                    this.selectedNav = this.navs[i]
-                    this.selectedSubNav = null;
+                    this.selectedNav = this.navs[i];
+                    this.selectedSubNav = undefined;
                     this.headerNav = [this.selectedNav];
+                    setTimeout(() => { this.forceSubmenuShow = false;}, 800, this); 
                 }
             }
         }
@@ -164,6 +162,5 @@ export class Admin {
             addition.icon = this.headerNav[this.headerNav.length-1].icon;
             this.headerNav.push(addition);
         }
-        
     }
 }

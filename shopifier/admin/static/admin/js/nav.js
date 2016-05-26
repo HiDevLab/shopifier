@@ -61,12 +61,12 @@ export var Nav = [
     {
         'icon': 'cog',
         'text': 'Settings',
-        'url': '#',
+        'url': '##',
         'submenu': [
              {
                  'icon': 'cog',
                  'text': 'General',
-                 'url': '#',
+                 'url': '###',
                  'type': 'component',
              },
              {

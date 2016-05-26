@@ -69,7 +69,7 @@
         <ul>
             <li *ngFor="let headnav of headerNav"
                 (click)="onSelectHeader(headnav)">
-                <a href="{% verbatim %}{{ headnav.url }}{% endverbatim %}" >
+                <a >
                     {% verbatim %}{{ headnav.text }}{% endverbatim %}
                 </a>
                 <span>/</span> 
