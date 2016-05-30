@@ -225,3 +225,31 @@ nav {
         }
     }                   
 }
+
+footer {
+    flex: 1 1 0;
+    align-items: center;
+    
+    background: $background-footer-color;
+    color: $footer-color;
+    
+    bottom: 0;
+    right: 0;
+    left: $nav-width;
+    
+    display: flex;
+    justify-content: center;
+    
+    position: fixed;
+    overflow-y: hidden;
+    &.hidden {
+        transition-duration: 300ms;
+        height: 0;
+    }
+    
+    &.show {
+        transition-duration: 300ms;
+        height: 80px;
+    }
+}
+

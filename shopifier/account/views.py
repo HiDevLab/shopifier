@@ -285,12 +285,12 @@ class UserPasswordRecoverView(APIView):
     
     def send_email(self, user):
         context = {
-            'current_user': '{} {}'.format(user.first_name, user.last_name),
+            'user': '{} {}'.format(user.first_name, user.last_name),
             'reference': '{}/admin/auth/reset/{}/{}'.format(settings.SITE, user.id, self.token_generator.make_token(user)),
             'store_name': settings.STORE_NAME,
             'store_ref': settings.SITE
         }
-       
+        
         subject = render_to_string(self.subject_template_name, context)
         subject = ''.join(subject.splitlines())  # Email subject *must not* contain newlines
         send_mail(

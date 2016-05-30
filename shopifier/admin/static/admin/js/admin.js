@@ -7,6 +7,7 @@ import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
 
+
 //------------------------------------------------------------------------------
 @Component({
     selector:   'main',
@@ -65,6 +66,9 @@ export class Admin {
     currentUser = undefined;
 
     headerButtons = [];
+    
+    footerShow = false;
+    footerText = '';
 
     static get parameters() {
         return [[Router], [AdminAuthService], [Location]];
@@ -162,5 +166,12 @@ export class Admin {
             addition.icon = this.headerNav[this.headerNav.length-1].icon;
             this.headerNav.push(addition);
         }
+    }
+    
+    footer(text) {
+        this.footerShow = true;
+        this.footerText = text;
+        setTimeout(() => {  this.footerShow = false;
+                        }, 1000, this);
     }
 }

@@ -1,6 +1,6 @@
 <div class="login">
     <h1>Reset your password</h1>
-    <h2>For the account  {% verbatim %}{{currentUser.email}}{% endverbatim %}</h2>
+    <h2 *ngIf="currentUser">For the account  {% verbatim %}{{currentUser.email}}{% endverbatim %}</h2>
     
     <form name="resetForm" class="login-box" [ngFormModel]="lform" (ngSubmit)="goReset()" novalidate>
         {% csrf_token %}
@@ -11,7 +11,7 @@
         </div>
         <div class="dialog-input">
             <input type="password" class="login-input" [ngFormControl]="lform.controls['password1']" placeholder="New password" autofocus>
-            <i class="fa fa-envelope"></i>
+            <i class="fa fa-lock"></i>
         </div>
         <div class="dialog-input">
             <input type="password" class="login-input" [ngFormControl]="lform.controls['password2']" placeholder="Confirm password"/>

@@ -281,7 +281,7 @@ export class AdminAuthReset {
     email = '';
     pk = 0; 
     token = '';
-    currentUser = ''
+
     
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], [Router], [RouteParams]];
@@ -305,7 +305,7 @@ export class AdminAuthReset {
           this.token = this._routeParams.get('token');
           let user = {'pk': this.pk, 'token': this.token };
           this._http.post('/api/check_token2/', user)
-                .subscribe( () => {},
+                .subscribe( data => {this.currentUser = data;},
                             err => this._router.navigate(['Recover']));          
     }
     

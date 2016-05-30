@@ -69,7 +69,7 @@
         <ul>
             <li *ngFor="let headnav of headerNav"
                 (click)="onSelectHeader(headnav)">
-                <a >
+                <a>
                     {% verbatim %}{{ headnav.text }}{% endverbatim %}
                 </a>
                 <span>/</span> 
@@ -90,3 +90,9 @@
 <router-outlet></router-outlet>
 
 </section>
+
+<footer 
+    [ngClass]="{hidden: !footerShow, 'show': footerShow}">
+    <h1>{% verbatim %}{{ footerText }}{% endverbatim %}</h1>
+</footer>
+

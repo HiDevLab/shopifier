@@ -71,12 +71,15 @@ export class DefaultRequestOptions extends BaseRequestOptions{
     
     constructor(http, router) {
         super();
+        let csrftoken = this.getCookie('csrftoken');
+        console.log(csrftoken);
         this.headers = new Headers({'Accept': 'application/json; charset=utf-8',
                 'Content-Type': 'application/json; charset=utf-8',
-                'X-CSRFToken': this.getCookie('csrftoken')});
+                'X-CSRFToken': csrftoken});
     }
     
     getCookie(name) {
+        console.log(document.cookie);
         let value = "; " + document.cookie;
         let parts = value.split("; " + name + "=");
         if (parts.length == 2) 

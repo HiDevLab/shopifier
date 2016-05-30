@@ -174,7 +174,7 @@ export class AdminAccountProfile{
             this.lform.controls['avatar_image'].updateValue(this.new_avatar);   
         
         this._http
-            .put(`/api/admin/${this.user.id}/`, this.lform.value )
+            .patch(`/api/admin/${this.user.id}/`, this.lform.value )
             .subscribe( data => this.onInit(data),
                         err => { 
                                 this.obj_errors = err.json(); 
@@ -257,17 +257,22 @@ export class AdminAccountDeleteSessions {
     obj_errors = {};
     
     static get parameters() {
-        return [[Http]];
+        return [[Http], [Admin]];
     }
-    constructor(http) {
+    constructor(http, admin) {
         this._http = http;
+        this._admin = admin;
+        
     }
     
     goDeleteSessions() {
         this._http.delete('/api/sessions-expire/')
                 .subscribe( () => {},
                             () => {}, 
-                            () =>  {this.show=false;} 
+                            () =>  {
+                                this.show=false;
+                                this._admin.footer('You have successfully logged out all users');
+                            } 
                  );
     }   
 }
@@ -287,15 +292,19 @@ export class AdminAccountDelete {
     obj_errors = {};
     
     static get parameters() {
-        return [[Http]];
+        return [[Http], [Admin]];
     }
-    constructor(http) {
+    constructor(http, admin) {
         this._http = http;
+        this._admin = admin;
     }
     
     goDelete() {
         this._http.delete(`/api/admin/${this.user.id}/`)
-                .subscribe( () => { this.show=false;},
+                .subscribe( () => { 
+                                    this.show=false;
+                                    this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been removed`);
+                                  },
                             () => {}, 
                             () => this.parrent.userRefresh() 
                  );
@@ -318,11 +327,12 @@ export class AdminAccountInvite {
     boolInvite = false;
     
     static get parameters() {
-        return [[Http], [FormBuilder], [AdminUtils]];
+        return [[Http], [FormBuilder], [AdminUtils], [Admin]];
     }
-    constructor(http, formbuilder, utils) {
+    constructor(http, formbuilder, utils, admin) {
         this._http = http;
         this._utils = utils;
+        this._admin = admin;
         this.lform = formbuilder.group({
                     'email':    ['', this._utils.emailValidator],
                     'first_name': ['', Validators.required],
@@ -340,7 +350,10 @@ export class AdminAccountInvite {
         }
         */
         this._http.post('/api/user-invite/', this.lform.value)
-                .subscribe( data => { this.show=false;},
+                .subscribe( data => { 
+                                        this.show=false;
+                                        this._admin.footer(`${this.lform.controls['first_name'].value} ${this.lform.controls['last_name'].value} has been invited`);
+                                    },
                             err => { this.obj_errors = err.json(); this._utils.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
                  );                                
