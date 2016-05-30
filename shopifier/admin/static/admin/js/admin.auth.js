@@ -59,6 +59,14 @@ export class AdminAuthService {
         return this._userPromise;
     }
     
+    refreshCurrentUser() {
+        this._userPromise = this._http.get('/api/current-user/')
+            .toPromise()
+            .then(data => this._currentUser = data);
+        return this._userPromise;
+    }
+    
+    
     logOut() {
         return this._http
                 .get('/api/logout/')

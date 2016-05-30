@@ -88,6 +88,7 @@ export class AdminAccountProfile{
         
         this.isUser = this.user.id == this._auth._currentUser.id;// no correct
         this.isAdmin = this._auth._currentUser.is_admin;
+        
         /* 
         this._admin.test(4, 2, 
             {
@@ -110,7 +111,7 @@ export class AdminAccountProfile{
             else {
                 this._admin.headerButtons.push(
                     {
-                        'text': 'Take away this user the account owner rights', 
+                        'text': 'Take away this user the account owner permissions', 
                         'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
                     });
             }
@@ -175,7 +176,12 @@ export class AdminAccountProfile{
         
         this._http
             .patch(`/api/admin/${this.user.id}/`, this.lform.value )
-            .subscribe( data => this.onInit(data),
+            .subscribe( data => {
+                                    if (this.isUser) {
+                                        this._admin.refreshCurrentUser();
+                                    }
+                                    this.onInit(data);
+                                },
                         err => { 
                                 this.obj_errors = err.json(); 
                                 this.errors = this._utils.to_array(err.json()); 

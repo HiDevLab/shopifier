@@ -82,12 +82,11 @@ export class Admin {
     }
    
     ngOnInit() {
-        //this._router.navigate(['Home']);
-        this._auth.getCurrentUser().then(data => this.currentUser = data );
-        /*
-        this._auth.get('/api/current-user/')
-            .subscribe( data => {this.currentUser = data; this._auth.currentUser=data;} );
-        */               
+        this._auth.getCurrentUser().then(data => {this.currentUser = data;} );
+    }
+    
+    refreshCurrentUser() {
+        this._auth.refreshCurrentUser().then(data => {this.currentUser = data;});
     }
  
     onSelect(nav) {
