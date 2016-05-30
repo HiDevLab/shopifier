@@ -65,64 +65,71 @@ export class AdminRouter {
 import {enableProdMode} from 'angular2/core';
 enableProdMode();
 
-
+/*
 @Injectable()
 export class DefaultRequestOptions extends BaseRequestOptions{
     
     constructor(http, router) {
         super();
-        let csrftoken = this.getCookie('csrftoken');
-        console.log(csrftoken);
         this.headers = new Headers({'Accept': 'application/json; charset=utf-8',
-                'Content-Type': 'application/json; charset=utf-8',
-                'X-CSRFToken': csrftoken});
+                'Content-Type': 'application/json; charset=utf-8'});
     }
-    
-    getCookie(name) {
-        console.log(document.cookie);
-        let value = "; " + document.cookie;
-        let parts = value.split("; " + name + "=");
-        if (parts.length == 2) 
-            return parts.pop().split(";").shift();
-    }
-    
 }
+*/
 
 @Injectable()
 export class SuperHttp extends Http {
   
     static get parameters() {
-            return [[ConnectionBackend], [RequestOptions]];
+        return [[ConnectionBackend], [RequestOptions]];
     }
     constructor(backend, defaultOptions) {
         super(backend, defaultOptions);
+        this.headers = new Headers({
+                    'Accept': 'application/json; charset=utf-8',
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'X-CSRFToken': '' 
+                });
     }
 
+    csrfToken() {
+        let value = "; " + document.cookie;
+        let parts = value.split("; csrftoken=");
+        if (parts.length == 2){ 
+            this.headers.set('X-CSRFToken', parts.pop().split(";").shift());
+        }
+    }
+    
     request(url, options){
         return super.request(url, options);
     }
 
     post(url, data) {
+        this.csrfToken();
         let body = JSON.stringify(data);
-        return super.post(url, body).map(res => res.json());
+        return super.post(url, body, {headers: this.headers}).map(res => res.json());
     }
     
     put(url, data) {
+        this.csrfToken();
         let body = JSON.stringify(data);
-        return super.put(url, body).map(res => res.json());
+        return super.put(url, body, {headers: this.headers}).map(res => res.json());
     }
     
     patch(url, data) {
+        this.csrfToken();
         let body = JSON.stringify(data);
-        return super.patch(url, body).map(res => res.json());
+        return super.patch(url, body, {headers: this.headers}).map(res => res.json());
     }
 
     get(url) {
-        return super.get(url).map(res => res.json());
+        this.csrfToken();
+        return super.get(url, {headers: this.headers}).map(res => res.json());
     }
      
     delete(url) {
-        return super.delete(url);
+        this.csrfToken();
+        return super.delete(url, {headers: this.headers});
     }
 }
 
@@ -130,7 +137,7 @@ export class SuperHttp extends Http {
 bootstrap(AdminRouter, [
     ROUTER_PROVIDERS,
     HTTP_PROVIDERS,
-    provide( RequestOptions, { useClass: DefaultRequestOptions }),
+    //provide( RequestOptions, { useClass: DefaultRequestOptions }),
     provide(Http, {
         useFactory: (backend, defaultOptions) => new SuperHttp(backend, defaultOptions),
         deps: [XHRBackend, RequestOptions]
