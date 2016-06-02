@@ -5,11 +5,9 @@ from rest_framework.routers import DefaultRouter
 
 from account.views import *
 
-
 router = DefaultRouter()
 router.register(r'admin', UsersAdminViewSet)
 router.register(r'staff', UsersStaffViewSet)
-
 
 urlpatterns = [
     #Angular
