@@ -80,7 +80,7 @@
       <div *ngIf="headerButtons">
          <a *ngFor="let btn of headerButtons" 
                 class="{% verbatim %}{{ btn.class }}{% endverbatim %}"
-                [ngClass]="{disabled : !btn.self.formChange && btn.text=='Save'}"
+                [ngClass]="{disabled : !btn.self.formChange && btn.primary}"
                 (click)="btn.click(btn.self)">
                 {% verbatim %}{{ btn.text }}{% endverbatim %}
         </a> 

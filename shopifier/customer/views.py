@@ -1,10 +1,11 @@
 from django.shortcuts import render
 
 from django.conf import settings
+from django.core.signing import Signer
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import permissions, mixins
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.serializers import *
@@ -19,19 +20,92 @@ from serializers import AddressSerializer
 from django.core.serializers import serialize
 
 
-class APIViewSet(ModelViewSet):
+class SHViewSet(ModelViewSet):
     
-    def __init__(self, shopify=None, *args, **kwargs):
-        self.shopify = shopify
+    REPR = {
+                'Customer' : {
+                              'list' : 'customers',
+                              'nonlist': 'customer',
+                              },
+                'Address' : {
+                              'list' : 'addresses',
+                              'nonlist': 'customer_address',
+                              },
+
+            }
+    
+    def __init__(self, *args, **kwargs):
+        self.repr = self.REPR[self.queryset.model.__name__]
+        super(SHViewSet, self).__init__( *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        response = super(SHViewSet, self).list(request, *args, **kwargs)
+        response.data = { self.repr['list']: response.data }
+        return response
+        
+    def retrieve(self, request, *args, **kwargs):
+        response = super(SHViewSet, self).retrieve(request, *args, **kwargs)
+        response.data = { self.repr['nonlist']: response.data }
+        return response
+    
+        
+    def create(self, request, *args, **kwargs):
+        response = super(SHViewSet, self).create(request, *args, **kwargs)
+        response.data = { self.repr['nonlist']: response.data }
+        return response
+    
+    def update(self, request, *args, **kwargs):
+        response = super(SHViewSet, self).update(request, *args, **kwargs)
+        response.data = { self.repr['nonlist']: response.data }
+        return response
+    
+    def destroy(self, request, *args, **kwargs):
+        response = super(SHViewSet, self).destroy(request, *args, **kwargs)
+        response.status = status.HTTP_200_OK
+        return response
+    
+    @list_route(methods=['get'])
+    def init(self, request):
+        obj = self.serializer_class.Meta.model#.objects.create()
+        serializer = self.serializer_class(obj)
+        return Response(serializer.data, status=HTTP_200_OK)
 
 
+def get_token(email):
+    signer = Signer()
+    return signer.signature(email)
 
-class CustomerViewSet(APIViewSet):
+
+class CustomerViewSet(SHViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Customer.objects.all().order_by('id')
     serializer_class = CustomerSerializer
+    
+    @detail_route(methods=['post'])
+    def account_activation_url(self, request, pk=None):
+        customer = self.get_object()
+        if customer.state != 'disabled':
+            content = {
+                "errors": ["account already active"]
+            }
+            return Response(content, status=422)
+        
+        url = '{}/account/activate/{}/{}/'.format(settings.SITE, customer.id, get_token(customer.email))
+        content = {
+            'account_activation_url': url,
+        }
+        return Response(content, status=HTTP_200_OK)
 
-class AddressViewSet(ModelViewSet):
+    @list_route(methods=['get'])
+    def count(self, request, pk=None):
+        count = Customer.objects.all().count()
+        content = {
+            'count': count,
+        }
+        return Response(content, status=HTTP_200_OK)
+
+
+class AddressViewSet(SHViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Address.objects.all().order_by('customer')
     serializer_class = AddressSerializer
@@ -68,26 +142,4 @@ class AddressViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.validated_data['customer'] = self.customer
         serializer.save()
-    
-    def list(self, request, *args, **kwargs):
-        response = super(AddressViewSet, self).list(request, *args, **kwargs)
-        response.data = { 'addresses': response.data }
-        return response
-        
-    def retrieve(self, request, *args, **kwargs):
-        response = super(AddressViewSet, self).retrieve(request, *args, **kwargs)
-        response.data = { 'customer_address': response.data }
-        return response
-    
-        
-    def create(self, request, *args, **kwargs):
-        response = super(AddressViewSet, self).create(request, *args, **kwargs)
-        response.data = { 'address': response.data }
-        return response
-    
-    def update(self, request, *args, **kwargs):
-        response = super(AddressViewSet, self).update(request, *args, **kwargs)
-        response.data = { 'customer_address': response.data }
-        return response
-    
-    
+

@@ -1,0 +1,57 @@
+<div class="section">
+    <div class="section-annotation">
+        <div>
+            <p></p>
+            <h2><strong>Customer overview</strong></h2>
+        </div>
+    </div>
+    <div class="section-content">
+        <div class="card">
+            <form *ngIf="form.customer">
+            {% csrf_token %}
+                <div class="input-section">
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input">
+                            First Name
+                            <input [ngFormControl]="form.customer.controls.first_name" (input)="formChange=true">
+                        </label>
+                    </div>
+                    <div class="input-box">
+                        <label class="input">
+                            Last Name
+                            <input [ngFormControl]="form.customer.controls['last_name']" (input)="formChange=true">
+                        </label>   
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input">
+                            Email
+                            <input [ngFormControl]="form.customer.controls['email']" (input)="formChange=true">
+                        </label>    
+                    </div>
+                </div>
+                <div class="input-section">
+                     <div class="input-box">
+                        <div class="input">
+                            <input type="checkbox" id="customer-new-id1">
+                            <label for="customer-new-id1"><i class="fa fa-check" aria-hidden="true"></i>Customer accepts marketing</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <div class="input">
+                            <input type="checkbox" id="customer-new-id2">
+                            <label for="customer-new-id2"><i class="fa fa-check" aria-hidden="true"></i>Customer is tax exempt</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-section">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

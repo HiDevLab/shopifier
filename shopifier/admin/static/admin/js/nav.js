@@ -59,6 +59,13 @@ export var Nav = [
         ],
     },
     {
+        'icon': 'users',
+        'text': 'Customers',
+        'url': '/Admin/Customers',
+        'type': 'router',
+        'submenu': [],
+    },
+    {
         'icon': 'cog',
         'text': 'Settings',
         'url': '##',

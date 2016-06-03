@@ -6,7 +6,7 @@ import { Location } from 'angular2/platform/common';
 import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
-
+import { Customers, CustomersNew} from './admin.customers'
 
 //------------------------------------------------------------------------------
 @Component({
@@ -34,7 +34,6 @@ export class AdminHome {
     directives: [ROUTER_DIRECTIVES],
 })
 @RouteConfig([
-    
     {
         path : '/',
         redirectTo: ['Home'],
@@ -52,6 +51,16 @@ export class AdminHome {
         component : AdminSettings,
     },
   
+    {
+        path : '/customers',
+        name : 'Customers',
+        component : Customers,
+    },
+    {
+        path : '/customers/new',
+        name : 'NewCustomer',
+        component : CustomersNew,
+    },
 ])
 export class Admin {
     navs = Nav;

@@ -13,12 +13,12 @@ import pdb
 
 class CustomerAddressSerializer(serializers.ModelSerializer):
 
+    default = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Address
         exclude = ('customer',)
-    
-    default = serializers.BooleanField(read_only=True)
-
+        
 
 class CustomerSerializer(serializers.ModelSerializer):
     
@@ -32,9 +32,11 @@ class CustomerSerializer(serializers.ModelSerializer):
    
 class AddressSerializer(serializers.ModelSerializer):
 
+    default = serializers.BooleanField(read_only=True)
+    
     class Meta:
         model = Address
         exclude = ('customer',)
     
-    default = serializers.BooleanField(read_only=True)
+    
     

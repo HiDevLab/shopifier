@@ -1,6 +1,6 @@
 import { Component, DynamicComponentLoader, ViewContainerRef } from 'angular2/core';
 import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
+import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators, Control } from 'angular2/common';
 import { Http } from 'angular2/http'
 import 'rxjs/Rx'
 
@@ -49,12 +49,14 @@ export class AdminAccountProfile{
             'www_site': [''],
             'bio': [''],
             'avatar_image': [''],
-            'email': [''],
             'is_admin': [''],
             'admin_password': [''],
             'password1': [''],
             'password2': [''],
         }); 
+        
+        let e = new Control('')
+        this.lform.addControl('email',e);
     
     }
     
@@ -120,7 +122,7 @@ export class AdminAccountProfile{
         this._admin.headerButtons.push(
             {
                 'text': 'Save', 'class': 'btn btn-blue', 
-                'click': this.onSave, 'self': this 
+                'click': this.onSave, 'primary': true, 'self': this 
             });
         
         for (let control in this.lform.controls) {

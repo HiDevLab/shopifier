@@ -64,8 +64,6 @@ $btn-disabled-color: #d3dbe2;
     border-radius: 3px;
     border: 1px solid $btn-border;
     
-    
-    
     &:hover {
         cursor: pointer; cursor: hand;
         background: $btn-disabled-background;
@@ -229,7 +227,7 @@ $input-error-background: #fef6f5;
         border: 1px solid $input-border;
         border-radius: 3px;
         box-sizing: border-box;
-        line-height: 20px;
+        line-height: 24px;
         font-size: $shopify-input-font-size;
         padding: 5px 10px;
         width: 100%;
@@ -244,7 +242,7 @@ $input-error-background: #fef6f5;
                 font-weight: 100;
                 cursor: pointer; cursor: hand;
                 > i {
-                    border: 1px solid $input-color; 
+                    border: 1px solid $input-border; 
                     border-radius: 3px;  
                     color: $input-background; 
                     margin-right: 10px;     
