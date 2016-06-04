@@ -29,7 +29,7 @@ export class BaseForm {
     
     getAPIData(get_api_data_url){
         this._http
-            .get(get_api_data_url)
+            .options(get_api_data_url)
             .subscribe( data => this.onBaseInit(data),
                         err => {
                                     this.obj_errors = err; 
@@ -89,7 +89,7 @@ export class BaseForm {
 export class CustomersNew extends BaseForm{
     get_object = 'customer';
     put_object = 'customer';
-    get_api_data_url = '/admin/customers/1.json';
+    get_api_data_url = '/admin/customers.json';
     
     
     static get parameters() {

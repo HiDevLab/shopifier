@@ -1,12 +1,17 @@
 import { bootstrap }    from 'angular2/platform/browser';
 
-import { ROUTER_BINDINGS, RouteConfig, Router, RouterOutlet, RouterLink, ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
-import { HTTP_PROVIDERS, ConnectionBackend, Http, Headers, BaseRequestOptions, RequestOptions, XHRBackend} from 'angular2/http';
+import { ROUTER_BINDINGS, RouteConfig, Router, RouterOutlet, RouterLink, 
+        ROUTER_PROVIDERS, ROUTER_DIRECTIVES } from 'angular2/router';
+import { HTTP_PROVIDERS, ConnectionBackend, Http, Headers, BaseRequestOptions, 
+        Request, RequestOptions, XHRBackend,RequestMethod} from 'angular2/http';
 import { FORM_PROVIDERS, COMMON_DIRECTIVES } from 'angular2/common';
 import { Component, provide, Injectable, Injector } from 'angular2/core';
 import 'rxjs/Rx';
 
-import { AdminAuthService, AdminUtils, AdminAuthLogout, AdminAuthLogin, AdminAuthRecover, AdminAuthReset, AdminAuthAccept, AdminAuthWrongToken } from './admin.auth'
+import { AdminAuthService, AdminUtils, AdminAuthLogout, AdminAuthLogin, 
+        AdminAuthRecover, AdminAuthReset, AdminAuthAccept, AdminAuthWrongToken } 
+from './admin.auth'
+
 import { Admin } from './admin'
 
 @Component({
@@ -85,7 +90,8 @@ export class SuperHttp extends Http {
     }
     constructor(backend, defaultOptions) {
         super(backend, defaultOptions);
-        this.headers = new Headers({
+        this.requestoptions = new RequestOptions({});
+        this.requestoptions.headers = new Headers({
                     'Accept': 'application/json; charset=utf-8',
                     'Content-Type': 'application/json; charset=utf-8',
                     'X-CSRFToken': '' 
@@ -96,40 +102,42 @@ export class SuperHttp extends Http {
         let value = "; " + document.cookie;
         let parts = value.split("; csrftoken=");
         if (parts.length == 2){ 
-            this.headers.set('X-CSRFToken', parts.pop().split(";").shift());
+            this.requestoptions.headers.set('X-CSRFToken', parts.pop().split(";").shift());
         }
     }
     
-    request(url, options){
-        return super.request(url, options);
+    request(url, method, data){
+        this.csrfToken();
+        this.requestoptions.method = RequestMethod[method];
+        this.requestoptions.url= url;
+        if (data) this.requestoptions.body = JSON.stringify(data); 
+        let request = new Request(this.requestoptions);
+        return super.request(request).map(res => res.json());
     }
 
     post(url, data) {
-        this.csrfToken();
-        let body = JSON.stringify(data);
-        return super.post(url, body, {headers: this.headers}).map(res => res.json());
+        return this.request(url, 'Post', data);
     }
-    
+
     put(url, data) {
-        this.csrfToken();
-        let body = JSON.stringify(data);
-        return super.put(url, body, {headers: this.headers}).map(res => res.json());
+        return this.request(url, 'Put', data);
     }
-    
+
     patch(url, data) {
-        this.csrfToken();
-        let body = JSON.stringify(data);
-        return super.patch(url, body, {headers: this.headers}).map(res => res.json());
+        return this.request(url, 'Patch', data);
     }
 
     get(url) {
-        this.csrfToken();
-        return super.get(url, {headers: this.headers}).map(res => res.json());
+        return this.request(url, 'Get');
+    }
+     
+    options(url) {
+        return this.request(url, 'Options');
     }
      
     delete(url) {
         this.csrfToken();
-        return super.delete(url, {headers: this.headers});
+        return super.delete(url, {headers: this.requestoptions.headers});
     }
 }
 

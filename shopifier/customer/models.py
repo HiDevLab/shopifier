@@ -48,9 +48,10 @@ class Address(models.Model):
     EXTRA_COUNTRY_CHOICES = [
         ('XK', _('Kosovo')),
     ]
+    #TODO: add more countries
     COUNTRY_CHOICES = [(c.alpha2, getattr(c, 'common_name', c.name))
-                       for c in countries]
-    COUNTRY_CHOICES += EXTRA_COUNTRY_CHOICES
+                       for c in countries][:2]
+    #COUNTRY_CHOICES += EXTRA_COUNTRY_CHOICES
 
     customer = models.ForeignKey(Customer, related_name='addresses')
     address1 = models.CharField(_("The  mailing address"), blank=True, max_length=254)
