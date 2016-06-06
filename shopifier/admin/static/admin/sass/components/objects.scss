@@ -221,8 +221,10 @@ $input-error-background: #fef6f5;
     > strong {
         font-weight: bold;
     }
-    
-    > input, > textarea {
+
+    > input, > textarea, > select {
+        position: relative;
+        background: inherit;
         margin-top: 5px;
         border: 1px solid $input-border;
         border-radius: 3px;
@@ -231,9 +233,17 @@ $input-error-background: #fef6f5;
         font-size: $shopify-input-font-size;
         padding: 5px 10px;
         width: 100%;
+        
+        box-shadow: none;
+        background-image: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+            appearance: none;
             
         &:focus {
             border-color: $input-focus-border;
+            outline: none;
+            background: transparent;
         }  
         
         &[type="checkbox"] {
@@ -260,6 +270,15 @@ $input-error-background: #fef6f5;
                 }
             }
         }
+        
+    }
+     > select::AFTER {
+        content: "\f105";
+        position: absolute;
+        right: 20px;
+        top: 0;
+        font-family: FontAwesome;
+        color: red;//$input-border;
     }
 }
 

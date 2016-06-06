@@ -110,7 +110,7 @@ export class SuperHttp extends Http {
         this.csrfToken();
         this.requestoptions.method = RequestMethod[method];
         this.requestoptions.url= url;
-        if (data) this.requestoptions.body = JSON.stringify(data); 
+        this.requestoptions.body = (data) ? JSON.stringify(data) : undefined;
         let request = new Request(this.requestoptions);
         return super.request(request).map(res => res.json());
     }

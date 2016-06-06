@@ -1,3 +1,18 @@
+<div *ngIf="errors.length> 0" class="section">
+    <div  class="input-box">
+        <div class="error-list">
+            <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
+            <div>
+                <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                <ul>
+                    <li *ngFor="let error of errors">
+                        {% verbatim %}{{ error }}{% endverbatim %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>    
+</div>
 <div class="section">
     <div class="section-annotation">
         <div>
@@ -13,30 +28,33 @@
                 </div>
                 <div class="input-section">
                     <div class="input-box">
-                        <label class="input">
+                        <label class="input" [ngClass]="{err: obj_errors.first_name}">
                             First Name
-                            <input [ngFormControl]="form.customer.controls.first_name" (input)="formChange=true">
+                            <input [ngFormControl]="form.customer.controls.first_name"
+                                   (input)="formChange=true">
                         </label>
                     </div>
                     <div class="input-box">
-                        <label class="input">
+                        <label class="input" [ngClass]="{err: obj_errors.last_name}">
                             Last Name
-                            <input [ngFormControl]="form.customer.controls['last_name']" (input)="formChange=true">
+                            <input  [ngFormControl]="form.customer.controls.last_name"
+                                    (input)="formChange=true">
                         </label>   
                     </div>
                 </div>
                 <div class="input-section">
                     <div class="input-box">
-                        <label class="input">
+                        <label class="input" [ngClass]="{err: obj_errors.email}">
                             Email
-                            <input [ngFormControl]="form.customer.controls['email']" (input)="formChange=true">
-                        </label>    
+                            <input [ngFormControl]="form.customer.controls.email"
+                                    (input)="formChange=true">
+                        </label>
                     </div>
                 </div>
                 <div class="input-section">
                      <div class="input-box">
                         <div class="input">
-                            <input type="checkbox" id="customer-new-id1">
+                            <input type="checkbox" id="customer-new-id1" [ngFormControl]="form.customer.controls.accepts_marketing" (input)="formChange=true">
                             <label for="customer-new-id1"><i class="fa fa-check" aria-hidden="true"></i>Customer accepts marketing</label>
                         </div>
                     </div>
@@ -44,7 +62,7 @@
                 <div class="input-section">
                     <div class="input-box">
                         <div class="input">
-                            <input type="checkbox" id="customer-new-id2">
+                            <input type="checkbox" id="customer-new-id2" [ngFormControl]="form.customer.controls.tax_exempt" (input)="formChange=true">
                             <label for="customer-new-id2"><i class="fa fa-check" aria-hidden="true"></i>Customer is tax exempt</label>
                         </div>
                     </div>
@@ -54,4 +72,128 @@
             </form>
         </div>
     </div>
+</div>
+
+<div class="section">
+    <div class="section-annotation">
+        <div>
+            <p></p>
+            <h2><strong>Address</strong></h2>
+            <p></p>
+            The primary address of this customer.
+        </div>
+    </div>
+    <div class="section-content">
+        <div class="card">
+            <form *ngIf="form.default_address">
+            {% csrf_token %}
+                <div class="input-section">
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.first_name}">
+                            First Name
+                            <input [ngFormControl]="form.default_address.controls.first_name"
+                                   (input)="formChange=true">
+                        </label>
+                    </div>
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.last_name}">
+                            Last Name
+                            <input  [ngFormControl]="form.default_address.controls.last_name"
+                                    (input)="formChange=true">
+                        </label>   
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.company}">
+                            Company
+                            <input [ngFormControl]="form.default_address.controls.company"
+                                   (input)="formChange=true">
+                        </label>
+                    </div>
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.phone}">
+                            Phone
+                            <input  [ngFormControl]="form.default_address.controls.phone"
+                                    (input)="formChange=true">
+                        </label>   
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.address1}">
+                            Address
+                            <input [ngFormControl]="form.default_address.controls.address1"
+                                    (input)="formChange=true">
+                        </label>
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.address2}">
+                            Address Con’t
+                            <input [ngFormControl]="form.default_address.controls.address2"
+                                    (input)="formChange=true">
+                        </label>
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.city}">
+                            City
+                            <input [ngFormControl]="form.default_address.controls.city"
+                                   (input)="formChange=true">
+                        </label>
+                    </div>
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.zip}">
+                            Postal / Zip Code
+                            <input  [ngFormControl]="form.default_address.controls.zip"
+                                    (input)="formChange=true">
+                        </label>   
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input">
+                            Coutry
+                            <select [ngFormControl]="form.default_address.controls.country_code">
+                                <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
+                                        {% verbatim %}{{ country.display_name }}{% endverbatim %}
+                                </option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="input-box">
+                        <label class="input">
+                            Region
+                            <select [ngFormControl]="form.default_address.controls.province_code">
+                                <option *ngFor="let region of form.default_address_meta.province_code.choices | 
+                                                province:form.default_address.controls.country_code.value" [value]="region.value">
+                                        {% verbatim %}{{ region.display_name }}{% endverbatim %}
+                                </option>
+                            </select>
+                        </label>   
+                    </div>
+                </div>
+                
+                <div class="input-section">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="section-profile">
+    <div class="input-box row end">
+        <a class="btn mr10"
+        (click)="onCancel()">Cancel</a>
+        
+        <a class="btn btn-blue"
+        [ngClass]="{disabled : !formChange}"
+        (click)="onSave()"> Save customer</a>
+    </div> 
 </div>

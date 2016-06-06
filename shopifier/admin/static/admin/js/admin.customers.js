@@ -1,12 +1,24 @@
-import { Component, DynamicComponentLoader, ViewContainerRef } from 'angular2/core';
+import { Component, DynamicComponentLoader, 
+        ViewContainerRef, Pipe } from 'angular2/core';
 import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators, Control, ControlGroup } from 'angular2/common';
+import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
+        Validators, Control, ControlGroup } from 'angular2/common';
 import { Http } from 'angular2/http'
 import 'rxjs/Rx'
 
 import { AdminAuthService, AdminUtils } from './admin.auth'
 import { Admin } from './admin'
 
+@Pipe({
+    name: 'province'
+})
+export class ProvincePipe{
+    transform(regions, country) {
+    return regions.filter( region => {
+        return region.value.substr(0, 2) === country;
+    });
+  }
+}
 
 //------------------------------------------------------------------------------ 
 export class BaseForm {
@@ -27,6 +39,92 @@ export class BaseForm {
         this._formbuilder = formbuilder;
     }
     
+    addForm(form, url, alias) {
+        this._http
+            .options(url)
+            .subscribe(data =>  {
+                                    this.addFormFromOptinons(form, data, alias)
+                                },
+                        err => {
+                                    this.obj_errors = err; 
+                                    this.errors = this._utils.to_array(err.json()); 
+                                }, 
+                       );
+    }
+    
+    addFormFromOptinons(form, data, alias) {
+        let group = data.actions[Object.keys(data.actions)[0]];
+        this.addGroup(form, group, alias);
+        console.log(form);
+    }
+    
+    addGroup(form, group, group_name) {
+        if (Object.prototype.toString.call(group) !== '[object Object]')
+            return;
+        form[group_name] = this._formbuilder.group({});
+        form[group_name + '_meta'] = {};
+        
+        let keys = Object.keys(group);
+        
+        for (let i in keys) {
+            let ctrl = keys[i];
+            if ('children' in group[ctrl]) 
+                this.addGroup(form, group[ctrl].children, ctrl);
+            else
+                this.addControl(form, group, group_name, ctrl);
+        }
+    }
+    
+    addControl(form, group, group_name, ctrl_name){
+        if (group[ctrl_name].read_only) 
+            return;
+            
+        let validators = [];
+        if (group[ctrl_name].required)
+            validators.push(Validators.required);
+            
+        if (group[ctrl_name].type==='email')
+            validators.push(this.emailValidator);
+
+        if (group[ctrl_name].max_length)
+            validators.push(Validators.maxLength(group[ctrl_name].max_length));
+        
+        if (group[ctrl_name].min_length)
+            validators.push(Validators.minLength(group[ctrl_name].min_length));
+
+        let control = new Control('', Validators.compose(validators));
+        form[group_name].addControl(ctrl_name, control);
+        
+        form[group_name + '_meta'][ctrl_name] = {'label': group[ctrl_name].label};
+        if (group[ctrl_name].type==='choice')
+            form[group_name + '_meta'][ctrl_name].choices = group[ctrl_name].choices;
+    }
+    
+    emailValidator(control) {
+        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+            return null;
+        }   else {
+            return {'Invalid Email Address': true };
+        }
+    }
+    
+    groupValidate (form, group_name) {
+        let keys = Object.keys(form[group_name].controls);
+        this.obj_errors = {};
+        this.errors = [];
+        for (let i in keys) {
+            let ctrl = keys[i];
+            if (!form[group_name].controls[ctrl].valid) {
+                this.obj_errors[ctrl] = true;
+                let err1 = form[group_name + '_meta'][ctrl].label;
+                let err2 = Object.keys(form[group_name].controls[ctrl].errors)[0];
+                this.errors.push(`${err1}: ${err2}`); 
+            }
+        }
+        console.log(this.form);
+    }
+    
+    
     getAPIData(get_api_data_url){
         this._http
             .options(get_api_data_url)
@@ -44,34 +142,8 @@ export class BaseForm {
         if (this.afterInit) this.afterInit(data);// define on the child
     }
     
-    addForm(set_data) {
-        let keys = Object.keys(this.api_data);
-        for (let i in keys) {
-            let group_name = keys[i];
-            this.addGroup(this.api_data[group_name], group_name, set_data);
-        }
-    }
     
-    addGroup(group, group_name, set_data) {
-        if (Object.prototype.toString.call(group) !== '[object Object]')
-            return;
-        this.form[group_name] = this._formbuilder.group({});
-        let keys = Object.keys(group);
-        
-        for (let i in keys) {
-            let ctrl = keys[i];
-            if (Object.prototype.toString.call(group[ctrl]) === '[object Object]') {
-                this.addGroup(group[ctrl], ctrl, set_data);
-            }
-            if (Object.prototype.toString.call(group[ctrl]) !== '[object Array]'){
-                let control = new Control('');
-                if (set_data)
-                    control.updateValue(group[ctrl], true, true);
-                this.form[group_name].addControl(ctrl, control);
-            }
-        }
-        
-    }
+    
     onChanges(changes) {
         console.log(changes);
     }
@@ -84,12 +156,13 @@ export class BaseForm {
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
   directives: [FORM_DIRECTIVES],
-  main_request : 'hhh'
+  pipes: [ProvincePipe]
 })
 export class CustomersNew extends BaseForm{
-    get_object = 'customer';
+    //get_object = 'customer';
     put_object = 'customer';
-    get_api_data_url = '/admin/customers.json';
+    get_api_optinons_url = '/admin/customers.json';
+
     
     
     static get parameters() {
@@ -114,12 +187,13 @@ export class CustomersNew extends BaseForm{
                 'click': this.onSave, 'primary': true, 'self': this 
             });
     
-        this.getAPIData(this.get_api_data_url);
+        this.addForm(this.form, this.get_api_optinons_url, this.put_object);
     }
     
-    afterInit(){
-        this.addForm(true);
-        console.log(this.form);
+    onSave(self) {
+        if (!self) 
+            self = this;
+        self.groupValidate(self.form, self.put_object)
     }
 }
 

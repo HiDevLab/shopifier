@@ -22,6 +22,10 @@ class CustomerAddressSerializer(serializers.ModelSerializer):
 
 class CustomerSerializer(serializers.ModelSerializer):
     
+    email = serializers.EmailField(max_length=255, required=True, allow_null=False)
+    first_name = serializers.CharField(min_length=6, max_length=128, required=True, allow_null=False)
+    last_name = serializers.CharField(max_length=128, required=True, allow_null=False)
+    
     addresses = CustomerAddressSerializer(many=True, read_only = True) #serializers.SerializerMethodField(read_only = True)
     default_address = CustomerAddressSerializer(read_only = True)
     

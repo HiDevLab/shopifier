@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from django.utils.translation import ugettext_lazy as _
 
-from pycountry import countries
+from pycountry import countries, subdivisions 
 
 __all__ = [
     'Customer',
@@ -50,11 +50,14 @@ class Address(models.Model):
     ]
     #TODO: add more countries
     COUNTRY_CHOICES = [(c.alpha2, getattr(c, 'common_name', c.name))
-                       for c in countries][:2]
+                       for c in countries]
     #COUNTRY_CHOICES += EXTRA_COUNTRY_CHOICES
+    PROVINCE_CHOICES = [(c.code, c.name )
+                       for c in subdivisions]
+    
 
     customer = models.ForeignKey(Customer, related_name='addresses')
-    address1 = models.CharField(_("The  mailing address"), blank=True, max_length=254)
+    address1 = models.CharField(_("The mailing address"), blank=True, max_length=254)
     address2 = models.CharField(_("An additional field for the mailing address"), blank=True, max_length=254)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
@@ -66,7 +69,7 @@ class Address(models.Model):
     #country_name
     #defaul
     province = models.CharField(_( "The province or state name"), blank=True, max_length=254)
-    province_code = models.CharField(_( "The two-letter code for the province or state"), blank=True, max_length=2)
+    province_code = models.CharField(_( "The two-letter code for the province or state"), max_length=6, choices=PROVINCE_CHOICES, blank=True)
     zip = models.CharField(_( "The zip or postal code"), blank=True, max_length=20)
     
     @property

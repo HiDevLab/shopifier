@@ -1,6 +1,6 @@
 import { Component } from 'angular2/core';
 import { ROUTER_DIRECTIVES, Router, RouteConfig, CanActivate } from 'angular2/router'
-import { FORM_DIRECTIVES, NgFor, ngIf } from 'angular2/common';
+import { FORM_DIRECTIVES } from 'angular2/common';
 import { Location } from 'angular2/platform/common';
 
 import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
