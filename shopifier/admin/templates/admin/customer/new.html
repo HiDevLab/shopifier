@@ -28,14 +28,14 @@
                 </div>
                 <div class="input-section">
                     <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.first_name}">
+                        <label class="input" [ngClass]="{err: form.customer_meta.first_name.error}">
                             First Name
                             <input [ngFormControl]="form.customer.controls.first_name"
                                    (input)="formChange=true">
                         </label>
                     </div>
                     <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.last_name}">
+                        <label class="input" [ngClass]="{err: form.customer_meta.last_name.error}">
                             Last Name
                             <input  [ngFormControl]="form.customer.controls.last_name"
                                     (input)="formChange=true">
@@ -44,7 +44,7 @@
                 </div>
                 <div class="input-section">
                     <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.email}">
+                        <label class="input" [ngClass]="{err: form.customer_meta.email.error}">
                             Email
                             <input [ngFormControl]="form.customer.controls.email"
                                     (input)="formChange=true">
@@ -159,7 +159,8 @@
                     <div class="input-box">
                         <label class="input">
                             Coutry
-                            <select [ngFormControl]="form.default_address.controls.country_code">
+                            <select [ngFormControl]="form.default_address.controls.country_code"
+                            (change)="form.default_address.controls.province.updateValue('')">
                                 <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
                                         {% verbatim %}{{ country.display_name }}{% endverbatim %}
                                 </option>
@@ -167,7 +168,8 @@
                         </label>
                     </div>
                     <div class="input-box">
-                        <label class="input">
+                        <label class="input" *ngIf="(form.default_address_meta.province_code.choices | 
+                                                province:form.default_address.controls.country_code.value).length>0">
                             Region
                             <select [ngFormControl]="form.default_address.controls.province_code">
                                 <option *ngFor="let region of form.default_address_meta.province_code.choices | 
@@ -176,9 +178,77 @@
                                 </option>
                             </select>
                         </label>   
+                        <label class="input" *ngIf="(form.default_address_meta.province_code.choices | 
+                                                province:form.default_address.controls.country_code.value).length==0">
+                            Region
+                            <input [ngFormControl]="form.default_address.controls.province"
+                                    (input)="formChange=true">
+                        </label>
                     </div>
                 </div>
                 
+                <div class="input-section">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-annotation">
+        <div>
+            <p></p>
+            <h2><strong>Notes</strong></h2>
+            <p></p>
+            Enter any extra notes relating to this customer.
+        </div>
+    </div>
+    <div class="section-content">
+        <div class="card">
+            <form *ngIf="form.customer">
+            {% csrf_token %}
+                <div class="input-section">
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.note}">
+                            Notes
+                            <input [ngFormControl]="form.customer.controls.note"
+                                    (input)="formChange=true" placeholder="Add a note to this customer…">
+                        </label>
+                    </div>
+                </div>
+                <div class="input-section">
+                </div>
+            </form>
+        </div>    
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-annotation">
+        <div>
+            <p></p>
+            <h2><strong>Tags</strong></h2>
+            <p></p>
+            Tags can be used to categorize customers into groups.
+        </div>
+    </div>
+    <div class="section-content">
+        <div class="card">
+            <form *ngIf="form.customer">
+            {% csrf_token %}
+                <div class="input-section">
+                </div>
+                <div class="input-section">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors.tags}">
+                            Tags
+                            <input [ngFormControl]="form.customer.controls.tags"
+                                    (input)="formChange=true" placeholder="Wholesale, referral, trade show">
+                        </label>
+                    </div>
+                </div>
                 <div class="input-section">
                 </div>
             </form>

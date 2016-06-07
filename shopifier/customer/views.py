@@ -20,7 +20,7 @@ from serializers import AddressSerializer
 from django.core.serializers import serialize
 
 
-class SHViewSet(ModelViewSet):
+class SHPFViewSet(ModelViewSet): #features shpf API
     
     REPR = {
                 'Customer' : {
@@ -36,47 +36,40 @@ class SHViewSet(ModelViewSet):
     
     def __init__(self, *args, **kwargs):
         self.repr = self.REPR[self.queryset.model.__name__]
-        super(SHViewSet, self).__init__( *args, **kwargs)
+        super(SHPFViewSet, self).__init__( *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        response = super(SHViewSet, self).list(request, *args, **kwargs)
+        response = super(SHPFViewSet, self).list(request, *args, **kwargs)
         response.data = { self.repr['list']: response.data }
         return response
         
     def retrieve(self, request, *args, **kwargs):
-        response = super(SHViewSet, self).retrieve(request, *args, **kwargs)
+        response = super(SHPFViewSet, self).retrieve(request, *args, **kwargs)
         response.data = { self.repr['nonlist']: response.data }
         return response
     
         
     def create(self, request, *args, **kwargs):
-        response = super(SHViewSet, self).create(request, *args, **kwargs)
+        response = super(SHPFViewSet, self).create(request, *args, **kwargs)
         response.data = { self.repr['nonlist']: response.data }
         return response
     
     def update(self, request, *args, **kwargs):
-        response = super(SHViewSet, self).update(request, *args, **kwargs)
+        response = super(SHPFViewSet, self).update(request, *args, **kwargs)
         response.data = { self.repr['nonlist']: response.data }
         return response
     
     def destroy(self, request, *args, **kwargs):
-        response = super(SHViewSet, self).destroy(request, *args, **kwargs)
+        response = super(SHPFViewSet, self).destroy(request, *args, **kwargs)
         response.status = status.HTTP_200_OK
         return response
     
-    @list_route(methods=['get'])
-    def init(self, request):
-        obj = self.serializer_class.Meta.model#.objects.create()
-        serializer = self.serializer_class(obj)
-        return Response(serializer.data, status=HTTP_200_OK)
-
-
 def get_token(email):
     signer = Signer()
     return signer.signature(email)
 
 
-class CustomerViewSet(SHViewSet):
+class CustomerViewSet(SHPFViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Customer.objects.all().order_by('id')
     serializer_class = CustomerSerializer
@@ -105,7 +98,7 @@ class CustomerViewSet(SHViewSet):
         return Response(content, status=HTTP_200_OK)
 
 
-class AddressViewSet(SHViewSet):
+class AddressViewSet(SHPFViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Address.objects.all().order_by('customer')
     serializer_class = AddressSerializer

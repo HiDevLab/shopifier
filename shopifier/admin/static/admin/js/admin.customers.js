@@ -55,7 +55,6 @@ export class BaseForm {
     addFormFromOptinons(form, data, alias) {
         let group = data.actions[Object.keys(data.actions)[0]];
         this.addGroup(form, group, alias);
-        console.log(form);
     }
     
     addGroup(form, group, group_name) {
@@ -91,13 +90,19 @@ export class BaseForm {
         
         if (group[ctrl_name].min_length)
             validators.push(Validators.minLength(group[ctrl_name].min_length));
-
-        let control = new Control('', Validators.compose(validators));
-        form[group_name].addControl(ctrl_name, control);
         
         form[group_name + '_meta'][ctrl_name] = {'label': group[ctrl_name].label};
-        if (group[ctrl_name].type==='choice')
+
+        let control = new Control('', Validators.compose(validators));
+        
+        if (group[ctrl_name].type==='choice'){
             form[group_name + '_meta'][ctrl_name].choices = group[ctrl_name].choices;
+            control.updateValue(group[ctrl_name].choices[0].value);
+        }
+        if (group[ctrl_name].type==='boolean') control.updateValue(false);
+        if (group[ctrl_name].type==='datetime') control.updateValue(undefined);
+
+        form[group_name].addControl(ctrl_name, control);
     }
     
     emailValidator(control) {
@@ -109,6 +114,7 @@ export class BaseForm {
     }
     
     groupValidate (form, group_name) {
+        //form[group_name].updateValueAndValidity();
         let keys = Object.keys(form[group_name].controls);
         this.obj_errors = {};
         this.errors = [];
@@ -119,12 +125,33 @@ export class BaseForm {
                 let err1 = form[group_name + '_meta'][ctrl].label;
                 let err2 = Object.keys(form[group_name].controls[ctrl].errors)[0];
                 this.errors.push(`${err1}: ${err2}`); 
+                form[group_name + '_meta'][ctrl].error = true;
             }
+            else
+                form[group_name + '_meta'][ctrl].error = false;
         }
-        console.log(this.form);
+//        console.log(form[group_name]);
+        return form[group_name].valid
     }
     
-    
+    apiErrors(form, group_name, errors) {
+        let keys = Object.keys(errors);
+        this.obj_errors = {};
+        this.errors = [];
+        
+        for (let i in keys) {
+            let ctrl = keys[i];
+            for (let j in errors[ctrl]) {
+                this.obj_errors[ctrl] = true;
+                let err1 = form[group_name + '_meta'][ctrl].label;
+                let err2 = errors[ctrl][j];
+                this.errors.push(`${err1}: ${err2}`); 
+                form[group_name + '_meta'][ctrl].error = true;
+            }
+        }
+        
+    }   
+
     getAPIData(get_api_data_url){
         this._http
             .options(get_api_data_url)
@@ -141,13 +168,10 @@ export class BaseForm {
         this.api_data = data;
         if (this.afterInit) this.afterInit(data);// define on the child
     }
-    
-    
-    
+
     onChanges(changes) {
         console.log(changes);
     }
-
 }
 
 
@@ -159,12 +183,7 @@ export class BaseForm {
   pipes: [ProvincePipe]
 })
 export class CustomersNew extends BaseForm{
-    //get_object = 'customer';
-    put_object = 'customer';
-    get_api_optinons_url = '/admin/customers.json';
 
-    
-    
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService], [Admin], [AdminUtils]];
     }
@@ -186,14 +205,55 @@ export class CustomersNew extends BaseForm{
                 'text': 'Save customer', 'class': 'btn btn-blue', 
                 'click': this.onSave, 'primary': true, 'self': this 
             });
-    
-        this.addForm(this.form, this.get_api_optinons_url, this.put_object);
+        this.addForm(this.form, '/admin/customers.json', 'customer');
     }
     
     onSave(self) {
-        if (!self) 
-            self = this;
-        self.groupValidate(self.form, self.put_object)
+        self = self || this;
+        
+        if(!self.groupValidate(self.form, 'customer')) return;
+        
+        let customer = {};
+        customer['customer'] = self.form['customer'].value;
+        
+        self._http
+            .post('/admin/customers.json', customer )
+            .subscribe( data => self.saveAddress(data),
+                        err => { 
+                                self.apiErrors(self.form, 'customer', err.json());
+                                //this.cls();
+                        }, 
+            );
+    }
+    
+    saveAddress(customer) {
+        let address = {};
+        address['address'] = this.form['default_address'].value;
+        
+        this._http
+            .post(`/admin/customers/${customer.customer.id}/addresses.json`, address )
+            .subscribe( data => this.setDefaultAddress(customer, data),
+                        err => { 
+                                this.apiErrors(this.form, 'default_address', err.json())
+                                //this.cls();
+                        }, 
+            );
+    }
+
+    setDefaultAddress(customer, address) {
+        this._http
+            .put(`/admin/customers/${customer.customer.id}/addresses/${address.customer_address.id}/default.json`)
+            .subscribe( data => this.onCancel(),
+                        err => { 
+                                this.apiErrors(this.form, 'default_address' ,err.json())
+                                //this.cls();
+                        }, 
+            );
+    }
+
+    onCancel(self) {
+        self = self || this;
+        self._router.navigate(['Customers']);
     }
 }
 
@@ -217,6 +277,7 @@ export class Customers {
     }
     
     ngOnInit() {
+        this._admin.currentUrl();
         this._admin.headerButtons = [];
         this._admin.headerButtons.push(
             {
