@@ -8,22 +8,7 @@
             <a class="cross fa fa-times" aria-hidden="true"
               (click)="show=false"></a>
         </div>
-        <div  *ngIf="errors.length> 0" class="input-section">
-            <div  class="input-box">
-                <div class="error-list">
-                    <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
-                    
-                    <div>
-                        <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
-                        <ul>
-                            <li *ngFor="let error of errors">
-                                {% verbatim %}{{ error }}{% endverbatim %}
-                            </li>                        
-                        </ul>
-                    </div>                
-                </div>
-            </div>    
-        </div>
+        {% include "admin/errorsbox.html" with class="input-section" %}
         
         <div class="input-section">
              <div class="input-box">   

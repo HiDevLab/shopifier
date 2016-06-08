@@ -1,0 +1,9 @@
+<div class="input-box"
+    {% if display %}*ngIf="{{ display }}"{% endif %}>
+    <label class="input" [ngClass]="{err: form.{{ group }}_meta.{{ control }}.error}">
+        {% templatetag openvariable %} form.{{ group }}_meta.{{ control }}.label {% templatetag closevariable %}
+        <input [ngFormControl]="form.{{ group }}.controls.{{ control }}" 
+        (input)="formChange=true"
+        placeholder="{{ placeholder }}">
+    </label>
+</div>

@@ -1,0 +1,8 @@
+<div class="input-box"
+    {% if display %}*ngIf="{{ display }}"{% endif %}>
+    <div class="input">
+        <input type="checkbox" id="{{ group }}-{{ control }}-id" [ngFormControl]="form.{{ group }}.controls.{{ control }}" 
+        (input)="formChange=true">
+        <label for="{{ group }}-{{ control }}-id"><i class="fa fa-check" aria-hidden="true"></i>{% templatetag openvariable %} form.{{ group }}_meta.{{ control }}.label {% templatetag closevariable %}</label>
+    </div>
+</div>

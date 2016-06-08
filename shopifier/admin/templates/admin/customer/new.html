@@ -1,18 +1,4 @@
-<div *ngIf="errors.length> 0" class="section">
-    <div  class="input-box">
-        <div class="error-list">
-            <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
-            <div>
-                <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
-                <ul>
-                    <li *ngFor="let error of errors">
-                        {% verbatim %}{{ error }}{% endverbatim %}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>    
-</div>
+{% include "admin/errorsbox.html" with class="section" %}
 <div class="section">
     <div class="section-annotation">
         <div>
@@ -23,52 +9,19 @@
     <div class="section-content">
         <div class="card">
             <form *ngIf="form.customer">
+            {% with group='customer' %}
             {% csrf_token %}
+                <div class="input-section"></div>
+                {% include "admin/input-section.html" with group="customer" control1="first_name" control2="last_name" %}
+                {% include "admin/input-section.html" with group="customer" control1="email" %}
                 <div class="input-section">
+                     {% include "admin/checkbox.html" with group="customer" control="accepts_marketing" %}
                 </div>
                 <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: form.customer_meta.first_name.error}">
-                            First Name
-                            <input [ngFormControl]="form.customer.controls.first_name"
-                                   (input)="formChange=true">
-                        </label>
-                    </div>
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: form.customer_meta.last_name.error}">
-                            Last Name
-                            <input  [ngFormControl]="form.customer.controls.last_name"
-                                    (input)="formChange=true">
-                        </label>   
-                    </div>
+                    {% include "admin/checkbox.html" with group="customer" control="tax_exempt" %}
                 </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: form.customer_meta.email.error}">
-                            Email
-                            <input [ngFormControl]="form.customer.controls.email"
-                                    (input)="formChange=true">
-                        </label>
-                    </div>
-                </div>
-                <div class="input-section">
-                     <div class="input-box">
-                        <div class="input">
-                            <input type="checkbox" id="customer-new-id1" [ngFormControl]="form.customer.controls.accepts_marketing" (input)="formChange=true">
-                            <label for="customer-new-id1"><i class="fa fa-check" aria-hidden="true"></i>Customer accepts marketing</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <div class="input">
-                            <input type="checkbox" id="customer-new-id2" [ngFormControl]="form.customer.controls.tax_exempt" (input)="formChange=true">
-                            <label for="customer-new-id2"><i class="fa fa-check" aria-hidden="true"></i>Customer is tax exempt</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-section">
-                </div>
+                <div class="input-section"></div>
+            {% endwith %}
             </form>
         </div>
     </div>
@@ -86,75 +39,14 @@
     <div class="section-content">
         <div class="card">
             <form *ngIf="form.default_address">
+            {% with group='default_address' %}
             {% csrf_token %}
-                <div class="input-section">
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.first_name}">
-                            First Name
-                            <input [ngFormControl]="form.default_address.controls.first_name"
-                                   (input)="formChange=true">
-                        </label>
-                    </div>
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.last_name}">
-                            Last Name
-                            <input  [ngFormControl]="form.default_address.controls.last_name"
-                                    (input)="formChange=true">
-                        </label>   
-                    </div>
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.company}">
-                            Company
-                            <input [ngFormControl]="form.default_address.controls.company"
-                                   (input)="formChange=true">
-                        </label>
-                    </div>
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.phone}">
-                            Phone
-                            <input  [ngFormControl]="form.default_address.controls.phone"
-                                    (input)="formChange=true">
-                        </label>   
-                    </div>
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.address1}">
-                            Address
-                            <input [ngFormControl]="form.default_address.controls.address1"
-                                    (input)="formChange=true">
-                        </label>
-                    </div>
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.address2}">
-                            Address Con’t
-                            <input [ngFormControl]="form.default_address.controls.address2"
-                                    (input)="formChange=true">
-                        </label>
-                    </div>
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.city}">
-                            City
-                            <input [ngFormControl]="form.default_address.controls.city"
-                                   (input)="formChange=true">
-                        </label>
-                    </div>
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.zip}">
-                            Postal / Zip Code
-                            <input  [ngFormControl]="form.default_address.controls.zip"
-                                    (input)="formChange=true">
-                        </label>   
-                    </div>
-                </div>
+                <div class="input-section"></div>
+                {% include 'admin/input-section.html' with control1='first_name' control2='last_name' %}
+                {% include 'admin/input-section.html' with control1='company' control2='phone' %}
+                {% include 'admin/input-section.html' with control1='address1' %}
+                {% include 'admin/input-section.html' with control1='address2' %}
+                {% include 'admin/input-section.html' with control1='city' control2='zip' %}
                 <div class="input-section">
                     <div class="input-box">
                         <label class="input">
@@ -167,9 +59,9 @@
                             </select>
                         </label>
                     </div>
-                    <div class="input-box">
-                        <label class="input" *ngIf="(form.default_address_meta.province_code.choices | 
+                    <div class="input-box" *ngIf="(form.default_address_meta.province_code.choices | 
                                                 province:form.default_address.controls.country_code.value).length>0">
+                        <label class="input"> 
                             Region
                             <select [ngFormControl]="form.default_address.controls.province_code">
                                 <option *ngFor="let region of form.default_address_meta.province_code.choices | 
@@ -178,17 +70,11 @@
                                 </option>
                             </select>
                         </label>   
-                        <label class="input" *ngIf="(form.default_address_meta.province_code.choices | 
-                                                province:form.default_address.controls.country_code.value).length==0">
-                            Region
-                            <input [ngFormControl]="form.default_address.controls.province"
-                                    (input)="formChange=true">
-                        </label>
                     </div>
+                    {% include "admin/input.html" with control="province" display="(form.default_address_meta.province_code.choices | province:form.default_address.controls.country_code.value).length==0" %}
                 </div>
-                
-                <div class="input-section">
-                </div>
+                <div class="input-section"></div>
+            {% endwith %} 
             </form>
         </div>
     </div>
@@ -206,20 +92,12 @@
     <div class="section-content">
         <div class="card">
             <form *ngIf="form.customer">
+            {% with group='customer' %}
             {% csrf_token %}
-                <div class="input-section">
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.note}">
-                            Notes
-                            <input [ngFormControl]="form.customer.controls.note"
-                                    (input)="formChange=true" placeholder="Add a note to this customer…">
-                        </label>
-                    </div>
-                </div>
-                <div class="input-section">
-                </div>
+                <div class="input-section"></div>
+                {% include "admin/input-section.html" with control1="note" placeholder1="Add a note to this customer…" %}
+                <div class="input-section"></div>
+            {% endwith %}
             </form>
         </div>    
     </div>
@@ -237,20 +115,12 @@
     <div class="section-content">
         <div class="card">
             <form *ngIf="form.customer">
+            {% with group='customer' %}
             {% csrf_token %}
-                <div class="input-section">
-                </div>
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input" [ngClass]="{err: obj_errors.tags}">
-                            Tags
-                            <input [ngFormControl]="form.customer.controls.tags"
-                                    (input)="formChange=true" placeholder="Wholesale, referral, trade show">
-                        </label>
-                    </div>
-                </div>
-                <div class="input-section">
-                </div>
+                <div class="input-section"></div>
+                {% include "admin/input-section.html" with control1="tags" placeholder1="Wholesale, referral, trade show" %}
+                <div class="input-section"></div>
+            {% endwith %}    
             </form>
         </div>
     </div>

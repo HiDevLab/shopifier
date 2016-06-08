@@ -362,7 +362,7 @@ export class AdminAccountInvite {
                                         this.show=false;
                                         this._admin.footer(`${this.lform.controls['first_name'].value} ${this.lform.controls['last_name'].value} has been invited`);
                                     },
-                            err => { this.obj_errors = err.json(); this._utils.to_array(err.json()); }, 
+                            err => { this.obj_errors = err.json(); this.errors = this._utils.to_array(err.json()); }, 
                             () => this.parrent.userRefresh() 
                  );                                
     }

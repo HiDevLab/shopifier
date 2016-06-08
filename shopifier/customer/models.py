@@ -24,19 +24,19 @@ class Customer(models.Model):
         ('invited', 'invited'),
     )
 
-    accepts_marketing = models.BooleanField(_('Sent marketing material via email'), default=False)
+    accepts_marketing = models.BooleanField(_('Customer accepts marketing'), default=False)
     #addresses
     created_at = models.DateTimeField(_('When the customer was created'), default=timezone.now)
     default_address = models.OneToOneField('Address', related_name='+', null=True)
-    email = models.EmailField(_('email address'), max_length=254, blank=True)
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
+    email = models.EmailField(_('Email'), max_length=254, blank=True)
+    first_name = models.CharField(_('First Name'), max_length=30, blank=True)
+    last_name = models.CharField(_('Last Name'), max_length=30, blank=True)
     #metafield
     #multipass_identifier
-    note = models.TextField(_('A note about the customer'), blank=True, max_length=254)
+    note = models.TextField(_('Notes'), blank=True, max_length=254)
     state = models.CharField(max_length=20, choices=STATES, default = 'disabled')
-    tags = models.CharField(_('A note about the customer'), blank=True, max_length=254)
-    tax_exempt = models.BooleanField(default=True)
+    tags = models.CharField(_('Tags'), blank=True, max_length=254)
+    tax_exempt = models.BooleanField(_('Customer is tax exempt'), default=True)
     #total_spent
     updated_at = models.DateTimeField(_('Information was updated'), default=timezone.now)
     verified_email = models.BooleanField(default=True)
@@ -57,20 +57,20 @@ class Address(models.Model):
     
 
     customer = models.ForeignKey(Customer, related_name='addresses')
-    address1 = models.CharField(_("The mailing address"), blank=True, max_length=254)
-    address2 = models.CharField(_("An additional field for the mailing address"), blank=True, max_length=254)
-    first_name = models.CharField(_('first name'), max_length=30, blank=True)
-    last_name = models.CharField(_('last name'), max_length=30, blank=True)
-    phone = models.CharField(_('Phone (optional)'), max_length=30, blank=True)
-    city = models.CharField(_("The city"), blank=True, null=True, max_length=54)
-    company = models.CharField(_("The company"), blank=True, max_length=254)
+    address1 = models.CharField(_('Address'), blank=True, max_length=254)
+    address2 = models.CharField(_("Address Con't"), blank=True, max_length=254)
+    first_name = models.CharField(_('First Name'), max_length=30, blank=True)
+    last_name = models.CharField(_('Last Name'), max_length=30, blank=True)
+    phone = models.CharField(_('Phone'), max_length=30, blank=True)
+    city = models.CharField(_('City'), blank=True, null=True, max_length=54)
+    company = models.CharField(_('Company'), blank=True, max_length=254)
     #country
-    country_code = models.CharField(max_length=2, choices=COUNTRY_CHOICES, null=True)
+    country_code = models.CharField(_('Coutry'), max_length=2, choices=COUNTRY_CHOICES, null=True)
     #country_name
     #defaul
-    province = models.CharField(_( "The province or state name"), blank=True, max_length=254)
-    province_code = models.CharField(_( "The two-letter code for the province or state"), max_length=6, choices=PROVINCE_CHOICES, blank=True)
-    zip = models.CharField(_( "The zip or postal code"), blank=True, max_length=20)
+    province = models.CharField(_('Region'), blank=True, max_length=254)
+    province_code = models.CharField(_('Region'), max_length=6, choices=PROVINCE_CHOICES, blank=True)
+    zip = models.CharField(_('Postal / Zip Code'), blank=True, max_length=20)
     
     @property
     def default(self):

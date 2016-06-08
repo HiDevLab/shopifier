@@ -162,16 +162,6 @@ export class BaseForm {
                                 }, 
                        ); 
     }
-    
-    onBaseInit(data) {
-        if (this.beforeInit) this.beforeInit(data);// define on the child
-        this.api_data = data;
-        if (this.afterInit) this.afterInit(data);// define on the child
-    }
-
-    onChanges(changes) {
-        console.log(changes);
-    }
 }
 
 

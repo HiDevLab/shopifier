@@ -1,20 +1,5 @@
-<div *ngIf="errors.length> 0" class="section-profile">
-    <div  class="input-box">
-        <div class="error-list">
-            <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
-            <div>
-                <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
-                <ul>
-                    <li *ngFor="let error of errors">
-                        {% verbatim %}{{ error }}{% endverbatim %}
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>    
-</div>
-    
-<div *ngIf="user" class="section-profile ">      
+{% include "admin/errorsbox.html" with class="section-profile" %}
+<div *ngIf="user" class="section-profile ">
     <div class="section-annotation">
         <h3>Account information</h3>
         <p>All information relevant to the account.</p>
