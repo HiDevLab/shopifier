@@ -6,7 +6,7 @@ import { Location } from 'angular2/platform/common';
 import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
-import { Customers, CustomersNew} from './admin.customers'
+import { Customers, CustomersNew, CustomersEdit} from './admin.customers'
 
 //------------------------------------------------------------------------------
 @Component({
@@ -60,6 +60,11 @@ export class AdminHome {
         path : '/customers/new',
         name : 'NewCustomer',
         component : CustomersNew,
+    },
+    {
+        path : '/customers/:id',
+        name : 'EditCustomer',
+        component : CustomersEdit,
     },
 ])
 export class Admin {

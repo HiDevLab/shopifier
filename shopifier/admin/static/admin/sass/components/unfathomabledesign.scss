@@ -1,0 +1,152 @@
+.rows {
+    //flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    //height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.columns {
+    //flex: 1 1 0;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    //width: 100%;
+}
+
+.rows, .columns { 
+    &.left, &.top {
+        //justify-content: flex-start;
+        align-items: flex-start;
+    }
+    &.right, &.bottom {
+        //justify-content: flex-end;
+        align-items: flex-end;
+    }
+    &.center {
+        //justify-content: center;
+        align-items: center;
+    }
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+//    flex-wrap: wrap;
+}
+
+.col {
+    height: inherit; //chrome bug
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.row, .col { 
+    &.left, &.top {
+        justify-content: flex-start;
+        //align-items: flex-start;
+    }
+    &.right, &.bottom {
+        justify-content: flex-end;
+        //align-items: flex-end;
+    }
+    &.center {
+        justify-content: center;
+        //align-items: center;
+    }
+    &.space-between {
+        justify-content: space-between;
+    }
+}
+
+.box {
+    width: 100%;
+    height: inherit; //chrome bug
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.form {
+    background: $background-main-color;
+    align-items: center;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out 0s;
+    position: relative;
+    box-sizing: border-box;
+    //height: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+.b {
+    border: 1px solid $input-error-border;
+}
+
+
+@for $i from 1 to 25 {
+    .w#{$i} {
+        width: calc(99.99% / 24 * #{$i});
+    }
+    .vw#{$i} {
+        width: calc(99.99vw / 24 * #{$i});
+    }
+    .vh#{$i} {
+        height: calc(99.99vh / 24 * #{$i});
+    }
+    
+    .h#{$i} {
+        height: calc(99.99% / 24 * #{$i});
+    }
+}
+
+
+//http://sass-scss.ru/documentation/sassscript/mapi.html
+$directions: (
+  '': '',
+  t: -top,
+  r: -right,
+  b: -bottom,
+  l: -left
+);
+
+$classes: (
+  p: padding,
+  m: margin
+);
+
+//http://sass-scss.ru/documentation/direktivi_kontrolya_i_virazheniya/
+@each $name0, $class in $classes { 
+  .#{$name0}{
+      @each $name, $direct in $directions { 
+        @for $i from 1 to 31 {
+          &#{$name}#{$i} {
+            #{$class}#{$direct}: #{$i}px;
+          }
+       }
+    }
+  }
+}
+
+.m{
+    @each $name, $direct in $directions { 
+      &#{$name}-auto {
+        margin#{$direct}: auto;
+      }
+  }
+}

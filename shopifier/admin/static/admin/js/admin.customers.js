@@ -149,18 +149,26 @@ export class BaseForm {
                 form[group_name + '_meta'][ctrl].error = true;
             }
         }
-        
-    }   
+    } 
 
-    getAPIData(get_api_data_url){
+    getAPIData(action, url){
         this._http
-            .options(get_api_data_url)
-            .subscribe( data => this.onBaseInit(data),
+            .get(url)
+            .subscribe( data => this.onInit(data), 
                         err => {
                                     this.obj_errors = err; 
                                     this.errors = this._utils.to_array(err.json()); 
                                 }, 
                        ); 
+    }
+    setDataToControls(group, obj) {
+        let keys = Object.keys(group.controls);
+        for (let i in keys) {
+            let ctrl = keys[i];
+            if (obj[ctrl])
+                group.controls[ctrl].updateValue(obj[ctrl]);
+        }
+        
     }
 }
 
@@ -233,11 +241,14 @@ export class CustomersNew extends BaseForm{
     setDefaultAddress(customer, address) {
         this._http
             .put(`/admin/customers/${customer.customer.id}/addresses/${address.customer_address.id}/default.json`)
-            .subscribe( data => this.onCancel(),
-                        err => { 
-                                this.apiErrors(this.form, 'default_address' ,err.json())
-                                //this.cls();
-                        }, 
+            .subscribe( data => {
+                        let link = ['EditCustomer', {'id': customer.customer.id }];
+                        this._router.navigate(link);
+                    },
+                    err => { 
+                            this.apiErrors(this.form, 'default_address' ,err.json())
+                            //this.cls();
+                    }, 
             );
     }
 
@@ -246,6 +257,60 @@ export class CustomersNew extends BaseForm{
         self._router.navigate(['Customers']);
     }
 }
+
+
+//------------------------------------------------------------------------------ 
+@Component({
+  selector: 'main',
+  templateUrl : 'templates/customer/edit.html',
+  directives: [FORM_DIRECTIVES],
+  pipes: [ProvincePipe]
+})
+export class CustomersEdit extends BaseForm{
+
+    static get parameters() {
+        return [[Http], [FormBuilder], [Router], [AdminAuthService], 
+                [Admin], [AdminUtils], [RouteParams]];
+    }
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
+        super(http, formbuilder, router, auth, admin, utils);
+        this._routeParams = routeparams;
+    }
+    
+    ngOnInit() {
+                
+        this._admin.headerButtons = [];
+        this._admin.headerButtons.push(
+            {
+                'text': '<', 'class': 'btn mr10', 
+                'click': this.onPrev, 'self': this 
+            });
+        this._admin.headerButtons.push(
+            {
+                'text': '>', 'class': 'btn mr10', 
+                'click': this.onNext, 'self': this 
+            });
+        this._admin.headerButtons.push(
+            {
+                'text': 'Save', 'class': 'btn btn-blue', 
+                'click': this.onSave, 'primary': true, 'self': this 
+            });
+        let id = this._routeParams.get('id');
+        this.addForm(this.form, `/admin/customers/${id}.json`, 'customer');
+        this.getAPIData(this.onInit, `/admin/customers/${id}.json`);
+    }
+    
+    onInit(data) {
+        this.api_data = data;
+        this.setDataToControls(this.form.customer, this.api_data.customer);
+
+        this._admin.currentUrl({
+                'url':'#', 'text': `${this.api_data.customer.first_name} ${this.api_data.customer.last_name}`
+                });
+        
+    }
+}
+
 
 
 //------------------------------------------------------------------------------ 

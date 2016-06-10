@@ -1,0 +1,36 @@
+<div class="rows pt20 center">
+    <div class="row w16 center pl30 b">
+        <div class="rows w16 ml30 b">
+            <div class="form pb10 b">
+                <div class="row mb20 p20 b">
+                   <span class="customer_avatar fa-stack fa-lg">
+                      <i class="fa fa-circle fa-stack-2x"></i>
+                      <i class="mt20 fa fa-user fa-stack-2x fa-inverse"></i>
+                    </span>
+                     <div class="col pl20 pt15 b">
+                        <h2><strong>Sergey Petrov</strong></h2>
+                        <p>Customer for 2 days</p> 
+                    </div>
+                </div>
+                <div class="input-section mt10 b">
+                    <div class="input-box" *ngIf="form.customer">
+                        <label class="input">
+                            <input [ngFormControl]="form.customer.controls.note" 
+                            (input)="formChange=true"
+                            placeholder="Add note about {% verbatim %}{{ form.customer.controls.first_name.value }}{% endverbatim %}">
+                        </label>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="form vh10 mt20 b">
+            </div>
+        </div>
+        <div class="rows w8 ml20 mr10 b">
+            <div class="form vh12 b">
+            </div>
+            <div class="form vh6 mt20 b">
+            </div>
+        </div>
+    </div>
+ </div>

@@ -1,139 +1,108 @@
-{% include "admin/errorsbox.html" with class="section" %}
-<div class="section">
-    <div class="section-annotation">
-        <div>
-            <p></p>
-            <h2><strong>Customer overview</strong></h2>
+<div class="rows center pt20">
+    {% include "admin/errorsbox.html" with class="row mb20" %}
+    <div class="row w16 space-between">
+        <div class="col pt20">
+             <h2><strong>Customer overview</strong></h2>
         </div>
+        <form class="form vw8 pt15 pb10" *ngIf="form.customer">
+        {% with group='customer' %}
+            {% include "admin/input-section.html" with group="customer" control1="first_name" control2="last_name" %}
+            {% include "admin/input-section.html" with group="customer" control1="email" %}
+            <div class="input-section">
+                 {% include "admin/checkbox.html" with group="customer" control="accepts_marketing" %}
+            </div>
+            <div class="input-section">
+                {% include "admin/checkbox.html" with group="customer" control="tax_exempt" %}
+            </div>
+            
+        {% endwith %}
+        </form>
     </div>
-    <div class="section-content">
-        <div class="card">
-            <form *ngIf="form.customer">
-            {% with group='customer' %}
-            {% csrf_token %}
-                <div class="input-section"></div>
-                {% include "admin/input-section.html" with group="customer" control1="first_name" control2="last_name" %}
-                {% include "admin/input-section.html" with group="customer" control1="email" %}
-                <div class="input-section">
-                     {% include "admin/checkbox.html" with group="customer" control="accepts_marketing" %}
-                </div>
-                <div class="input-section">
-                    {% include "admin/checkbox.html" with group="customer" control="tax_exempt" %}
-                </div>
-                <div class="input-section"></div>
-            {% endwith %}
-            </form>
-        </div>
-    </div>
-</div>
 
-<div class="section">
-    <div class="section-annotation">
-        <div>
-            <p></p>
-            <h2><strong>Address</strong></h2>
+    <div class="row separator w16 m20 "></div>
+
+    <div class="row w16 space-between">
+        <div class="col w6 pt20">
+             <h2><strong>Address</strong></h2>
             <p></p>
             The primary address of this customer.
         </div>
-    </div>
-    <div class="section-content">
-        <div class="card">
-            <form *ngIf="form.default_address">
-            {% with group='default_address' %}
-            {% csrf_token %}
-                <div class="input-section"></div>
-                {% include 'admin/input-section.html' with control1='first_name' control2='last_name' %}
-                {% include 'admin/input-section.html' with control1='company' control2='phone' %}
-                {% include 'admin/input-section.html' with control1='address1' %}
-                {% include 'admin/input-section.html' with control1='address2' %}
-                {% include 'admin/input-section.html' with control1='city' control2='zip' %}
-                <div class="input-section">
-                    <div class="input-box">
-                        <label class="input">
-                            Coutry
-                            <select [ngFormControl]="form.default_address.controls.country_code"
-                            (change)="form.default_address.controls.province.updateValue('')">
-                                <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
-                                        {% verbatim %}{{ country.display_name }}{% endverbatim %}
-                                </option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="input-box" *ngIf="(form.default_address_meta.province_code.choices | 
-                                                province:form.default_address.controls.country_code.value).length>0">
-                        <label class="input"> 
-                            Region
-                            <select [ngFormControl]="form.default_address.controls.province_code">
-                                <option *ngFor="let region of form.default_address_meta.province_code.choices | 
-                                                province:form.default_address.controls.country_code.value" [value]="region.value">
-                                        {% verbatim %}{{ region.display_name }}{% endverbatim %}
-                                </option>
-                            </select>
-                        </label>   
-                    </div>
-                    {% include "admin/input.html" with control="province" display="(form.default_address_meta.province_code.choices | province:form.default_address.controls.country_code.value).length==0" %}
+        <form class="form vw8 pt15 pb10" *ngIf="form.default_address">
+        {% with group='default_address' %}
+            {% include 'admin/input-section.html' with control1='first_name' control2='last_name' %}
+            {% include 'admin/input-section.html' with control1='company' control2='phone' %}
+            {% include 'admin/input-section.html' with control1='address1' %}
+            {% include 'admin/input-section.html' with control1='address2' %}
+            {% include 'admin/input-section.html' with control1='city' control2='zip' %}
+            <div class="input-section">
+                <div class="input-box">
+                    <label class="input">
+                        Coutry
+                        <select [ngFormControl]="form.default_address.controls.country_code"
+                        (change)="form.default_address.controls.province.updateValue('')">
+                            <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
+                                    {% verbatim %}{{ country.display_name }}{% endverbatim %}
+                            </option>
+                        </select>
+                    </label>
                 </div>
-                <div class="input-section"></div>
-            {% endwith %} 
-            </form>
-        </div>
+                <div class="input-box" *ngIf="(form.default_address_meta.province_code.choices | 
+                                            province:form.default_address.controls.country_code.value).length>0">
+                    <label class="input"> 
+                        Region
+                        <select [ngFormControl]="form.default_address.controls.province_code">
+                            <option *ngFor="let region of form.default_address_meta.province_code.choices | 
+                                            province:form.default_address.controls.country_code.value" [value]="region.value">
+                                    {% verbatim %}{{ region.display_name }}{% endverbatim %}
+                            </option>
+                        </select>
+                    </label>   
+                </div>
+                {% include "admin/input.html" with control="province" display="(form.default_address_meta.province_code.choices | province:form.default_address.controls.country_code.value).length==0" %}
+            </div>
+        {% endwith %} 
+        </form>
     </div>
-</div>
-
-<div class="section">
-    <div class="section-annotation">
-        <div>
-            <p></p>
+    
+    <div class="row separator w16 m20 "></div>
+    
+    <div class="row w16 space-between">
+        <div class="col w6 pt20">
             <h2><strong>Notes</strong></h2>
             <p></p>
             Enter any extra notes relating to this customer.
         </div>
+        <form class="form vw8 pt15 pb10" *ngIf="form.customer">
+        {% with group='customer' %}
+            {% include "admin/input-section.html" with control1="note" placeholder1="Add a note to this customer…" %}
+        {% endwith %}
+        </form>
     </div>
-    <div class="section-content">
-        <div class="card">
-            <form *ngIf="form.customer">
-            {% with group='customer' %}
-            {% csrf_token %}
-                <div class="input-section"></div>
-                {% include "admin/input-section.html" with control1="note" placeholder1="Add a note to this customer…" %}
-                <div class="input-section"></div>
-            {% endwith %}
-            </form>
-        </div>    
-    </div>
-</div>
 
-<div class="section">
-    <div class="section-annotation">
-        <div>
-            <p></p>
+    <div class="row separator w16 m20 "></div>
+
+    <div class="row w16 space-between">
+        <div  class="col w6 pt20">
             <h2><strong>Tags</strong></h2>
             <p></p>
             Tags can be used to categorize customers into groups.
         </div>
-    </div>
-    <div class="section-content">
-        <div class="card">
-            <form *ngIf="form.customer">
-            {% with group='customer' %}
-            {% csrf_token %}
-                <div class="input-section"></div>
-                {% include "admin/input-section.html" with control1="tags" placeholder1="Wholesale, referral, trade show" %}
-                <div class="input-section"></div>
-            {% endwith %}    
-            </form>
-        </div>
+        <form class="form vw8 pt15 pb10" *ngIf="form.customer">
+        {% with group='customer' %}
+            {% include "admin/input-section.html" with control1="tags" placeholder1="Wholesale, referral, trade show" %}
+        {% endwith %}    
+        </form>
     </div>
 </div>
 
+<div class="row h1"></div>
 
-<div class="section-profile">
-    <div class="input-box row end">
-        <a class="btn mr10"
-        (click)="onCancel()">Cancel</a>
-        
-        <a class="btn btn-blue"
-        [ngClass]="{disabled : !formChange}"
-        (click)="onSave()"> Save customer</a>
-    </div> 
+<div class="row right">
+    <a class="btn mr10"
+    (click)="onCancel()">Cancel</a>
+    
+    <a class="btn btn-blue"
+    [ngClass]="{disabled : !formChange}"
+    (click)="onSave()"> Save customer</a>
 </div>
+<div class="row h1"></div>
