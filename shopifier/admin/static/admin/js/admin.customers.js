@@ -7,6 +7,7 @@ import { Http } from 'angular2/http'
 import 'rxjs/Rx'
 
 import { AdminAuthService, AdminUtils } from './admin.auth'
+import { Autosize, Popover } from './components'
 import { Admin } from './admin'
 
 @Pipe({
@@ -134,6 +135,16 @@ export class BaseForm {
         return form[group_name].valid
     }
     
+    clsErrors(form, group_name) {
+        this.obj_errors = {};
+        this.errors = [];
+        let keys = Object.keys(form[group_name + '_meta']);
+        for (let i in keys) {
+            let ctrl = keys[i];
+            form[group_name + '_meta'][ctrl].error = false;
+        }
+    }
+
     apiErrors(form, group_name, errors) {
         let keys = Object.keys(errors);
         this.obj_errors = {};
@@ -177,7 +188,7 @@ export class BaseForm {
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
-  directives: [FORM_DIRECTIVES],
+  directives: [FORM_DIRECTIVES, Autosize],
   pipes: [ProvincePipe]
 })
 export class CustomersNew extends BaseForm{
@@ -263,11 +274,13 @@ export class CustomersNew extends BaseForm{
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/edit.html',
-  directives: [FORM_DIRECTIVES],
+  directives: [FORM_DIRECTIVES, Autosize, Popover],
   pipes: [ProvincePipe]
 })
 export class CustomersEdit extends BaseForm{
-
+    
+    showChangeAddress = false;
+    
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService], 
                 [Admin], [AdminUtils], [RouteParams]];
@@ -293,7 +306,7 @@ export class CustomersEdit extends BaseForm{
         this._admin.headerButtons.push(
             {
                 'text': 'Save', 'class': 'btn btn-blue', 
-                'click': this.onSave, 'primary': true, 'self': this 
+                'click': this.onSaveNote, 'primary': true, 'self': this 
             });
         let id = this._routeParams.get('id');
         this.addForm(this.form, `/admin/customers/${id}.json`, 'customer');
@@ -309,8 +322,51 @@ export class CustomersEdit extends BaseForm{
                 });
         
     }
+    
+    onSaveNote(self) {
+        
+    }
+    
+    onEditCustomer() {
+        this.clsErrors(this.form, 'customer');
+        
+        let controls = ['first_name', 'last_name', 'email', 'accepts_marketing', 'tax_exempt']; 
+        for (let i in controls) {
+            let ctrl = controls[i];
+            this.form.customer.controls[ctrl].updateValue(this.api_data.customer[ctrl]);
+        }
+        this.showEdit = true;
+    }
+    
+    onSaveCustomer() {
+        if(!this.groupValidate(this.form, 'customer')) return;
+    }
+    
+    onChangeAddress(event) {
+        event.stopPropagation();
+        console.log(event);
+        let popover = document.querySelector('popover');
+        if (popover) {
+            popover.classList.remove('hide');
+            popover.classList.add('show');
+        }
+    }
+    
+    editDefaultAddewss(event){
+        event.stopPropagation();
+        console.log(event);
+        let popover = document.querySelector('popover');
+        if (popover) {
+            popover.classList.add('hide');
+            popover.classList.remove('show');
+        }
+        this.showEditDefaultAddress = true;
+    }
+    
+    onSaveDefaultAddress(){
+        
+    }
 }
-
 
 
 //------------------------------------------------------------------------------ 
@@ -320,6 +376,7 @@ export class CustomersEdit extends BaseForm{
   directives: [FORM_DIRECTIVES],
 })
 export class Customers {
+    
     static get parameters() {
         return [[Http], [Router], [AdminAuthService], [Admin], [AdminUtils]];
     }

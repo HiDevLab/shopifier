@@ -1,4 +1,4 @@
-import { Component, Injectable, Injector } from 'angular2/core';
+import { Component, Injectable, Injector} from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
 import { Router, RouteParams, CanActivate, ROUTER_DIRECTIVES } from 'angular2/router'
 import { Http } from 'angular2/http'

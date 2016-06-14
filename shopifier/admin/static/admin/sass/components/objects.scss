@@ -1,3 +1,15 @@
+//text, icon color
+$colors: (
+    deafault: #1a1a1a,
+    subdued: #707070,
+    sky-darker: #c3cfd8
+);
+
+@each $name, $color in $colors { 
+    .color-#{$name}{
+        color: #{$color};
+    }
+}
 
 //avatar
 $background-avatar-empty: #ff5d5d;
@@ -145,10 +157,8 @@ $btn-cross-color: #ebeef0;
     }
 }
 
-
-
 //ref
-$color-ref: #479ccf;
+$color-ref: #0078bd;//#479ccf;
 
 .ref {
     color: $color-ref;
@@ -205,7 +215,7 @@ $input-error-background: #fef6f5;
     font-weight: normal;
     background: $input-background;
     color: $input-color; 
-    position: relative;      
+    position: relative;
     
     &.err { 
         color: $input-error-border;
@@ -215,8 +225,8 @@ $input-error-background: #fef6f5;
      
             &:focus {
                 border-color: $input-error-border;
-            }  
-        }                
+            }
+        }
     }
     > strong {
         font-weight: bold;
@@ -233,6 +243,7 @@ $input-error-background: #fef6f5;
         font-size: $shopify-input-font-size;
         padding: 5px 10px;
         width: 100%;
+        resize: none;
         
         box-shadow: none;
         background-image: none;
@@ -257,10 +268,9 @@ $input-error-background: #fef6f5;
                     color: $input-background; 
                     margin-right: 10px;     
                     
-                }                     
+                }
             }
             &:checked + label {
-
                 cursor: pointer; cursor: hand;
                 color: $color-ref;
                 > i {
@@ -272,13 +282,19 @@ $input-error-background: #fef6f5;
         }
         
     }
-     > select::AFTER {
-        content: "\f105";
+    &.select::AFTER {
+        content: "\f107";
         position: absolute;
         right: 20px;
-        top: 0;
+        top: 30px;
         font-family: FontAwesome;
-        color: red;//$input-border;
+        font-size: 1.5em;
+        color: #1a1a1a;
+        pointer-events:none;
+        
+        > option:checked {
+                background: $background-main-color;
+        } 
     }
 }
 
@@ -342,6 +358,13 @@ $note-color:    #888888;
     padding: 0 20px;
 }
 
+.sep {
+    width: 100%;
+    border-top: 1px solid $border-section-color;
+    height: 1px;
+}
+
+
 .mr10 {
     margin-right: 10px;
 }
@@ -365,24 +388,28 @@ h0{
     font-size: 36px;
     font-weight: 400;
     line-height: 1.8em;
+    margin-top: auto;
 }
 
 h1 {
     font-size: 24px;
     font-weight: 400;
     line-height: 1.2em;
+    margin-top: auto;
 }
 
 h2 {
     font-size: 18px;
     font-weight: 400;
     line-height: 1.2em;
+    margin-top: auto;
 }
 
 h3 {
      font-size: 15px;
      font-weight: 400;
-     line-height: 1.2em;   
+     line-height: 1.2em;
+     margin-top: auto;
 }
 
 
@@ -392,5 +419,5 @@ h3 {
     //border: 1px solid $input-border;
     color: $color-ref;
     //border-radius: 50%;
-    font-size: 52px;
+    font-size: 48px;
 }

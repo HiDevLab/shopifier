@@ -31,7 +31,7 @@
 }
 
 .row {
-    width: 100%;
+    //width: 100%;
     display: flex;
     flex-direction: row;
     position: relative;
@@ -39,7 +39,7 @@
 }
 
 .col {
-    height: inherit; //chrome bug
+    //height: inherit; //chrome bug
     display: inline-block;
     position: relative;
     overflow: hidden;
@@ -65,8 +65,8 @@
 }
 
 .box {
-    width: 100%;
-    height: inherit; //chrome bug
+    //width: 100%;
+    //height: inherit; //chrome bug
     display: flex;
     flex-direction: column;
     position: relative;
@@ -77,14 +77,67 @@
     background: $background-main-color;
     align-items: center;
     border-radius: 3px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
+    //box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease-in-out 0s;
     position: relative;
     box-sizing: border-box;
     //height: auto;
 }
 
+popover {
+    cursor: default;
+    z-index: 10;
+    position: absolute;
+    top: 35px;
+    width: 100%;
+    &.show {
+        transform-origin: center top;
+        transform: scale(1);
+        visibility: visible;
+        opacity:0.99;
 
+        transition: transform 0.2s linear, opacity 0.3s linear, visibility 0s step-start;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+    }
+
+    &.hide {
+        transform-origin: center top;
+        transform: scale(0.8);
+        visibility: hidden;
+        opacity: 0;
+
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
+    }
+
+}
+
+.cone {
+    z-index: 11;
+    transform: rotate(45deg);
+    position: absolute;
+    left: calc(50% - 6px);
+    top: -7px;
+    height: 12px;
+    width: 12px;
+    background: inherit;
+    box-shadow: inherit;
+    
+    
+}
+.cone-bottom {
+    z-index: 12;
+    position: absolute;
+    left: calc(50% - 20px);
+    height: 20px;
+    width: 50px;
+    background: inherit;
+}
 
 
 
@@ -98,6 +151,13 @@
     border: 1px solid $input-error-border;
 }
 
+.rotate-45 {
+    transform: rotate(-45deg);
+}
+
+.rotate45 {
+    transform: rotate(45deg);
+}
 
 @for $i from 1 to 25 {
     .w#{$i} {
@@ -114,6 +174,14 @@
         height: calc(99.99% / 24 * #{$i});
     }
 }
+
+
+@for $i from 5 to 81 {
+    .font#{$i} {
+        font-size: #{$i}px;
+    }
+}
+
 
 
 //http://sass-scss.ru/documentation/sassscript/mapi.html

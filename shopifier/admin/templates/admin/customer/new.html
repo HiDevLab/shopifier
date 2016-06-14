@@ -14,7 +14,6 @@
             <div class="input-section">
                 {% include "admin/checkbox.html" with group="customer" control="tax_exempt" %}
             </div>
-            
         {% endwith %}
         </form>
     </div>
@@ -35,29 +34,25 @@
             {% include 'admin/input-section.html' with control1='address2' %}
             {% include 'admin/input-section.html' with control1='city' control2='zip' %}
             <div class="input-section">
-                <div class="input-box">
-                    <label class="input">
-                        Coutry
-                        <select [ngFormControl]="form.default_address.controls.country_code"
-                        (change)="form.default_address.controls.province.updateValue('')">
-                            <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
-                                    {% verbatim %}{{ country.display_name }}{% endverbatim %}
-                            </option>
-                        </select>
-                    </label>
-                </div>
-                <div class="input-box" *ngIf="(form.default_address_meta.province_code.choices | 
-                                            province:form.default_address.controls.country_code.value).length>0">
-                    <label class="input"> 
-                        Region
-                        <select [ngFormControl]="form.default_address.controls.province_code">
-                            <option *ngFor="let region of form.default_address_meta.province_code.choices | 
-                                            province:form.default_address.controls.country_code.value" [value]="region.value">
-                                    {% verbatim %}{{ region.display_name }}{% endverbatim %}
-                            </option>
-                        </select>
-                    </label>   
-                </div>
+                <label class="input-box input select">
+                    Coutry
+                    <select [ngFormControl]="form.default_address.controls.country_code"
+                    (change)="form.default_address.controls.province.updateValue('')">
+                        <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
+                                {% verbatim %}{{ country.display_name }}{% endverbatim %}
+                        </option>
+                    </select>
+                </label>
+                <label class="input input-box select" *ngIf="(form.default_address_meta.province_code.choices | 
+                                        province:form.default_address.controls.country_code.value).length>0"> 
+                    Region
+                    <select [ngFormControl]="form.default_address.controls.province_code">
+                        <option *ngFor="let region of form.default_address_meta.province_code.choices | 
+                                        province:form.default_address.controls.country_code.value" [value]="region.value">
+                                {% verbatim %}{{ region.display_name }}{% endverbatim %}
+                        </option>
+                    </select>
+                </label>   
                 {% include "admin/input.html" with control="province" display="(form.default_address_meta.province_code.choices | province:form.default_address.controls.country_code.value).length==0" %}
             </div>
         {% endwith %} 
@@ -73,9 +68,9 @@
             Enter any extra notes relating to this customer.
         </div>
         <form class="form vw8 pt15 pb10" *ngIf="form.customer">
-        {% with group='customer' %}
-            {% include "admin/input-section.html" with control1="note" placeholder1="Add a note to this customer…" %}
-        {% endwith %}
+            <div class="input-section">
+                {% include "admin/textarea.html" with group="customer" control="note" placeholder="Add a note to this customer…" rows="1" %}
+            </div>
         </form>
     </div>
 

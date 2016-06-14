@@ -257,7 +257,6 @@
 
 <modal-form *ngIf="expireSessions">
     <form class="input-form up">
-        {% csrf_token %}
         <div class="modal-header">
             <h2>
                 Expire Current User's Sessions
@@ -280,7 +279,6 @@
 
 <modal-form *ngIf="showSetAdmin">
     <form *ngIf="!user.is_admin" class="input-form up">
-        {% csrf_token %}
         <div class="modal-header">
             <h2>
                 Confirm Account Ownership Granting
@@ -321,7 +319,6 @@
     </form>
     
     <form *ngIf="user.is_admin" class="input-form up">
-        {% csrf_token %}
         <div class="modal-header">
             <h2>
                 Confirm Account Ownership taking away

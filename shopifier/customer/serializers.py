@@ -21,11 +21,12 @@ class SHPFSerializer(serializers.ModelSerializer): #features shpf API
 class CustomerAddressSerializer(SHPFSerializer):
 
     default = serializers.BooleanField(read_only=True)
+    country_name = serializers.CharField(read_only=True, source='get_country_code_display')
 
     class Meta:
         model = Address
         exclude = ('customer',)
-        
+
 
 class CustomerSerializer(SHPFSerializer):
     

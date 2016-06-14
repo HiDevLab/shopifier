@@ -1,30 +1,9 @@
 <div class="input-section">
-    <div class="input-box">
-        <label class="input" [ngClass]="{err: form.{{ group }}_meta.{{ control1 }}.error}">
-            {% templatetag openvariable %} form.{{ group }}_meta.{{ control1 }}.label {% templatetag closevariable %}
-            <input [ngFormControl]="form.{{ group }}.controls.{{ control1 }}" 
-            (input)="formChange=true"
-            placeholder="{{ placeholder1 }}">
-        </label>
-    </div>
+    {% include 'admin/input.html' with control=control1 placeholder=placeholder1 %}
 {% if control2 %}
-    <div class="input-box">
-        <label class="input" [ngClass]="{err: form.{{ group }}_meta.{{ control2 }}.error}">
-            {% templatetag openvariable %} form.{{ group }}_meta.{{ control2 }}.label {% templatetag closevariable %}
-            <input [ngFormControl]="form.{{ group }}.controls.{{ control2 }}" 
-            (input)="formChange=true"
-            placeholder="{{ placeholder2 }}">
-        </label>
-    </div>
+    {% include 'admin/input.html' with control=control2 placeholder=placeholder2 %}
 {% endif %}
 {% if control3 %}
-    <div class="input-box">
-        <label class="input" [ngClass]="{err: form.{{ group }}_meta.{{ control3 }}.error}">
-            {% templatetag openvariable %} form.{{ group }}_meta.{{ control3 }}.label {% templatetag closevariable %}
-            <input [ngFormControl]="form.{{ group }}.controls.{{ control3 }}" 
-            (input)="formChange=true"
-            placeholder="{{ placeholder3 }}">
-        </label>
-    </div>
+    {% include 'admin/input.html' with control=control2 placeholder=placeholder3 %}
 {% endif %}
 </div>
