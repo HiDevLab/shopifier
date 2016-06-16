@@ -106,7 +106,7 @@ export class SuperHttp extends Http {
         }
     }
     
-    request(url, method, data){
+    request(method, url, data){
         this.csrfToken();
         this.requestoptions.method = RequestMethod[method];
         this.requestoptions.url= url;
@@ -116,23 +116,23 @@ export class SuperHttp extends Http {
     }
 
     post(url, data) {
-        return this.request(url, 'Post', data);
+        return this.request('Post', url, data);
     }
 
     put(url, data) {
-        return this.request(url, 'Put', data);
+        return this.request('Put', url, data);
     }
 
     patch(url, data) {
-        return this.request(url, 'Patch', data);
+        return this.request('Patch', url, data);
     }
 
     get(url) {
-        return this.request(url, 'Get');
+        return this.request('Get', url );
     }
      
     options(url) {
-        return this.request(url, 'Options');
+        return this.request('Options', url);
     }
      
     delete(url) {

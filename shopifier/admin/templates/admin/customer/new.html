@@ -37,7 +37,7 @@
                 <label class="input-box input select">
                     Coutry
                     <select [ngFormControl]="form.default_address.controls.country_code"
-                    (change)="form.default_address.controls.province.updateValue('')">
+                    (change)="form.default_address.controls.province.updateValue(''); formChange=true">
                         <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
                                 {% verbatim %}{{ country.display_name }}{% endverbatim %}
                         </option>
@@ -46,7 +46,8 @@
                 <label class="input input-box select" *ngIf="(form.default_address_meta.province_code.choices | 
                                         province:form.default_address.controls.country_code.value).length>0"> 
                     Region
-                    <select [ngFormControl]="form.default_address.controls.province_code">
+                    <select [ngFormControl]="form.default_address.controls.province_code"
+                    (change)="formChange=true">
                         <option *ngFor="let region of form.default_address_meta.province_code.choices | 
                                         province:form.default_address.controls.country_code.value" [value]="region.value">
                                 {% verbatim %}{{ region.display_name }}{% endverbatim %}

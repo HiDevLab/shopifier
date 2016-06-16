@@ -41,6 +41,9 @@ class Customer(models.Model):
     updated_at = models.DateTimeField(_('Information was updated'), default=timezone.now)
     verified_email = models.BooleanField(default=True)
     
+    @property
+    def name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
 
 class Address(models.Model):
     
@@ -69,7 +72,7 @@ class Address(models.Model):
     #country_name
     #defaul
     province = models.CharField(_('Region'), blank=True, max_length=254)
-    province_code = models.CharField(_('Region'), max_length=6, choices=PROVINCE_CHOICES, blank=True)
+    province_code = models.CharField(_('Region'), max_length=10, choices=PROVINCE_CHOICES, blank=True)
     zip = models.CharField(_('Postal / Zip Code'), blank=True, max_length=20)
     
     @property

@@ -1,21 +1,23 @@
-<div class="rows pt20 center" *ngIf="form.customer && api_data.customer">
+<div class="rows pt20 center" *ngIf="form.customer && form.default_address && api_data.customer">
     <div class="row w16 center pl30">
         <div class="rows w16 ml30">
             <div class="form pb10">
                 <div class="row mb10 p20">
-                    <span class="customer_avatar fa-stack fa-lg">
+                    <span class="fa-stack fa-lg color-avatar font48">
                       <i class="fa fa-circle fa-stack-2x"></i>
-                      <i class="mt20 fa fa-user fa-stack-2x fa-inverse"></i>
+                      <i class="mt6 fa fa-user fa-stack-1x fa-inverse font70"></i>
                     </span>
                      <div class="col pl20 pt15">
                         <h2><strong>{% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}</strong></h2>
+                        <p class="color-subdued">{% verbatim %}{{ api_data.customer.default_address.province_name }}{{ api_data.customer.default_address.province }}{% endverbatim %}</p> 
                         <p class="color-subdued">Customer for 2 days</p> 
                     </div>
                 </div>
                 <div class="input-section">
                     <label class="input-box input">
                         <textarea autosize rows="1" [ngFormControl]="form.customer.controls.note" 
-                        (input)="formChange=true">
+                        (input)="formChange=true"
+                        placeholder="Add a note about Ivan">
                         </textarea>
                     </label>
                 </div>
@@ -31,7 +33,7 @@
                 </div>
             </div>
             <div class="row mt20">
-                <a class="btn btn-red" (click)="goDelete()">Delete customer</a>
+                <a class="btn btn-red" (click)="onDeleteCustomer()">Delete customer</a>
             </div>
         </div>
         <div class="rows w8 ml20 mr10">
@@ -40,51 +42,72 @@
                     <h2 class="mt-auto"><strong>Contact</strong></h2>
                     <a class="ref mt-auto" (click)="onEditCustomer()">Edit</a>
                 </div>
-                <div class="col pt20 pl20 pr20">
+                <div class="col p20 pb0">
                     <a class="ref mt9" (click)="showMail=true">
                         {% verbatim %}{{ api_data.customer.email }}{% endverbatim %}
                     </a>
-                    <div class="color-subdued mt5 mb9">No account</div> 
+                    <div class="color-subdued mt3 mb9">No account</div> 
                 </div>
                 <div class="row sep mt20 mb20"></div>
                 <div class="row space-between">
                     <h2 class="pl20 mt-auto"><strong>Default address</strong></h2>
                     <a class="ref mt-auto pr20" (click)="onChangeAddress($event)">Change
-                    <popover class="color-deafault hide">
-                        <div class="form center">
-                            <div class="cone"></div><div class="cone-bottom"></div>
-                            <div class="row space-between p20" >
-                                <h2 class="mt-auto"><strong>Change address</strong></h2>
-                                <a class="ref mt-auto" (click)="addNewAddress()">Add new address</a>
-                            </div>
-                            <div class="row sep"></div>
-                            <div class="row p20">
-                                <h3 class="mt-auto">Default address</h3>
-                            </div>
-                            <div class="col pl20">
-                                <div class="color-subdued mt5 mb9">
-                                    {% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}
+                        <popover class="color-deafault hide">
+                            <div class="form center">
+                                <div class="cone"></div><div class="cone-bottom"></div>
+                                <div class="row space-between p20" >
+                                    <h2 class="mt-auto"><strong>Change address</strong></h2>
+                                    <a class="ref mt-auto" (click)="onEditAddress($event)">Add new address</a>
                                 </div>
-                                <div class="color-subdued mt5">
-                                    {% verbatim %}{{ api_data.customer.default_address.country_name }}{% endverbatim %}
-                                </div> 
+                                <ul class="rows">
+                                    <li *ngFor="let address of api_data.customer.addresses">
+                                        <div class="row sep mb20"></div>
+                                        <div class="row pl20 pb15" *ngIf="address.default">
+                                            <h3 class="mt-auto">Default address</h3>
+                                        </div>
+                                        <div class="row space-between">
+                                            <div class="col color-subdued pl20">
+                                                <div>
+                                                    {% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}
+                                                </div>
+                                                <div class="mt3">
+                                                    {% verbatim %}{{ address.company }}{% endverbatim %}
+                                                </div>
+                                                <div class="mt3">
+                                                    {% verbatim %}{{ address.province_name }}{% endverbatim %}
+                                                </div>
+                                                <div class="mt3">
+                                                    {% verbatim %}{{ address.country_name }}{% endverbatim %}
+                                                </div> 
+                                            </div>
+                                            <div class="col" *ngIf="!address.default">
+                                                <a class="btn mr10"
+                                                (click)="onSelectAddress($event, address)">Select</a>
+                                            </div>
+                                        </div>
+                                        <div class="row p20 pt15" >
+                                            <a class="ref mt-auto" (click)="onEditAddress($event, address)">Edit address</a>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="row p20" >
-                                <a class="ref mt-auto" (click)="editDefaultAddewss($event)">Edit address</a>
-                            </div>
-                        </div>
-                    </popover>
+                        </popover>
                     </a>
                 </div>
-                <div class="col p20">
-                    <div class="color-subdued mt5 mb9">
+                <div class="col color-subdued p20">
+                    <div class="mt5">
                         {% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}
                     </div>
-                    <div class="color-subdued mt5 mb9">
+                   <div class="mt3">
+                        {% verbatim %}{{ api_data.customer.default_address.company }}{% endverbatim %}
+                    </div>
+                    <div class="mt3">
+                        {% verbatim %}{{ api_data.customer.default_address.province_name }}{% endverbatim %}
+                    </div>
+                    <div class="mt3">
                         {% verbatim %}{{ api_data.customer.default_address.country_name }}{% endverbatim %}
                     </div> 
                 </div>
-
             </div>
             <div class="form vh6 mt20 b">
             </div>
@@ -121,13 +144,14 @@
     </form>
 </modal-form>
 
-<modal-form *ngIf="form.default_address && showEditDefaultAddress">
+<modal-form *ngIf="form.default_address && showEditAddress">
     <form class="input-form" novalidate>
-        {% with group='default_address' change='changeDefaultAddress' %}
+        {% with group='default_address' change='changeAddress' %}
         <div class="modal-header">
-            <h2>Edit address</h2>
+            <h2 *ngIf="current_address.id" >Edit address</h2>
+            <h2 *ngIf="!current_address.id" >Create address</h2>
             <a class="cross fa fa-times" aria-hidden="true"
-              (click)="showEditDefaultAddress=false"></a>
+              (click)="showEditAddress=false"></a>
         </div>
         {% include "admin/errorsbox.html" with class="row m10 mb20" %}
         
@@ -140,7 +164,7 @@
             <label class="input-box input select">
                 Coutry
                 <select [ngFormControl]="form.default_address.controls.country_code"
-                (change)="form.default_address.controls.province.updateValue('')">
+                (change)="form.default_address.controls.province.updateValue(''); changeAddress=true">
                     <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
                             {% verbatim %}{{ country.display_name }}{% endverbatim %}
                     </option>
@@ -149,7 +173,8 @@
             <label class="input input-box select" *ngIf="(form.default_address_meta.province_code.choices | 
                                     province:form.default_address.controls.country_code.value).length>0"> 
                 Region
-                <select [ngFormControl]="form.default_address.controls.province_code">
+                <select [ngFormControl]="form.default_address.controls.province_code"
+                (change)="changeAddress=true">
                     <option *ngFor="let region of form.default_address_meta.province_code.choices | 
                                     province:form.default_address.controls.country_code.value" [value]="region.value">
                             {% verbatim %}{{ region.display_name }}{% endverbatim %}
@@ -160,11 +185,12 @@
         </div>
     
         <div class="modal-footer">
+            <a *ngIf="current_address.id && !current_address.default" class="btn btn-red mr-auto" (click)="onDeleteAddress()">Delete address</a>
             <a class="btn mr10"
-            (click)="showEditDefaultAddress=false">Cancel</a>
+               (click)="showEditAddress=false">Cancel</a>
             <a class="btn btn-blue"
-                [ngClass]="{disabled : !changeDefaultAddress}"
-                (click)="onSaveDefaultAddress()">Save</a>
+                [ngClass]="{disabled : !changeAddress}"
+                (click)="onSaveAddress()">Save</a>
         </div>
         {% endwith %}
     </form>

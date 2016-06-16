@@ -85,67 +85,6 @@
     //height: auto;
 }
 
-popover {
-    cursor: default;
-    z-index: 10;
-    position: absolute;
-    top: 35px;
-    width: 100%;
-    &.show {
-        transform-origin: center top;
-        transform: scale(1);
-        visibility: visible;
-        opacity:0.99;
-
-        transition: transform 0.2s linear, opacity 0.3s linear, visibility 0s step-start;
-        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
-        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
-        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
-    }
-
-    &.hide {
-        transform-origin: center top;
-        transform: scale(0.8);
-        visibility: hidden;
-        opacity: 0;
-
-        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
-        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
-        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
-        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
-    }
-
-}
-
-.cone {
-    z-index: 11;
-    transform: rotate(45deg);
-    position: absolute;
-    left: calc(50% - 6px);
-    top: -7px;
-    height: 12px;
-    width: 12px;
-    background: inherit;
-    box-shadow: inherit;
-    
-    
-}
-.cone-bottom {
-    z-index: 12;
-    position: absolute;
-    left: calc(50% - 20px);
-    height: 20px;
-    width: 50px;
-    background: inherit;
-}
-
-
-
-
-
-
-
-
 
 .b {
     border: 1px solid $input-error-border;
@@ -176,7 +115,7 @@ popover {
 }
 
 
-@for $i from 5 to 81 {
+@for $i from 5 to 100 {
     .font#{$i} {
         font-size: #{$i}px;
     }
@@ -202,7 +141,7 @@ $classes: (
 @each $name0, $class in $classes { 
   .#{$name0}{
       @each $name, $direct in $directions { 
-        @for $i from 1 to 31 {
+        @for $i from 0 to 31 {
           &#{$name}#{$i} {
             #{$class}#{$direct}: #{$i}px;
           }
@@ -217,4 +156,49 @@ $classes: (
         margin#{$direct}: auto;
       }
   }
+}
+
+
+
+p {
+    margin-bottom: 15px;
+}
+p.p10 {
+    margin-bottom: 10px;
+}
+
+p.p5 {
+    margin-bottom: 5px;
+}
+
+strong, .bold {
+    font-weight: bold;
+}
+
+h0{
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.8em;
+    margin-top: auto;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.2em;
+    margin-top: auto;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.2em;
+    margin-top: auto;
+}
+
+h3 {
+     font-size: 15px;
+     font-weight: 400;
+     line-height: 1.2em;
+     margin-top: auto;
 }

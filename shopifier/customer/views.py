@@ -61,7 +61,7 @@ class SHPFViewSet(ModelViewSet): #features shpf API
     
     def destroy(self, request, *args, **kwargs):
         response = super(SHPFViewSet, self).destroy(request, *args, **kwargs)
-        response.status = status.HTTP_200_OK
+        response.status = HTTP_200_OK
         return response
     
 def get_token(email):
@@ -130,7 +130,7 @@ class AddressViewSet(SHPFViewSet):
             return Response(content, status=422)
         
         self.perform_destroy(instance)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=HTTP_200_OK)
 
     def perform_create(self, serializer):
         serializer.validated_data['customer'] = self.customer

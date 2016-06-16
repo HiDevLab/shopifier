@@ -22,6 +22,7 @@ class CustomerAddressSerializer(SHPFSerializer):
 
     default = serializers.BooleanField(read_only=True)
     country_name = serializers.CharField(read_only=True, source='get_country_code_display')
+    province_name = serializers.CharField(read_only=True, source='get_province_code_display')
 
     class Meta:
         model = Address
@@ -42,13 +43,10 @@ class CustomerSerializer(SHPFSerializer):
         exclude = ()
     
 
-class AddressSerializer(serializers.ModelSerializer):
+class AddressSerializer(SHPFSerializer):
 
     default = serializers.BooleanField(read_only=True)
     
     class Meta:
         model = Address
         exclude = ('customer',)
-    
-    
-    
