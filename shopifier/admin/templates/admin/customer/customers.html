@@ -1,39 +1,63 @@
-<div class="rows b center mt25">
-    <div class="row b w20 right">
-         <div class="col b p20">
-            <div class="col h6 b">
-                CCCCC
+<div class="rows center p20" *ngIf="customers">
+    <div class="form w24 pb20">
+        <ul class="row tabs left w24">
+            <li class="active"> 
+                All Customers</li>
+            <li>
+                Accepts Marketing</li>
+            <li>
+                Repeat Customers</li>
+            <li>
+                Prospects</li>
+            <li>
+                From Kazakhstan</li>
+            
+        </ul>
+        <div class="list row ph20 mt20">
+            <div class="th ph10 pv17 tl w6" >
+                Name
             </div>
-         </div>
-         
-        <form class="form vw11 m10 p10">
-            <div class="input-section">
-                 <div class="input-box">   
-                    <label class="input">
-                        First Name
-                        <input>
-                    </label>
-                </div>    
-                <div class="input-box">
-                    <label class="input">
-                       Last Name
-                        <input> 
-                    </label>
-                </div>
+            <div class="th ph10 pv17 tl w4" >
+                Location
             </div>
-            <div class="input-section">
-                <div class="input-box"> 
-                    <label class="input">
-                        Email
-                        <input>
-                    </label>
-                </div>    
+            <div class="th ph10 pv17 tc w3" >
+                Orders
             </div>
-        </form>
-         
-    </div>
-    <div class="row w8 h5 b">
-         AAA
+            <div class="th ph10 pv17 tc w4" >
+                Last Order
+            </div>
+            <div class="th ph10 pv17 tr w6" >
+                Total Spent
+            </div>
+        </div>
+        
+        <div class="list tr row mh20" *ngFor="let customer of customers">
+            <a class=" ph10 pv17 tl w6 ref"
+                (click)="onEditCustomer(customer)">
+                {% verbatim %}{{ customer.fist_name }} {{ customer.last_name }}{% endverbatim %}
+            </a>
+            <div class="ph10 pv17 tl w4 color-subdued" *ngIf="customer.default_address"
+                (click)="onEditCustomer(customer)">
+                {% verbatim %}{{ customer.default_address.country_name }}{% endverbatim %}
+            </div>
+            <div class="ph10 pv17 tl w4 color-subdued" *ngIf="!customer.default_address"
+                (click)="onEditCustomer(customer)">
+            </div>
+            <div class="ph10 pv17 tc w3"
+                (click)="onEditCustomer(customer)">
+                Orders
+            </div>
+            <div class="ph10 pv17 tc w4"
+                (click)="onEditCustomer(customer)">
+                Last Order
+            </div>
+            <div class="ph10 pv17 tr w6"
+                (click)="onEditCustomer(customer)">
+                0.00 $ 
+            </div>
+        </div>
+            
+        
     </div>
 </div>
 

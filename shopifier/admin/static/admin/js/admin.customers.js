@@ -470,17 +470,15 @@ export class CustomersEdit extends BaseForm{
   templateUrl: 'templates/customer/customers.html',
   directives: [FORM_DIRECTIVES],
 })
-export class Customers {
+export class Customers extends BaseForm {
     
     static get parameters() {
-        return [[Http], [Router], [AdminAuthService], [Admin], [AdminUtils]];
+        return [[Http], [FormBuilder], [Router], [AdminAuthService], 
+                [Admin], [AdminUtils]];
     }
-    constructor(http, router, auth, admin, utils ) {
-        this._http = http;
-        this._router = router;
-        this._admin = admin;
-        this._auth = auth;
-        this._utils = utils;
+    
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
+        super(http, formbuilder, router, auth, admin, utils);
     }
     
     ngOnInit() {
@@ -501,10 +499,20 @@ export class Customers {
                 'text': 'Add customer', 'class': 'btn btn-blue', 
                 'click': this.onAdd, 'self': this 
             });
+            
+        this.getAPIData(`/admin/customers.json`);
     }
     
+    getAPIDataAfter(data) {
+        this.customers = data.customers;
+    }
+
     onAdd(self) {
         self._router.navigate(['NewCustomer'])
     }
+    
+    onEditCustomer(customer) {
+        let link = ['EditCustomer', {'id': customer.id }];
+        this._router.navigate(link);
+    }
 }
-

@@ -9,7 +9,7 @@
                     </span>
                      <div class="col pl20 pt15">
                         <h2><strong>{% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}</strong></h2>
-                        <p class="color-subdued">{% verbatim %}{{ api_data.customer.default_address.province_name }}{{ api_data.customer.default_address.province }}{% endverbatim %}</p> 
+                        <p *ngIf="api_data.customer.default_address" class="color-subdued">{% verbatim %}{{ api_data.customer.default_address.province_name }}{{ api_data.customer.default_address.province }}{% endverbatim %}</p> 
                         <p class="color-subdued">Customer for 2 days</p> 
                     </div>
                 </div>
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="rows w8 ml20 mr10">
-            <div class="form">
+            <div class="form pb20">
                 <div class="row space-between p20" >
                     <h2 class="mt-auto"><strong>Contact</strong></h2>
                     <a class="ref mt-auto" (click)="onEditCustomer()">Edit</a>
@@ -46,7 +46,7 @@
                     <a class="ref mt9" (click)="showMail=true">
                         {% verbatim %}{{ api_data.customer.email }}{% endverbatim %}
                     </a>
-                    <div class="color-subdued mt3 mb9">No account</div> 
+                    <div class="color-subdued pt3 pb9">No account</div> 
                 </div>
                 <div class="row sep mt20 mb20"></div>
                 <div class="row space-between">
@@ -94,11 +94,11 @@
                         </popover>
                     </a>
                 </div>
-                <div class="col color-subdued p20">
+                <div class="col color-subdued p20 pb0" *ngIf="api_data.customer.default_address">
                     <div class="mt5">
                         {% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}
                     </div>
-                   <div class="mt3">
+                   <div class="mt3" >
                         {% verbatim %}{{ api_data.customer.default_address.company }}{% endverbatim %}
                     </div>
                     <div class="mt3">

@@ -8,7 +8,7 @@ from rest_framework import serializers
 from rest_framework.fields import empty
 
 from customer.models import Customer, Address
-import pdb
+
 
 class SHPFSerializer(serializers.ModelSerializer): #features shpf API
     

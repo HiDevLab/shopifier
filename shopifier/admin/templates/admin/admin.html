@@ -17,11 +17,11 @@
             
             <div class="avatar" *ngIf="currentUser">
                 {% verbatim %}{{ currentUser.first_name[0] + currentUser.last_name[0] }}{% endverbatim %}
-                <img *ngIf="currentUser.avatar" src="{% verbatim %}{{ currentUser.avatar }}{% endverbatim %}">                
+                <img *ngIf="currentUser.avatar" src="{% verbatim %}{{ currentUser.avatar }}{% endverbatim %}">
             </div>
             <span>
                 <span> Shopifier</span>
-                 <span> {% verbatim %}{{ currentUser.first_name + ' ' + currentUser.last_name }}{% endverbatim %}</span>       
+                 <span> {% verbatim %}{{ currentUser.first_name + ' ' + currentUser.last_name }}{% endverbatim %}</span>
             </span>
             
         

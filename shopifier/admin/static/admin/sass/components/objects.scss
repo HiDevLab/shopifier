@@ -346,7 +346,7 @@ $error-list-icon-color: #d83e3e;
     }
 }
 
-$note-color:    #888888;
+$note-color: #888888;
 .note {
     color: $note-color;
     font-size: $shopify-note-font-size;
@@ -370,12 +370,59 @@ $note-color:    #888888;
 
 // customers
 
-.customer_avatar {
-    //border: 1px solid $input-border;
-    color: $color-ref;
-    //border-radius: 50%;
-    font-size: 46px;
+$tabs-background: #f5f6f7;
+$tabs-background-hover: #fafbfc;
+$tabs-background-active: #ffffff;
+$tabs-border: #ebeef0;
+
+$tab-color: #707070;
+$tab-color-hover: #0078bd;
+
+$list-background-hover: #eff9fd;
+$list-color-hover: #0078bd;
+
+.list { 
+    .th:hover {
+        background: $list-background-hover;
+        color: $list-color-hover;
+        cursor: pointer; cursor: hand;
+    }
+    & + .tr {
+        border-top: 1px solid $tabs-border;
+        &:hover {
+            background: $list-background-hover;
+            border-top: 1px solid $tabs-border;
+        }
+    }
 }
+
+.tabs {
+    background: $tabs-background;
+    border-radius: 3px 3px 0 0;
+    & > li {
+        border-bottom: 1px solid $tabs-border;
+        border-right: 1px solid $tabs-border;
+        color: $tab-color;
+        padding: 15px 20px;
+        text-align: center;
+        
+        &:first-child {
+            border-top-left-radius: 3px;
+        }
+        &:hover {
+            background: $tabs-background-hover;
+            color: $tab-color-hover;
+            cursor: pointer; cursor: hand;
+        }
+        &.active {
+            background: $tabs-background-active;
+            border-bottom-color: $tabs-background-active;
+            color: inherit;
+            cursor: default;
+        }
+    }
+}
+
 
 popover {
     cursor: default;

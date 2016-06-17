@@ -98,6 +98,19 @@
     transform: rotate(45deg);
 }
 
+.tr {
+    text-align: right;
+}
+
+.tl {
+    text-align: left;
+}
+
+.tc {
+    text-align: center;
+}
+
+
 @for $i from 1 to 25 {
     .w#{$i} {
         width: calc(99.99% / 24 * #{$i});
@@ -120,8 +133,6 @@
         font-size: #{$i}px;
     }
 }
-
-
 
 //http://sass-scss.ru/documentation/sassscript/mapi.html
 $directions: (
@@ -150,6 +161,26 @@ $classes: (
   }
 }
 
+@for $i from 0 to 31 {
+    .pv#{$i} {
+        padding-top: #{$i}px;
+        padding-bottom: #{$i}px;
+    }
+    .ph#{$i} {
+        padding-left: #{$i}px;
+        padding-right: #{$i}px;
+    }
+    .mv#{$i} {
+        margin-top: #{$i}px;
+        margin-bottom: #{$i}px;
+    }
+    .mh#{$i} {
+        margin-left: #{$i}px;
+        margin-right: #{$i}px;
+    }
+}
+
+
 .m{
     @each $name, $direct in $directions { 
       &#{$name}-auto {
@@ -157,7 +188,6 @@ $classes: (
       }
   }
 }
-
 
 
 p {
