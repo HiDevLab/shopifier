@@ -74,6 +74,18 @@ class CustomerViewSet(SHPFViewSet):
     queryset = Customer.objects.all().order_by('id')
     serializer_class = CustomerSerializer
     
+    def filter_queryset(self, queryset):
+        
+        since_id = self.request.query_params.get('since_id', None)
+        if since_id:
+            return Customer.objects.filter(id__gt=since_id).order_by('id')
+        
+        before_id = self.request.query_params.get('before_id', None)
+        if before_id:
+            return Customer.objects.filter(id__lt=before_id).order_by('-id')
+
+        return super(CustomerViewSet, self).filter_queryset(queryset)
+    
     @detail_route(methods=['post'])
     def account_activation_url(self, request, pk=None):
         customer = self.get_object()

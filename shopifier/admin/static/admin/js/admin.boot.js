@@ -13,6 +13,7 @@ import { AdminAuthService, AdminUtils, AdminAuthLogout, AdminAuthLogin,
 from './admin.auth'
 
 import { Admin } from './admin'
+import { Customers } from './admin.customers' 
 
 @Component({
   selector: "body",
@@ -152,5 +153,6 @@ bootstrap(AdminRouter, [
     }),
     FORM_PROVIDERS,
     AdminAuthService,
-    AdminUtils
+    AdminUtils, 
+
 ]).then((appRef) => window.injector = appRef.injector);

@@ -109,6 +109,8 @@ export class BaseForm {
     }
     
     emailValidator(control) {
+        if (!control.value)
+            return {'Invalid Email Address': true };
         if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
         }   else {
@@ -133,7 +135,6 @@ export class BaseForm {
             else
                 form[group_name + '_meta'][ctrl].error = false;
         }
-//        console.log(form[group_name]);
         return form[group_name].valid
     }
     
@@ -177,6 +178,7 @@ export class BaseForm {
                                 }, 
                        ); 
     }
+    
     setDataToControls(form, group_name, obj) {
         let group = form[group_name];
         let meta = form[group_name + '_meta'];
@@ -195,7 +197,127 @@ export class BaseForm {
             }
         }
     }
+    
+    //manage pagination
+    /*
+        this.count_list
+        this.current_page
+        this.last_page
+        this.hidePrevPage
+        this.hideNextPage
+    */
+    getPagination(count_url, list_url){
+        this.list_url = list_url;
+        this._http
+            .get(count_url)
+            .subscribe(data => {
+                        this.count_list = data.count;
+                        this.current_page = 1;
+                        this.last_page = Math.ceil(this.count_list / 4); //50
+                        this.disabledPrevPage = true;
+                        this.disabledNextPage = !(this.current_page < this.last_page);
+                        if (this.getPaginationAfter)
+                            this.getPaginationAfter();
+
+                    },
+                       err => this.obj_errors = err, 
+        ); 
+    }
+    
+    onNextPage(self){ //call from admin header 
+        if (self.current_page == self.last_page) return;
+        self = self || this;
+        self.current_page++;
+        self.getAPIData(`${self.list_url}?page=${self.current_page}`);
+        self.disabledNextPage = !(self.current_page < self.last_page);
+        self.disabledPrevPage = !(self.current_page > 1);
+    }
+
+    onPrevPage(self) { //call from admin header
+        if (self.current_page == 1) return;
+        self = self || this;
+        self.current_page--;
+        self.getAPIData(`${self.list_url}?page=${self.current_page}`);
+        self.disabledNextPage = !(self.current_page < self.last_page);
+        self.disabledPrevPage = !(self.current_page > 1);
+    }
 }
+
+//------------------------------------------------------------------------------ 
+@Component({
+  selector: 'main',
+  templateUrl: 'templates/customer/customers.html',
+  directives: [FORM_DIRECTIVES],
+})
+export class Customers extends BaseForm {
+    
+    static get parameters() {
+        return [[Http], [FormBuilder], [Router], [AdminAuthService], 
+                [Admin], [AdminUtils]];
+    }
+    
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
+        super(http, formbuilder, router, auth, admin, utils);
+    }
+    
+    ngOnInit() {
+        this._admin.currentUrl();
+        this._admin.headerButtons = [];
+            
+        this._admin.headerButtons.push(
+            {
+                'text': 'Export', 'class': 'btn ml10 mr10', 
+                'click': this.onExport, 'self': this 
+            });
+        this._admin.headerButtons.push(
+            {
+                'text': 'Import customers', 'class': 'btn mr10', 
+                'click': this.onImport, 'self': this 
+            });
+        this._admin.headerButtons.push(
+            {
+                'text': 'Add customer', 'class': 'btn btn-blue', 
+                'click': this.onAdd, 'self': this 
+            });
+            
+        this.getPagination('/admin/customers/count.json',
+                            '/admin/customers.json');
+        this.getAPIData('/admin/customers.json');
+        
+    }
+    
+    getAPIDataAfter(data) {
+        this.customers = data.customers;
+    }
+    
+    getPaginationAfter() {
+        if (this.last_page == 1)
+            return;
+            
+        this._admin.headerButtons.unshift(
+            {
+                'text': '', 'class': 'btn mr30 fa fa-chevron-right', 
+                'click': this.onNextPage, 'self': this, 'disabled' : 'disabledNextPage' 
+            });
+        this._admin.headerButtons.unshift(
+            {
+                'text': '', 'class': 'btn mr10 fa fa-chevron-left', 
+                'click': this.onPrevPage, 'self': this, 'disabled' : 'disabledPrevPage' 
+            });
+    }
+
+    onAdd(self) {
+        self._router.navigate(['NewCustomer'])
+    }
+    
+    onEditCustomer(customer) {
+        this._admin.customers = this;
+        this.current_customer_index = this.customers.indexOf(customer); 
+        let link = ['EditCustomer', {'id': customer.id }];
+        this._router.navigate(link);
+    }
+}
+
 
 
 //------------------------------------------------------------------------------ 
@@ -297,13 +419,18 @@ export class CustomersNew extends BaseForm{
 })
 export class CustomersEdit extends BaseForm{
     
+//     disabledNext = true;
+//     disabledPrev = true;
+    
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService], 
                 [Admin], [AdminUtils], [RouteParams]];
     }
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams, list) {
         super(http, formbuilder, router, auth, admin, utils);
         this._routeParams = routeparams;
+        this._list = this._admin.customers;
+        this.customer_id = this._routeParams.get('id');
     }
     
     ngOnInit() {
@@ -311,21 +438,58 @@ export class CustomersEdit extends BaseForm{
         this._admin.headerButtons = [];
         this._admin.headerButtons.push(
             {
-                'text': '', 'class': 'btn mr10 fa fa-backward', 
-                'click': this.onPrev, 'self': this 
+                'text': '', 'class': 'btn mr10 fa fa-chevron-left', 
+                'click': this.onPrev, 'self': this, 'disabled' : 'disabledPrev' 
             });
         this._admin.headerButtons.push(
             {
-                'text': '', 'class': 'btn mr10 fa fa-forward', 
-                'click': this.onNext, 'self': this 
+                'text': '', 'class': 'btn mr10 fa fa-chevron-right', 
+                'click': this.onNext, 'self': this, 'disabled' : 'disabledNext'
             });
         this._admin.headerButtons.push(
             {
                 'text': 'Save', 'class': 'btn btn-blue', 
                 'click': this.onSaveNote, 'primary': true, 'self': this 
             });
-        this.customer_id = this._routeParams.get('id');
         this.addForm(this.form, `/admin/customers/${this.customer_id}.json`, 'customer');
+    }
+    
+    onNext(self){ // call from admin header
+        self = self || this;
+        let url = `/admin/customers.json?since_id=${self.customer_id}&limit=1&fields=id`;
+        self._http
+            .get(url)
+            .subscribe(data => { 
+                            if (data.customers.length > 0) {  
+                                self._router.navigate( ['EditCustomer', {'id': data.customers[0].id }]);
+                                self.disabledPrev = false; 
+                                self.disabledNext = false;
+                            }
+                            else {
+                               self.disabledNext = true;
+                            }
+                        }, 
+                        err =>  self.disabledNext = true, 
+            ); 
+    }
+    
+    onPrev(self){ // call from admin header
+        self = self || this;
+        let url = `/admin/customers.json?before_id=${self.customer_id}&limit=1&fields=id`;
+        self._http
+            .get(url)
+            .subscribe(data => { 
+                            if (data.customers.length > 0) { 
+                                self._router.navigate( ['EditCustomer', {'id': data.customers[0].id }]);
+                                self.disabledNext = false;
+                                self.disabledPrev = false;
+                            }
+                            else {
+                               self.disabledPrev = true;
+                            }
+                        }, 
+                        err =>  self.disabledPrev = undefined, 
+            ); 
     }
     
     addFormAfter() {
@@ -333,12 +497,16 @@ export class CustomersEdit extends BaseForm{
     }
     
     getAPIDataAfter(data) {
+        this.customer_id = data.customer.id;
         this.api_data = data;
         this.setDataToControls(this.form, 'customer', this.api_data.customer);
 
         this._admin.currentUrl({
                 'url':'#', 'text': `${this.api_data.customer.first_name} ${this.api_data.customer.last_name}`
                 });
+                
+        this.disabledNext = undefined;
+        this.disabledPrev = undefined;
     }
     
     onSaveNote(self) {
@@ -464,55 +632,3 @@ export class CustomersEdit extends BaseForm{
 }
 
 
-//------------------------------------------------------------------------------ 
-@Component({
-  selector: 'main',
-  templateUrl: 'templates/customer/customers.html',
-  directives: [FORM_DIRECTIVES],
-})
-export class Customers extends BaseForm {
-    
-    static get parameters() {
-        return [[Http], [FormBuilder], [Router], [AdminAuthService], 
-                [Admin], [AdminUtils]];
-    }
-    
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
-        super(http, formbuilder, router, auth, admin, utils);
-    }
-    
-    ngOnInit() {
-        this._admin.currentUrl();
-        this._admin.headerButtons = [];
-        this._admin.headerButtons.push(
-            {
-                'text': 'Export', 'class': 'btn mr10', 
-                'click': this.onExport, 'self': this 
-            });
-        this._admin.headerButtons.push(
-            {
-                'text': 'Import customers', 'class': 'btn mr10', 
-                'click': this.onImport, 'self': this 
-            });
-        this._admin.headerButtons.push(
-            {
-                'text': 'Add customer', 'class': 'btn btn-blue', 
-                'click': this.onAdd, 'self': this 
-            });
-            
-        this.getAPIData(`/admin/customers.json`);
-    }
-    
-    getAPIDataAfter(data) {
-        this.customers = data.customers;
-    }
-
-    onAdd(self) {
-        self._router.navigate(['NewCustomer'])
-    }
-    
-    onEditCustomer(customer) {
-        let link = ['EditCustomer', {'id': customer.id }];
-        this._router.navigate(link);
-    }
-}

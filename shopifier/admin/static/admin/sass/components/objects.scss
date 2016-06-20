@@ -86,7 +86,7 @@ $btn-disabled-color: #d3dbe2;
         background: $btn-disabled-background;
         color:  $btn-disabled-color;
         border-color: $btn-border;
-        
+        pointer-events: none;
         &:hover {
             cursor: default;
         }
@@ -105,7 +105,7 @@ $btn-disabled-color: #d3dbe2;
             background: $btn-disabled-background;
             border-color: $btn-border;
             color:  $btn-disabled-color;
-            
+            pointer-events: none;
             &:hover {
                 cursor: default;
             }

@@ -6,8 +6,24 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.fields import empty
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 from customer.models import Customer, Address
+
+
+class SHPFPagination(PageNumberPagination):
+    page_query_param = 'page'
+    page_size_query_param = 'limit'
+    
+    def get_fields(self):
+        import pdb
+        pdb.set_trace()
+        return super(SHPFSerializer, self).get_fields()
+        
+    
+    def get_paginated_response(self, data):
+        return Response(data)
 
 
 class SHPFSerializer(serializers.ModelSerializer): #features shpf API
@@ -42,6 +58,11 @@ class CustomerSerializer(SHPFSerializer):
         model = Customer
         exclude = ()
     
+    def get_field_names(self, declared_fields, info):
+        fields = self.context['request'].query_params.get('fields', None) 
+        if fields:
+            return fields.split(',')
+        return super(CustomerSerializer, self).get_field_names(declared_fields, info)
 
 class AddressSerializer(SHPFSerializer):
 
