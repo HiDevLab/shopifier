@@ -104,7 +104,8 @@ export class BaseForm {
         }
         if (group[ctrl_name].type==='boolean') control.updateValue(false);
         if (group[ctrl_name].type==='datetime') control.updateValue(undefined);
-
+        if (group[ctrl_name].type==='list') control.updateValue([]);
+        
         form[group_name].addControl(ctrl_name, control);
     }
     
@@ -241,7 +242,21 @@ export class BaseForm {
         self.disabledNextPage = !(self.current_page < self.last_page);
         self.disabledPrevPage = !(self.current_page > 1);
     }
+    
+    //manage tags
+    
+    getTags(tags_url){
+        this._http
+            .get(tags_url)
+            .subscribe(data => {
+                        this.tags = data.tags;
+                      },
+                      err => this.obj_errors = err, 
+        ); 
+    }
+
 }
+
 
 //------------------------------------------------------------------------------ 
 @Component({
@@ -311,7 +326,6 @@ export class Customers extends BaseForm {
     }
     
     onEditCustomer(customer) {
-        this._admin.customers = this;
         this.current_customer_index = this.customers.indexOf(customer); 
         let link = ['EditCustomer', {'id': customer.id }];
         this._router.navigate(link);
@@ -351,6 +365,31 @@ export class CustomersNew extends BaseForm{
                 'click': this.onSave, 'primary': true, 'self': this 
             });
         this.addForm(this.form, '/admin/customers.json', 'customer');
+        this.getTags('/admin/customers/tags.json');
+        this.current_tags = ['ru', 'kz']
+        this.tag = '';
+    }
+    
+    deleteTag(i) {
+        this.current_tags.splice(i, 1);
+    }
+
+    changeTag() {
+        if (this.tag) {
+            this.current_tags.push(this.tag.trim());
+            this.tag = '';
+        }
+    }
+    
+    onKeyUpTag(event) {
+        if (event.code == 'Backspace' && this.tag.length < 1 ) {
+            this.current_tags.pop();
+            //this.tag = '';
+        }
+    }
+    
+    addTag(tag) {
+        this.current_tags.push(tag);
     }
     
     onSave(self) {
@@ -360,6 +399,8 @@ export class CustomersNew extends BaseForm{
         
         let customer = {};
         customer['customer'] = self.form['customer'].value;
+        
+        customer.customer.tags = ['ru', 'rub', 'gey']
         
         self._http
             .post('/admin/customers.json', customer )
@@ -378,7 +419,7 @@ export class CustomersNew extends BaseForm{
             address.address.first_name = this.form.customer.controls.first_name.value;
         if (!address.address.last_name)
             address.address.last_name = this.form.customer.controls.last_name.value;
-            
+
         this._http
             .post(`/admin/customers/${customer.customer.id}/addresses.json`, address )
             .subscribe( data => this.setDefaultAddress(customer, data),
@@ -426,10 +467,9 @@ export class CustomersEdit extends BaseForm{
         return [[Http], [FormBuilder], [Router], [AdminAuthService], 
                 [Admin], [AdminUtils], [RouteParams]];
     }
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams, list) {
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
         super(http, formbuilder, router, auth, admin, utils);
         this._routeParams = routeparams;
-        this._list = this._admin.customers;
         this.customer_id = this._routeParams.get('id');
     }
     

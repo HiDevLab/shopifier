@@ -1,5 +1,5 @@
 <div class="rows center pt20">
-    {% include "admin/errorsbox.html" with class="row mb20" %}
+    {% include "admin/errorsbox.html" with class="row w24 mb20" %}
     <div class="row w16 space-between">
         <div class="col pt20">
              <h2><strong>Customer overview</strong></h2>
@@ -83,10 +83,37 @@
             <p></p>
             Tags can be used to categorize customers into groups.
         </div>
-        <form class="form vw8 pt15 pb10" *ngIf="form.customer">
-        {% with group='customer' %}
-            {% include "admin/input-section.html" with control1="tags" placeholder1="Wholesale, referral, trade show" %}
-        {% endwith %}    
+        <form class="form vw8 p20" *ngIf="form.customer">
+            <label class="tags-input"
+                [ngClass]="{err: form.customer_meta.tags.error}">
+                Tags
+                <ul [ngClass]="{focus: inputtagsFocus}">
+                    <li class="" *ngFor="let new_tag of current_tags; let i = index" >
+                        {% verbatim %}{{ new_tag }}{% endverbatim %}
+                        <a class="fa fa-times" aria-hidden="true"
+                            (click)="deleteTag(i)"></a>
+                    </li>
+                    <li>
+                        <div class="tooltip-error attached-to-bottom"
+                            [ngClass]="{hide: !tooltipError}">
+                            Oops, you've already used this tag.
+                        </div>
+                        <input [(ngModel)]="tag"
+                        (change)="changeTag()"
+                        (keydown)="onKeyUpTag($event)"
+                        (focus)="inputtagsFocus=true"
+                        (blur)="inputtagsFocus=false">
+                    </li>
+                </ul>
+            </label>
+            <div class="row">Click to add previously used tags:</div>
+            <ul class="tags pv10">
+                <li class="tag" *ngFor="let tag of tags"
+                    [ngClass]="{disabled: current_tags.includes(tag[0])}"
+                    (click)="addTag(tag[0])">
+                    {% verbatim %}{{ tag[0] }}{% endverbatim %}
+                </li>
+            </ul>
         </form>
     </div>
 </div>

@@ -1,11 +1,14 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.utils import timezone
 
 from django.utils.translation import ugettext_lazy as _
 
 from pycountry import countries, subdivisions 
+
+from customer.tags import TagField, TagQuerySet 
 
 __all__ = [
     'Customer',
@@ -28,22 +31,29 @@ class Customer(models.Model):
     #addresses
     created_at = models.DateTimeField(_('When the customer was created'), default=timezone.now)
     default_address = models.OneToOneField('Address', related_name='+', null=True)
-    email = models.EmailField(_('Email'), max_length=254, blank=True)
+    email = models.EmailField(_('Email'), max_length=254, blank=True, unique=True)
     first_name = models.CharField(_('First Name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last Name'), max_length=30, blank=True)
     #metafield
     #multipass_identifier
     note = models.TextField(_('Notes'), blank=True, max_length=254)
     state = models.CharField(max_length=20, choices=STATES, default = 'disabled')
-    tags = models.CharField(_('Tags'), blank=True, max_length=254)
+    #tags = ArrayField(models.CharField(max_length=254), blank=True)
+    tags = TagField()
+    
     tax_exempt = models.BooleanField(_('Customer is tax exempt'), default=True)
     #total_spent
     updated_at = models.DateTimeField(_('Information was updated'), default=timezone.now)
     verified_email = models.BooleanField(default=True)
     
+    objects = TagQuerySet.as_manager()
+    
     @property
     def name(self):
         return '{} {}'.format(self.first_name, self.last_name)
+    
+    
+
 
 class Address(models.Model):
     

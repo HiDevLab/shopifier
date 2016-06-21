@@ -2,9 +2,11 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+from django.db.models.fields import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -45,8 +47,13 @@ class CustomerAddressSerializer(SHPFSerializer):
         exclude = ('customer',)
 
 
+class TagsField(serializers.ListField):
+    child = serializers.CharField(label=_('Tags'), required=False, max_length=255, allow_blank=True, allow_null=True)
+
+
 class CustomerSerializer(SHPFSerializer):
     
+    tags = TagsField()
     email = serializers.EmailField(label=_('Email'), max_length=255, required=True, allow_null=False)
     first_name = serializers.CharField(label=_('First Name'), max_length=30, required=True, allow_null=False)
     last_name = serializers.CharField(label=_('Last Name'), max_length=30, required=True, allow_null=False)
@@ -59,10 +66,18 @@ class CustomerSerializer(SHPFSerializer):
         exclude = ()
     
     def get_field_names(self, declared_fields, info):
-        fields = self.context['request'].query_params.get('fields', None) 
-        if fields:
-            return fields.split(',')
-        return super(CustomerSerializer, self).get_field_names(declared_fields, info)
+        meta_fields = set(super(CustomerSerializer, self).get_field_names(declared_fields, info))
+        param = self.context['request'].query_params.get('fields', None) 
+        if param:
+            fields = set(param.replace(' ','').split(',')) 
+            #if len(fields.difference(meta_fields))>0:
+                #msg = 'Fields:{} not exists'.format(', '.join(str(f) for f in fields.difference(meta_fields)))
+                #raise ValidationError(detail = msg)
+                #raise ObjectDoesNotExist('Field:{} not exists'.format(field))
+                
+            return fields.intersection(meta_fields)
+
+        return meta_fields
 
 class AddressSerializer(SHPFSerializer):
 

@@ -108,6 +108,14 @@ class CustomerViewSet(SHPFViewSet):
             'count': count,
         }
         return Response(content, status=HTTP_200_OK)
+    
+    @list_route(methods=['get'])
+    def tags(self, request, pk=None):
+        tags = Customer.objects.count_tag_values('tags')
+        content = {
+            'tags': tags,
+        }
+        return Response(content, status=HTTP_200_OK)
 
 
 class AddressViewSet(SHPFViewSet):

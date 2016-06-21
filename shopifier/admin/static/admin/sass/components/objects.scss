@@ -475,3 +475,136 @@ popover {
     width: 50px;
     background: inherit;
 }
+
+
+// tags
+$tag-color: #005e94;
+$tag-background: #cae9f7 none repeat scroll 0 0;
+
+$tag-color-grey: #798c9c;
+$tag-background-grey: #ebeef0 none repeat scroll 0 0;
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: outside none none;
+
+    > li{
+        display: inline-flex;
+        padding: 4px 8px;
+        margin: 0 3px 3px 0;
+        background: $tag-background;
+        color: $tag-color; 
+        border-radius: 3px;
+        cursor: pointer;
+        
+        &.disabled {
+            opacity: 0.5;
+            cursor: default;
+            pointer-events: none;
+        }
+    }
+}
+
+.tags-input {
+    flex: 1 1 0;
+    padding: 10px 0;
+    
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+
+    > ul {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: outside none none;
+        
+        border: 1px solid $input-border;
+        border-radius: 3px;
+        box-sizing: border-box;
+        margin-top: 5px;
+        
+        &.focus {
+            border-color: $input-focus-border;
+        }
+        
+        > li {
+            position: relative;
+            display: inline-flex;
+            margin: 3px;
+            padding: 4px 8px;
+            background: $tag-background;
+            color: $tag-color; 
+            border-radius: 3px;
+            text-transform: initial;
+            cursor: pointer;
+    
+            margin: 3px;
+            font-size: 1.14286rem;
+            font-weight: 400;
+            line-height: 1.71429rem;
+            cursor: default;
+            &:first-of-type {
+                margin-right: 0;
+            }
+            
+            & > a {
+                font-size: 0.8rem;
+                padding-left: 8px;
+                cursor: pointer;
+                margin: auto;
+            }
+            
+            & > input {
+                outline: none;
+            }
+
+            &:last-of-type {    
+                background: inherit;
+                > input {
+                    border: none;
+                    font-size: 1.14286rem;
+                    line-height: 1.71429rem;
+                    width: 120px;
+                }
+            }
+        }
+    }
+}
+
+$tooltip-error-background: #ec6060;
+$tooltip-error-color: #ffffff;
+
+.tooltip-error {
+    background: $tooltip-error-background;
+    color: white;
+    font-size: 0.8rem;
+    border-radius: 3px;
+    margin-bottom: 9px;
+    padding: 2px 9px;
+    position: absolute;
+    z-index: 50;
+    white-space: nowrap;
+
+    &.attached-to-bottom {
+        margin-top: 45px;
+    }
+
+    &::before {
+        border: 5px solid transparent;
+        border-bottom-color: $tooltip-error-background;
+        
+        content: "";
+        top: -10px;
+        left: 15px;
+        position: absolute;
+    }
+    
+    &.hide {
+        display: none !important;
+    }
+}
+
+
