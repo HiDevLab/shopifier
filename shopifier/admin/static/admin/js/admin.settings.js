@@ -416,11 +416,6 @@ export class AdminAccount {
         
         this._auth.getCurrentUser().then(data => this.currentUser = data );
         
-        /*
-        this._auth.get('/api/current-user/')
-            .subscribe( data => { this.currentUser = data; } );      
-        */
-              
         this.dcl.loadNextToLocation(AdminAccountInvite,  this.viewContainerRef)
             .then((compRef)=> {
                 this.invite_user = compRef.instance;

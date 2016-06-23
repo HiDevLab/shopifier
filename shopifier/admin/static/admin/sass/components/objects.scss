@@ -1,9 +1,10 @@
 //text, icon color
 $colors: (
-    deafault: #1a1a1a,
+    default: #1a1a1a,
     subdued: #707070,
     sky-darker: #c3cfd8,
     avatar: #4b9acc,
+    tags: #798c9c,
 );
 
 @each $name, $color in $colors { 
@@ -12,12 +13,26 @@ $colors: (
     }
 }
 
+//background
+$backgrounds: (
+    default: #EBEEF0,
+    form: #FFFFFF,
+    grey: #F5F6F7,
+);
+
+@each $name, $color in $backgrounds { 
+    .backgraund-#{$name}{
+        background-color: #{$color};
+    }
+}
+
+
 //avatar
 $background-avatar-empty: #ff5d5d;
 $color-avatar-empty: #ffffff;
 .avatar {
     display: block;
-    text-transform: uppercase;                        
+    text-transform: uppercase;
     background: $background-avatar-empty;
     color: $color-avatar-empty;
     font-size: 16px;
@@ -182,6 +197,28 @@ $input-error-color: #ff5d5d;
 $input-error-border: #ff5d5d;
 $input-error-background: #fef6f5;
 
+.shadow {
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
+}
+
+
+.form {
+    background: $background-main-color;
+    align-items: center;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
+    //box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out 0s;
+    position: relative;
+    box-sizing: border-box;
+    //height: auto;
+    
+    &.grey {
+        background-color: $background-grey-color;
+    }
+}
+
 
 .input-section {
     padding: 8px 10px;
@@ -250,11 +287,10 @@ $input-error-background: #fef6f5;
         background-image: none;
         -webkit-appearance: none;
         -moz-appearance: none;
-            appearance: none;
-            
+         appearance: none;
+        
         &:focus {
             border-color: $input-focus-border;
-            outline: none;
             background: transparent;
         }  
         
@@ -428,8 +464,15 @@ popover {
     cursor: default;
     z-index: 10;
     position: absolute;
-    top: 35px;
-    width: 100%;
+    //width: 100%;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
+    & > div {
+        position: relative;
+        z-index: 11;
+        border-radius: 3px;
+        background: $background-main-color;
+    }
     &.show {
         transform-origin: center top;
         transform: scale(1);
@@ -452,28 +495,30 @@ popover {
         -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
         -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
     }
-}
+    &::before {
+        z-index: 11;
+        transform: rotate(45deg);
+        position: absolute;
+        left: calc(50% - 6px);
+        height: 12px;
+        width: 12px;
+        background: $background-main-color;
+        box-shadow: inherit;
+        content: "";
+    }
+    &.down {
+        top: 35px;
+        &::before {
+            top: -7px;
+        }
+    }
+    &.up {
+        bottom: 45px;
+        &::before {
+            bottom: -7px;
+        }
+    }
 
-.cone {
-    z-index: 11;
-    transform: rotate(45deg);
-    position: absolute;
-    left: calc(50% - 6px);
-    top: -7px;
-    height: 12px;
-    width: 12px;
-    background: inherit;
-    box-shadow: inherit;
-    
-    
-}
-.cone-bottom {
-    z-index: 12;
-    position: absolute;
-    left: calc(50% - 20px);
-    height: 20px;
-    width: 50px;
-    background: inherit;
 }
 
 
@@ -483,6 +528,9 @@ $tag-background: #cae9f7 none repeat scroll 0 0;
 
 $tag-color-grey: #798c9c;
 $tag-background-grey: #ebeef0 none repeat scroll 0 0;
+$tag-input-border: #d3dbe2;
+$tag-popover-select: #0078BD;
+
 
 .tags {
     display: flex;
@@ -520,11 +568,15 @@ $tag-background-grey: #ebeef0 none repeat scroll 0 0;
         display: flex;
         flex-wrap: wrap;
         list-style: outside none none;
-        
-        border: 1px solid $input-border;
+        border: 1px solid $tag-input-border;
         border-radius: 3px;
         box-sizing: border-box;
-        margin-top: 5px;
+        padding: 3px 0 0 3px;
+        
+        &.large {
+            font-size: 1.14286rem;
+            line-height: 1.71429rem;
+        }
         
         &.focus {
             border-color: $input-focus-border;
@@ -532,47 +584,82 @@ $tag-background-grey: #ebeef0 none repeat scroll 0 0;
         
         > li {
             position: relative;
-            display: inline-flex;
-            margin: 3px;
-            padding: 4px 8px;
+            margin: 0 3px 3px 0;
+            padding: 2px 6px;
             background: $tag-background;
             color: $tag-color; 
             border-radius: 3px;
-            text-transform: initial;
             cursor: pointer;
-    
-            margin: 3px;
-            font-size: 1.14286rem;
-            font-weight: 400;
-            line-height: 1.71429rem;
             cursor: default;
-            &:first-of-type {
-                margin-right: 0;
-            }
-            
             & > a {
                 font-size: 0.8rem;
-                padding-left: 8px;
                 cursor: pointer;
-                margin: auto;
             }
-            
-            & > input {
-                outline: none;
-            }
-
             &:last-of-type {    
                 background: inherit;
                 > input {
                     border: none;
-                    font-size: 1.14286rem;
-                    line-height: 1.71429rem;
+                    font-size: inherit;
+                    line-height: inherit;
                     width: 120px;
                 }
             }
         }
     }
 }
+
+
+.tag {
+    cursor: pointer;
+    position: relative;
+    margin: 0 3px 3px 0;
+    padding: 4px 8px;
+    background: $tag-background;
+    color: $tag-color; 
+    border-radius: 3px;
+    cursor: default;
+    & > a {
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+}
+
+tags {
+    & > div {
+        position: relative;
+        & > input {
+            background: $input-background;
+            border: 1px solid $tag-input-border;
+            border-radius: 3px;
+            box-sizing: border-box;
+            padding: 5px 10px;
+            width: 100%;
+            &:focus {
+                border-color: $input-focus-border;
+            }
+        }
+    }
+    > ul {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: outside none none;
+    }
+}
+ 
+ 
+tags popover > div > ul { 
+    max-height: 300px;
+    & > li > a{
+        line-height: 24px;
+        flex: 1 1 0;
+        &:hover, &.sel {
+            cursor: pointer;
+            background: $tag-popover-select;
+            color: white;
+        }
+    }
+}
+
 
 $tooltip-error-background: #ec6060;
 $tooltip-error-color: #ffffff;

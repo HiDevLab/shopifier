@@ -53,7 +53,7 @@ class TagsField(serializers.ListField):
 
 class CustomerSerializer(SHPFSerializer):
     
-    tags = TagsField()
+    tags = TagsField(required=False)
     email = serializers.EmailField(label=_('Email'), max_length=255, required=True, allow_null=False)
     first_name = serializers.CharField(label=_('First Name'), max_length=30, required=True, allow_null=False)
     last_name = serializers.CharField(label=_('Last Name'), max_length=30, required=True, allow_null=False)

@@ -1,5 +1,4 @@
-import { Component, DynamicComponentLoader, 
-        ViewContainerRef, Pipe } from 'angular2/core';
+import { Component, Pipe } from 'angular2/core';
 import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
         Validators, Control, ControlGroup } from 'angular2/common';
@@ -7,8 +6,9 @@ import { Http } from 'angular2/http'
 import 'rxjs/Rx'
 
 import { AdminAuthService, AdminUtils } from './admin.auth'
-import { Autosize, Popover } from './components'
+import { Autosize, Popover, ArrayLengthPipe, AdminTagsEdit } from './components'
 import { Admin } from './admin'
+
 
 @Pipe({
     name: 'province'
@@ -21,7 +21,7 @@ export class ProvincePipe{
   }
 }
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------BaseForm
 export class BaseForm {
     errors = [];
     obj_errors = {};
@@ -61,7 +61,7 @@ export class BaseForm {
     
     addGroup(form, group, group_name) {
         if (Object.prototype.toString.call(group) !== '[object Object]')
-            return;
+            return;7
         form[group_name] = this._formbuilder.group({});
         form[group_name + '_meta'] = {};
         
@@ -166,20 +166,19 @@ export class BaseForm {
         }
     } 
 
-    getAPIData(url){
-        this._http
-            .get(url)
-            .subscribe( data => { 
-                                    if (this.getAPIDataAfter)
-                                        this.getAPIDataAfter(data);
-                                }, 
-                        err => {
-                                    this.obj_errors = err; 
-                                    this.errors = this._utils.to_array(err.json()); 
-                                }, 
-                       ); 
+    getAPIData(urls, afters){
+        for(let i in urls) {
+            this._http
+                .get(urls[i])
+                .subscribe( data => this[afters[i]](data), 
+                            err => {
+                                        this.obj_errors = err; 
+                                        this.errors = this._utils.to_array(err.json()); 
+                                    }, 
+                           ); 
+        }
     }
-    
+
     setDataToControls(form, group_name, obj) {
         let group = form[group_name];
         let meta = form[group_name + '_meta'];
@@ -243,22 +242,10 @@ export class BaseForm {
         self.disabledPrevPage = !(self.current_page > 1);
     }
     
-    //manage tags
-    
-    getTags(tags_url){
-        this._http
-            .get(tags_url)
-            .subscribe(data => {
-                        this.tags = data.tags;
-                      },
-                      err => this.obj_errors = err, 
-        ); 
-    }
-
 }
 
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------ ------------------------------------------------------------------------------Customers
 @Component({
   selector: 'main',
   templateUrl: 'templates/customer/customers.html',
@@ -297,11 +284,11 @@ export class Customers extends BaseForm {
             
         this.getPagination('/admin/customers/count.json',
                             '/admin/customers.json');
-        this.getAPIData('/admin/customers.json');
+        this.getAPIData(['/admin/customers.json'], ['getCustomers']);
         
     }
     
-    getAPIDataAfter(data) {
+    getCustomers(data) {
         this.customers = data.customers;
     }
     
@@ -334,12 +321,12 @@ export class Customers extends BaseForm {
 
 
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------CustomersNew 
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
   directives: [FORM_DIRECTIVES, Autosize],
-  pipes: [ProvincePipe]
+  pipes: [ProvincePipe, ArrayLengthPipe]
 })
 export class CustomersNew extends BaseForm{
 
@@ -365,31 +352,50 @@ export class CustomersNew extends BaseForm{
                 'click': this.onSave, 'primary': true, 'self': this 
             });
         this.addForm(this.form, '/admin/customers.json', 'customer');
-        this.getTags('/admin/customers/tags.json');
-        this.current_tags = ['ru', 'kz']
-        this.tag = '';
+        this.getAPIData(['/admin/customers/tags.json'], ['getTagsAfter']);
     }
     
+    getTagsAfter(data){
+        this.all_tags_statistic = data.tags;
+        this.all_tags = [];
+        for (let i in data.tags) {
+            this.all_tags.push(data.tags[i][0]);
+        }
+        this.tags = [];
+        this.tag = '';
+    }
+
     deleteTag(i) {
-        this.current_tags.splice(i, 1);
+        let ret = this.all_tags.indexOf(this.tags[i]);
+        if (ret < 0 ) {
+            this.all_tags.push(this.tags[i]);
+        }
+        this.tags.splice(i, 1);
     }
 
     changeTag() {
         if (this.tag) {
-            this.current_tags.push(this.tag.trim());
+            if (this.tags.indexOf(this.tag) > -1 ) {
+                this.tooltipError = true;
+                return;
+            }
+            this.tags.push(this.tag.trim());
             this.tag = '';
+            this.tooltipError = false;
+            this.formChange=true;
         }
     }
     
     onKeyUpTag(event) {
         if (event.code == 'Backspace' && this.tag.length < 1 ) {
-            this.current_tags.pop();
+            this.tags.pop();
             //this.tag = '';
         }
     }
     
     addTag(tag) {
-        this.current_tags.push(tag);
+        this.tags.push(tag);
+        this.formChange=true;
     }
     
     onSave(self) {
@@ -399,8 +405,7 @@ export class CustomersNew extends BaseForm{
         
         let customer = {};
         customer['customer'] = self.form['customer'].value;
-        
-        customer.customer.tags = ['ru', 'rub', 'gey']
+        customer.customer.tags = this.tags;
         
         self._http
             .post('/admin/customers.json', customer )
@@ -451,17 +456,14 @@ export class CustomersNew extends BaseForm{
 }
 
 
-//------------------------------------------------------------------------------ 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------CustomersEdit 
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/edit.html',
-  directives: [FORM_DIRECTIVES, Autosize, Popover],
+  directives: [FORM_DIRECTIVES, Autosize, Popover, AdminTagsEdit],
   pipes: [ProvincePipe]
 })
 export class CustomersEdit extends BaseForm{
-    
-//     disabledNext = true;
-//     disabledPrev = true;
     
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService], 
@@ -474,7 +476,8 @@ export class CustomersEdit extends BaseForm{
     }
     
     ngOnInit() {
-                
+        this.self = this; // for child components
+
         this._admin.headerButtons = [];
         this._admin.headerButtons.push(
             {
@@ -533,12 +536,14 @@ export class CustomersEdit extends BaseForm{
     }
     
     addFormAfter() {
-        this.getAPIData(`/admin/customers/${this.customer_id}.json`);
+        this.getAPIData([`/admin/customers/${this.customer_id}.json`, '/admin/customers/tags.json'], 
+        ['getCustomerAfter', 'getTagsAfter']);
     }
     
-    getAPIDataAfter(data) {
+    getCustomerAfter(data) {
         this.customer_id = data.customer.id;
         this.api_data = data;
+        this.tags = this.api_data.customer.tags; //for child
         this.setDataToControls(this.form, 'customer', this.api_data.customer);
 
         this._admin.currentUrl({
@@ -548,17 +553,31 @@ export class CustomersEdit extends BaseForm{
         this.disabledNext = undefined;
         this.disabledPrev = undefined;
     }
-    
+
+    getTagsAfter(data){
+        this.all_tags_statistic = data.tags;//for child
+        this.all_tags = [];                 //for child
+        for (let i in data.tags) {
+            this.all_tags.push(data.tags[i][0]);
+        }
+
+    }
+
     onSaveNote(self) {
         self = self || this;
         let customer = {
             'customer': {
                 'note':self.form.customer.controls.note.value,
+                'tags':self.tags
             }
         };
         self._http
             .patch(`/admin/customers/${self.customer_id}.json`, customer )
-            .subscribe( data => self.api_data = data,
+            .subscribe( data => { 
+                                    self.getCustomerAfter(data);
+                                    self.getAPIData(['/admin/customers/tags.json'], 
+                                                    ['getTagsAfter']);
+                                },
                         err => self.apiErrors(self.form, 'customer', err.json()), 
             );
             self.formChange = false;
@@ -588,7 +607,7 @@ export class CustomersEdit extends BaseForm{
 
     changePopover(event, display) {
         event.stopPropagation();
-        let popover = document.querySelector('popover');
+        let popover = document.querySelector('#address-popover');
         if (popover) {
             popover.classList.remove(display=='show' ? 'hide' : 'show');
             popover.classList.add(display=='show' ? 'show' : 'hide');

@@ -1,7 +1,7 @@
-<div class="rows pt20 center" *ngIf="form.customer && form.default_address && api_data.customer">
+<div class="rows pt20 center">
     <div class="row w16 center pl30">
         <div class="rows w16 ml30">
-            <div class="form pb10">
+            <div class="form pb10" *ngIf="form.customer && form.default_address && api_data.customer">
                 <div class="row mb10 p20">
                     <span class="fa-stack fa-lg color-avatar font48">
                       <i class="fa fa-circle fa-stack-2x"></i>
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="rows w8 ml20 mr10">
-            <div class="form pb20">
+            <div class="form pb20" *ngIf="form.customer && form.default_address && api_data.customer">
                 <div class="row space-between p20" >
                     <h2 class="mt-auto"><strong>Contact</strong></h2>
                     <a class="ref mt-auto" (click)="onEditCustomer()">Edit</a>
@@ -52,9 +52,8 @@
                 <div class="row space-between">
                     <h2 class="pl20 mt-auto"><strong>Default address</strong></h2>
                     <a class="ref mt-auto pr20" (click)="onChangeAddress($event)">Change
-                        <popover class="color-deafault hide">
-                            <div class="form center">
-                                <div class="cone"></div><div class="cone-bottom"></div>
+                        <popover id="address-popover" class="down w24 color-default hide">
+                            <div>
                                 <div class="row space-between p20" >
                                     <h2 class="mt-auto"><strong>Change address</strong></h2>
                                     <a class="ref mt-auto" (click)="onEditAddress($event)">Add new address</a>
@@ -109,7 +108,11 @@
                     </div> 
                 </div>
             </div>
-            <div class="form vh6 mt20 b">
+            <div class="form mt20 p20 grey">
+                <tags   [tags]="tags" 
+                        [all_tags]="all_tags" 
+                        [all_tags_statistic]="all_tags_statistic"
+                        [parrent_component]="self"></tags>
             </div>
         </div>
     </div>

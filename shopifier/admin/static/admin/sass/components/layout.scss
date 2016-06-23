@@ -73,18 +73,6 @@
     box-sizing: border-box;
 }
 
-.form {
-    background: $background-main-color;
-    align-items: center;
-    border-radius: 3px;
-    box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
-    //box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease-in-out 0s;
-    position: relative;
-    box-sizing: border-box;
-    //height: auto;
-}
-
 
 .b {
     border: 1px solid $input-error-border;
