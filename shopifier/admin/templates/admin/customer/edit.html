@@ -51,7 +51,9 @@
                 <div class="row sep mt20 mb20"></div>
                 <div class="row space-between">
                     <h2 class="pl20 mt-auto"><strong>Default address</strong></h2>
-                    <a class="ref mt-auto pr20" (click)="onChangeAddress($event)">Change
+                    <div class="ref mt-auto pr20">
+                        <a class="ref mt-auto" (click)="onChangeAddress($event)">Change
+                        </a>
                         <popover id="address-popover" class="down w24 color-default hide">
                             <div>
                                 <div class="row space-between p20" >
@@ -91,7 +93,7 @@
                                 </ul>
                             </div>
                         </popover>
-                    </a>
+                    </div>
                 </div>
                 <div class="col color-subdued p20 pb0" *ngIf="api_data.customer.default_address">
                     <div class="mt5">

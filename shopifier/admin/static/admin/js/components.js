@@ -59,7 +59,7 @@ export class Popover {
         if (!this.element.classList.contains('show'))
             return;
         let obj = event.target;
-        //console.log(obj.parentNode.parentNode.parentNode);
+        
 //      if(!this.childOf(obj, this.element)){
         if (this.element.previousElementSibling!=obj && !this.childOf(obj, this.element)) {
              this.element.classList.remove('show');
@@ -80,14 +80,13 @@ export class Popover {
     }
   
     ngOnInit() {
-        let s = window.getComputedStyle(this.element.parentElement);
+        let s = window.getComputedStyle(this.element.parentElement);//parentElement);previousElementSibling
         let left = `calc( 50% - (${s.width})/2 - ${s.paddingRight} - ${s.marginRight})`;
         this.element.style.left = left;
     }
   
     childOf(c, p) {
         while(c !== p && c) {
-            console.log(c);
             c = c.parentNode;
         }
         return c === p;
@@ -158,61 +157,152 @@ export class AdminTagsEdit {
     all_tags = [];
     tag_input = '';
      
-    refresh(){
-        this.available_tags = this.all_tags.filter( value => {
-            return this.tags.indexOf(value) < 0;
-        });
-    }
-    
     changePopover(event, display) {
         event.stopPropagation();
         let popover = document.querySelector('#tags-popover');
-        if (popover) {
+        if (!!popover) {
             popover.classList.remove(display=='show' ? 'hide' : 'show');
             popover.classList.add(display=='show' ? 'show' : 'hide');
         }
     }
-    
-    onInputFocus(event){
-        this.changePopover(event, 'show');
-        this.current_i=0;
-    }
-    
+
     available() { //copy of NotInPipe and StratWithPipe
+        if (!this.all_tags) {
+            return [];
+        }
+        if (!this.tags) {
+            return this.all_tags;
+        }
+        
         return this.all_tags.filter( value => {
             return this.tags.indexOf(value) < 0 && (!this.tag_input || value.startsWith(this.tag_input));
         });
     }
-    
+
+    onInputFocus(event) {
+        if (this.available().length == 0 && !this.tag_input)
+            return;
+        this.changePopover(event, 'show');
+        this.current_i=0;
+    }
+
+    pushTag(tag) {
+        if (!tag)
+            return;
+
+        let out = [];
+
+        let tags = tag.split(',');
+        this.tooltipError = false;
+        
+        tags.forEach((tag)=> {
+            let t = tag.trim();
+            if (!t) 
+                return;
+            if (this.tags.indexOf(t) > -1) {
+                this.tooltipError = true;
+                out.push(t);
+                return;
+            }
+            this.tags.push(t);
+
+        }, this);
+        if (this.tooltipError) {
+            let self = this;
+            setTimeout(()=> { self.tooltipError = false; }, 5000);
+        }
+        return out.join(' ,');
+        //Array.prototype.push.apply(this.tags, tags);
+    }
+
     onKeyDown(event) {
-        if (event.code=='ArrowDown' && (this.available().length-1) > this.current_i) {
-            this.current_i++;
-        }
-        
-        if (event.code=='ArrowUp' && this.current_i>0) {
-            this.current_i--;
-        }
-        
-        if (['Enter', 'NumpadEnter'].includes(event.code)) {
-            this.tags.push(this.available()[this.current_i]);
+        this.tooltipError = false; 
+        if (['Comma'].includes(event.code)) {
+            let t = ''
+            if (this.current_i < 0) {
+                t = this.tag_input;
+            }
+            else {
+                t = this.available()[this.current_i];
+            }
+            this.tag_input = this.pushTag(t);
+            
             this.parrent_component.formChange = true;
             this.current_i = 0;
+            //this.tag_input = '';
+            if (this.available().length == 0) {
+                this.changePopover(event, 'hide');
+            }
+        }
+   }
+
+    onKeyUp(event) {
+        console.log(event);
+        this.tooltipError = false;
+        if (event.code=='ArrowDown' && (this.available().length-1) > this.current_i) {
+            event.stopPropagation();
+            this.current_i++;
+            return;
+        }
+        if (event.code=='ArrowUp' && (this.current_i > 0 || (!!this.tag_input && this.current_i > -1))) {
+            this.current_i--;
+            event.stopPropagation();
+            return;
+        }
+        if (event.code == 'Comma') {
+            this.current_i = 0;
             this.tag_input = '';
+            if (this.available().length == 0)
+                this.changePopover(event, 'hide');
+            return;
+        }
+        if (['Enter', 'NumpadEnter'].includes(event.code)) {
+            let t = ''
+            if (this.current_i < 0) {
+                t = this.tag_input;
+            }
+            else {
+                t = this.available()[this.current_i];
+            }
+            this.tag_input = this.pushTag(t);
+            
+            this.parrent_component.formChange = true;
+            this.current_i = 0;
+            //this.tag_input = '';
+            if (this.available().length == 0) {
+                this.changePopover(event, 'hide');
+                return;
+            }
+        }
+        
+        if (!!this.tag_input) {
+            if(this.available().length == 0 || this.available().length > 1) {
+                this.current_i = -1;
+                return;
+            }
+            if(this.available().length == 1 && this.available()[0]!=this.tag_input) {
+                this.current_i = -1;
+                return;
+            }
+            this.current_i = 0;
         }
     }
-    
+
     deleteTag(i) {
         this.tags.splice(i, 1);
         this.parrent_component.formChange = true;
     }
     
     insertTag(event, tag) {
+        this.tooltipError = false;
         event.stopPropagation();
         //let self = this;
-//         setTimeout(function() {
+//         setTimeout(()=> {
 //             self.tags.push(tag);
 //         }, 0);
-        this.tags.push(tag);
+        this.tag_input = this.pushTag(tag);
+        if (this.available().length == 0)
+            this.changePopover(event, 'hide');
         this.parrent_component.formChange = true;
     }
 

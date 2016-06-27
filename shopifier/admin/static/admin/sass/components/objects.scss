@@ -474,26 +474,26 @@ popover {
         background: $background-main-color;
     }
     &.show {
-        transform-origin: center top;
+        //transform-origin: center top;
         transform: scale(1);
         visibility: visible;
         opacity:0.99;
 
-        transition: transform 0.2s linear, opacity 0.3s linear, visibility 0s step-start;
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
         -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
         -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
         -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
     }
     &.hide {
-        transform-origin: center top;
+        //transform-origin: center top;
         transform: scale(0.8);
         visibility: hidden;
         opacity: 0;
 
-        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
-        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
-        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
-        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.5s step-end;
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
     }
     &::before {
         z-index: 11;
@@ -507,12 +507,14 @@ popover {
         content: "";
     }
     &.down {
+        transform-origin: center top;
         top: 35px;
         &::before {
             top: -7px;
         }
     }
     &.up {
+        transform-origin: center bottom;
         bottom: 45px;
         &::before {
             bottom: -7px;
@@ -649,14 +651,20 @@ tags {
  
 tags popover > div > ul { 
     max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
     & > li > a{
         line-height: 24px;
         flex: 1 1 0;
-        &:hover, &.sel {
-            cursor: pointer;
-            background: $tag-popover-select;
-            color: white;
+        &:first-of-type {
+            color:$tag-popover-select;
         }
+        &.sel {
+             cursor: pointer;
+             background: $tag-popover-select;
+             color: white;
+         }
     }
 }
 
@@ -665,20 +673,29 @@ $tooltip-error-background: #ec6060;
 $tooltip-error-color: #ffffff;
 
 .tooltip-error {
+    position: absolute;
     background: $tooltip-error-background;
     color: white;
     font-size: 0.8rem;
     border-radius: 3px;
-    margin-bottom: 9px;
+    //margin-bottom: 9px;
     padding: 2px 9px;
     position: absolute;
     z-index: 50;
     white-space: nowrap;
 
-    &.attached-to-bottom {
-        margin-top: 45px;
+    &.bottom30 {
+        bottom: -30px;
     }
-
+    &.bottom35 {
+        bottom: -35px;
+    }
+    &.bottom40 {
+        bottom: -40px;
+    }
+    &.bottom45 {
+        bottom: -45px;
+    }
     &::before {
         border: 5px solid transparent;
         border-bottom-color: $tooltip-error-background;

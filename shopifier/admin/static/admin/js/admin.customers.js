@@ -377,6 +377,8 @@ export class CustomersNew extends BaseForm{
         if (this.tag) {
             if (this.tags.indexOf(this.tag) > -1 ) {
                 this.tooltipError = true;
+                let self = this;
+                setTimeout(()=> { self.tooltipError = false; }, 5000);
                 return;
             }
             this.tags.push(this.tag.trim());
@@ -606,7 +608,7 @@ export class CustomersEdit extends BaseForm{
     }
 
     changePopover(event, display) {
-        event.stopPropagation();
+        //event.stopPropagation();
         let popover = document.querySelector('#address-popover');
         if (popover) {
             popover.classList.remove(display=='show' ? 'hide' : 'show');
