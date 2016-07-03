@@ -84,11 +84,11 @@
             Tags can be used to categorize customers into groups.
         </div>
         <form class="form vw8 p20 pb10" *ngIf="form.customer">
-            <label class="tags-input"
+            <label class="input-tags"
                 [ngClass]="{err: form.customer_meta.tags.error}">
                 Tags
-                <ul class="mt5 large" [ngClass]="{focus: inputtagsFocus}">
-                    <li class="" *ngFor="let new_tag of tags; let i=index" >
+                <ul class="mt5 apply-tags" [ngClass]="{focus: inputtagsFocus}">
+                    <li *ngFor="let new_tag of tags; let i=index" >
                         {% verbatim %}{{ new_tag }}{% endverbatim %}
                         <a class="fa fa-times" aria-hidden="true"
                             (click)="deleteTag(i)"></a>
@@ -107,9 +107,8 @@
                 </ul>
             </label>
             <div class="row">Click to add previously used tags:</div>
-            <ul class="tags pv10">
-                <li class="tag" 
-                    *ngFor="let tag of all_tags|length:maxTags || 10; let j=index"
+            <ul class="all-tags pv10">
+                <li *ngFor="let tag of all_tags|length:maxTags || 10; let j=index"
                     [ngClass]="{disabled: tags.includes(tag)}"
                     (click)="addTag(tag)">
                     {% verbatim %}{{ tag }}{% endverbatim %}

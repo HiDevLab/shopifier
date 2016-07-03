@@ -534,12 +534,11 @@ $tag-input-border: #d3dbe2;
 $tag-popover-select: #0078BD;
 
 
-.tags {
+.all-tags {
     display: flex;
     flex-wrap: wrap;
     list-style: outside none none;
-
-    > li{
+    > li {
         display: inline-flex;
         padding: 4px 8px;
         margin: 0 3px 3px 0;
@@ -547,7 +546,6 @@ $tag-popover-select: #0078BD;
         color: $tag-color; 
         border-radius: 3px;
         cursor: pointer;
-        
         &.disabled {
             opacity: 0.5;
             cursor: default;
@@ -556,48 +554,27 @@ $tag-popover-select: #0078BD;
     }
 }
 
-.tags-input {
-    flex: 1 1 0;
+
+
+.input-tags {
     padding: 10px 0;
-    
-    display: flex;
-    flex-direction: column;
     text-align: left;
     cursor: pointer;
     display: block;
-
     > ul {
-        display: flex;
-        flex-wrap: wrap;
-        list-style: outside none none;
         border: 1px solid $tag-input-border;
         border-radius: 3px;
         box-sizing: border-box;
         padding: 3px 0 0 3px;
         
-        &.large {
-            font-size: 1.14286rem;
-            line-height: 1.71429rem;
-        }
-        
+        font-size: 1.14286rem;
+        line-height: 1.71429rem;
+
         &.focus {
             border-color: $input-focus-border;
         }
         
-        > li {
-            position: relative;
-            margin: 0 3px 3px 0;
-            padding: 2px 6px;
-            background: $tag-background;
-            color: $tag-color; 
-            border-radius: 3px;
-            cursor: pointer;
-            cursor: default;
-            & > a {
-                font-size: 0.8rem;
-                cursor: pointer;
-            }
-            &:last-of-type {    
+        > li:last-of-type {
                 background: inherit;
                 > input {
                     border: none;
@@ -605,28 +582,33 @@ $tag-popover-select: #0078BD;
                     line-height: inherit;
                     width: 120px;
                 }
-            }
         }
     }
 }
 
-
-.tag {
-    cursor: pointer;
-    position: relative;
-    margin: 0 3px 3px 0;
-    padding: 4px 8px;
-    background: $tag-background;
-    color: $tag-color; 
-    border-radius: 3px;
-    cursor: default;
-    & > a {
-        font-size: 0.8rem;
+.apply-tags {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: outside none none;
+    
+    > li {
         cursor: pointer;
+        position: relative;
+        margin: 0 3px 3px 0;
+        padding: 4px 8px;
+        background: $tag-background;
+        color: $tag-color; 
+        border-radius: 3px;
+        cursor: default;
+        & > a {
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
     }
 }
 
 tags {
+    position: relative;
     & > div {
         position: relative;
         & > input {
@@ -641,13 +623,8 @@ tags {
             }
         }
     }
-    > ul {
-        display: flex;
-        flex-wrap: wrap;
-        list-style: outside none none;
-    }
 }
- 
+
  
 tags popover > div > ul { 
     max-height: 300px;

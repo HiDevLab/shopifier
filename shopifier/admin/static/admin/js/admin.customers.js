@@ -320,7 +320,9 @@ export class Customers extends BaseForm {
   pipes: [ProvincePipe, ArrayLengthPipe]
 })
 export class CustomersNew extends BaseForm{
-
+    tags = [];
+    all_tags = [];
+    
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService], [Admin], [AdminUtils]];
     }

@@ -1,6 +1,6 @@
 <div class="row space-between mb20" >
     <h2 class="mt-auto"><strong>Tags</strong></h2>
-    <a class="ref mt-auto" (click)="onViewAllTags()">View all tags</a>
+    <a class="ref mt-auto" (click)="showAllTags=true">View all tags</a>
 </div>
 <div>
     <div class="tooltip-error bottom30"
@@ -43,12 +43,60 @@
         </div>
     </popover>
 </div>
-<ul class="mt10">
+<ul class="mt10 apply-tags">
     <li class="tag" *ngFor="let tag of tags; let i=index" >
         {% verbatim %}{{ tag }}{% endverbatim %}
         <a class="fa fa-times" aria-hidden="true"
             (click)="deleteTag(i)"></a>
     </li>
-    {% verbatim %}{{ current_i }}{% endverbatim %}
 </ul>
+
+
+<modal-form *ngIf="showAllTags">
+    <form class="input-form" novalidate>
+        <div class="modal-header">
+            <h2>Tags</h2>
+            <a class="cross fa fa-times" aria-hidden="true"
+              (click)="showAllTags=false"></a>
+        </div>
+        <div>
+            <h2 class="bold ph20 mb20">applied tags</h2>
+            
+            <ul class="ph20 apply-tags">
+                <li *ngFor="let ap_tag of tags; let k=index">
+                    {% verbatim %}{{ ap_tag }}{% endverbatim %}
+                    <a class="fa fa-times" aria-hidden="true"
+                        (click)="deleteTag(k)"></a>
+                </li>
+            </ul>
+            <div class="sep"></div>
+            <div class="row p20 space-between">
+                <h2 class="bold">all Tags</h2>
+                <div class="row right">
+                    <h3 class="mb-auto mr20">Sort:</h3>
+                    <a class="btn"
+                        [ngClass]="{disabled: !isAlphabetically}"
+                        (click)="onAlphabetically()">Alphabetically</a>
+                    <a class="btn"
+                        [ngClass]="{disabled: !!isPopularity}"
+                        (click)="onPopularity()">Popularity</a>
+                </div>
+            </div>
+            <ul class="all-tags ph20">
+                <li *ngFor="let all_tag of tags; let j=index"
+                    (click)="insertTag($event,j)">
+                    {% verbatim %}{{ all_tag }}{% endverbatim %}
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10"
+            (click)="showAllTags=false">Cancel</a>
+            <a class="btn btn-blue"
+                [ngClass]="{disabled : !tagsChange}"
+                (click)="onSaveCustomer()">Apply changes</a>
+        </div>
+    </form>
+</modal-form>
+
 
