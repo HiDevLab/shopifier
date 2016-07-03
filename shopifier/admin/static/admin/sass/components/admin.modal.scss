@@ -3,7 +3,7 @@ modal-form {
     top: 0;
     width: 100vw;
     height: 100vh;
-    position: absolute;
+    position: fixed;
     z-index: 1;
     background: rgba(0, 0, 0, 0.25) none repeat scroll 0 0;
     display: flex;
@@ -32,7 +32,8 @@ form.input-form {
     color: $color-section-annotation-title;       
     background: $background-main-color;
     transition: box-shadow 0.3s ease-in-out 0s;
-    
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
     &.up {
         transform: translateY(-50%);
     }

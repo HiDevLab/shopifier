@@ -53,7 +53,7 @@
 
 
 <modal-form *ngIf="showAllTags">
-    <form class="input-form" novalidate>
+    <form class="input-form up10" novalidate>
         <div class="modal-header">
             <h2>Tags</h2>
             <a class="cross fa fa-times" aria-hidden="true"
@@ -62,7 +62,7 @@
         <div>
             <h2 class="bold ph20 mb20">applied tags</h2>
             
-            <ul class="ph20 apply-tags">
+            <ul class="ph20 pb20 apply-tags">
                 <li *ngFor="let ap_tag of tags; let k=index">
                     {% verbatim %}{{ ap_tag }}{% endverbatim %}
                     <a class="fa fa-times" aria-hidden="true"
