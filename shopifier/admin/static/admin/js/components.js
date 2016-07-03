@@ -305,4 +305,8 @@ export class AdminTagsEdit {
             this.changePopover(event, 'hide');
         this.parrent_component.formChange = true;
     }
+    
+    addTag(tag) {
+        this.tag_input = this.pushTag(tag);
+    }
 }

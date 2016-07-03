@@ -66,12 +66,12 @@
                 <li *ngFor="let ap_tag of tags; let k=index">
                     {% verbatim %}{{ ap_tag }}{% endverbatim %}
                     <a class="fa fa-times" aria-hidden="true"
-                        (click)="deleteTag(k)"></a>
+                        (click)="deleteTag(k);tagsChange=true"></a>
                 </li>
             </ul>
             <div class="sep"></div>
             <div class="row p20 space-between">
-                <h2 class="bold">all Tags</h2>
+                <h2 class="bold">all tags</h2>
                 <div class="row right">
                     <h3 class="mb-auto mr20">Sort:</h3>
                     <a class="btn"
@@ -83,8 +83,9 @@
                 </div>
             </div>
             <ul class="all-tags ph20">
-                <li *ngFor="let all_tag of tags; let j=index"
-                    (click)="insertTag($event,j)">
+                <li *ngFor="let all_tag of all_tags; let j=index"
+                    [ngClass]="{disabled: tags.includes(all_tag)}"
+                    (click)="addTag(all_tag);tagsChange=true">
                     {% verbatim %}{{ all_tag }}{% endverbatim %}
                 </li>
             </ul>
@@ -93,8 +94,8 @@
             <a class="btn mr10"
             (click)="showAllTags=false">Cancel</a>
             <a class="btn btn-blue"
-                [ngClass]="{disabled : !tagsChange}"
-                (click)="onSaveCustomer()">Apply changes</a>
+                [ngClass]="{disabled:!tagsChange}"
+                (click)="parrent_component.saveTags(parrent_component); showAllTags=false; tagsChange=false">Apply changes</a>
         </div>
     </form>
 </modal-form>

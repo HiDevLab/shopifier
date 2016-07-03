@@ -578,6 +578,25 @@ export class CustomersEdit extends BaseForm{
             self.formChange = false;
     }
     
+    saveTags(self) {
+        let customer = {
+            'customer': {
+                'tags':self.tags
+            }
+        };
+        self._http
+            .patch(`/admin/customers/${self.customer_id}.json`, customer )
+            .subscribe( data => { 
+                                    self.getCustomerAfter(data);
+                                    self.getAPIData(['/admin/customers/tags.json'], 
+                                                    ['getTagsAfter']);
+                                },
+                        err => self.apiErrors(self.form, 'customer', err.json()), 
+            );
+            self.formChange = false;
+    }
+    
+    
     onEditCustomer() {
         this.clsErrors(this.form, 'customer');
         this.setDataToControls(this.form, 'customer', this.api_data.customer);
