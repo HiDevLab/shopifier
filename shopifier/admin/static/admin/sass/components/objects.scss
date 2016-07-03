@@ -655,8 +655,8 @@ tags popover > div > ul {
     overflow-x: hidden;
 
     & > li > a {
+        display: block;
         line-height: 24px;
-        flex: 1 1 0;
         &:first-of-type {
             color:$tag-popover-select;
         }

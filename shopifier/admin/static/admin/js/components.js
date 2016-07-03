@@ -244,13 +244,13 @@ export class AdminTagsEdit {
         if (event.code=='ArrowDown' && (this.available().length-1) > this.current_i) {
             event.stopPropagation();
             this.current_i++;
-            ul.children[this.current_i].scrollIntoView({ block: 'end' });
+            ul.children[this.current_i].scrollIntoView(false);
             return;
         }
         if (event.code=='ArrowUp' && (this.current_i > 0 || (!!this.tag_input && this.current_i > -1))) {
             this.current_i--;
             event.stopPropagation();
-            ul.children[this.current_i].scrollIntoView({ block: 'start' });
+            ul.children[this.current_i].scrollIntoView(true);
             return;
         }
         if (event.code == 'Comma') {

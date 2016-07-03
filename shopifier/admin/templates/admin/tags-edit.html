@@ -30,7 +30,7 @@
                         <span class="ml5 mv-auto">{% verbatim %}{{ '"' + tag_input+'"' }}{% endverbatim %}</span>
                     </a>
                 </li>
-                <li class="row" *ngFor="let tag of all_tags|not_in:tags|stastartswith:tag_input; let i=index;"
+                <li *ngFor="let tag of all_tags|not_in:tags|stastartswith:tag_input; let i=index;"
                     (mouseover)="current_i=i">
                     <a class="ph20 pv5"
                         (click)="insertTag($event, tag)"
