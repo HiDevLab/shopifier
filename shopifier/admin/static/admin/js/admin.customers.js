@@ -551,13 +551,26 @@ export class CustomersEdit extends BaseForm{
 
     getTagsAfter(data){
         this.all_tags_statistic = data.tags;//for child
-        this.all_tags = [];                 //for child
-        for (let i in data.tags) {
-            this.all_tags.push(data.tags[i][0]);
-        }
-
+        this.sortAllTags(0);                 //for child
     }
+    
+    sortAllTags(index) {
+        let tags = this.all_tags_statistic.sort((a,b)=>{
+            let _a = a[index];
+            let _b = b[index];
+            if (_a == _b)
+                return 0;
+            if (_a < _b )
+                return -1;
+            return 1;
+        });
 
+        this.all_tags = [];
+        for (let i in tags) {
+            this.all_tags.push(this.all_tags_statistic[i][0]);
+        }
+    }
+    
     onSaveNote(self) {
         self = self || this;
         let customer = {

@@ -156,7 +156,8 @@ export class StartsWithPipe{
 export class AdminTagsEdit {
     all_tags = [];
     tag_input = '';
-     
+    isAlphabetically = false ;
+    
     changePopover(event, display) {
         event.stopPropagation();
         let popover = document.querySelector('#tags-popover');
