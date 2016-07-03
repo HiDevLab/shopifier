@@ -235,18 +235,22 @@ export class AdminTagsEdit {
                 this.changePopover(event, 'hide');
             }
         }
-   }
+    }
 
     onKeyUp(event) {
         this.tooltipError = false;
+        let ul = document.querySelector('#tags-popover-ul');
+
         if (event.code=='ArrowDown' && (this.available().length-1) > this.current_i) {
             event.stopPropagation();
             this.current_i++;
+            ul.children[this.current_i].scrollIntoView({ block: 'end' });
             return;
         }
         if (event.code=='ArrowUp' && (this.current_i > 0 || (!!this.tag_input && this.current_i > -1))) {
             this.current_i--;
             event.stopPropagation();
+            ul.children[this.current_i].scrollIntoView({ block: 'start' });
             return;
         }
         if (event.code == 'Comma') {

@@ -17,7 +17,7 @@
                 <h3 class="mt-auto color-tags font11 bold">FREQUENTLY USED TAGS</h3>
             </div>
             <div class="row sep mt10" *ngIf="!tag_input"></div>
-            <ul class="rows"
+            <ul class="rows" id="tags-popover-ul" 
                 (keyup)="onKeyUp($event)">
                 <li class="row add" *ngIf="tag_input && !(available().length==1 && available()[0]==tag_input)"
                     (show)="current_i=-1">
