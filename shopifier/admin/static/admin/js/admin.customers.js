@@ -39,7 +39,7 @@ export class BaseForm {
         this._utils = utils;
         this._formbuilder = formbuilder;
     }
-    
+
     addForm(form, url, alias) {
         this._http
             .options(url)
@@ -197,15 +197,7 @@ export class BaseForm {
             }
         }
     }
-    
-    //manage pagination
-    /*
-        this.count_list
-        this.current_page
-        this.last_page
-        this.hidePrevPage
-        this.hideNextPage
-    */
+
     getPagination(count_url, list_url){
         this.list_url = list_url;
         this._http
@@ -233,7 +225,7 @@ export class BaseForm {
         self.disabledPrevPage = !(self.current_page > 1);
     }
 
-    onPrevPage(self) { //call from admin header
+    onPrevPage(self){ //call from admin header
         if (self.current_page == 1) return;
         self = self || this;
         self.current_page--;
@@ -241,7 +233,6 @@ export class BaseForm {
         self.disabledNextPage = !(self.current_page < self.last_page);
         self.disabledPrevPage = !(self.current_page > 1);
     }
-    
 }
 
 
@@ -257,15 +248,15 @@ export class Customers extends BaseForm {
         return [[Http], [FormBuilder], [Router], [AdminAuthService], 
                 [Admin], [AdminUtils]];
     }
-    
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
+
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams){
         super(http, formbuilder, router, auth, admin, utils);
     }
-    
+
     ngOnInit() {
         this._admin.currentUrl();
         this._admin.headerButtons = [];
-            
+
         this._admin.headerButtons.push(
             {
                 'text': 'Export', 'class': 'btn ml10 mr10', 
@@ -281,7 +272,7 @@ export class Customers extends BaseForm {
                 'text': 'Add customer', 'class': 'btn btn-blue', 
                 'click': this.onAdd, 'self': this 
             });
-            
+
         this.getPagination('/admin/customers/count.json',
                             '/admin/customers.json');
         this.getAPIData(['/admin/customers.json'], ['getCustomers']);

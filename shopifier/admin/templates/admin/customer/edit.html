@@ -17,7 +17,7 @@
                     <label class="input-box input">
                         <textarea autosize rows="1" [ngFormControl]="form.customer.controls.note" 
                         (input)="formChange=true"
-                        placeholder="Add a note about Ivan">
+                        placeholder="Add a note about {% verbatim %}{{ api_data.customer.first_name }}{% endverbatim %}">
                         </textarea>
                     </label>
                 </div>

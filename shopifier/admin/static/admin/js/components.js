@@ -175,7 +175,8 @@ export class AdminTagsEdit {
         }
         
         return this.all_tags.filter( value => {
-            return this.tags.indexOf(value) < 0 && (!this.tag_input || value.startsWith(this.tag_input));
+            return  this.tags.indexOf(value) < 0 && 
+                    (!this.tag_input || value.startsWith(this.tag_input));
         });
     }
 
@@ -226,10 +227,10 @@ export class AdminTagsEdit {
                 t = this.available()[this.current_i];
             }
             this.tag_input = this.pushTag(t);
-            
+
             this.parrent_component.formChange = true;
             this.current_i = 0;
-            //this.tag_input = '';
+
             if (this.available().length == 0) {
                 this.changePopover(event, 'hide');
             }
@@ -237,7 +238,6 @@ export class AdminTagsEdit {
    }
 
     onKeyUp(event) {
-        console.log(event);
         this.tooltipError = false;
         if (event.code=='ArrowDown' && (this.available().length-1) > this.current_i) {
             event.stopPropagation();
@@ -268,7 +268,7 @@ export class AdminTagsEdit {
             
             this.parrent_component.formChange = true;
             this.current_i = 0;
-            //this.tag_input = '';
+
             if (this.available().length == 0) {
                 this.changePopover(event, 'hide');
                 return;
@@ -292,18 +292,13 @@ export class AdminTagsEdit {
         this.tags.splice(i, 1);
         this.parrent_component.formChange = true;
     }
-    
+
     insertTag(event, tag) {
         this.tooltipError = false;
         event.stopPropagation();
-        //let self = this;
-//         setTimeout(()=> {
-//             self.tags.push(tag);
-//         }, 0);
         this.tag_input = this.pushTag(tag);
         if (this.available().length == 0)
             this.changePopover(event, 'hide');
         this.parrent_component.formChange = true;
     }
-
 }
