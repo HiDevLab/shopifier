@@ -1,7 +1,9 @@
 from django.core.signing import Signer
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework.decorators import list_route
+from rest_framework import permissions
+from rest_framework.status import HTTP_200_OK
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -22,7 +24,6 @@ class SHPFViewSet(ModelViewSet):
                        'list': 'addresses',
                        'nonlist': 'customer_address',
                     },
-
             }
 
     def __init__(self, *args, **kwargs):
@@ -81,7 +82,7 @@ class CustomerViewSet(SHPFViewSet):
         customer = self.get_object()
         if customer.state != 'disabled':
             content = {
-                "errors": ["account already active"]
+                "errors": [_("account already active")]
             }
             return Response(content, status=422)
 
@@ -135,7 +136,7 @@ class AddressViewSet(SHPFViewSet):
         instance = self.get_object()
         if instance.default:
             content = {'errors': {
-                    'base': ['Cannot delete the customers default address']
+                    'base': [_('Cannot delete the customers default address')]
                     }}
             return Response(content, status=422)
 
