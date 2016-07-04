@@ -1,8 +1,9 @@
-#https://github.com/funkybob/django-array-tags
+# https://github.com/funkybob/django-array-tags
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Count, QuerySet, F
+
 
 class TagField(ArrayField):
     def __init__(self, **kwargs):
@@ -47,7 +48,12 @@ class ArrayLength(models.Func):
 
 
 class Intersect(models.Func):
-    template = 'array_length(ARRAY(SELECT * FROM UNNEST(%(field)s) WHERE UNNEST = ANY(%(value)s)), 1)'
+    template = """
+                    array_length(ARRAY(
+                                    SELECT *
+                                    FROM UNNEST(%(field)s)
+                                    WHERE UNNEST = ANY(%(value)s)), 1)
+                """
     output_field = models.IntegerField()
     arity = 2
 
@@ -76,7 +82,7 @@ class TagQuerySet(QuerySet):
 
     def count_tag_values(self, name):
         return (
-            self.order_by()
+            self.order_by('_v')
             .annotate(_v=Unnest(name))
             .values('_v')
             .annotate(count=Count('*'))
