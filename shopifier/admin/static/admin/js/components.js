@@ -306,7 +306,24 @@ export class AdminTagsEdit {
             this.changePopover(event, 'hide');
         this.parrent_component.formChange = true;
     }
-    
+
+    sortAllTags(index) {
+        let tags = this.all_tags_statistic.sort((a,b)=>{
+            let _a = a[index];
+            let _b = b[index];
+            if (_a == _b)
+                return 0;
+            if (_a < _b )
+                return -1;
+            return 1;
+        });
+
+        this.all_tags = [];
+        for (let i in tags) {
+            this.all_tags.push(this.all_tags_statistic[i][0]);
+        }
+    }
+
     addTag(tag) {
         this.tag_input = this.pushTag(tag);
     }

@@ -76,10 +76,10 @@
                     <h3 class="mb-auto mr20">Sort:</h3>
                     <a class="btn"
                         [ngClass]="{disabled: !isAlphabetically}"
-                        (click)="parrent_component.sortAllTags(0);isAlphabetically=false">Alphabetically</a>
+                        (click)="sortAllTags(0);isAlphabetically=false">Alphabetically</a>
                     <a class="btn"
                         [ngClass]="{disabled: !!isAlphabetically}"
-                        (click)="parrent_component.sortAllTags(1);isAlphabetically=true">Popularity</a>
+                        (click)="sortAllTags(1);isAlphabetically=true">Popularity</a>
                 </div>
             </div>
             <ul class="all-tags ph20">
