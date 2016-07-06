@@ -623,7 +623,7 @@ export class CustomersEdit extends BaseForm{
         this._http
             .patch(`/admin/customers/${this.customer_id}.json`, customer )
             .subscribe( data => { 
-                                    this.getAPIDataAfter(data);
+                                    this.getCustomerAfter(data);
                                     this.showEdit = false;
                                 },
                         err => self.apiErrors(self.form, 'customer', err.json()), 
