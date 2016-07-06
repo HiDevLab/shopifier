@@ -8,7 +8,7 @@ import 'rxjs/Rx'
 //------------------------------------------------------------------------------
 @Injectable()
 export class AdminUtils {
-    
+
     emailValidator(control) {
         if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
@@ -35,7 +35,7 @@ export class AdminUtils {
 //------------------------------------------------------------------------------
 @Injectable()
 export class AdminAuthService {
-    
+
     message = '';
     errors = '';
 
@@ -46,55 +46,53 @@ export class AdminAuthService {
     constructor(http, router) {
         this._http = http;
     }
-    
+
     getCurrentUser() {
         if (this._currentUser) {
             return new Promise((resolve, reject) => resolve(this._currentUser));
         }
-        
+
         this._userPromise = this._userPromise || this._http.get('/api/current-user/')
             //.map(res => res.json())
             .toPromise()
             .then(data => this._currentUser = data);
         return this._userPromise;
     }
-    
+
     refreshCurrentUser() {
         this._userPromise = this._http.get('/api/current-user/')
             .toPromise()
             .then(data => this._currentUser = data);
         return this._userPromise;
     }
-    
-    
+
     logOut() {
         return this._http
                 .get('/api/logout/')
                 .toPromise()
                 .then(() => { 
-                                this._currentUser = undefined; 
-                                this._userPromise = undefined;  
+                                this._currentUser = undefined;
+                                this._userPromise = undefined;
                         }, 
                         () => { 
-                                this._currentUser = undefined; 
-                                this._userPromise = undefined;  
+                                this._currentUser = undefined;
+                                this._userPromise = undefined;
                         },);
     }
-    
+
     logIn(data) {
         return this._http
                 .post('/api/login/', data)
                 .toPromise()
                 .then(() => { 
-                                this._currentUser = undefined; 
-                                this._userPromise = undefined;  
+                                this._currentUser = undefined;
+                                this._userPromise = undefined;
                         }, 
                         () => { 
-                                this._currentUser = undefined; 
-                                this._userPromise = undefined;  
+                                this._currentUser = undefined;
+                                this._userPromise = undefined;
                         });
     }
-    
 
     emailValidator(control) {
         if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
@@ -119,23 +117,6 @@ export class AdminAuthService {
 }
 
 
-//------------------------------------------------------------------------------
-/*
-export function getCurrentUser(_found, _re_direct) {
-    let _auth = window.injector.get(AdminAuthService);
-    let router = window.injector.get(Router);
-    return new Promise((resolve, reject) => {
-        _auth.get('/api/current-user/')
-            .subscribe(function(data) {
-                let _u = Boolean(data.id === 0);
-                let _ret = _found ? !_u : _u;
-                if(!_ret) { router.navigate([_re_direct]); }
-                resolve(_ret);
-            });
-    });
-}
-*/
-
 export function getCurrentUser(_found, _re_direct) {
     let _auth = window.injector.get(AdminAuthService);
     let router = window.injector.get(Router);
@@ -153,7 +134,7 @@ export function getCurrentUser(_found, _re_direct) {
             let _ret = _found ? !_u : _u;
             if(!_ret) { router.navigate([_re_direct]); }
             return _ret;
-        });        
+        });
 }
 
 //------------------------------------------------------------------------------
@@ -163,24 +144,19 @@ export function getCurrentUser(_found, _re_direct) {
     directives    : [ROUTER_DIRECTIVES],
 })
 export class AdminAuthLogout {
-   
+
     static get parameters() {
         return [[AdminAuthService], [Router]];
     }
-    
+
     constructor(authService, router) {
         this._auth = authService;
-        this._router = router;        
+        this._router = router;
     }
-   
+
     ngOnInit() {
         this._auth.logOut()
-            .then( () => this._router.navigate(['/Login']) )
-            
-    /*
-        this._auth.get('/api/logout/')
-                         .subscribe( data => this._router.navigate(['Login']) );                                
-    */
+            .then( () => this._router.navigate(['/Login']))
     }
 
 }
@@ -196,12 +172,11 @@ export class AdminAuthLogout {
 export class AdminAuthLogin {
     message = '';
     errors = '';
-    //currentUser = null;
-    
+
     static get parameters() {
         return [[AdminAuthService], [FormBuilder], [Router]];
     }
-    
+
     constructor(authService, formbuilder, router) {
         this._auth = authService;
         this._router = router;
@@ -209,9 +184,8 @@ export class AdminAuthLogin {
                     'email':    ['', this._auth.emailValidator],
                     'password': ['', Validators.required]
                 }); 
-        
     }
-    
+
     goLogin() {
         if(this.lform.controls['email'].status == 'INVALID') {
             
@@ -224,13 +198,6 @@ export class AdminAuthLogin {
                 .logIn(this.lform.value)
                 .then(  () => this._router.navigate(['/Admin/Home']),
                         err => this.errors = err.json() );
-            /*
-            this._auth.post(this.lform.value, '/api/login/')
-                    .subscribe( () => {},
-                                err => { this.errors = err.json();}, 
-                                () => { this._router.navigate(['/Admin/Home']);}
-                            );
-            */                                
         }
     }
 }
@@ -247,25 +214,24 @@ export class AdminAuthRecover {
     message = '';
     errors = '';
     currentUser = ''
-    
+
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], [Router]];
     }
-    
+
     constructor(http, authService, formbuilder, router) {
         this._http = http;
         this._auth = authService;
         this._router = router;
         this.lform = formbuilder.group({
-                    'email':    ['', this._auth.emailValidator]
+                    'email': ['', this._auth.emailValidator]
                 }); 
-        
     }
-    
+
     goRecover() {
         if(this.lform.controls['email'].status == 'INVALID') {
             this.errors = this.lform.controls['email'].errors;
-            this.lform.controls['email'].updateValue('', true, true);            
+            this.lform.controls['email'].updateValue('', true, true);
         }
         else {
             this._http.post('/api/recover/', this.lform.value )
@@ -290,11 +256,10 @@ export class AdminAuthReset {
     pk = 0; 
     token = '';
 
-    
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], [Router], [RouteParams]];
     }
-    
+
     constructor(http, authService, formbuilder, router, routeparams) {
         this._http = http;
         this._auth = authService;
@@ -305,47 +270,46 @@ export class AdminAuthReset {
                     'password2': ['',Validators.minLength(6)]
                 }); 
     }
-    
+
     //The link to reset your password is no longer valid. to recover
-    
     ngOnInit() {
           this.pk = this._routeParams.get('pk');
           this.token = this._routeParams.get('token');
           let user = {'pk': this.pk, 'token': this.token };
           this._http.post('/api/check_token2/', user)
                 .subscribe( data => {this.currentUser = data;},
-                            err => this._router.navigate(['Recover']));          
+                            err => this._router.navigate(['Recover']));
     }
-    
+
     goReset() {
         if ( this.lform.controls['password1'].status == 'INVALID' 
             || this.lform.controls['password2'].status == 'INVALID' ) {
-            
+
             this.errors = 'There was an error updating your password';
             this.lform.controls['password2'].updateValue('', true, true);
-            this.lform.controls['password1'].updateValue('', true, true);            
+            this.lform.controls['password1'].updateValue('', true, true);
         }
-        
+
         else if (   this.lform.controls['password1'].value 
                     != this.lform.controls['password2'].value ) {
-                    
+
             this.errors = 'There was an error updating your password';
             this.lform.controls['password2']._value ='';
             this.lform.controls['password1']._value ='';
         }
-        
-        else {         
+
+        else {
             let user = {
                             'pk': this.pk, 
                             'token': this.token, 
-                            'password': this.lform.controls['password1'].value 
-                        };       
-            
+                            'password': this.lform.controls['password1'].value
+                        };
+
             this._http.post('/api/reset/', user)
                     .subscribe( () => { this._router.navigate(['/Admin/Home']);},
                                 err => { this.errors = err.json();} );
         }
-    }   
+    }
 }
 
 
@@ -359,16 +323,15 @@ export class AdminAuthReset {
 export class AdminAuthAccept {
     errors = [];
     obj_errors = {};
-    
+
     user = undefined;
 
     declineInvitation = undefined;
-    
-    
+
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], [Router], [RouteParams]];
     }
-    
+
     constructor(http, authService, formbuilder, router, routeparams) {
         this._http = http;
         this._auth = authService;
@@ -386,7 +349,7 @@ export class AdminAuthAccept {
             'id': [''],
         }); 
     }
-    
+
     ngOnInit() {
         let id = this._routeParams.get('id');
         this.token = this._routeParams.get('token');
@@ -417,9 +380,9 @@ export class AdminAuthAccept {
                                 this.obj_errors = err.json(); 
                                 this.errors = this._auth.to_array(err.json()); 
                         }, 
-            );  
+            );
     }
-    
+
     declineInvitationt() {
         let data = {'pk': this.user.id, 'token': this.token };
         this._http
@@ -427,7 +390,6 @@ export class AdminAuthAccept {
             .subscribe( () => this._router.navigate(['Login']),
                         () => this._router.navigate(['Login']), 
             );
-        
     }
 }
 
