@@ -200,8 +200,9 @@
             <div class="input-section">
                 <div class="input-box">
                     <div class="input">
-                        <input type="checkbox" id="checkbox-id">
-                        <label for="checkbox-id"><i class="fa fa-check" aria-hidden="true"></i>Limit admin access for Ivan Tuleev</label>
+                        <input type="checkbox" id="checkbox-id"
+                        (change)="formChange=true">
+                        <label for="checkbox-id"><i class="fa fa-check" aria-hidden="true"></i>Limit admin access for {% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</label>
                     </div>
                 </div>    
             </div>
