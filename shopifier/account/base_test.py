@@ -1,19 +1,22 @@
 import json
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.test.client import Client, MULTIPART_CONTENT
 from django.utils.encoding import force_text
-from django.core.urlresolvers import reverse
+
 
 from rest_framework import status
 
 
 class APIClient(Client):
 
-    def patch(self, path, data='', content_type=MULTIPART_CONTENT, follow=False, **extra):
+    def patch(self, path, data='', content_type=MULTIPART_CONTENT,
+              follow=False, **extra):
         return self.generic('PATCH', path, data, content_type, **extra)
 
-    def options(self, path, data='', content_type=MULTIPART_CONTENT, follow=False, **extra):
+    def options(self, path, data='', content_type=MULTIPART_CONTENT,
+                follow=False, **extra):
         return self.generic('OPTIONS', path, data, content_type, **extra)
 
 
@@ -24,9 +27,12 @@ class BaseAccountTest(object):
         status_code = None
         if 'content_type' not in kwargs and request_method != 'get':
             kwargs['content_type'] = 'application/json'
-        if 'data' in kwargs and request_method != 'get' and kwargs['content_type'] == 'application/json':
+
+        if ('data' in kwargs and request_method != 'get' and
+                kwargs['content_type'] == 'application/json'):
             data = kwargs.get('data', '')
-            kwargs['data'] = json.dumps(data) 
+            kwargs['data'] = json.dumps(data)
+
         if 'status_code' in kwargs:
             status_code = kwargs.pop('status_code')
 
@@ -65,8 +71,8 @@ class BaseAccountTest(object):
         self.password_change_url = reverse('api_password_change')
         self.invaite_url = reverse('api_invaite')
         self.confirm_url = reverse('api_confirm')
-        self.activate_url = reverse('api_activate')        
-        
+        self.activate_url = reverse('api_activate')
+
     def _login_adm(self):
         fill = {
             "email": self.ADMIN_EMAIL,
