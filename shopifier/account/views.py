@@ -90,7 +90,7 @@ class PasswordChangeView(APIView):
 class LogoutView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
         logout(request)
         content = {'success': _('User logged out.')}
         return Response(content, status=status.HTTP_200_OK)
