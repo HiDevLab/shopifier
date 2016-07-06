@@ -412,14 +412,14 @@ export class CustomersNew extends BaseForm{
         if(!self.groupValidate(self.form, 'customer')) return;
         let customer = {};
         customer['customer'] = self.form['customer'].value;
-        customer.customer.tags = this.tags;
+        customer.customer.tags = self.tags;
 
         self._http
             .post('/admin/customers.json', customer )
             .subscribe((data) => self.saveAddress(data),
-                       (err) => { 
+                       (err) => {
                             self.apiErrors(self.form, 'customer', err.json());
-                       }, 
+                       },
             );
     }
 
@@ -450,7 +450,7 @@ export class CustomersNew extends BaseForm{
         this._http
             .put(`/admin/customers/${c_id}/addresses/${a_id}/default.json`)
             .subscribe((data) => {
-                    let link = ['EditCustomer', 
+                    let link = ['EditCustomer',
                                 {'id': customer.customer.id }];
                     this._router.navigate(link);
                 },
