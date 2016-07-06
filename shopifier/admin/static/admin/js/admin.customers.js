@@ -301,12 +301,14 @@ export class Customers extends BaseForm {
         this._admin.headerButtons.unshift(
             {
                 'text': '', 'class': 'btn mr30 fa fa-chevron-right', 
-                'click': this.onNextPage, 'self': this, 'disabled' : 'disabledNextPage' 
+                'click': this.onNextPage, 
+                'self': this, 'disabled' : 'disabledNextPage' 
             });
         this._admin.headerButtons.unshift(
             {
                 'text': '', 'class': 'btn mr10 fa fa-chevron-left', 
-                'click': this.onPrevPage, 'self': this, 'disabled' : 'disabledPrevPage' 
+                'click': this.onPrevPage, 'self': this,
+                'disabled' : 'disabledPrevPage' 
             });
     }
 
@@ -323,7 +325,7 @@ export class Customers extends BaseForm {
 
 
 
-//------------------------------------------------------------------------------------------------------------------------------------------------------------CustomersNew 
+//-----------------------------------------------------------------CustomersNew 
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
@@ -416,21 +418,22 @@ export class CustomersNew extends BaseForm{
         
         self._http
             .post('/admin/customers.json', customer )
-            .subscribe( data => self.saveAddress(data),
-                        err => { 
-                                self.apiErrors(self.form, 'customer', err.json());
-                                //this.cls();
-                        }, 
+            .subscribe((data) => self.saveAddress(data),
+                       (err) => { 
+                            self.apiErrors(self.form, 'customer', err.json());
+                       }, 
             );
     }
-    
+
     saveAddress(customer) {
         let address = {};
         address['address'] = this.form.default_address.value;
         if (!address.address.first_name)
-            address.address.first_name = this.form.customer.controls.first_name.value;
+            address.address.first_name = this.form.customer
+                                                .controls.first_name.value;
         if (!address.address.last_name)
-            address.address.last_name = this.form.customer.controls.last_name.value;
+            address.address.last_name = this.form.customer
+                                                    .controls.last_name.value;
 
         this._http
             .post(`/admin/customers/${customer.customer.id}/addresses.json`, address )
