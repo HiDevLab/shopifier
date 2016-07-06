@@ -1,13 +1,16 @@
-import { Component, Pipe } from 'angular2/core';
-import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
-        Validators, Control, ControlGroup } from 'angular2/common';
-import { Http } from 'angular2/http'
 import 'rxjs/Rx'
 
+import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
+        Validators, Control, ControlGroup } from 'angular2/common';
+import { Component, Pipe } from 'angular2/core';
+import { Http } from 'angular2/http'
+import { Router, RouteParams, RouteConfig,
+            ROUTER_DIRECTIVES } from 'angular2/router';
+
+import { Admin } from './admin';
 import { AdminAuthService, AdminUtils } from './admin.auth'
-import { Autosize, Popover, ArrayLengthPipe, AdminTagsEdit } from './components'
-import { Admin } from './admin'
+import { Autosize, Popover, ArrayLengthPipe,
+            AdminTagsEdit } from './components';
 
 
 @Pipe({
@@ -15,22 +18,20 @@ import { Admin } from './admin'
 })
 export class ProvincePipe{
     transform(regions, country) {
-    return regions.filter( region => {
+    return regions.filter((region) => {
         return region.value.substr(0, 2) === country;
     });
   }
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------------------BaseForm
+//----------------------------------------------------------------------BaseForm
 export class BaseForm {
     errors = [];
     obj_errors = {};
     api_data = {}
-
     form = {};    //tree controls
-
     formChange = false;
-    
+
     constructor(http, formbuilder, router, auth, admin, utils) {
         this._http = http;
         this._router = router;
@@ -43,15 +44,16 @@ export class BaseForm {
     addForm(form, url, alias) {
         this._http
             .options(url)
-            .subscribe(data =>  {
-                                    this.addFormFromOptinons(form, data, alias);
-                                    if (this.addFormAfter) this.addFormAfter();
-                                },
-                        err => {
-                                    this.obj_errors = err; 
-                                    this.errors = this._utils.to_array(err.json()); 
-                                }, 
-                       );
+            .subscribe(
+                (data) =>  {
+                            this.addFormFromOptinons(form, data, alias);
+                            if (this.addFormAfter) this.addFormAfter();
+                },
+                (err) => {
+                            this.obj_errors = err; 
+                            this.errors = this._utils.to_array(err.json()); 
+                }, 
+            );
     }
     
     addFormFromOptinons(form, data, alias) {
@@ -61,7 +63,7 @@ export class BaseForm {
     
     addGroup(form, group, group_name) {
         if (Object.prototype.toString.call(group) !== '[object Object]')
-            return;7
+            return;
         form[group_name] = this._formbuilder.group({});
         form[group_name + '_meta'] = {};
         
@@ -76,51 +78,55 @@ export class BaseForm {
         }
     }
     
-    addControl(form, group, group_name, ctrl_name){
+    addControl(form, group, group_name, ctrl_name) {
         if (group[ctrl_name].read_only) 
             return;
-            
+
         let validators = [];
         if (group[ctrl_name].required)
             validators.push(Validators.required);
-            
+
         if (group[ctrl_name].type==='email')
             validators.push(this.emailValidator);
 
         if (group[ctrl_name].max_length)
             validators.push(Validators.maxLength(group[ctrl_name].max_length));
-        
+
         if (group[ctrl_name].min_length)
             validators.push(Validators.minLength(group[ctrl_name].min_length));
         
-        form[group_name + '_meta'][ctrl_name] = {'label': group[ctrl_name].label};
+        form[group_name + '_meta'][ctrl_name] = {
+            'label': group[ctrl_name].label
+        };
         form[group_name + '_meta'][ctrl_name].type = group[ctrl_name].type;
-        
+
         let control = new Control('', Validators.compose(validators));
-        
+
         if (group[ctrl_name].type==='choice'){
-            form[group_name + '_meta'][ctrl_name].choices = group[ctrl_name].choices;
+            form[group_name + '_meta'][ctrl_name].choices = 
+                                                group[ctrl_name].choices;
             control.updateValue(group[ctrl_name].choices[0].value);
         }
         if (group[ctrl_name].type==='boolean') control.updateValue(false);
         if (group[ctrl_name].type==='datetime') control.updateValue(undefined);
         if (group[ctrl_name].type==='list') control.updateValue([]);
-        
+
         form[group_name].addControl(ctrl_name, control);
     }
     
     emailValidator(control) {
         if (!control.value)
-            return {'Invalid Email Address': true };
-        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+            return {'Invalid Email Address': true};
+        if (control.value
+                    .match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
-        }   else {
-            return {'Invalid Email Address': true };
+        }
+        else {
+            return {'Invalid Email Address': true};
         }
     }
-    
+
     groupValidate (form, group_name) {
-        //form[group_name].updateValueAndValidity();
         let keys = Object.keys(form[group_name].controls);
         this.obj_errors = {};
         this.errors = [];
@@ -129,16 +135,18 @@ export class BaseForm {
             if (!form[group_name].controls[ctrl].valid) {
                 this.obj_errors[ctrl] = true;
                 let err1 = form[group_name + '_meta'][ctrl].label;
-                let err2 = Object.keys(form[group_name].controls[ctrl].errors)[0];
+                let err2 = Object.keys(form[group_name]
+                                .controls[ctrl].errors)[0];
                 this.errors.push(`${err1}: ${err2}`); 
                 form[group_name + '_meta'][ctrl].error = true;
             }
-            else
+            else {
                 form[group_name + '_meta'][ctrl].error = false;
+            }
         }
-        return form[group_name].valid
+        return form[group_name].valid;
     }
-    
+
     clsErrors(form, group_name) {
         this.obj_errors = {};
         this.errors = [];
@@ -153,29 +161,30 @@ export class BaseForm {
         let keys = Object.keys(errors);
         this.obj_errors = {};
         this.errors = [];
-        
+
         for (let i in keys) {
             let ctrl = keys[i];
             for (let j in errors[ctrl]) {
                 this.obj_errors[ctrl] = true;
                 let err1 = form[group_name + '_meta'][ctrl].label;
                 let err2 = errors[ctrl][j];
-                this.errors.push(`${err1}: ${err2}`); 
+                this.errors.push(`${err1}: ${err2}`);
                 form[group_name + '_meta'][ctrl].error = true;
             }
         }
-    } 
+    }
 
-    getAPIData(urls, afters){
+    getAPIData(urls, afters) {
         for(let i in urls) {
             this._http
                 .get(urls[i])
-                .subscribe( data => this[afters[i]](data), 
-                            err => {
+                .subscribe( (data) => this[afters[i]](data),
+                            (err) => {
                                         this.obj_errors = err; 
-                                        this.errors = this._utils.to_array(err.json()); 
-                                    }, 
-                           ); 
+                                        this.errors = this._utils
+                                            .to_array(err.json());
+                            },
+                );
         }
     }
 
@@ -193,27 +202,29 @@ export class BaseForm {
                 control.updateValue(undefined);
                 if (meta[ctrl].type==='choice')
                     control.updateValue(meta[ctrl].choices[0].value);
-                if (meta[ctrl].type==='boolean') control.updateValue(false);
+                if (meta[ctrl].type==='boolean')
+                    control.updateValue(false);
             }
         }
     }
 
-    getPagination(count_url, list_url){
+    getPagination(count_url, list_url) {
         this.list_url = list_url;
         this._http
             .get(count_url)
-            .subscribe(data => {
+            .subscribe((data) => {
                         this.count_list = data.count;
                         this.current_page = 1;
                         this.last_page = Math.ceil(this.count_list / 4); //50
                         this.disabledPrevPage = true;
-                        this.disabledNextPage = !(this.current_page < this.last_page);
+                        this.disabledNextPage = 
+                            !(this.current_page < this.last_page);
                         if (this.getPaginationAfter)
                             this.getPaginationAfter();
 
-                    },
-                       err => this.obj_errors = err, 
-        ); 
+                        },
+                        err => this.obj_errors = err, 
+            ); 
     }
     
     onNextPage(self){ //call from admin header 
@@ -236,7 +247,7 @@ export class BaseForm {
 }
 
 
-//------------------------------------------------------------------------------ ------------------------------------------------------------------------------Customers
+//---------------------------------------------------------------------Customers
 @Component({
   selector: 'main',
   templateUrl: 'templates/customer/customers.html',
@@ -324,7 +335,8 @@ export class CustomersNew extends BaseForm{
     all_tags = [];
     
     static get parameters() {
-        return [[Http], [FormBuilder], [Router], [AdminAuthService], [Admin], [AdminUtils]];
+        return [[Http], [FormBuilder], [Router], [AdminAuthService],
+                [Admin], [AdminUtils]];
     }
     constructor(http, formbuilder, router, auth, admin, utils) {
         super(http, formbuilder, router, auth, admin, utils);
