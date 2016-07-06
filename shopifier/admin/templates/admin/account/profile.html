@@ -114,7 +114,7 @@
             </div>
             <div class="input-section" *ngIf="!passwordChange">
                 <div class="input-box">
-                    <a class="ref" (click)="passwordChange=true" >Change password</a>
+                    <a class="ref" (click)="passwordChange=true">Change password</a>
                 </div>   
             </div>
             <div class="input-section"  *ngIf="passwordChange">
@@ -137,7 +137,7 @@
 
 <div *ngIf="isAdmin || isUser" class="separator"></div>
 
-<div *ngIf="user && isAdmin" class="section-profile">    
+<div *ngIf="user && isAdmin" class="section-profile">
     <div class="section-annotation">
         <h3>Recent login history</h3>
         <p>Access from an ISP, Location, or IP address you don't recognize may indicate that the account has been compromised and should be reviewed further.</p>
@@ -167,7 +167,7 @@
                                 <td>
                                     {% verbatim %}{{ session.ip }}{% endverbatim %} 
                                 </td>
-                                <td >
+                                <td>
                                     {% verbatim %}{{ session.isp }}{% endverbatim %}
                                 </td>
                                 <td>
@@ -178,8 +178,8 @@
                                     <a class="btn fa fa-info-circle" aria-hidden="true" title="Firefox 46 on ubuntu">
                                     </a>
                                 </td>
-                            </tr>                            
-                        </tbody>                       
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -211,7 +211,7 @@
 
 <div *ngIf="isAdmin" class="separator"></div>
 
-<div *ngIf="isAdmin || isUser" class="section-profile ">  
+<div *ngIf="isAdmin || isUser" class="section-profile ">
     <div class="input-box row end">
             <a class="btn btn-blue"
             [ngClass]="{disabled : !formChange}"
@@ -230,7 +230,7 @@
               (click)="confirmPassword=false"></a>
         </div>
         <div class="input-section">
-             <div class="input-box">   
+             <div class="input-box">
                 <label class="input">
                     Enter your current password to save changes to {% verbatim %}{{ user.first_name }}{% endverbatim %}'s account.
                     <input type="password" [ngFormControl]="lform.controls['admin_password']">
@@ -267,7 +267,7 @@
          <div class="input-section">
             <div class="input-box">
                 <div>Are you sure you want to force <strong>{% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %}</strong> to re-login?</div>
-            </div>            
+            </div>
         </div>
         <div class="modal-footer">
             <a class="btn mr10"
@@ -291,7 +291,7 @@
          <div class="input-section">
             <div class="input-box">
                 You are granting ownership of your store from another user:
-            </div>            
+            </div>
         </div>
         
          <div class="input-section">
@@ -303,12 +303,12 @@
                         <li type="disc">This action can be undone.</li>
                     </ul>
                 </div>    
-            </div>            
+            </div>
         </div>
         <div class="input-section">
             <div class="input-box">
                Are you sure you want to granting ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
-            </div>                  
+            </div>
         </div>
         
         <div class="modal-footer">
@@ -374,8 +374,7 @@
         </div>
 
         <div class="modal-footer">
-            <a class="btn mr10" (click)="unloadPage(false); canDeactivate=undefined;"
-            >Cancel</a>
+            <a class="btn mr10" (click)="unloadPage(false); canDeactivate=undefined;">Cancel</a>
             <a class="btn btn-red" (click)= "unloadPage(true)">Leav page</a>
         </div>
     </form>
