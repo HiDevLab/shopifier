@@ -335,7 +335,7 @@ export class Customers extends BaseForm {
 export class CustomersNew extends BaseForm{
     tags = [];
     all_tags = [];
-    
+
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
             [Admin], [AdminUtils]];
@@ -343,7 +343,7 @@ export class CustomersNew extends BaseForm{
     constructor(http, formbuilder, router, auth, admin, utils) {
         super(http, formbuilder, router, auth, admin, utils);
     }
-    
+
     ngOnInit() {
         this._admin.currentUrl({ 'url':'#', 'text': 'Add customer'});
         
@@ -361,7 +361,7 @@ export class CustomersNew extends BaseForm{
         this.addForm(this.form, '/admin/customers.json', 'customer');
         this.getAPIData(['/admin/customers/tags.json'], ['getTagsAfter']);
     }
-    
+
     getTagsAfter(data){
         this.all_tags_statistic = data.tags;
         this.all_tags = [];
@@ -394,28 +394,26 @@ export class CustomersNew extends BaseForm{
             this.formChange=true;
         }
     }
-    
+
     onKeyUpTag(event) {
         if (event.code == 'Backspace' && this.tag.length < 1 ) {
             this.tags.pop();
-            //this.tag = '';
         }
     }
-    
+
     addTag(tag) {
         this.tags.push(tag);
         this.formChange=true;
     }
-    
+
     onSave(self) {
         self = self || this;
-        
+
         if(!self.groupValidate(self.form, 'customer')) return;
-        
         let customer = {};
         customer['customer'] = self.form['customer'].value;
         customer.customer.tags = this.tags;
-        
+
         self._http
             .post('/admin/customers.json', customer )
             .subscribe((data) => self.saveAddress(data),
@@ -434,28 +432,31 @@ export class CustomersNew extends BaseForm{
         if (!address.address.last_name)
             address.address.last_name = this.form.customer
                                                     .controls.last_name.value;
-
+        let url = `/admin/customers/${customer.customer.id}/addresses.json`;
         this._http
-            .post(`/admin/customers/${customer.customer.id}/addresses.json`, address )
-            .subscribe( data => this.setDefaultAddress(customer, data),
-                        err => { 
-                                this.apiErrors(this.form, 'default_address', err.json())
-                                //this.cls();
+            .post(url, address )
+            .subscribe((data) => this.setDefaultAddress(customer, data),
+                       (err) => { 
+                            this.apiErrors(
+                                this.form, 'default_address', err.json()
+                            );
                         }, 
             );
     }
 
     setDefaultAddress(customer, address) {
+        let c_id = customer.customer.id;
+        let a_id = address.customer_address.id;
         this._http
-            .put(`/admin/customers/${customer.customer.id}/addresses/${address.customer_address.id}/default.json`)
-            .subscribe( data => {
-                        let link = ['EditCustomer', {'id': customer.customer.id }];
-                        this._router.navigate(link);
-                    },
-                    err => { 
-                            this.apiErrors(this.form, 'default_address' ,err.json())
-                            //this.cls();
-                    }, 
+            .put(`/admin/customers/${c_id}/addresses/${a_id}/default.json`)
+            .subscribe((data) => {
+                    let link = ['EditCustomer', 
+                                {'id': customer.customer.id }];
+                    this._router.navigate(link);
+                },
+                (err) => { 
+                    this.apiErrors(this.form, 'default_address' ,err.json());
+                }, 
             );
     }
 
