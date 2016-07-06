@@ -336,7 +336,7 @@ export class CustomersNew extends BaseForm{
     
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
-                [Admin], [AdminUtils]];
+            [Admin], [AdminUtils]];
     }
     constructor(http, formbuilder, router, auth, admin, utils) {
         super(http, formbuilder, router, auth, admin, utils);
