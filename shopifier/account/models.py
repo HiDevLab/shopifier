@@ -16,9 +16,8 @@ def user_log(sender, user, request, **kwargs):
     request.session.modified = True
     request.session.save()
     s = Session.objects.get(pk=request.session.session_key)
-    UserLog.objects.create(user=user, session=s, ip=ip)
-
-user_logged_in.connect(user_log)
+    user_log = UserLog.objects.create(user=user, session=s, ip=ip)
+    user_logged_in.connect(user_log)
 
 
 class UserManager(BaseUserManager):
