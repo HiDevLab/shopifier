@@ -68,39 +68,25 @@ export class AdminAuthService {
         return this._userPromise;
     }
 
+    LogInOut(url, data) {
+        this._currentUser = undefined;
+        this._userPromise = undefined;
+        return this._http.post(url, data).toPromise();
+    }
     logOut() {
-        return this._http
-                .get('/api/logout/')
-                .toPromise()
-                .then(() => { 
-                                this._currentUser = undefined;
-                                this._userPromise = undefined;
-                        }, 
-                        () => { 
-                                this._currentUser = undefined;
-                                this._userPromise = undefined;
-                        },);
+        return this.LogInOut('/api/logout/');
     }
 
     logIn(data) {
-        return this._http
-                .post('/api/login/', data)
-                .toPromise()
-                .then(() => {
-                                this._currentUser = undefined;
-                                this._userPromise = undefined;
-                        }, 
-                        () => { 
-                                this._currentUser = undefined;
-                                this._userPromise = undefined;
-                        });
+        return this.LogInOut('/api/login/', data);
     }
 
     emailValidator(control) {
         if (control.value
                     .match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
-        }   else {
+        }   
+        else {
             return {'detail': 'invalidEmailAddress'};
         }
     }
@@ -192,16 +178,20 @@ export class AdminAuthLogin {
 
     goLogin() {
         if(this.lform.controls['email'].status == 'INVALID') {
-            
+
             this.errors = this.lform.controls['email'].errors;
-            this.lform.controls['password'].updateValue('', true, true);
-            this.lform.controls['email'].updateValue('', true, true);
+            this.lform.controls['password'].updateValue('');
+            this.lform.controls['email'].updateValue('');
         }
         else {
             this._auth
                 .logIn(this.lform.value)
-                .then(() => this._router.navigate(['/Admin/Home']),
-                      (err) => this.errors = err.json()
+                .then(  () => this._router.navigate(['/Admin/Home']),
+                        (err) => {
+                                this.errors = err.json();
+                                this.lform.controls['password']
+                                    .updateValue('');
+                        }
                 );
         }
     }
