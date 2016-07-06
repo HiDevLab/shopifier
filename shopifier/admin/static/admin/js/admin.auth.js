@@ -1,8 +1,9 @@
-import { Component, Injectable, Injector} from 'angular2/core';
+import { Component, Injectable, Injector } from 'angular2/core';
 import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
-import { Router, RouteParams, CanActivate, ROUTER_DIRECTIVES } from 'angular2/router'
-import { Http } from 'angular2/http'
-import 'rxjs/Rx'
+import { Router, RouteParams, CanActivate,
+         ROUTER_DIRECTIVES } from 'angular2/router';
+import { Http } from 'angular2/http';
+import 'rxjs/Rx';
 
 
 //------------------------------------------------------------------------------
@@ -10,7 +11,8 @@ import 'rxjs/Rx'
 export class AdminUtils {
 
     emailValidator(control) {
-        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+        if (control.value
+            .match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
         }   else {
             return { 'detail': 'invalidEmailAddress' };
@@ -52,8 +54,8 @@ export class AdminAuthService {
             return new Promise((resolve, reject) => resolve(this._currentUser));
         }
 
-        this._userPromise = this._userPromise || this._http.get('/api/current-user/')
-            //.map(res => res.json())
+        this._userPromise = this._userPromise || 
+                            this._http.get('/api/current-user/')
             .toPromise()
             .then(data => this._currentUser = data);
         return this._userPromise;
@@ -84,7 +86,7 @@ export class AdminAuthService {
         return this._http
                 .post('/api/login/', data)
                 .toPromise()
-                .then(() => { 
+                .then(() => {
                                 this._currentUser = undefined;
                                 this._userPromise = undefined;
                         }, 
@@ -95,10 +97,11 @@ export class AdminAuthService {
     }
 
     emailValidator(control) {
-        if (control.value.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+        if (control.value
+                    .match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
         }   else {
-            return { 'detail': 'invalidEmailAddress' };
+            return {'detail': 'invalidEmailAddress'};
         }
     }
 
@@ -136,6 +139,7 @@ export function getCurrentUser(_found, _re_direct) {
             return _ret;
         });
 }
+
 
 //------------------------------------------------------------------------------
 @Component({
@@ -196,8 +200,9 @@ export class AdminAuthLogin {
         else {
             this._auth
                 .logIn(this.lform.value)
-                .then(  () => this._router.navigate(['/Admin/Home']),
-                        err => this.errors = err.json() );
+                .then(() => this._router.navigate(['/Admin/Home']),
+                      (err) => this.errors = err.json()
+                );
         }
     }
 }
@@ -224,8 +229,8 @@ export class AdminAuthRecover {
         this._auth = authService;
         this._router = router;
         this.lform = formbuilder.group({
-                    'email': ['', this._auth.emailValidator]
-                }); 
+                        'email': ['', this._auth.emailValidator]
+                    }); 
     }
 
     goRecover() {
@@ -235,8 +240,9 @@ export class AdminAuthRecover {
         }
         else {
             this._http.post('/api/recover/', this.lform.value )
-                    .subscribe( () =>  this._router.navigate(['Login']),
-                                err => {this.errors = err.json();});
+                    .subscribe(() => this._router.navigate(['Login']),
+                               (err) => this.errors = err.json()
+                    );
         }
     }
 }
@@ -257,7 +263,8 @@ export class AdminAuthReset {
     token = '';
 
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder], [Router], [RouteParams]];
+        return [[Http], [AdminAuthService],
+                [FormBuilder], [Router], [RouteParams]];
     }
 
     constructor(http, authService, formbuilder, router, routeparams) {
@@ -268,7 +275,7 @@ export class AdminAuthReset {
         this.lform = formbuilder.group({
                     'password1': ['',Validators.minLength(6)],
                     'password2': ['',Validators.minLength(6)]
-                }); 
+        }); 
     }
 
     //The link to reset your password is no longer valid. to recover
@@ -277,8 +284,9 @@ export class AdminAuthReset {
           this.token = this._routeParams.get('token');
           let user = {'pk': this.pk, 'token': this.token };
           this._http.post('/api/check_token2/', user)
-                .subscribe( data => {this.currentUser = data;},
-                            err => this._router.navigate(['Recover']));
+                .subscribe((data) => this.currentUser = data,
+                           (err) => this._router.navigate(['Recover'])
+                );
     }
 
     goReset() {
@@ -306,8 +314,9 @@ export class AdminAuthReset {
                         };
 
             this._http.post('/api/reset/', user)
-                    .subscribe( () => { this._router.navigate(['/Admin/Home']);},
-                                err => { this.errors = err.json();} );
+                    .subscribe(() => this._router.navigate(['/Admin/Home']),
+                               (err) => this.errors = err.json()
+                    );
         }
     }
 }
@@ -329,7 +338,8 @@ export class AdminAuthAccept {
     declineInvitation = undefined;
 
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder], [Router], [RouteParams]];
+        return [[Http], [AdminAuthService],
+                [FormBuilder], [Router], [RouteParams]];
     }
 
     constructor(http, authService, formbuilder, router, routeparams) {
@@ -355,8 +365,9 @@ export class AdminAuthAccept {
         this.token = this._routeParams.get('token');
         let data = {'pk': id, 'token': this.token };
         this._http.post('/api/check_token1/', data)
-                .subscribe( data => this.onInit(data),
-                            err => this._router.navigate(['WrongToken']));
+                .subscribe((data) => this.onInit(data),
+                            (err) => this._router.navigate(['WrongToken'])
+                );
     }
 
     onInit(data) {
@@ -366,7 +377,8 @@ export class AdminAuthAccept {
 
         for (let control in this.lform.controls) {
             this.lform.controls[control].updateValue(undefined);
-            this.lform.controls[control].updateValue(this.user[control], true, true);
+            this.lform.controls[control]
+                .updateValue(this.user[control],true, true);
         }
         this.lform.controls['token'].updateValue(this.token);
         this.lform.controls['password1'].updateValue('');
@@ -375,16 +387,16 @@ export class AdminAuthAccept {
     createAccount(){
         this._http
             .post('/api/user-activate/', this.lform.value )
-            .subscribe( () => this._router.navigate(['/Admin/Home']),
-                        err => { 
+            .subscribe(() => this._router.navigate(['/Admin/Home']),
+                       (err) => { 
                                 this.obj_errors = err.json(); 
-                                this.errors = this._auth.to_array(err.json()); 
+                                this.errors = this._auth.to_array(err.json());
                         }, 
             );
     }
 
     declineInvitationt() {
-        let data = {'pk': this.user.id, 'token': this.token };
+        let data = {'pk': this.user.id, 'token': this.token};
         this._http
             .post('/api/user-decline/', data )
             .subscribe( () => this._router.navigate(['Login']),
