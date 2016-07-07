@@ -467,7 +467,7 @@ export class CustomersNew extends BaseForm{
 }
 
 
-//------------------------------------------------------------------------------------------------------------------------------------------------------------CustomersEdit 
+//-----------------------------------------------------------------CustomersEdit
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/edit.html',
@@ -475,9 +475,9 @@ export class CustomersNew extends BaseForm{
   pipes: [ProvincePipe]
 })
 export class CustomersEdit extends BaseForm{
-    
+
     static get parameters() {
-        return [[Http], [FormBuilder], [Router], [AdminAuthService], 
+        return [[Http], [FormBuilder], [Router], [AdminAuthService],
                 [Admin], [AdminUtils], [RouteParams]];
     }
     constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
@@ -485,87 +485,95 @@ export class CustomersEdit extends BaseForm{
         this._routeParams = routeparams;
         this.customer_id = this._routeParams.get('id');
     }
-    
+
     ngOnInit() {
         this.self = this; // for child components
 
         this._admin.headerButtons = [];
-        this._admin.headerButtons.push(
-            {
-                'text': '', 'class': 'btn mr10 fa fa-chevron-left', 
-                'click': this.onPrev, 'self': this, 'disabled' : 'disabledPrev' 
-            });
-        this._admin.headerButtons.push(
-            {
-                'text': '', 'class': 'btn mr10 fa fa-chevron-right', 
-                'click': this.onNext, 'self': this, 'disabled' : 'disabledNext'
-            });
-        this._admin.headerButtons.push(
-            {
-                'text': 'Save', 'class': 'btn btn-blue', 
-                'click': this.onSaveNote, 'primary': true, 'self': this 
-            });
-        this.addForm(this.form, `/admin/customers/${this.customer_id}.json`, 'customer');
+        this._admin.headerButtons.push({
+            'text': '', 'class': 'btn mr10 fa fa-chevron-left', 
+            'click': this.onPrev, 'self': this, 'disabled' : 'disabledPrev'
+        });
+        
+        this._admin.headerButtons.push({
+            'text': '', 'class': 'btn mr10 fa fa-chevron-right', 
+            'click': this.onNext, 'self': this, 'disabled' : 'disabledNext'
+        });
+        
+        this._admin.headerButtons.push({
+            'text': 'Save', 'class': 'btn btn-blue', 
+            'click': this.onSaveNote, 'primary': true, 'self': this 
+        });
+        
+        this.addForm(this.form,
+                    `/admin/customers/${this.customer_id}.json`, 'customer');
     }
-    
+
     onNext(self){ // call from admin header
         self = self || this;
-        let url = `/admin/customers.json?since_id=${self.customer_id}&limit=1&fields=id`;
+        let id = self.customer_id;
         self._http
-            .get(url)
-            .subscribe(data => { 
-                            if (data.customers.length > 0) {  
-                                self._router.navigate( ['EditCustomer', {'id': data.customers[0].id }]);
-                                self.disabledPrev = false; 
-                                self.disabledNext = false;
-                            }
-                            else {
-                               self.disabledNext = true;
-                            }
-                        }, 
-                        err =>  self.disabledNext = true, 
-            ); 
+            .get(`/admin/customers.json?since_id=${id}&limit=1&fields=id`)
+            .subscribe(
+                (data) => { 
+                    if (data.customers.length > 0) {
+                        self._router.navigate(['EditCustomer',
+                            {'id': data.customers[0].id }]);
+                        self.disabledPrev = false; 
+                        self.disabledNext = false;
+                    }
+                    else {
+                       self.disabledNext = true;
+                    }
+                },
+                (err) =>  self.disabledNext = true,
+            );
     }
-    
+
     onPrev(self){ // call from admin header
         self = self || this;
-        let url = `/admin/customers.json?before_id=${self.customer_id}&limit=1&fields=id`;
+        let id = self.customer_id;
         self._http
-            .get(url)
-            .subscribe(data => { 
-                            if (data.customers.length > 0) { 
-                                self._router.navigate( ['EditCustomer', {'id': data.customers[0].id }]);
-                                self.disabledNext = false;
-                                self.disabledPrev = false;
-                            }
-                            else {
-                               self.disabledPrev = true;
-                            }
-                        }, 
-                        err =>  self.disabledPrev = undefined, 
-            ); 
+            .get(`/admin/customers.json?before_id=${id}&limit=1&fields=id`)
+            .subscribe(
+                (data) => {
+                    if (data.customers.length > 0) {
+                        self._router.navigate(['EditCustomer',
+                            {'id': data.customers[0].id }]);
+                        self.disabledNext = false;
+                        self.disabledPrev = false;
+                    }
+                    else {
+                       self.disabledPrev = true;
+                    }
+                }, 
+                (err) => self.disabledPrev = undefined,
+            );
     }
-    
+
     addFormAfter() {
-        this.getAPIData([`/admin/customers/${this.customer_id}.json`, '/admin/customers/tags.json'], 
-        ['getCustomerAfter', 'getTagsAfter']);
+        this.getAPIData([`/admin/customers/${this.customer_id}.json`,
+            '/admin/customers/tags.json'], 
+            ['getCustomerAfter', 'getTagsAfter']
+        );
     }
-    
+
     getCustomerAfter(data) {
         this.customer_id = data.customer.id;
         this.api_data = data;
         this.tags = this.api_data.customer.tags; //for child
         this.setDataToControls(this.form, 'customer', this.api_data.customer);
 
+        let customer = this.api_data.customer;
         this._admin.currentUrl({
-                'url':'#', 'text': `${this.api_data.customer.first_name} ${this.api_data.customer.last_name}`
-                });
-                
+            'url': '#', 'text': `${customer.first_name} ${customer.last_name}`
+        });
+
         this.disabledNext = undefined;
         this.disabledPrev = undefined;
     }
 
-    getTagsAfter(data){
+    getTagsAfter(data) {
         this.all_tags_statistic = data.tags;//for child
         this.all_tags = [];
         for (let i in this.all_tags_statistic) {
@@ -582,80 +590,77 @@ export class CustomersEdit extends BaseForm{
             }
         };
         self._http
-            .patch(`/admin/customers/${self.customer_id}.json`, customer )
-            .subscribe( data => { 
-                                    self.getCustomerAfter(data);
-                                    self.getAPIData(['/admin/customers/tags.json'], 
-                                                    ['getTagsAfter']);
-                                },
-                        err => self.apiErrors(self.form, 'customer', err.json()), 
+            .patch(`/admin/customers/${self.customer_id}.json`, customer)
+            .subscribe(
+                (data) => {
+                    self.getCustomerAfter(data);
+                    self.getAPIData(['/admin/customers/tags.json'], 
+                                    ['getTagsAfter']);
+                },
+                (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
             self.formChange = false;
     }
 
     saveTags(self) {
-        let customer = {
-            'customer': {
-                'tags':self.tags
-            }
-        };
+        let customer = {'customer': {'tags':self.tags}};
         self._http
-            .patch(`/admin/customers/${self.customer_id}.json`, customer )
-            .subscribe( data => { 
-                                    self.getCustomerAfter(data);
-                                    self.getAPIData(['/admin/customers/tags.json'], 
-                                                    ['getTagsAfter']);
-                                },
-                        err => self.apiErrors(self.form, 'customer', err.json()), 
+            .patch(`/admin/customers/${self.customer_id}.json`, customer)
+            .subscribe( 
+                (data) => { 
+                    self.getCustomerAfter(data);
+                    self.getAPIData(['/admin/customers/tags.json'],
+                                    ['getTagsAfter']);
+                },
+                (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
-            self.formChange = false;
+        self.formChange = false;
     }
-    
-    
+
     onEditCustomer() {
         this.clsErrors(this.form, 'customer');
         this.setDataToControls(this.form, 'customer', this.api_data.customer);
         this.showEdit = true;
         this.customerChange = false;
     }
-    
+
     onSaveCustomer() {
         if(!this.groupValidate(this.form, 'customer')) return;
 
         let customer = {};
         customer['customer'] = this.form['customer'].value;
         this._http
-            .patch(`/admin/customers/${this.customer_id}.json`, customer )
-            .subscribe( data => { 
-                                    this.getCustomerAfter(data);
-                                    this.showEdit = false;
-                                },
-                        err => self.apiErrors(self.form, 'customer', err.json()), 
+            .patch(`/admin/customers/${this.customer_id}.json`, customer)
+            .subscribe( 
+                (data) => { 
+                    this.getCustomerAfter(data);
+                    this.showEdit = false;
+                },
+                (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
     }
 
     changePopover(event, display) {
-        //event.stopPropagation();
         let popover = document.querySelector('#address-popover');
         if (popover) {
             popover.classList.remove(display=='show' ? 'hide' : 'show');
             popover.classList.add(display=='show' ? 'show' : 'hide');
         }
     }
-    
+
     onChangeAddress(event) {
         this.changePopover(event, 'show');
     }
-    
-    onEditAddress(event, address){
+
+    onEditAddress(event, address) {
         this.current_address = address || {};
-        //this.form.address = Object.assign({}, this.form.default_address); 
-        this.setDataToControls(this.form, 'default_address', this.current_address);
-        
+        this.setDataToControls(this.form, 'default_address',
+                               this.current_address
+        );
         this.changePopover(event, 'hide');
         this.showEditAddress = true;
     }
-    
+
     onSaveAddress(){
         if(!this.groupValidate(this.form, 'default_address')) return;
 
@@ -665,58 +670,65 @@ export class CustomersEdit extends BaseForm{
             address.address.first_name = this.api_data.customer.first_name;
         if (!address.address.last_name)
             address.address.last_name = this.api_data.customer.last_name;
-        
+
         let url = `/admin/customers/${this.customer_id}/addresses.json`;
         let method = 'Post';
-        
+
+        let c_id = this.customer_id;
+        let a_id = this.current_address.id;
         if (this.current_address.id) { 
-            url = `/admin/customers/${this.customer_id}/addresses/${this.current_address.id}.json`;
+            url = `/admin/customers/${c_id}/addresses/${a_id}.json`;
             method = 'Patch';
         }
-        
+
         this._http
             .request(method, url, address)
-            .subscribe(()=> { 
-                                this.addFormAfter();
-                                this.showEditAddress = false;
-                            },
-                        err => self.apiErrors(self.form, 'customer', err.json()), 
+            .subscribe(
+                () => { 
+                    this.addFormAfter();
+                    this.showEditAddress = false;
+                },
+                (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
     }
-    
+
     onSelectAddress(event, address) {
         this.changePopover(event, 'hide');
-        let url = `/admin/customers/${this.customer_id}/addresses/${address.id}/default.json`;
+        let c_id = this.customer_id;
+        let a_id = address.id;
+        let url = `/admin/customers/${c_id}/addresses/${a_id}/default.json`;
         this._http
-                .put(url)
-                .subscribe(()=> { 
-                                    this.addFormAfter();
-                                    this.showEditAddress = false;
-                                },
-                            err => self.apiErrors(self.form, 'customer', err.json()), 
-                );
+            .put(url)
+            .subscribe(
+                () => { 
+                    this.addFormAfter();
+                    this.showEditAddress = false;
+                },
+                (err) => self.apiErrors(self.form, 'customer', err.json()), 
+            );
     }
-    
+
     onDeleteAddress() {
-        let url = `/admin/customers/${this.customer_id}/addresses/${this.current_address.id}.json`;
+        let c_id = this.customer_id;
+        let a_id = this.current_address.id;
         this._http
-                .delete(url)
-                .subscribe(()=> { 
-                                    this.addFormAfter();
-                                    this.showEditAddress = false;
-                                },
-                            err => self.apiErrors(self.form, 'customer', err.json()), 
-                );
+            .delete(`/admin/customers/${c_id}/addresses/${a_id}.json`)
+            .subscribe(
+                () => { 
+                    this.addFormAfter();
+                    this.showEditAddress = false;
+                },
+                (err) => self.apiErrors(self.form, 'customer', err.json()),
+            );
     }
-    
+
     onDeleteCustomer() {
         let url = `/admin/customers/${this.customer_id}.json`;
         this._http
-                .delete(url)
-                .subscribe(()=> this._router.navigate(['Customers']),
-                            err => self.apiErrors(self.form, 'customer', err.json()), 
-                );
+            .delete(url)
+            .subscribe(
+                ()=> this._router.navigate(['Customers']),
+                (err) => self.apiErrors(self.form, 'customer', err.json()),
+            );
     }
 }
-
-
