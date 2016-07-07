@@ -7,13 +7,13 @@ import 'rxjs/Rx'
 import { AdminAuthService, AdminUtils } from './admin.auth'
 import { Admin } from './admin'
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------AdminAccountProfile
 @Component({
     selector      : 'profile',
     templateUrl: 'templates/account/profile.html',
     directives    : [FORM_DIRECTIVES],
 })
-export class AdminAccountProfile{
+export class AdminAccountProfile {
     errors = [];
     obj_errors = {};
     user = undefined;
@@ -57,22 +57,21 @@ export class AdminAccountProfile{
         
         let e = new Control('')
         this.lform.addControl('email',e);
-    
     }
-    
+
     ngOnInit() {
         let id = this._routeParams.get('id');
         this._http
             .get(`/api/admin/${id}/`)
-            .subscribe( data => { this.onInit(data); },
-                        err => {
-                                    this.obj_errors = err; 
-                                    this.errors = this._utils.to_array(err.json()); 
-                                }, 
-                       ); 
+            .subscribe( 
+                (data) => this.onInit(data),
+                (err) => {
+                    this.obj_errors = err; 
+                    this.errors = this._utils.to_array(err.json()); 
+                }, 
+            ); 
         this.getSessions(id);
-        this._auth.getCurrentUser().then(data => this.currentUser = data );
-         
+        this._auth.getCurrentUser().then(data => this.currentUser = data);
     }
 
     onInit(data) {
@@ -90,45 +89,37 @@ export class AdminAccountProfile{
         
         this.isUser = this.user.id == this._auth._currentUser.id;// no correct
         this.isAdmin = this._auth._currentUser.is_admin;
-        
-        /* 
-        this._admin.test(4, 2, 
-            {
-                'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
-            });
-        */
+
         this._admin.currentUrl({
-                'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
-                });
+            'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
+        });
 
         this._admin.headerButtons = [];
         if (this.isAdmin && !this.isUser) {
             if (!this.user.is_admin) {
-                this._admin.headerButtons.push(
-                    {
-                        'text': 'Make this user the account owner', 
-                        'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
-                    });
+                this._admin.headerButtons.push({
+                    'text': 'Make this user the account owner', 
+                    'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
+                });
             }
             else {
-                this._admin.headerButtons.push(
-                    {
-                        'text': 'Take away this user the account owner permissions', 
-                        'class': 'btn mr10', 'click': this.setAdmin, 'self': this 
-                    });
+                this._admin.headerButtons.push({
+                    'text': 'Take away this user the account owner permissions',
+                    'class': 'btn mr10', 'click': this.setAdmin, 'self': this
+                });
             }
         }
 
-        this._admin.headerButtons.push(
-            {
-                'text': 'Save', 'class': 'btn btn-blue', 
-                'click': this.onSave, 'primary': true, 'self': this 
-            });
+        this._admin.headerButtons.push({
+            'text': 'Save', 'class': 'btn btn-blue', 
+            'click': this.onSave, 'primary': true, 'self': this
+        });
         
         for (let control in this.lform.controls) {
             if (control != 'avatar_image') {
                 this.lform.controls[control].updateValue(undefined);
-                this.lform.controls[control].updateValue(this.user[control], true, true);
+                this.lform.controls[control]
+                    .updateValue(this.user[control], true, true);
             }
         }
     }
@@ -138,26 +129,27 @@ export class AdminAccountProfile{
         for (let control in this.lform.controls) {
             if (control != 'avatar_image') {
                 this.lform.controls[control].updateValue(undefined);
-                this.lform.controls[control].updateValue(this.user[control], true, true);
+                this.lform.controls[control]
+                          .updateValue(this.user[control], true, true);
             }
         }
     }
-    
 
     routerCanDeactivate() {
         if (!this.formChange)
             return true;
         this.close  = false;
-        this.canDeactivate = new Promise((resolve) => {
-            this.unloadPage = resolve;
-        });
+        this.canDeactivate = new Promise(
+            (resolve) => {
+                this.unloadPage = resolve;
+            }
+        );
         return this.canDeactivate;
     }
 
     onSave(self) {
         if (!self) 
             self = this;
-               
         if  (
                 self.lform.controls['email'].value != self.user.email || 
                 self.lform.controls['password1'].value  || 
@@ -172,24 +164,24 @@ export class AdminAccountProfile{
     }
     
     onSaveAdmin() { // admin permissions
-     
         if (this.new_avatar)
-            this.lform.controls['avatar_image'].updateValue(this.new_avatar);   
-        
+            this.lform.controls['avatar_image'].updateValue(this.new_avatar);
+
         this._http
             .patch(`/api/admin/${this.user.id}/`, this.lform.value )
-            .subscribe( data => {
-                                    if (this.isUser) {
-                                        this._admin.refreshCurrentUser();
-                                    }
-                                    this.onInit(data);
-                                },
-                        err => { 
-                                this.obj_errors = err.json(); 
-                                this.errors = this._utils.to_array(err.json()); 
-                                this.cls();
-                        }, 
-            );  
+            .subscribe(
+                (data) => {
+                    if (this.isUser) {
+                        this._admin.refreshCurrentUser();
+                    }
+                    this.onInit(data);
+                },
+                (err) => { 
+                    this.obj_errors = err.json(); 
+                    this.errors = this._utils.to_array(err.json());
+                    this.cls();
+                },
+            );
     }
 
     setAdmin(self) {
@@ -198,14 +190,16 @@ export class AdminAccountProfile{
 
     addOwnership() {
         this.user.is_admin = !this.user.is_admin;
+        let data = {'is_admin': this.user.is_admin};
         this._http
-            .patch(`/api/admin/${this.user.id}/`, {'is_admin': this.user.is_admin} )
-            .subscribe( data => this.onInit(data),
-                        err => { 
-                                this.obj_errors = err.json(); 
-                                this.errors = this._utils.to_array(err.json());
-                                this.cls();
-                        }, 
+            .patch(`/api/admin/${this.user.id}/`, data)
+            .subscribe(
+                (data) => this.onInit(data),
+                (err) => { 
+                        this.obj_errors = err.json(); 
+                        this.errors = this._utils.to_array(err.json());
+                        this.cls();
+                }, 
             );  
     }
 
@@ -222,33 +216,32 @@ export class AdminAccountProfile{
             reader.readAsDataURL(files[0]);
         }
     }
-    
+
     deleteAvatar() {
         if (this.user.avatar)
             this.formChange = true;
-        
+
         this.new_avatar = null;
         this.user.avatar = null;
         this.lform.controls['avatar_image'].updateValue(null);
     }
-    
+
     getSessions(id) {
         this._http
             .get(`/api/admin/${id}/session/`)
-            .subscribe( data => this.sessions = data);        
+            .subscribe( data => this.sessions = data);
     }
-    
+
     deleteSessions() {
         this._http
             .delete(`/api/admin/${this.user.id}/deletesession/`)
-            .subscribe( () => this.getSessions(this.user.id) );   
+            .subscribe( () => this.getSessions(this.user.id) );
     }
-    
+
     setDate (date) {
         let d = new Date(date);
         return d;
     }
-    
 }
 
 
