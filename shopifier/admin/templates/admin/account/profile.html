@@ -349,7 +349,7 @@
         <div class="input-section">
             <div class="input-box">
                Are you sure you want to taking away ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
-            </div>                  
+            </div>
         </div>
         
         <div class="modal-footer">
@@ -360,24 +360,6 @@
     </form>
 </modal-form>
 
-
-<modal-form *ngIf="canDeactivate">
-    <form class="input-form up" novalidate>
-        <div class="modal-header">
-            <h1>
-                You have unsaved changes on this page
-            </h1>
-        </div>
-        <div class="input-section">
-            <div class="input-box">    
-                If you leave this page, all unsaved changes will be lost. Are you sure you want to leave this page?
-            </div>
-        </div>
-
-        <div class="modal-footer">
-            <a class="btn mr10" (click)="unloadPage(false); canDeactivate=undefined;">Cancel</a>
-            <a class="btn btn-red" (click)= "unloadPage(true)">Leav page</a>
-        </div>
-    </form>
-</modal-form>
-
+ <leave-page 
+    [parrent_component]="self">
+</leave-page>
