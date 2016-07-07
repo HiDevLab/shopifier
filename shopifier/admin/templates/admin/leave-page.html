@@ -1,0 +1,19 @@
+<modal-form *ngIf="parrent_component.leavePage">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h1>
+                You have unsaved changes on this page
+            </h1>
+        </div>
+        <div class="input-section">
+            <div class="input-box">
+                If you leave this page, all unsaved changes will be lost. Are you sure you want to leave this page?
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="parrent_component.unloadPage(false);parrent_component.leavePage=false;">Cancel</a>
+            <a class="btn btn-red" (click)= "parrent_component.unloadPage(true);parrent_component.leavePage=false;">Leav page</a>
+        </div>
+    </form>
+</modal-form>
