@@ -144,8 +144,7 @@ export class StartsWithPipe{
 }
 
 
-//------------------------------------------------------------------------------------------------------------------------------------------------------------AdminTagsEdit
-
+//-----------------------------------------------------------------AdminTagsEdit
 @Component({
     selector:   'tags',
     templateUrl: 'templates/tags-edit.html',
@@ -327,4 +326,14 @@ export class AdminTagsEdit {
     addTag(tag) {
         this.tag_input = this.pushTag(tag);
     }
+}
+
+
+//----------------------------------------------------------------AdminLeavePage
+@Component({
+    selector:   'leave-page',
+    templateUrl: 'templates/leave-page.html',
+    inputs: ['parrent_component']
+})
+export class AdminLeavePage {
 }
