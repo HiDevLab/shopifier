@@ -46,22 +46,22 @@ export class BaseForm {
         this._http
             .options(url)
             .subscribe(
-                (data) =>  {
-                            this.addFormFromOptinons(form, data, alias);
-                            if (this.addFormAfter) this.addFormAfter();
+                (data) => {
+                    this.addFormFromOptinons(form, data, alias);
+                    if (this.addFormAfter) this.addFormAfter();
                 },
                 (err) => {
-                            this.obj_errors = err; 
-                            this.errors = this._utils.to_array(err.json());
-                }, 
+                    this.obj_errors = err; 
+                    this.errors = this._utils.to_array(err.json());
+                },
             );
     }
-    
+
     addFormFromOptinons(form, data, alias) {
         let group = data.actions[Object.keys(data.actions)[0]];
         this.addGroup(form, group, alias);
     }
-    
+
     addGroup(form, group, group_name) {
         if (Object.prototype.toString.call(group) !== '[object Object]')
             return;
@@ -69,7 +69,7 @@ export class BaseForm {
         form[group_name + '_meta'] = {};
         
         let keys = Object.keys(group);
-        
+
         for (let i in keys) {
             let ctrl = keys[i];
             if ('children' in group[ctrl])
@@ -78,7 +78,7 @@ export class BaseForm {
                 this.addControl(form, group, group_name, ctrl);
         }
     }
-    
+
     addControl(form, group, group_name, ctrl_name) {
         if (group[ctrl_name].read_only) 
             return;
@@ -95,7 +95,7 @@ export class BaseForm {
 
         if (group[ctrl_name].min_length)
             validators.push(Validators.minLength(group[ctrl_name].min_length));
-        
+
         form[group_name + '_meta'][ctrl_name] = {
             'label': group[ctrl_name].label
         };
@@ -114,7 +114,7 @@ export class BaseForm {
 
         form[group_name].addControl(ctrl_name, control);
     }
-    
+
     emailValidator(control) {
         if (!control.value)
             return {'Invalid Email Address': true};
@@ -192,7 +192,7 @@ export class BaseForm {
     setDataToControls(form, group_name, obj) {
         let group = form[group_name];
         let meta = form[group_name + '_meta'];
-        
+
         let keys = Object.keys(group.controls);
         for (let i in keys) {
             let ctrl = keys[i];
@@ -228,7 +228,7 @@ export class BaseForm {
                 (err) => this.obj_errors = err,
             ); 
     }
-    
+
     onNextPage(self){ //call from admin header 
         if (self.current_page == self.last_page) return;
         self = self || this;
@@ -256,7 +256,7 @@ export class BaseForm {
   directives: [FORM_DIRECTIVES],
 })
 export class Customers extends BaseForm {
-    
+
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
                 [Admin], [AdminUtils]];
@@ -335,7 +335,7 @@ export class CustomersNew extends BaseForm {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
             [Admin], [AdminUtils]];
     }
-    
+
     constructor(http, formbuilder, router, auth, admin, utils) {
         super(http, formbuilder, router, auth, admin, utils);
     }
@@ -421,7 +421,7 @@ export class CustomersNew extends BaseForm {
     saveAddress(customer) {
         let address = {};
         address['address'] = this.form.default_address.value;
-        
+
         if (!address.address.first_name)
             address.address.first_name = this.form.customer
                                              .controls.first_name.value;
@@ -489,17 +489,17 @@ export class CustomersEdit extends BaseForm{
             'text': '', 'class': 'btn mr10 fa fa-chevron-left',
             'click': this.onPrev, 'self': this, 'disabled' : 'disabledPrev'
         });
-        
+
         this._admin.headerButtons.push({
             'text': '', 'class': 'btn mr10 fa fa-chevron-right', 
             'click': this.onNext, 'self': this, 'disabled' : 'disabledNext'
         });
-        
+
         this._admin.headerButtons.push({
             'text': 'Save', 'class': 'btn btn-blue', 
             'click': this.onSaveNote, 'primary': true, 'self': this 
         });
-        
+
         this.addForm(this.form,
                     `/admin/customers/${this.customer_id}.json`, 'customer');
     }
@@ -541,7 +541,7 @@ export class CustomersEdit extends BaseForm{
                     else {
                        self.disabledPrev = true;
                     }
-                }, 
+                },
                 (err) => self.disabledPrev = undefined,
             );
     }
@@ -627,7 +627,7 @@ export class CustomersEdit extends BaseForm{
         this._http
             .patch(`/admin/customers/${this.customer_id}.json`, customer)
             .subscribe(
-                (data) => { 
+                (data) => {
                     this.getCustomerAfter(data);
                     this.showEdit = false;
                 },
