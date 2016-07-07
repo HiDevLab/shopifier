@@ -1,4 +1,4 @@
-import 'rxjs/Rx'
+import 'rxjs/Rx';
 
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
         Validators, Control, ControlGroup } from 'angular2/common';
@@ -23,6 +23,7 @@ export class ProvincePipe{
     });
   }
 }
+
 
 //----------------------------------------------------------------------BaseForm
 export class BaseForm {
@@ -51,7 +52,7 @@ export class BaseForm {
                 },
                 (err) => {
                             this.obj_errors = err; 
-                            this.errors = this._utils.to_array(err.json()); 
+                            this.errors = this._utils.to_array(err.json());
                 }, 
             );
     }
@@ -71,7 +72,7 @@ export class BaseForm {
         
         for (let i in keys) {
             let ctrl = keys[i];
-            if ('children' in group[ctrl]) 
+            if ('children' in group[ctrl])
                 this.addGroup(form, group[ctrl].children, ctrl);
             else
                 this.addControl(form, group, group_name, ctrl);
@@ -103,7 +104,7 @@ export class BaseForm {
         let control = new Control('', Validators.compose(validators));
 
         if (group[ctrl_name].type==='choice'){
-            form[group_name + '_meta'][ctrl_name].choices = 
+            form[group_name + '_meta'][ctrl_name].choices =
                                                 group[ctrl_name].choices;
             control.updateValue(group[ctrl_name].choices[0].value);
         }
@@ -178,12 +179,12 @@ export class BaseForm {
         for(let i in urls) {
             this._http
                 .get(urls[i])
-                .subscribe( (data) => this[afters[i]](data),
-                            (err) => {
-                                        this.obj_errors = err; 
-                                        this.errors = this._utils
-                                            .to_array(err.json());
-                            },
+                .subscribe(
+                    (data) => this[afters[i]](data),
+                    (err) => {
+                        this.obj_errors = err;
+                        this.errors = this._utils.to_array(err.json());
+                    },
                 );
         }
     }
@@ -212,18 +213,19 @@ export class BaseForm {
         this.list_url = list_url;
         this._http
             .get(count_url)
-            .subscribe((data) => {
-                        this.count_list = data.count;
-                        this.current_page = 1;
-                        this.last_page = Math.ceil(this.count_list / 4); //50
-                        this.disabledPrevPage = true;
-                        this.disabledNextPage = 
-                            !(this.current_page < this.last_page);
-                        if (this.getPaginationAfter)
-                            this.getPaginationAfter();
+            .subscribe(
+                (data) => {
+                    this.count_list = data.count;
+                    this.current_page = 1;
+                    this.last_page = Math.ceil(this.count_list / 4); //50
+                    this.disabledPrevPage = true;
+                    this.disabledNextPage = 
+                        !(this.current_page < this.last_page);
+                    if (this.getPaginationAfter)
+                        this.getPaginationAfter();
 
-                        },
-                        err => this.obj_errors = err, 
+                },
+                (err) => this.obj_errors = err,
             ); 
     }
     
@@ -256,11 +258,11 @@ export class BaseForm {
 export class Customers extends BaseForm {
     
     static get parameters() {
-        return [[Http], [FormBuilder], [Router], [AdminAuthService], 
+        return [[Http], [FormBuilder], [Router], [AdminAuthService],
                 [Admin], [AdminUtils]];
     }
 
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams){
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
         super(http, formbuilder, router, auth, admin, utils);
     }
 
@@ -268,61 +270,54 @@ export class Customers extends BaseForm {
         this._admin.currentUrl();
         this._admin.headerButtons = [];
 
-        this._admin.headerButtons.push(
-            {
-                'text': 'Export', 'class': 'btn ml10 mr10', 
-                'click': this.onExport, 'self': this 
-            });
-        this._admin.headerButtons.push(
-            {
-                'text': 'Import customers', 'class': 'btn mr10', 
-                'click': this.onImport, 'self': this 
-            });
-        this._admin.headerButtons.push(
-            {
-                'text': 'Add customer', 'class': 'btn btn-blue', 
-                'click': this.onAdd, 'self': this 
-            });
+        this._admin.headerButtons.push({
+            'text': 'Export', 'class': 'btn ml10 mr10',
+            'click': this.onExport, 'self': this
+        });
+        this._admin.headerButtons.push ({
+            'text': 'Import customers', 'class': 'btn mr10', 
+            'click': this.onImport, 'self': this 
+        });
+        this._admin.headerButtons.push({
+            'text': 'Add customer', 'class': 'btn btn-blue',
+            'click': this.onAdd, 'self': this 
+        });
 
         this.getPagination('/admin/customers/count.json',
                             '/admin/customers.json');
         this.getAPIData(['/admin/customers.json'], ['getCustomers']);
-        
     }
-    
+
     getCustomers(data) {
         this.customers = data.customers;
     }
-    
+
     getPaginationAfter() {
         if (this.last_page == 1)
             return;
-            
-        this._admin.headerButtons.unshift(
-            {
-                'text': '', 'class': 'btn mr30 fa fa-chevron-right', 
-                'click': this.onNextPage, 
-                'self': this, 'disabled' : 'disabledNextPage' 
-            });
-        this._admin.headerButtons.unshift(
-            {
-                'text': '', 'class': 'btn mr10 fa fa-chevron-left', 
-                'click': this.onPrevPage, 'self': this,
-                'disabled' : 'disabledPrevPage' 
-            });
+
+        this._admin.headerButtons.unshift({
+            'text': '', 'class': 'btn mr30 fa fa-chevron-right',
+            'click': this.onNextPage, 
+            'self': this, 'disabled' : 'disabledNextPage' 
+        });
+        this._admin.headerButtons.unshift({
+            'text': '', 'class': 'btn mr10 fa fa-chevron-left',
+            'click': this.onPrevPage, 'self': this,
+            'disabled' : 'disabledPrevPage'
+        });
     }
 
     onAdd(self) {
-        self._router.navigate(['NewCustomer'])
+        self._router.navigate(['NewCustomer']);
     }
     
     onEditCustomer(customer) {
-        this.current_customer_index = this.customers.indexOf(customer); 
+        this.current_customer_index = this.customers.indexOf(customer);
         let link = ['EditCustomer', {'id': customer.id }];
         this._router.navigate(link);
     }
 }
-
 
 
 //-----------------------------------------------------------------CustomersNew 
@@ -332,7 +327,7 @@ export class Customers extends BaseForm {
   directives: [FORM_DIRECTIVES, Autosize],
   pipes: [ProvincePipe, ArrayLengthPipe]
 })
-export class CustomersNew extends BaseForm{
+export class CustomersNew extends BaseForm {
     tags = [];
     all_tags = [];
 
@@ -340,24 +335,23 @@ export class CustomersNew extends BaseForm{
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
             [Admin], [AdminUtils]];
     }
+    
     constructor(http, formbuilder, router, auth, admin, utils) {
         super(http, formbuilder, router, auth, admin, utils);
     }
 
     ngOnInit() {
         this._admin.currentUrl({ 'url':'#', 'text': 'Add customer'});
-        
+
         this._admin.headerButtons = [];
-        this._admin.headerButtons.push(
-            {
-                'text': 'Cancel', 'class': 'btn mr10', 
-                'click': this.onCancel, 'self': this 
-            });
-        this._admin.headerButtons.push(
-            {
-                'text': 'Save customer', 'class': 'btn btn-blue', 
-                'click': this.onSave, 'primary': true, 'self': this 
-            });
+        this._admin.headerButtons.push({
+            'text': 'Cancel', 'class': 'btn mr10', 
+            'click': this.onCancel, 'self': this 
+        });
+        this._admin.headerButtons.push ({
+            'text': 'Save customer', 'class': 'btn btn-blue', 
+            'click': this.onSave, 'primary': true, 'self': this 
+        });
         this.addForm(this.form, '/admin/customers.json', 'customer');
         this.getAPIData(['/admin/customers/tags.json'], ['getTagsAfter']);
     }
@@ -416,31 +410,32 @@ export class CustomersNew extends BaseForm{
 
         self._http
             .post('/admin/customers.json', customer )
-            .subscribe((data) => self.saveAddress(data),
-                       (err) => {
-                            self.apiErrors(self.form, 'customer', err.json());
-                       },
+            .subscribe(
+                (data) => self.saveAddress(data),
+                (err) => {
+                    self.apiErrors(self.form, 'customer', err.json());
+                },
             );
     }
 
     saveAddress(customer) {
         let address = {};
         address['address'] = this.form.default_address.value;
+        
         if (!address.address.first_name)
             address.address.first_name = this.form.customer
-                                                .controls.first_name.value;
+                                             .controls.first_name.value;
         if (!address.address.last_name)
             address.address.last_name = this.form.customer
-                                                    .controls.last_name.value;
+                                                 .controls.last_name.value;
         let url = `/admin/customers/${customer.customer.id}/addresses.json`;
         this._http
             .post(url, address )
-            .subscribe((data) => this.setDefaultAddress(customer, data),
-                       (err) => { 
-                            this.apiErrors(
-                                this.form, 'default_address', err.json()
-                            );
-                        }, 
+            .subscribe(
+                (data) => this.setDefaultAddress(customer, data),
+                (err) => {
+                    this.apiErrors(this.form, 'default_address', err.json());
+                },
             );
     }
 
@@ -449,14 +444,14 @@ export class CustomersNew extends BaseForm{
         let a_id = address.customer_address.id;
         this._http
             .put(`/admin/customers/${c_id}/addresses/${a_id}/default.json`)
-            .subscribe((data) => {
-                    let link = ['EditCustomer',
-                                {'id': customer.customer.id }];
+            .subscribe(
+                (data) => {
+                    let link = ['EditCustomer', {'id': customer.customer.id }];
                     this._router.navigate(link);
                 },
-                (err) => { 
+                (err) => {
                     this.apiErrors(this.form, 'default_address' ,err.json());
-                }, 
+                },
             );
     }
 
@@ -491,7 +486,7 @@ export class CustomersEdit extends BaseForm{
 
         this._admin.headerButtons = [];
         this._admin.headerButtons.push({
-            'text': '', 'class': 'btn mr10 fa fa-chevron-left', 
+            'text': '', 'class': 'btn mr10 fa fa-chevron-left',
             'click': this.onPrev, 'self': this, 'disabled' : 'disabledPrev'
         });
         
@@ -519,7 +514,7 @@ export class CustomersEdit extends BaseForm{
                     if (data.customers.length > 0) {
                         self._router.navigate(['EditCustomer',
                             {'id': data.customers[0].id }]);
-                        self.disabledPrev = false; 
+                        self.disabledPrev = false;
                         self.disabledNext = false;
                     }
                     else {
@@ -553,7 +548,7 @@ export class CustomersEdit extends BaseForm{
 
     addFormAfter() {
         this.getAPIData([`/admin/customers/${this.customer_id}.json`,
-            '/admin/customers/tags.json'], 
+            '/admin/customers/tags.json'],
             ['getCustomerAfter', 'getTagsAfter']
         );
     }
@@ -594,7 +589,7 @@ export class CustomersEdit extends BaseForm{
             .subscribe(
                 (data) => {
                     self.getCustomerAfter(data);
-                    self.getAPIData(['/admin/customers/tags.json'], 
+                    self.getAPIData(['/admin/customers/tags.json'],
                                     ['getTagsAfter']);
                 },
                 (err) => self.apiErrors(self.form, 'customer', err.json()),
@@ -606,7 +601,7 @@ export class CustomersEdit extends BaseForm{
         let customer = {'customer': {'tags':self.tags}};
         self._http
             .patch(`/admin/customers/${self.customer_id}.json`, customer)
-            .subscribe( 
+            .subscribe(
                 (data) => { 
                     self.getCustomerAfter(data);
                     self.getAPIData(['/admin/customers/tags.json'],
@@ -631,7 +626,7 @@ export class CustomersEdit extends BaseForm{
         customer['customer'] = this.form['customer'].value;
         this._http
             .patch(`/admin/customers/${this.customer_id}.json`, customer)
-            .subscribe( 
+            .subscribe(
                 (data) => { 
                     this.getCustomerAfter(data);
                     this.showEdit = false;
@@ -684,7 +679,7 @@ export class CustomersEdit extends BaseForm{
         this._http
             .request(method, url, address)
             .subscribe(
-                () => { 
+                () => {
                     this.addFormAfter();
                     this.showEditAddress = false;
                 },
@@ -696,15 +691,15 @@ export class CustomersEdit extends BaseForm{
         this.changePopover(event, 'hide');
         let c_id = this.customer_id;
         let a_id = address.id;
-        let url = `/admin/customers/${c_id}/addresses/${a_id}/default.json`;
+        
         this._http
-            .put(url)
+            .put(`/admin/customers/${c_id}/addresses/${a_id}/default.json`)
             .subscribe(
                 () => { 
                     this.addFormAfter();
                     this.showEditAddress = false;
                 },
-                (err) => self.apiErrors(self.form, 'customer', err.json()), 
+                (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
     }
 
@@ -714,7 +709,7 @@ export class CustomersEdit extends BaseForm{
         this._http
             .delete(`/admin/customers/${c_id}/addresses/${a_id}.json`)
             .subscribe(
-                () => { 
+                () => {
                     this.addFormAfter();
                     this.showEditAddress = false;
                 },
@@ -727,7 +722,7 @@ export class CustomersEdit extends BaseForm{
         this._http
             .delete(url)
             .subscribe(
-                ()=> this._router.navigate(['Customers']),
+                () => this._router.navigate(['Customers']),
                 (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
     }
