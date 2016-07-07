@@ -7,11 +7,14 @@ import 'rxjs/Rx'
 import { AdminAuthService, AdminUtils } from './admin.auth'
 import { Admin } from './admin'
 
+import { AdminLeavePage } from './components';
+
+
 //-----------------------------------------------------------AdminAccountProfile
 @Component({
     selector      : 'profile',
     templateUrl: 'templates/account/profile.html',
-    directives    : [FORM_DIRECTIVES],
+    directives    : [FORM_DIRECTIVES, AdminLeavePage],
 })
 export class AdminAccountProfile {
     errors = [];
@@ -60,6 +63,7 @@ export class AdminAccountProfile {
     }
 
     ngOnInit() {
+        this.self = this; // for child components
         let id = this._routeParams.get('id');
         this._http
             .get(`/api/admin/${id}/`)
@@ -138,7 +142,7 @@ export class AdminAccountProfile {
     routerCanDeactivate() {
         if (!this.formChange)
             return true;
-        this.close  = false;
+        this.leavePage = true;
         this.canDeactivate = new Promise(
             (resolve) => {
                 this.unloadPage = resolve;
