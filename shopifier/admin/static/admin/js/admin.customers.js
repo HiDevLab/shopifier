@@ -209,8 +209,9 @@ export class BaseForm {
         }
     }
 
-    getPagination(count_url, list_url) {
+    getPagination(count_url, list_url, after) {
         this.list_url = list_url;
+        this.list_func_after = [after];
         this._http
             .get(count_url)
             .subscribe(
@@ -223,26 +224,27 @@ export class BaseForm {
                         !(this.current_page < this.last_page);
                     if (this.getPaginationAfter)
                         this.getPaginationAfter();
-
                 },
                 (err) => this.obj_errors = err,
             ); 
     }
 
     onNextPage(self){ //call from admin header 
-        if (self.current_page == self.last_page) return;
         self = self || this;
+        if (self.current_page == self.last_page) return;
         self.current_page++;
-        self.getAPIData(`${self.list_url}?page=${self.current_page}`);
+        let urls = [`${self.list_url}?page=${self.current_page}`,];
+        self.getAPIData(urls, self.list_func_after);
         self.disabledNextPage = !(self.current_page < self.last_page);
         self.disabledPrevPage = !(self.current_page > 1);
     }
 
     onPrevPage(self){ //call from admin header
-        if (self.current_page == 1) return;
         self = self || this;
+        if (self.current_page == 1) return;
         self.current_page--;
-        self.getAPIData(`${self.list_url}?page=${self.current_page}`);
+        let urls = [`${self.list_url}?page=${self.current_page}`,];
+        self.getAPIData(urls, self.list_func_after);
         self.disabledNextPage = !(self.current_page < self.last_page);
         self.disabledPrevPage = !(self.current_page > 1);
     }
@@ -284,7 +286,8 @@ export class Customers extends BaseForm {
         });
 
         this.getPagination('/admin/customers/count.json',
-                            '/admin/customers.json');
+                            '/admin/customers.json',
+                            'getCustomers');
         this.getAPIData(['/admin/customers.json'], ['getCustomers']);
     }
 
