@@ -83,7 +83,10 @@ export class Admin {
     
     footerShow = false;
     footerText = '';
-
+    cacheNav = undefined;
+    cacheSubNav = undefined;
+    cacheHeaderNav = undefined;
+    
     static get parameters() {
         return [[Router], [AdminAuthService], [Location]];
     }
@@ -104,6 +107,8 @@ export class Admin {
     }
  
     onSelect(nav) {
+        this.cacheNav = this.selectedNav;
+        let self = this;
         this.selectedNav = nav;
         this.forceSubmenuShow=true;
                
@@ -115,13 +120,20 @@ export class Admin {
             this.selectedSubNav = undefined;
             this.headerNav =[this.selectedNav];
             if (this.selectedNav.url.indexOf('#') < 0) {
-                this._router.navigate([this.selectedNav.url]);
+                this._router.navigate([this.selectedNav.url])
+                    .catch(()=> {
+                       self.selectedNav = self.cacheNav;
+                       self.headerNav = self.cacheHeaderNav;
+                    });
             }
         }
         setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this); 
     }
     
     onSelectSubNav(subnav) {
+        let self = this;
+        this.cacheSubNav = this.selectedSubNav;
+        this.cacheHeaderNav = this.headerNav;
         this.selectedSubNav = subnav;
         
         if (subnav.type=='router')
@@ -130,8 +142,11 @@ export class Admin {
             this.headerNav = [this.selectedNav, this.selectedSubNav];
         
         if (subnav.url.indexOf('#') < 0) {
-            let link = 
-            this._router.navigate([subnav.url]);
+            this.resove = this._router.navigate([subnav.url])
+                .catch(()=> {
+                    self.selectedSubNav = self.cacheSubNav;
+                    self.headerNav = self.cacheHeaderNav;
+                });
         }
     }
     

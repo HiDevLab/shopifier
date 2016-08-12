@@ -144,8 +144,9 @@ export class AdminAccountProfile {
             return true;
         this.leavePage = true;
         this.canDeactivate = new Promise(
-            (resolve) => {
+            (resolve, reject) => {
                 this.unloadPage = resolve;
+                this.not_unloadPage = reject;
             }
         );
         return this.canDeactivate;
