@@ -134,22 +134,9 @@ export class AdminAccountProfile {
             if (control != 'avatar_image') {
                 this.lform.controls[control].updateValue(undefined);
                 this.lform.controls[control]
-                          .updateValue(this.user[control], true, true);
+                    .updateValue(this.user[control], true, true);
             }
         }
-    }
-
-    routerCanDeactivate() {
-        if (!this.formChange)
-            return true;
-        this.leavePage = true;
-        this.canDeactivate = new Promise(
-            (resolve, reject) => {
-                this.unloadPage = resolve;
-                this.not_unloadPage = reject;
-            }
-        );
-        return this.canDeactivate;
     }
 
     onSave(self) {
@@ -157,15 +144,15 @@ export class AdminAccountProfile {
             self = this;
         if  (
                 self.lform.controls['email'].value != self.user.email || 
-                self.lform.controls['password1'].value  || 
-                self.lform.controls['password2'].value 
-            ) { 
-            
-            self.lform.controls['admin_password'].updateValue('');
-            self.confirmPassword = true;
-        }        
-        else 
+                self.lform.controls['password1'].value ||
+                self.lform.controls['password2'].value
+            ){
+                self.lform.controls['admin_password'].updateValue('');
+                self.confirmPassword = true;
+        }
+        else {
             self.onSaveAdmin();
+        }
     }
     
     onSaveAdmin() { // admin permissions
@@ -246,6 +233,20 @@ export class AdminAccountProfile {
     setDate (date) {
         let d = new Date(date);
         return d;
+    }
+
+    routerCanDeactivate(prev, next) {
+        if (!this.formChange) {
+            return true;
+        }
+        this.leavePage = true;
+        this.canDeactivate = new Promise(
+            (resolve, reject) => {
+                this.unloadPage = resolve;
+                this.not_unloadPage = reject;
+            }
+        );
+        return this.canDeactivate;
     }
 }
 
