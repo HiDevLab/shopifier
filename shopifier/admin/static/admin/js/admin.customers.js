@@ -9,8 +9,9 @@ import { Router, RouteParams, RouteConfig,
 
 import { Admin } from './admin';
 import { AdminAuthService, AdminUtils } from './admin.auth'
-import { Autosize, Popover, ArrayLengthPipe,
-            AdminTagsEdit } from './components';
+import { 
+            Autosize, Popover, ArrayLengthPipe, AdminLeavePage, AdminTagsEdit
+        } from './components';
 
 
 @Pipe({
@@ -469,11 +470,15 @@ export class CustomersNew extends BaseForm {
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/edit.html',
-  directives: [FORM_DIRECTIVES, Autosize, Popover, AdminTagsEdit],
+  directives:   [
+                    FORM_DIRECTIVES, Autosize, Popover, AdminTagsEdit,
+                    AdminLeavePage
+                ],
   pipes: [ProvincePipe]
 })
 export class CustomersEdit extends BaseForm{
-
+    canDeactivate = undefined;
+    
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
                 [Admin], [AdminUtils], [RouteParams]];
