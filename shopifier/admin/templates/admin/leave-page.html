@@ -12,8 +12,8 @@
         </div>
 
         <div class="modal-footer">
-            <a class="btn mr10" (click)="parrent_component.not_unloadPage();parrent_component.unloadPage(false);parrent_component.leavePage=false;">Cancel</a>
-            <a class="btn btn-red" (click)= "parrent_component.unloadPage(true);parrent_component.leavePage=false;">Leav page</a>
+            <a class="btn mr10" (click)="onClick(parrent_component, false)">Cancel</a>
+            <a class="btn btn-red" (click)= "onClick(parrent_component, true)">Leav page</a>
         </div>
     </form>
 </modal-form>
