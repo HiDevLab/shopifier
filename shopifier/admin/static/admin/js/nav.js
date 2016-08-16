@@ -2,7 +2,7 @@ export var Nav = [
     {
         'icon': 'search',
         'text': 'Search',
-        'url': '#',
+        'url': '/Admin/Search',
         'submenu': [],
     },
     {
@@ -19,17 +19,17 @@ export var Nav = [
              {
                  'icon': 'calendar-check-o',
                  'text': 'Orders',
-                 'url': '#',
+                 'url': '/Admin/Orders/Orders',
              },
              {
                  'icon': 'calendar-check-o',
                  'text': 'Drafts',
-                 'url': '#',
+                 'url': '/Admin/Orders/Drafts',
              },
              {
                  'icon': 'calendar-check-o',
                  'text': 'Transfers',
-                 'url': '#',
+                 'url': '/Admin/Orders/Transfers',
              }
         ],
     },

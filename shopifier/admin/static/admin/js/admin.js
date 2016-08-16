@@ -5,24 +5,28 @@ import { Location } from 'angular2/platform/common';
 
 import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
+
+import { AdminOrders } from './admin.orders'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
-import { Customers, CustomersNew, CustomersEdit} from './admin.customers'
+import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
+
 
 //------------------------------------------------------------------------------
-@Component({
-    selector:   'main',
-    template:   '',
-})
+@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
 export class AdminHome {
-        static get parameters() {
-        return [[Admin]];
-    }
-    constructor(admin) {
-        this._admin = admin;
-    }
-    ngOnInit() {
-        this._admin.currentUrl();
-    }
+    component = 'Home';
+    static get parameters() {return [[Admin]];}
+    constructor(admin) {this._admin = admin;}
+    ngOnInit() {this._admin.currentUrl();}
+}
+
+//------------------------------------------------------------------------------
+@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+export class AdminSearch {
+    component = 'Search';
+    static get parameters() {return [[Admin]];}
+    constructor(admin) {this._admin = admin;}
+    ngOnInit() {this._admin.currentUrl();}
 }
 
 
@@ -42,7 +46,19 @@ export class AdminHome {
     {
         path : '/home',
         name : 'Home',
-        component : AdminHome //AdminAccountInvite,// AdminHome,
+        component : AdminHome
+    },
+
+    {
+        path : '/search',
+        name : 'Search',
+        component : AdminSearch
+    },
+
+    {
+        path : '/orders/...',
+        name : 'Orders',
+        component : AdminOrders,
     },
 
     {
@@ -50,7 +66,7 @@ export class AdminHome {
         name : 'Settings',
         component : AdminSettings,
     },
-  
+
     {
         path : '/customers',
         name : 'Customers',
@@ -107,11 +123,8 @@ export class Admin {
     }
  
     onSelect(nav) {
-        this.cacheNav = this.selectedNav;
-        let self = this;
         this.selectedNav = nav;
         this.forceSubmenuShow=true;
-               
         if (this.selectedNav.submenu.length > 0) {
             this.selectedSubNav = this.selectedNav.submenu[0];
             this.onSelectSubNav(this.selectedSubNav);
@@ -121,31 +134,27 @@ export class Admin {
             this.headerNav =[this.selectedNav];
             if (this.selectedNav.url.indexOf('#') < 0) {
                 this._router.navigate([this.selectedNav.url])
-                    .catch(()=> {
-                       self.selectedNav = self.cacheNav;
-                       self.headerNav = self.cacheHeaderNav;
+                    .then(()=> {
+                    })
+                   .catch(()=> {
                     });
-            }
+                }
         }
         setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this); 
     }
     
     onSelectSubNav(subnav) {
-        let self = this;
-        this.cacheSubNav = this.selectedSubNav;
-        this.cacheHeaderNav = this.headerNav;
         this.selectedSubNav = subnav;
-        
         if (subnav.type=='router')
             this.headerNav = [this.selectedSubNav];
         else 
             this.headerNav = [this.selectedNav, this.selectedSubNav];
         
         if (subnav.url.indexOf('#') < 0) {
-            this.resove = this._router.navigate([subnav.url])
-                .catch(()=> {
-                    self.selectedSubNav = self.cacheSubNav;
-                    self.headerNav = self.cacheHeaderNav;
+            this._router.navigate([subnav.url])
+                .then(()=> {
+                })
+               .catch(()=> {
                 });
         }
     }
