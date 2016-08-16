@@ -468,6 +468,24 @@ export class AdminAccount {
     }
 }
 
+//------------------------------------------------------------------------------
+@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+export class AdminSettingsGeneral {
+    component = 'General';
+    static get parameters() {return [[Admin]];}
+    constructor(admin) {this._admin = admin;}
+    ngOnInit() {this._admin.currentUrl();}
+}
+
+//------------------------------------------------------------------------------
+@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+export class AdminSettingsCheckout {
+    component = 'Checkout';
+    static get parameters() {return [[Admin]];}
+    constructor(admin) {this._admin = admin;}
+    ngOnInit() {this._admin.currentUrl();}
+}
+
 
 //------------------------------------------------------------------------------ 
 @Component({
@@ -476,11 +494,25 @@ export class AdminAccount {
   directives: [ROUTER_DIRECTIVES],
 })
 @RouteConfig([
+    {
+         path : '/',
+         redirectTo: ['General'],
+     }, 
 
     {
         path : '/account/:id',
         name : 'Profile',
         component : AdminAccountProfile,
+    },
+    {
+        path : '/general',
+        name : 'General',
+        component : AdminSettingsGeneral,
+    },
+    {
+        path : '/checkout',
+        name : 'Checkout',
+        component : AdminSettingsCheckout,
     },
     {
         path : '/account',

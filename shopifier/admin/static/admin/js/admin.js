@@ -7,6 +7,7 @@ import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 
 import { AdminOrders } from './admin.orders'
+import { AdminProducts } from './admin.products'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
 import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
 
@@ -65,6 +66,12 @@ export class AdminSearch {
         path : '/settings/...',
         name : 'Settings',
         component : AdminSettings,
+    },
+
+    {
+        path : '/products/...',
+        name : 'Products',
+        component : AdminProducts,
     },
 
     {

@@ -41,19 +41,19 @@ export var Nav = [
              {
                  'icon': 'tag',
                  'text': 'Products',
-                 'url': '#',
+                 'url': '/Admin/Products/Products',
                  'type': 'router',
              },
              {
                  'icon': 'truck',
                  'text': 'Transfers',
-                 'url': '#',
+                 'url': '/Admin/Products/Transfers',
                  'type': 'router',
              },
              {
                  'icon': 'tag',
                  'text': 'Collections',
-                 'url': '#',
+                 'url': '/Admin/Products/Collections',
                  'type': 'component',
              }
         ],
@@ -73,13 +73,13 @@ export var Nav = [
              {
                  'icon': 'cog',
                  'text': 'General',
-                 'url': '###',
+                 'url': '/Admin/Settings/General',
                  'type': 'component',
              },
              {
                  'icon': 'shopping-cart',
                  'text': 'Checkout',
-                 'url': '#',
+                 'url': '/Admin/Settings/Checkout',
                  'type': 'component',
              },
              {
