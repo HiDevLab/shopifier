@@ -336,4 +336,11 @@ export class AdminTagsEdit {
     inputs: ['parrent_component']
 })
 export class AdminLeavePage {
+    onClick(parrent_component, val) {
+        if (val)
+            parrent_component.unloadPage();
+        else
+            parrent_component.not_unloadPage();
+        parrent_component.leavePage = false;
+    }
 }
