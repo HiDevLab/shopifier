@@ -389,7 +389,8 @@ export class CustomersNew extends BaseForm {
             this.tags.push(this.tag.trim());
             this.tag = '';
             this.tooltipError = false;
-            this.formChange=true;
+            this.formChange = true;
+            this._admin.notNavigate = true;
         }
     }
 
@@ -401,7 +402,8 @@ export class CustomersNew extends BaseForm {
 
     addTag(tag) {
         this.tags.push(tag);
-        this.formChange=true;
+        this.formChange = true;
+        this._admin.notNavigate = true;
     }
 
     onSave(self) {
@@ -491,7 +493,8 @@ export class CustomersEdit extends BaseForm{
 
     ngOnInit() {
         this.self = this; // for child components
-
+        this._admin.notNavigate = false;
+        
         this._admin.headerButtons = [];
         this._admin.headerButtons.push({
             'text': '', 'class': 'btn mr10 fa fa-chevron-left',
@@ -603,6 +606,7 @@ export class CustomersEdit extends BaseForm{
                 (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
             self.formChange = false;
+            self._admin.notNavigate = false;
     }
 
     saveTags(self) {
@@ -618,6 +622,7 @@ export class CustomersEdit extends BaseForm{
                 (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
         self.formChange = false;
+        self._admin.notNavigate = false;
     }
 
     onEditCustomer() {
@@ -733,5 +738,23 @@ export class CustomersEdit extends BaseForm{
                 () => this._router.navigate(['Customers']),
                 (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
+    }
+
+    onFormChange() {
+        this._admin.notNavigate = true;
+        this.formChange = true;
+    }
+
+    routerCanDeactivate(prev, next) {
+        if (!this.formChange) {
+            return true;
+        }
+        this.showLeavePageDialog = true;
+        this.canDeactivate = new Promise(
+            (resolve, reject) => {
+                this.unloadPage = resolve;
+            }
+        );
+        return this.canDeactivate;
     }
 }

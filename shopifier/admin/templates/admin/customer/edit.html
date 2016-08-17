@@ -16,7 +16,7 @@
                 <div class="input-section">
                     <label class="input-box input">
                         <textarea autosize rows="1" [ngFormControl]="form.customer.controls.note" 
-                        (input)="formChange=true"
+                        (input)="onFormChange()"
                         placeholder="Add a note about {% verbatim %}{{ api_data.customer.first_name }}{% endverbatim %}">
                         </textarea>
                     </label>
@@ -200,3 +200,8 @@
         {% endwith %}
     </form>
 </modal-form>
+
+
+ <leave-page 
+    [parrent_component]="self">
+</leave-page>
