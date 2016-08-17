@@ -337,10 +337,8 @@ export class AdminTagsEdit {
 })
 export class AdminLeavePage {
     onClick(parrent_component, val) {
-        if (val)
-            parrent_component.unloadPage();
-        else
-            parrent_component.not_unloadPage();
-        parrent_component.leavePage = false;
+        parrent_component.unloadPage(val);
+        parrent_component.showLeavePageDialog = false;
+        parrent_component._admin.notNavigate = !val;
     }
 }

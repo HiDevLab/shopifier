@@ -84,6 +84,7 @@ export class AdminAccountProfile {
         this.obj_errors = {};
         this.new_avatar = null;
         this.formChange = false;
+        this._admin.notNavigate = false;
         this.emailChange = false;
         this.passwordChange = false;
         this.confirmPassword = false;
@@ -204,15 +205,17 @@ export class AdminAccountProfile {
             reader.onload = (event) => {
                 self.new_avatar =  event.target.result;
                 self.formChange = true;
+                self._admin.notNavigate = true;
             };
             reader.readAsDataURL(files[0]);
         }
     }
 
     deleteAvatar() {
-        if (this.user.avatar)
+        if (this.user.avatar) {
             this.formChange = true;
-
+            this._admin.notNavigate = true;
+        }
         this.new_avatar = null;
         this.user.avatar = null;
         this.lform.controls['avatar_image'].updateValue(null);
@@ -235,15 +238,19 @@ export class AdminAccountProfile {
         return d;
     }
 
+    onFormChange() {
+        this._admin.notNavigate = true;
+        this.formChange = true;
+    }
+
     routerCanDeactivate(prev, next) {
         if (!this.formChange) {
             return true;
         }
-        this.leavePage = true;
+        this.showLeavePageDialog = true;
         this.canDeactivate = new Promise(
             (resolve, reject) => {
                 this.unloadPage = resolve;
-                this.not_unloadPage = reject;
             }
         );
         return this.canDeactivate;

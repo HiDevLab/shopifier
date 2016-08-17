@@ -128,44 +128,51 @@ export class Admin {
     refreshCurrentUser() {
         this._auth.refreshCurrentUser().then(data => {this.currentUser = data;});
     }
- 
+
     onSelect(nav) {
-        this.selectedNav = nav;
         this.forceSubmenuShow=true;
-        if (this.selectedNav.submenu.length > 0) {
-            this.selectedSubNav = this.selectedNav.submenu[0];
-            this.onSelectSubNav(this.selectedSubNav);
+
+        let subnav = undefined;
+        if (nav.submenu.length > 0) {
+            subnav = nav.submenu[0];
+        }
+        this.changeNav(nav, subnav);
+
+        setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this);
+    }
+
+    onSelectSubNav(subnav) {
+        this.changeNav(this.selectedNav, subnav);
+    }
+
+    changeNav(nav, subnav) {
+        let url = (subnav) ? subnav.url : nav.url;
+        if (this.notNavigate) {
+            let self = this;
+            this._router.navigate([url])
+                .then(()=> {
+                    if (!self.notNavigate) {
+                        self.selectedSubNav = subnav;
+                        self.selectedNav = nav;
+                        if (subnav)
+                            self.headerNav = [nav, subnav];
+                        else
+                            self.headerNav = [nav];
+                    }
+                }
+            );
         }
         else {
-            this.selectedSubNav = undefined;
-            this.headerNav =[this.selectedNav];
-            if (this.selectedNav.url.indexOf('#') < 0) {
-                this._router.navigate([this.selectedNav.url])
-                    .then(()=> {
-                    })
-                   .catch(()=> {
-                    });
-                }
-        }
-        setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this); 
-    }
-    
-    onSelectSubNav(subnav) {
-        this.selectedSubNav = subnav;
-        if (subnav.type=='router')
-            this.headerNav = [this.selectedSubNav];
-        else 
-            this.headerNav = [this.selectedNav, this.selectedSubNav];
-        
-        if (subnav.url.indexOf('#') < 0) {
-            this._router.navigate([subnav.url])
-                .then(()=> {
-                })
-               .catch(()=> {
-                });
+            this.selectedSubNav = subnav;
+            this.selectedNav = nav;
+            if (subnav)
+                this.headerNav = [nav, subnav];
+            else
+                this.headerNav = [nav];
+            this._router.navigate([url]);
         }
     }
-    
+
     onSelectHeader(headnav) {
         let b = Object.is(headnav, this.selectedSubNav);
         this.onSelect(this.selectedNav);

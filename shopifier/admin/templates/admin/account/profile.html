@@ -68,13 +68,13 @@
                 <div class="input-box">                
                     <label class="input" [ngClass]="{err: obj_errors['first_name']}">
                         First Name
-                        <input [ngFormControl]="lform.controls['first_name']"  (input)="formChange=true">
+                        <input [ngFormControl]="lform.controls['first_name']"  (input)="onFormChange()">
                     </label>    
                 </div>
                 <div class="input-box">
                     <label class="input" [ngClass]="{err: obj_errors['last_name']}">
                         Last Name
-                        <input [ngFormControl]="lform.controls['last_name']" (input)="formChange=true">
+                        <input [ngFormControl]="lform.controls['last_name']" (input)="onFormChange()">
                     </label>   
                 </div>
             </div>
@@ -86,13 +86,13 @@
                 <div class="input-box" *ngIf="emailChange">
                     <label class="input" [ngClass]="{err: obj_errors['email']}">
                         Email address
-                        <input [ngFormControl]="lform.controls['email']" (input)="formChange=true">
+                        <input [ngFormControl]="lform.controls['email']" (input)="onFormChange()">
                     </label>   
                 </div>
                 <div class="input-box">
                     <label class="input">
                         Phone (optional)
-                        <input [ngFormControl]="lform.controls['phone']" (input)="formChange=true">
+                        <input [ngFormControl]="lform.controls['phone']" (input)="onFormChange()">
                     </label>
                 </div>   
             </div>
@@ -100,7 +100,7 @@
                 <div class="input-box">
                     <label class="input">
                         Personal website address (optional)
-                        <input [ngFormControl]="lform.controls['www_site']" (input)="formChange=true">
+                        <input [ngFormControl]="lform.controls['www_site']" (input)="onFormChange()">
                     </label>
                 </div>   
             </div>
@@ -108,7 +108,7 @@
                 <div class="input-box">
                     <label class="input">
                         Bio (optional)
-                        <textarea [ngFormControl]="lform.controls['bio']" (input)="formChange=true"></textarea>
+                        <textarea [ngFormControl]="lform.controls['bio']" (input)="onFormChange()"></textarea>
                     </label>
                 </div>   
             </div>
@@ -121,13 +121,13 @@
                 <div class="input-box">                
                     <label class="input" [ngClass]="{err: obj_errors['password1']}">
                         New password
-                        <input type="password" [ngFormControl]="lform.controls['password1']"  (input)="formChange=true">
+                        <input type="password" [ngFormControl]="lform.controls['password1']"  (input)="onFormChange()">
                     </label>    
                 </div>
                 <div class="input-box">
                     <label class="input" [ngClass]="{err: obj_errors['password2']}">
                         Confirm new password
-                        <input type="password" [ngFormControl]="lform.controls['password2']" (input)="formChange=true">
+                        <input type="password" [ngFormControl]="lform.controls['password2']" (input)="onFormChange()">
                     </label>   
                 </div>
             </div>
@@ -201,7 +201,7 @@
                 <div class="input-box">
                     <div class="input">
                         <input type="checkbox" id="checkbox-id"
-                        (change)="formChange=true">
+                        (change)="onFormChange()">
                         <label for="checkbox-id"><i class="fa fa-check" aria-hidden="true"></i>Limit admin access for {% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</label>
                     </div>
                 </div>    
