@@ -96,37 +96,37 @@ export class Admin {
     selectedNav = Nav[1];
     selectedSubNav = undefined;
     headerNav = [Nav[1]];
-    
+
     forceSubmenuShow = false;
     forcePopupShow = false;
-    
+
     currentUser = undefined;
 
     headerButtons = [];
-    
+
     footerShow = false;
     footerText = '';
     cacheNav = undefined;
     cacheSubNav = undefined;
     cacheHeaderNav = undefined;
-    
+
     static get parameters() {
         return [[Router], [AdminAuthService], [Location]];
     }
-        
+
     constructor(router, authService, location) {
-        this._auth = authService;//window.injector.get(AdminAuthService);
+        this._auth = authService;
         this._router = router;
         this._location = location;
-        
     }
-   
+
     ngOnInit() {
-        this._auth.getCurrentUser().then(data => {this.currentUser = data;} );
+        this._auth.getCurrentUser().then(data => {this.currentUser = data;});
     }
-    
+
     refreshCurrentUser() {
-        this._auth.refreshCurrentUser().then(data => {this.currentUser = data;});
+        this._auth.refreshCurrentUser()
+            .then(data => {this.currentUser = data;});
     }
 
     onSelect(nav) {
@@ -180,12 +180,11 @@ export class Admin {
             this.onSelectSubNav(headnav);
         }
     }
-    
+
     goProfile() {
         let link = ['Settings/Profile', {'id': this.currentUser.id }];
         this._router.navigate(link);
-    } 
-    
+    }
 
     currentUrl (addition) {
         let url = '/admin' + this._location.path();
@@ -198,7 +197,8 @@ export class Admin {
                     if (url.indexOf(s) + 1 ) {
                         this.selectedNav = this.navs[i];
                         this.selectedSubNav = this.selectedNav.submenu[j];
-                        this.headerNav = [this.selectedNav, this.selectedSubNav];
+                        this.headerNav = [
+                            this.selectedNav, this.selectedSubNav];
                     }
                 }
             }
@@ -208,21 +208,22 @@ export class Admin {
                     this.selectedNav = this.navs[i];
                     this.selectedSubNav = undefined;
                     this.headerNav = [this.selectedNav];
-                    setTimeout(() => { this.forceSubmenuShow = false;}, 800, this); 
+                    setTimeout(
+                        () => {this.forceSubmenuShow = false;}, 800, this);
                 }
             }
         }
-        
+
         if (addition) {
             addition.icon = this.headerNav[this.headerNav.length-1].icon;
             this.headerNav.push(addition);
         }
     }
-    
+
     footer(text) {
         this.footerShow = true;
         this.footerText = text;
-        setTimeout(() => {  this.footerShow = false;
-                        }, 1000, this);
+        setTimeout(
+            () => {this.footerShow = false;}, 1000, this);
     }
 }
