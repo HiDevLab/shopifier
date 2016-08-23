@@ -7,7 +7,9 @@ import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 
 import { AdminOrders } from './admin.orders'
-import { AdminProducts } from './admin.products'
+import { 
+    AdminProductsProducts, AdminProductsTransfers, AdminProductsCollections
+} from './admin.products'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
 import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
 
@@ -69,9 +71,21 @@ export class AdminSearch {
     },
 
     {
-        path : '/products/...',
+        path : '/products/collections',
+        name : 'Collections',
+        component : AdminProductsCollections
+    },
+
+    {
+        path : '/products',
         name : 'Products',
-        component : AdminProducts,
+        component : AdminProductsProducts
+    },
+
+    {
+        path : '/transfers',
+        name : 'Transfers',
+        component : AdminProductsTransfers
     },
 
     {
@@ -155,7 +169,10 @@ export class Admin {
                         self.selectedSubNav = subnav;
                         self.selectedNav = nav;
                         if (subnav)
-                            self.headerNav = [nav, subnav];
+                            if (subnav.type == 'router')
+                                self.headerNav = [subnav];
+                            else
+                                self.headerNav = [nav, subnav];
                         else
                             self.headerNav = [nav];
                     }
@@ -166,7 +183,10 @@ export class Admin {
             this.selectedSubNav = subnav;
             this.selectedNav = nav;
             if (subnav)
-                this.headerNav = [nav, subnav];
+                if (subnav.type == 'router')
+                    this.headerNav = [subnav];
+                else
+                    this.headerNav = [nav, subnav];
             else
                 this.headerNav = [nav];
             this._router.navigate([url]);
@@ -193,23 +213,30 @@ export class Admin {
         for (let i = 0; i < this.navs.length; i++) {
             if (this.navs[i].submenu.length > 0) {
                 for (let j = 0; j < this.navs[i].submenu.length; j++) {
-                    s = this.navs[i].submenu[j].url.toUpperCase();
-                    if (url.indexOf(s) + 1 ) {
+                    s = this.navs[i].submenu[j].uri.toUpperCase();
+                    if (url === s) {
                         this.selectedNav = this.navs[i];
                         this.selectedSubNav = this.selectedNav.submenu[j];
-                        this.headerNav = [
-                            this.selectedNav, this.selectedSubNav];
+                        if (this.selectedSubNav.type == 'router')
+                            this.headerNav = [this.selectedSubNav];
+                        else
+                            this.headerNav = [
+                                this.selectedNav, this.selectedSubNav];
+                        setTimeout(
+                            () => {this.forceSubmenuShow = true;}, 800, this);
+                        break;
                     }
                 }
             }
             else {
-                s = this.navs[i].url.toUpperCase();
-                if (url.indexOf(s) + 1 ) {
+                s = this.navs[i].uri.toUpperCase();
+                if (url === s) {
                     this.selectedNav = this.navs[i];
                     this.selectedSubNav = undefined;
                     this.headerNav = [this.selectedNav];
                     setTimeout(
                         () => {this.forceSubmenuShow = false;}, 800, this);
+                    break;
                 }
             }
         }

@@ -11,7 +11,10 @@ import { AdminLeavePage } from './components';
 
 
 //------------------------------------------------------------------------------
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+@Component({
+    selector: 'main', 
+    templateUrl: 'templates/temporarily.html',
+})
 export class AdminProductsProducts {
     component = 'Products';
     static get parameters() {return [[Admin]];}
@@ -37,39 +40,4 @@ export class AdminProductsTransfers {
     static get parameters() {return [[Admin]];}
     constructor(admin) {this._admin = admin;}
     ngOnInit() {this._admin.currentUrl();}
-}
-
-
-//------------------------------------------------------------------------------ 
-@Component({
-  selector: 'main',
-  template : '<router-outlet></router-outlet>',
-  directives: [ROUTER_DIRECTIVES],
-})
-@RouteConfig([
-     {
-         path : '/',
-         redirectTo: ['Products'],
-     }, 
-
-    {
-        path : '/products',
-        name : 'Products',
-        component : AdminProductsProducts
-    },
-
-    {
-        path : '/collections',
-        name : 'Collections',
-        component : AdminProductsCollections
-    },
-
-    {
-        path : '/transfers',
-        name : 'Transfers',
-        component : AdminProductsTransfers
-    },
-
-])
-export class AdminProducts {
 }
