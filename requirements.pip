@@ -27,3 +27,6 @@ simplegeneric==0.8.1
 six==1.10.0
 sqlparse==0.1.19
 traitlets==4.2.1
+pycountry-1.20
+django-debug-toolbar-1.5
+geoip2
