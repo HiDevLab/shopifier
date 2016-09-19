@@ -97,7 +97,7 @@ export class AdminAccountProfile {
 
         this._admin.currentUrl({
             'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
-        });
+        }, 2);
 
         this._admin.headerButtons = [];
         if (this.isAdmin && !this.isUser) {

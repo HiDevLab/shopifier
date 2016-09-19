@@ -206,8 +206,15 @@ export class Admin {
         this._router.navigate(link);
     }
 
-    currentUrl (addition) {
-        let url = '/admin' + this._location.path();
+    currentUrl (addition, levels) {
+        let url = '/admin';
+        if (levels) {
+            let navs = this._location.path().split('/', levels + 1);    
+            url += navs.join('/');
+        }
+        else {
+            url += this._location.path();
+        }
         url = url.toUpperCase()
         let s;
         for (let i = 0; i < this.navs.length; i++) {
