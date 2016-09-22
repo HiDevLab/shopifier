@@ -8,7 +8,7 @@ import { Nav, PopUpMenu } from './nav'
 
 import { AdminOrders } from './admin.orders'
 import { 
-    AdminProductsProducts, AdminProductsTransfers, AdminProductsCollections
+    Products, ProductsNew, AdminProductsTransfers, AdminProductsCollections
 } from './admin.products'
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
 import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
@@ -79,9 +79,13 @@ export class AdminSearch {
     {
         path : '/products',
         name : 'Products',
-        component : AdminProductsProducts
+        component : Products
     },
-
+    {
+        path : '/products/new',
+        name : 'NewProduct',
+        component : ProductsNew,
+    },
     {
         path : '/transfers',
         name : 'Transfers',

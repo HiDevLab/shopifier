@@ -1,0 +1,43 @@
+<div class="rows center p20" *ngIf="products">
+    <div class="form w24 pb20">
+        <ul class="row tabs left w24">
+            <li class="active"> All Products</li>
+        </ul>
+        <div class="list row ph20 mt20">
+            <div class="th ph10 pv17 tl w6" >
+                Product
+            </div>
+            <div class="th ph10 pv17 tl w4" >
+                Inventory
+            </div>
+            <div class="th ph10 pv17 tc w3" >
+                Type
+            </div>
+            <div class="th ph10 pv17 tc w4" >
+                Vendor
+            </div>
+        </div>
+        
+        <div class="list tr row mh20" *ngFor="let product of products">
+            <a class=" ph10 pv17 tl w6 ref"
+                (click)="onEditProduct(product)">
+                {% verbatim %}{{ product.title }}{% endverbatim %}
+            </a>
+            <div class="ph10 pv17 tl w4 color-subdued"
+                (click)="onEditProduct(product)">
+            </div>
+            <div class="ph10 pv17 tl w4 color-subdued"
+                (click)="onEditProduct(product)">
+            </div>
+            <div class="ph10 pv17 tc w3"
+                (click)="onEditProduct(product)">
+            </div>
+            <div class="ph10 pv17 tc w4"
+                (click)="onEditProduct(product)">
+                HiDevLab
+            </div>
+        </div>
+    </div>
+</div>
+
+<router-outlet></router-outlet>
