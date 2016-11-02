@@ -342,3 +342,20 @@ export class AdminLeavePage {
         parrent_component._admin.notNavigate = !val;
     }
 }
+
+
+//----------------------------------------------------------------RichTextEditor
+@Component({
+    selector:   'reach-text-editor',
+    templateUrl: 'templates/reach-text-editor.html',
+    inputs: ['parrent_component']
+})
+export class RichTextEditor {
+    ngOnInit() {
+        var editor = new wysihtml5.Editor("textarea", {
+            toolbar:        "toolbar",
+            useLineBreaks:  false
+        });
+ 
+    }
+}

@@ -8,9 +8,7 @@ import { Router, RouteParams, RouteConfig,
 
 import { Admin } from './admin';
 import { AdminAuthService, AdminUtils } from './admin.auth'
-import { 
-            Autosize, Popover, ArrayLengthPipe, AdminLeavePage, AdminTagsEdit
-        } from './components';
+import { RichTextEditor } from './components';
 import { BaseForm } from './admin.customers'
 
 
@@ -110,7 +108,7 @@ export class Products extends BaseForm {
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new.html',
-  directives: [FORM_DIRECTIVES, Autosize],
+  directives: [FORM_DIRECTIVES, RichTextEditor],
 })
 export class ProductsNew extends BaseForm {
 
@@ -124,7 +122,8 @@ export class ProductsNew extends BaseForm {
     }
 
     ngOnInit() {
-        this._admin.currentUrl({ 'url':'#', 'text': 'Add product'});
+        this.self = this; // for child components
+        this._admin.currentUrl({ 'url':'#', 'text': 'Add product'},1 );
 
         this._admin.headerButtons = [];
         this._admin.headerButtons.push({
