@@ -28,20 +28,20 @@ export class Autosize {
     onInput(textArea) {
         this.adjust();
     }
-  
+
     static get parameters() {
         return [[ElementRef]];
     }
-  
+
     constructor(element) {
         this.element = element.nativeElement;
     }
-  
+
     ngOnInit() {
         this.element.style.overflow = 'hidden';
         this.adjust();
     }
-  
+
     adjust() {
         this.element.style.height = 'auto';
         this.element.style.height = this.element.scrollHeight + 'px';
@@ -55,11 +55,11 @@ export class Autosize {
 export class Popover {
     @HostListener('window:click',['$event'])
     onClick(event) {
-        
-        if (!this.element.classList.contains('show'))
+        if (!this.element.classList.contains('show')) {
             return;
+        }
         let obj = event.target;
-        
+
 //      if(!this.childOf(obj, this.element)){
         if (this.element.previousElementSibling!=obj && !this.childOf(obj, this.element)) {
              this.element.classList.remove('show');
@@ -91,13 +91,12 @@ export class Popover {
         }
         return c === p;
     }
-
 }
 
 
 @Pipe({
     name: 'length',
-    pure: false,
+    pure: false
 })
 export class ArrayLengthPipe{
     transform(array, max) {
@@ -127,7 +126,7 @@ export class NotInPipe{
 
 @Pipe({
     name: 'stastartswith',
-    pure: false,
+    pure: false
 })
 export class StartsWithPipe{
     transform(tags, filter) {
@@ -140,13 +139,13 @@ export class StartsWithPipe{
         return tags.filter( value => {
             return value.startsWith(filter);
         });
-      }
+    }
 }
 
 
 //-----------------------------------------------------------------AdminTagsEdit
 @Component({
-    selector:   'tags',
+    selector: 'tags',
     templateUrl: 'templates/tags-edit.html',
     directives: [Popover],
     inputs: ['tags', 'all_tags','all_tags_statistic', 'parrent_component' ],
@@ -155,7 +154,7 @@ export class StartsWithPipe{
 export class AdminTagsEdit {
     all_tags = [];
     tag_input = '';
-    isAlphabetically = false ;
+    isAlphabetically = false;
     
     changePopover(event, display) {
         event.stopPropagation();
@@ -181,16 +180,17 @@ export class AdminTagsEdit {
     }
 
     onInputFocus(event) {
-        if (this.available().length == 0 && !this.tag_input)
+        if (this.available().length == 0 && !this.tag_input) {
             return;
+        }
         this.changePopover(event, 'show');
         this.current_i=0;
     }
 
     pushTag(tag) {
-        if (!tag)
+        if (!tag) {
             return;
-
+        }
         let out = [];
 
         let tags = tag.split(',');
@@ -198,8 +198,9 @@ export class AdminTagsEdit {
         
         tags.forEach((tag)=> {
             let t = tag.trim();
-            if (!t) 
+            if (!t) {
                 return;
+            }
             if (this.tags.indexOf(t) > -1) {
                 this.tooltipError = true;
                 out.push(t);
@@ -219,11 +220,10 @@ export class AdminTagsEdit {
     onKeyDown(event) {
         this.tooltipError = false; 
         if (['Comma'].includes(event.code)) {
-            let t = ''
+            let t = '';
             if (this.current_i < 0) {
                 t = this.tag_input;
-            }
-            else {
+            } else {
                 t = this.available()[this.current_i];
             }
             this.tag_input = this.pushTag(t);
@@ -256,16 +256,16 @@ export class AdminTagsEdit {
         if (event.code == 'Comma') {
             this.current_i = 0;
             this.tag_input = '';
-            if (this.available().length == 0)
+            if (this.available().length == 0) {
                 this.changePopover(event, 'hide');
+            }
             return;
         }
         if (['Enter', 'NumpadEnter'].includes(event.code)) {
             let t = ''
             if (this.current_i < 0) {
                 t = this.tag_input;
-            }
-            else {
+            } else {
                 t = this.available()[this.current_i];
             }
             this.tag_input = this.pushTag(t);
@@ -301,8 +301,9 @@ export class AdminTagsEdit {
         this.tooltipError = false;
         event.stopPropagation();
         this.tag_input = this.pushTag(tag);
-        if (this.available().length == 0)
+        if (this.available().length == 0) {
             this.changePopover(event, 'hide');
+        }
         this.parrent_component.formChange = true;
     }
 
@@ -310,10 +311,12 @@ export class AdminTagsEdit {
         let tags = this.all_tags_statistic.sort((a,b)=>{
             let _a = a[index];
             let _b = b[index];
-            if (_a == _b)
+            if (_a == _b) {
                 return 0;
-            if (_a < _b )
+            }
+            if (_a < _b ) {
                 return -1;
+            }
             return 1;
         });
 
@@ -331,7 +334,7 @@ export class AdminTagsEdit {
 
 //----------------------------------------------------------------AdminLeavePage
 @Component({
-    selector:   'leave-page',
+    selector: 'leave-page',
     templateUrl: 'templates/leave-page.html',
     inputs: ['parrent_component']
 })
@@ -346,16 +349,15 @@ export class AdminLeavePage {
 
 //----------------------------------------------------------------RichTextEditor
 @Component({
-    selector:   'reach-text-editor',
+    selector: 'reach-text-editor',
     templateUrl: 'templates/reach-text-editor.html',
     inputs: ['parrent_component']
 })
 export class RichTextEditor {
     ngOnInit() {
         var editor = new wysihtml5.Editor("textarea", {
-            toolbar:        "toolbar",
-            useLineBreaks:  false
+            toolbar: 'toolbar',
+            useLineBreaks: false
         });
- 
     }
 }
