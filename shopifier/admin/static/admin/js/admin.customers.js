@@ -5,13 +5,13 @@ import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder,
 import { Component, Pipe } from 'angular2/core';
 import { Http } from 'angular2/http'
 import { Router, RouteParams, RouteConfig,
-            ROUTER_DIRECTIVES } from 'angular2/router';
+    ROUTER_DIRECTIVES } from 'angular2/router';
 
 import { Admin } from './admin';
 import { AdminAuthService, AdminUtils } from './admin.auth'
 import { 
-            Autosize, Popover, ArrayLengthPipe, AdminLeavePage, AdminTagsEdit
-        } from './components';
+    Autosize, Popover, ArrayLengthPipe, AdminLeavePage, AdminTagsEdit
+} from './components';
 
 
 @Pipe({
@@ -53,7 +53,7 @@ export class BaseForm {
                 },
                 (err) => {
                     this.obj_errors = err; 
-                    this.errors = this._utils.to_array(err.json());
+//                     this.errors = this._utils.to_array(err.json());
                 },
             );
     }
@@ -470,13 +470,12 @@ export class CustomersNew extends BaseForm {
 
 //-----------------------------------------------------------------CustomersEdit
 @Component({
-  selector: 'main',
-  templateUrl : 'templates/customer/edit.html',
-  directives:   [
-                    FORM_DIRECTIVES, Autosize, Popover, AdminTagsEdit,
-                    AdminLeavePage
-                ],
-  pipes: [ProvincePipe]
+    selector: 'main',
+    templateUrl : 'templates/customer/edit.html',
+    directives: [
+        FORM_DIRECTIVES, Autosize, Popover, AdminTagsEdit, AdminLeavePage
+    ],
+    pipes: [ProvincePipe]
 })
 export class CustomersEdit extends BaseForm{
     canDeactivate = undefined;

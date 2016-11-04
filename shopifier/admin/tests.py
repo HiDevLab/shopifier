@@ -11,8 +11,8 @@ from rest_framework.status import (
         HTTP_401_UNAUTHORIZED
     )
 
-from account.base_test import BaseAccountTest
-from account.models import User
+from shopifier_admin.base_test import BaseAccountTest
+from shopifier_admin.models import User
 
 
 class ModelAccountTests(TestCase):

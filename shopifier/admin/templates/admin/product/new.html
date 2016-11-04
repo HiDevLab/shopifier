@@ -6,10 +6,15 @@
                 {% include "admin/input-section.html" with control1="title" placeholder1="Short Sleeve T-Shirt" %}
                 {% endwith %}
                 <div class="input-section">
-                    <reach-text-editor   
+                    <reach-text-editor
                         [parrent_component]="self"></reach-text-editor> 
                 </div>
             </div>
+            <form class="form vw8 pt15 pb10" *ngIf="form.customer">
+                <div class="input-section">
+                    {% include "admin/textarea.html" with group="customer" control="note" placeholder="Add a note to this customer…" rows="1" %}
+                </div>
+            </form>
         </div>
     </div>
  </div>
@@ -19,4 +24,3 @@
     parserRules:  wysihtml5ParserRules
   });
 </script>
-    

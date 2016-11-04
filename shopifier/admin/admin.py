@@ -1,15 +1,15 @@
 from django import forms
-from django.contrib import admin
+from django import contrib
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from account.models import User, UserLog
+from shopifier.admin.models import User, UserLog
 
 
-class UserLogInline(admin.TabularInline):
+class UserLogInline(contrib.admin.TabularInline):
     model = UserLog
     extra = 5
     readonly_fields = ('is_active', 'ip', 'visit_datetime')
@@ -47,10 +47,10 @@ class UserCreationForm(forms.ModelForm):
 
 class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField(
-        label=_("Password"),
+        label=_('Password'),
         help_text=_("Raw passwords are not stored, so there is no way to see "
                     "this user's password, but you can change the password "
-                    "using <a href=\"../password/\">this form</a>.")
+                    "using <a href=\'../password/\'>this form</a>.")
     )
 
     class Meta:
@@ -58,16 +58,16 @@ class UserChangeForm(forms.ModelForm):
         fields = '__all__'
 
     def clean_password(self):
-        """
-        Regardless of what the user provides, return the initial value.
+        """Regardless of what the user provides, return the initial value.
         This is done here, rather than on the field, because the
-        field does not have access to the initial value
-        """
+        field does not have access to the initial value"""
+
         return self.initial["password"]
 
 
 class UserAdmin(BaseUserAdmin):
-    # The forms to add and change user instances
+    """The form to add and change user instances"""
+
     form = UserChangeForm
     add_form = UserCreationForm
     inlines = [UserLogInline]
@@ -100,7 +100,7 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 # Now register the new UserAdmin...
-admin.site.register(User, UserAdmin)
+contrib.admin.site.register(User, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
-admin.site.unregister(Group)
+contrib.admin.site.unregister(Group)

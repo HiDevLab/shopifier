@@ -13,9 +13,7 @@ class TagField(ArrayField):
         super(TagField, self).__init__(**kwargs)
 
     def pre_save(self, model_instance, add):
-        '''
-        Trim whitspace and deduplicate values.
-        '''
+        """Trim whitspace and deduplicate values."""
         values = super(TagField, self).pre_save(model_instance, add)
         if values is None:
             return []
@@ -25,9 +23,7 @@ class TagField(ArrayField):
         return tuple(values)
 
     def contribute_to_class(self, cls, name, virtual_only=False):
-        '''
-        Add a 'get_{name}_most_like' method.
-        '''
+        """Add a 'get_{name}_most_like' method."""
         super(TagField, self).contribute_to_class(cls, name, virtual_only)
 
         def get_most_like_by_FIELD(self, exclude_self=True, field=name):
@@ -69,9 +65,7 @@ class Intersect(models.Func):
 
 
 class TagQuerySet(QuerySet):
-    '''
-    Mix into your tagged model to provide extra helpers
-    '''
+    """Mix into your tagged model to provide extra helpers"""
     def all_tag_values(self, name):
         return (
             self.order_by()

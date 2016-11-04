@@ -351,11 +351,12 @@ export class AdminLeavePage {
 @Component({
     selector: 'reach-text-editor',
     templateUrl: 'templates/reach-text-editor.html',
+    directives: [Autosize],
     inputs: ['parrent_component']
 })
 export class RichTextEditor {
     ngOnInit() {
-        var editor = new wysihtml5.Editor("textarea", {
+        var editor = new wysihtml5.Editor('editor', {
             toolbar: 'toolbar',
             useLineBreaks: false
         });

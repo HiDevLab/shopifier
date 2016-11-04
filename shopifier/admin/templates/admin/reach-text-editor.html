@@ -1,59 +1,40 @@
-<style>
-  small {
-    display: block;
-    margin-top: 40px;
-    font-size: 9px;
-  }
-  
-  small,
-  small a {
-    color: #666;
-  }
-  
-  a {
-    color: #000;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  
-  #toolbar [data-wysihtml5-action] {
-    float: right;
-    margin-right: 10px;
-  }
-  
-  #toolbar,
-  textarea {
-    width: 600px;
-    padding: 5px;
-  }
-  
-  textarea {
-    height: 280px;
-    border: 2px solid green;
-    box-sizing: boder-box;
-    -webkit-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    font-family: Verdana;
-    font-size: 11px;
-  }
-  
-  textarea:focus {
-    color: black;
-    border: 2px solid black;
-  }
-  
-  .wysihtml5-command-active {
-    font-weight: bold;
-  }
-</style>
-
-<form>
-  <div id="toolbar">
-    <a data-wysihtml5-command="bold" title="CTRL+B">bold</a> |
-    <a data-wysihtml5-command="italic" title="CTRL+I">italic</a>
-    <a data-wysihtml5-action="change_view">switch to html view</a>
-  </div>
-  <textarea id="textarea" placeholder="Enter text ..."></textarea>
-  <br><input type="reset" value="Reset form!">
-</form>
+<label class="input-box input">
+    Description
+    <form class="edit-box">
+        <div id="toolbar" class="row" class="edit-toolbar">
+            <div class="row">
+                <div class="tool left edy-tb-menucontainer">
+                    <button class="edy-tb-act edy-tb-paragraph edy-tb-g" data-behavior="showstyles" title="Styles">
+                        <svg width="21" height="21" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.5 17.5v-12.5h1.5v12.5h1.5v-14h-4.5c-.714 0-3.5 0-3.5 3s2.5 3 3.5 3v8h1.5z" fill="#1B2124"></path>
+                        </svg>
+                    </button>
+                    <div class="edy-tb-stylemenu" style="display: none;">
+                      <button class="edy-tb-cmd edy-tb-style-h1" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Title</button>
+                      <button class="edy-tb-cmd edy-tb-style-h2" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Heading</button>
+                      <button class="edy-tb-cmd edy-tb-style-h3" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Subheading</button>
+                      <button class="edy-tb-cmd edy-tb-style-p" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="p" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Normal text</button>
+                      <button class="edy-tb-cmd edy-tb-style-pre" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="pre" style="font-weight: 300; font-family: monospace;">Fixed width</button>
+                      <button class="edy-tb-cmd edy-tb-style-blockquote" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="blockquote">Quote block</button>
+                    </div>
+                  </div>
+                
+                
+                
+                <div class="tool" data-wysihtml5-command="bold" title="CTRL+B">
+                    <span class="fa fa-bold" aria-hidden="true"></span>
+                </div>
+                <div class="tool"data-wysihtml5-command="italic" title="CTRL+I">
+                    <span class="fa fa-italic" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="row right w24">
+                <div class="tool left-right" data-wysihtml5-action="change_view">
+                    <span class="fa fa-angle-left" aria-hidden="true"></span>
+                    <span class="fa fa-angle-right" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+        <textarea id="editor" autosize rows="10" class="edit-textarea" placeholder="Enter text ..."></textarea>
+    </form>
+</label>
