@@ -31,11 +31,9 @@ nav {
         &.selected-with-submenu {
             background: $background-nav-icon-color;
             width: 56px;
-            
             > li.selected {
                 background: $background-nav-icon-color;
             }
-            
             &:not(.force-submenu-show):hover {
                 transition-duration: 300ms;
                 width: 100%;
@@ -45,9 +43,8 @@ nav {
                     background: $background-nav-selected-color;
                 }
             }
-        
             &.force-submenu-show, &:not(:hover) {
-                background: $background-nav-icon-color;                                                     
+                background: $background-nav-icon-color;
                 width: 56px;
                 transition-duration: 300ms;
                 > li.selected {
@@ -55,12 +52,12 @@ nav {
                 }
             }
         }
-        
+
         > h1 {
-                font-style: italic;
-                font-size: 26px;
-                background: $background-nav-icon-color;
-                color: $color-nav-selected;
+            font-style: italic;
+            font-size: 26px;
+            background: $background-nav-icon-color;
+            color: $color-nav-selected;
             a {
                 text-decoration: none;
                 line-height: 56px;
@@ -69,9 +66,8 @@ nav {
                 color: inherit;
                 overflow: hidden;
                 white-space: nowrap;
-                
                 i {
-                    display: inline-block;        
+                    display: inline-block;
                     width: 26px + 15px;
                     color: $shopify-color;
                     font-size: 26px;
@@ -80,31 +76,27 @@ nav {
                     vertical-align: top;
                 }
             }
-        }    
-        
+        }
+
         > h3 {
-                font-size: $shopify-font-size;
-                text-transform: uppercase;
-                border-bottom: 1px solid  $background-nav-icon-color;
-                line-height: 56px;
-                padding: 0 10px 0 20px;
-        }    
-    
+            font-size: $shopify-font-size;
+            text-transform: uppercase;
+            border-bottom: 1px solid  $background-nav-icon-color;
+            line-height: 56px;
+            padding: 0 10px 0 20px;
+        }
+
         > li {
-            
             a {
                 font-size: $shopify-font-size;
                 text-decoration: none;
                 line-height: 40px;
-                display: block;        i {
-            //color: $color-header-ref;
-        }
-
+                display: block;
                 padding: 0 10px 0 20px;
                 color: inherit;
                 overflow: hidden;
                 white-space: nowrap;
-                
+
                 i {
                     display: inline-block;
                     width: 26px + 15px;
@@ -114,11 +106,10 @@ nav {
                     vertical-align: top;
                 }
             }
-            
+
             &.with-submenu {
                 > a {
                     position: relative;
-                    
                     &:AFTER {
                         content: "\f105";
                         position: absolute;
@@ -128,11 +119,9 @@ nav {
                     }
                 }
             }
-            
             &:HOVER, &.selected { 
                 color: $color-nav-selected;
             }
-        
             &.account {
                 cursor: pointer; cursor: hand;
                 //line-height: 40px;
@@ -142,7 +131,7 @@ nav {
                 overflow: hidden;
                 white-space: nowrap;
                 display: flex;
-                
+
                 > span {
                     position: relative;
                     padding: 10px 0 0 0;   
@@ -164,51 +153,46 @@ nav {
                         bottom: 10px;
                         font-family: FontAwesome;
                     }
-                
-                }    
-            
+                }
             }
-        
-        } 
-        
+        }
+
         popup {
             display: none;
             overflow: hidden;
-             
             &.show {
                 display: block;
                 overflow: hidden;
             }
-            
-            >   div {
+
+            > div {
                 position: absolute;
                 border-radius: 3px;
                 left: 33px;
                 bottom: 60px;
                 display: block;
                 background: $background-nav-popup-menu;
-                               
+
                 div {
-                    width: 143px;    
+                    width: 143px;
                     padding: 10px 10px 10px 10px;
-                    
+
                     li {
                         a {
-                            
                             line-height: 28px;
-                            padding: 0;                                      
+                            padding: 0;
                             padding: 5px 5px 20px 5px;
                             text-decoration: none;
                             color: $color-nav-popup-menu;
-                            
+
                             &:hover {
                                 text-decoration: underline;
                                 cursor: pointer; cursor: hand;
                             }
                         }
-                    } 
+                    }
                     &:last-of-type {
-                        border-top: 1px solid $border-popup-menu-color;                        
+                        border-top: 1px solid $border-popup-menu-color;
                     }
                 }
             }
@@ -220,36 +204,30 @@ nav {
                 border: 10px solid transparent; 
                 border-top: 10px solid $background-nav-popup-menu;
                 height: 0px; 
-                width: 0px;     
+                width: 0px;
             }
         }
-    }                   
+    }
 }
 
 footer {
     flex: 1 1 0;
     align-items: center;
-    
     background: $background-footer-color;
     color: $footer-color;
-    
     bottom: 0;
     right: 0;
     left: $nav-width;
-    
     display: flex;
     justify-content: center;
-    
     position: fixed;
     overflow-y: hidden;
     &.hidden {
         transition-duration: 300ms;
         height: 0;
     }
-    
     &.show {
         transition-duration: 300ms;
         height: 80px;
     }
 }
-

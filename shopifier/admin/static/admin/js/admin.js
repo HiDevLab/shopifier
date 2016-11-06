@@ -155,7 +155,6 @@ export class Admin {
             subnav = nav.submenu[0];
         }
         this.changeNav(nav, subnav);
-
         setTimeout(() => {this.forceSubmenuShow = false;}, 1000, this);
     }
 

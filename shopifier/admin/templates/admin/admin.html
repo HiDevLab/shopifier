@@ -13,8 +13,9 @@
              </a>
         </li>
         <li class="account"  *ngIf="currentUser"
-            (click)="forcePopupShow=true">
-            
+            (click)="forcePopupShow=true;"
+            (mouseover)="forceSubmenuShow=false;">
+
             <div class="avatar" *ngIf="currentUser">
                 {% verbatim %}{{ currentUser.first_name[0] + currentUser.last_name[0] }}{% endverbatim %}
                 <img *ngIf="currentUser.avatar" src="{% verbatim %}{{ currentUser.avatar }}{% endverbatim %}">
@@ -23,10 +24,8 @@
                 <span> Shopifier</span>
                  <span> {% verbatim %}{{ currentUser.first_name + ' ' + currentUser.last_name }}{% endverbatim %}</span>
             </span>
-            
-        
         </li>
-        
+
         <popup *ngIf="currentUser" [ngClass]="{show: forcePopupShow }">
             <div>
                 <div>
@@ -49,7 +48,7 @@
                     </ul>
                 </div>
             </div>
-            <tringle></tringle>   
+            <tringle></tringle> 
         </popup>
     </ul>
     <ul class="menu submenu" *ngIf="selectedNav.submenu.length > 0">
