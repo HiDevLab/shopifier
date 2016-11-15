@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild, AfterViewInit, AfterContentComponent, 
+import { Component, ElementRef, HostListener,
          Directive, Pipe} from 'angular2/core';
 import { CommonModule, ORM_PROVIDERS, FORM_DIRECTIVES } from 'angular2/common';
 //------------------------------------------------------------------------------
@@ -80,9 +80,9 @@ export class Popover {
             left = base_element.offsetLeft;
         }
         if (!this.classList.contains('left') && !this.classList.contains('right')) {
-            left = left + base_element.clientWidth/2 - this.clientWidth/2;
+            left = left + base_element.offsetWidth/2 - this.clientWidth/2;
         } else if (this.classList.contains('right')) {
-            left = left + base_element.clientWidth - this.clientWidth;
+            left = left + base_element.offsetWidth - this.offsetWidth;
         }
         this.style.left = left;
     }
@@ -95,23 +95,6 @@ export class Popover {
         this.element = element.nativeElement;
         this.count_click = 0;
         this.element.onshow = this.onShow;
-    }
-
-    ngAfterViewInit() {
-        // starting point elemevnt with id = base-... OR parrent element
-        let base_element = document.querySelector(`#base-${this.element.id}`);
-        let left = 0;
-        if (!base_element) {
-            base_element = this.element.parentElement;
-        } else {
-            left = base_element.offsetLeft;
-        }
-        if (!this.element.classList.contains('left') && !this.element.classList.contains('right')) {
-            left = left + base_element.offsetWidth/2 - this.element.offsetWidth/2;
-        } else if (this.element.classList.contains('right')) {
-            left = left + base_element.offsetWidth - this.element.offsetWidth;
-        }
-        this.element.style.left = left;
     }
 
     childOf(c, p) {
