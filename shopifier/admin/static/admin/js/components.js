@@ -1,6 +1,6 @@
-import { Component, ElementRef, HostListener,
-         Directive, Pipe } from 'angular2/core';
-import { ORM_PROVIDERS, FORM_DIRECTIVES } from 'angular2/common';
+import { Component, ElementRef, HostListener, ViewChild, AfterViewInit, AfterContentComponent, 
+         Directive, Pipe} from 'angular2/core';
+import { CommonModule, ORM_PROVIDERS, FORM_DIRECTIVES } from 'angular2/common';
 //------------------------------------------------------------------------------
 // Steve Papa
 //------------------------------------------------------------------------------
@@ -70,6 +70,23 @@ export class Popover {
         }
     }
 
+    onShow(event) {
+        // starting point elemevnt with id = base-... OR parrent element
+        let base_element = document.querySelector(`#base-${this.id}`);
+        let left = 0;
+        if (!base_element) {
+            base_element = this.parentElement;
+        } else {
+            left = base_element.offsetLeft;
+        }
+        if (!this.classList.contains('left') && !this.classList.contains('right')) {
+            left = left + base_element.clientWidth/2 - this.clientWidth/2;
+        } else if (this.classList.contains('right')) {
+            left = left + base_element.clientWidth - this.clientWidth;
+        }
+        this.style.left = left;
+    }
+
     static get parameters() {
         return [[ElementRef]];
     }
@@ -77,14 +94,26 @@ export class Popover {
     constructor(element) {
         this.element = element.nativeElement;
         this.count_click = 0;
+        this.element.onshow = this.onShow;
     }
-  
-    ngOnInit() {
-        let s = window.getComputedStyle(this.element.parentElement);//parentElement);previousElementSibling
-        let left = `calc( 50% - (${s.width})/2 - ${s.paddingRight} - ${s.marginRight})`;
+
+    ngAfterViewInit() {
+        // starting point elemevnt with id = base-... OR parrent element
+        let base_element = document.querySelector(`#base-${this.element.id}`);
+        let left = 0;
+        if (!base_element) {
+            base_element = this.element.parentElement;
+        } else {
+            left = base_element.offsetLeft;
+        }
+        if (!this.element.classList.contains('left') && !this.element.classList.contains('right')) {
+            left = left + base_element.offsetWidth/2 - this.element.offsetWidth/2;
+        } else if (this.element.classList.contains('right')) {
+            left = left + base_element.offsetWidth - this.element.offsetWidth;
+        }
         this.element.style.left = left;
     }
-  
+
     childOf(c, p) {
         while(c !== p && c) {
             c = c.parentNode;
@@ -351,14 +380,78 @@ export class AdminLeavePage {
 @Component({
     selector: 'reach-text-editor',
     templateUrl: 'templates/reach-text-editor.html',
-    directives: [Autosize],
+    directives: [Autosize, Popover],
     inputs: ['parrent_component']
 })
 export class RichTextEditor {
+    showHtml = false;
+    formats = [
+        {title: 'Paragraph', tag: 'p'},
+        {title: 'Heading 1', tag: 'h1'},
+        {title: 'Heading 2', tag: 'h2'},
+        {title: 'Heading 3', tag: 'h3'},
+        {title: 'Heading 4', tag: 'h4'},
+        {title: 'Heading 5', tag: 'h5'},
+        {title: 'Heading 6', tag: 'h6'},
+        {title: 'Blockquote ', tag: 'blockquote'}
+    ];
+    alignments = [
+        {title: 'Align left', command: 'justifyLeft'},
+        {title: 'Align center', command: 'justifyCenter'},
+        {title: 'Align right', command: 'justifyRight'},
+    ];
+
     ngOnInit() {
-        var editor = new wysihtml5.Editor('editor', {
+        this.editor = new wysihtml5.Editor('editor', {
             toolbar: 'toolbar',
-            useLineBreaks: false
+            parserRules: wysihtml5ParserRules
         });
+        this.popover_formatting = document.querySelector('#formatting-popover');
+        this.popover_alignment = document.querySelector('#alignment-popover');
+        
+        let self = this;
+        this.editor.currentView.sandbox.getDocument().addEventListener("click", () => {
+            self.hidePopovers()
+        });
+    }
+
+    switchPopover(popover) {
+        let show = popover.classList.contains('hide');
+        popover.classList.remove(show ? 'hide' : 'show');
+        popover.classList.add(show ? 'show' : 'hide');
+        if (show) {
+            let event = new Event('show');
+            popover.dispatchEvent(event);
+        }
+    }
+
+    onFormatting(event){
+        event.preventDefault();
+        event.stopPropagation();
+        this.hidePopovers(this.popover_formatting);
+        this.switchPopover(this.popover_formatting);
+    }
+    onAlignment(event){
+        event.preventDefault();
+        event.stopPropagation();
+        this.hidePopovers(this.popover_alignment);
+        this.switchPopover(this.popover_alignment);
+    }
+    hidePopover(popover) {
+        if (popover.classList.contains('show')) {
+            popover.classList.remove('show');
+            popover.classList.add('hide');
+        }
+    }
+    hidePopovers(exclude) {
+        let popovers = [this.popover_formatting, this.popover_alignment]
+        for (let i in popovers) {
+            if (popovers[i] != exclude) {
+                this.hidePopover(popovers[i]);
+            }
+        }
+    }
+    hideView(){
+        this.showHtml = !this.showHtml;
     }
 }

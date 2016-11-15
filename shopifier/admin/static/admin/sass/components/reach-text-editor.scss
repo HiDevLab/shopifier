@@ -29,12 +29,32 @@ reach-text-editor {
         display: flex;
         border-bottom: 1px solid $input-border;
         background: $btn-disabled-background;
+        font-size: 14px;
+        > .hide {
+            display: none;
+        }
+        popover {
+            div {
+                ul {
+                    padding: 5px 0;
+                    li {
+                        padding: 5px 40px 5px 20px;
+                        &:hover {
+                            cursor: pointer; cursor: hand;
+                            background: $btn-blue-background;
+                            color: $btn-blue-color;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .edit-textarea {
         flex: 1 1 0;
         width: 100%;
-        padding: 0 10px 0 10px;
+        min-height: 280px;
+        padding: 10px;
         font-size: $shopify-font-size;
         font-weight: normal;
         display: flex;
@@ -47,12 +67,12 @@ reach-text-editor {
 
 .tool {
 //     display: inline-block;
-//     position: relative;
-//     overflow: hidden;
-    padding: 6px 8px 0;
+    position: relative;
+    padding: 8px 10px 0;
 //     box-sizing: border-box;
 //     height: auto;
     font-family: FontAwesome;
+    font-weight: 100;
     margin: 4px 0;
 
 //     text-align: center;
@@ -61,6 +81,7 @@ reach-text-editor {
 //     white-space: nowrap;
 
     background: $btn-background;
+    color: $input-color;
     border-width: 1px 0 1px 1px;
     border-style: solid;
     border-color: $input-border;

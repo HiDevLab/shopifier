@@ -2,39 +2,70 @@
     Description
     <form class="edit-box">
         <div id="toolbar" class="row" class="edit-toolbar">
-            <div class="row">
-                <div class="tool left edy-tb-menucontainer">
-                    <button class="edy-tb-act edy-tb-paragraph edy-tb-g" data-behavior="showstyles" title="Styles">
-                        <svg width="21" height="21" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.5 17.5v-12.5h1.5v12.5h1.5v-14h-4.5c-.714 0-3.5 0-3.5 3s2.5 3 3.5 3v8h1.5z" fill="#1B2124"></path>
-                        </svg>
-                    </button>
-                    <div class="edy-tb-stylemenu" style="display: none;">
-                      <button class="edy-tb-cmd edy-tb-style-h1" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Title</button>
-                      <button class="edy-tb-cmd edy-tb-style-h2" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Heading</button>
-                      <button class="edy-tb-cmd edy-tb-style-h3" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Subheading</button>
-                      <button class="edy-tb-cmd edy-tb-style-p" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="p" style="font-weight: 300; font-family: Montserrat, 'Helvetica Neue', Helvetica, Arial, sans-serif;">Normal text</button>
-                      <button class="edy-tb-cmd edy-tb-style-pre" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="pre" style="font-weight: 300; font-family: monospace;">Fixed width</button>
-                      <button class="edy-tb-cmd edy-tb-style-blockquote" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="blockquote">Quote block</button>
+            <div class="row" [ngClass]="{hide:showHtml}">
+                <div id="base-formatting-popover" class="tool row left" title="Formatting"
+                (click)="onFormatting($event)">
+                    <span class="fa fa-font" aria-hidden="true"></span>
+                    <span class="fa fa-caret-down ml4" aria-hidden="true"></span>
+                </div>
+                <popover id="formatting-popover" class="down left color-default hide mt18">
+                    <div data-wysihtml5-command-group="formatBlock">
+                       <ul class="rows">
+                       {% verbatim %}
+                            <li  *ngFor="let format of formats" data-wysihtml5-command="formatBlock" attr.data-wysihtml5-command-value="{{ format.tag }}" unselectable="on">{{ format.title }}</li>
+                        {% endverbatim %}
+                        </ul>
                     </div>
-                  </div>
+                </popover>
                 
-                
-                
-                <div class="tool" data-wysihtml5-command="bold" title="CTRL+B">
+                <div class="tool" data-wysihtml5-command="bold" title="Bold" unselectable="on">
                     <span class="fa fa-bold" aria-hidden="true"></span>
                 </div>
-                <div class="tool"data-wysihtml5-command="italic" title="CTRL+I">
+                <div class="tool"data-wysihtml5-command="italic" title="Italic" unselectable="on">
                     <span class="fa fa-italic" aria-hidden="true"></span>
                 </div>
+                <div class="tool right"data-wysihtml5-command="underline" title="Underline" unselectable="on">
+                    <span class="fa fa-underline" aria-hidden="true"></span>
+                </div>
+                <div class="tool left"data-wysihtml5-command="insertUnorderedList" title="Bulleted list" unselectable="on">
+                    <span class="fa fa-list-ul" aria-hidden="true"></span>
+                </div>
+                <div class="tool"data-wysihtml5-command="insertOrderedList" title="Numbered list" unselectable="on">
+                    <span class="fa fa-list-ol" aria-hidden="true"></span>
+                </div>
+                <div class="tool"data-wysihtml5-command="Outdent" title="Outdent" unselectable="on">
+                    <span class="fa fa-outdent" aria-hidden="true"></span>
+                </div>
+                <div class="tool"data-wysihtml5-command="Indent" title="Indent" unselectable="on">
+                    <span class="fa fa-indent" aria-hidden="true"></span>
+                </div>
+                <div id="base-alignment-popover" class="tool row left" title="Alignment"
+                (click)="onAlignment($event)">
+                    <span class="fa fa-align-left" aria-hidden="true"></span>
+                    <span class="fa fa-caret-down ml4" aria-hidden="true"></span>
+                </div>
+                <popover id="alignment-popover" class="down right color-default hide mt18" data-behavior="showstyles">
+                    <div>
+                       <ul class="rows">
+                       {% verbatim %}
+                            <li *ngFor="let align of alignments" attr.data-wysihtml5-command="{{ align.command }}" unselectable="on">{{ align.title }}</li>
+                        {% endverbatim %}
+                        </ul>
+                    </div>
+                </popover>
             </div>
+            
             <div class="row right w24">
-                <div class="tool left-right" data-wysihtml5-action="change_view">
+                <div class="tool left-right" data-wysihtml5-action="change_view" unselectable="on" (click)="hideView();">
                     <span class="fa fa-angle-left" aria-hidden="true"></span>
                     <span class="fa fa-angle-right" aria-hidden="true"></span>
                 </div>
             </div>
         </div>
-        <textarea id="editor" autosize rows="10" class="edit-textarea" placeholder="Enter text ..."></textarea>
+        <!-- <textarea id="editor" autosize rows="10" class="edit-textarea" placeholder="Enter text ...">
+        </textarea> -->
+        <div id="editor" data-placeholder="Enter text ..." class="edit-textarea autosize wysihtml-sandbox wysihtml-editor" contenteditable="true">
+        </div>
     </form>
 </label>
+
