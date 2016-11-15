@@ -57,7 +57,7 @@ $color-avatar-empty: #ffffff;
 
 
 //buttons
-$btn-blue-background: #479ccf;
+$btn-blue-background: #0069A6;
 $btn-blue-hover-background: #4293c2;
 $btn-blue-color: #ffffff;
 
@@ -458,6 +458,8 @@ $list-color-hover: #0078bd;
 
 
 popover {
+    font-family: $shopify-font-family;
+    white-space: nowrap;
     cursor: default;
     z-index: 10;
     position: absolute;
@@ -515,6 +517,16 @@ popover {
         bottom: 45px;
         &::before {
             bottom: -7px;
+        }
+    }
+    &.left {
+        &::before {
+            left: 18px;
+        }
+    }
+    &.right {
+        &::before {
+            left: calc(100% - 28px);
         }
     }
 
