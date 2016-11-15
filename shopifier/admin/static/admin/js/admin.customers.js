@@ -649,14 +649,24 @@ export class CustomersEdit extends BaseForm{
 
     changePopover(event, display) {
         let popover = document.querySelector('#address-popover');
-        if (popover) {
-            popover.classList.remove(display=='show' ? 'hide' : 'show');
-            popover.classList.add(display=='show' ? 'show' : 'hide');
+        popover.classList.remove(display=='show' ? 'hide' : 'show');
+        popover.classList.add(display=='show' ? 'show' : 'hide');
+    }
+
+    switchPopover() {
+        let popover = document.querySelector('#address-popover');
+        let show = popover.classList.contains('hide');
+        popover.classList.remove(show ? 'hide' : 'show');
+        popover.classList.add(show ? 'show' : 'hide');
+        if (show) {
+            let event = new Event('show');
+            popover.dispatchEvent(event);
         }
     }
 
+
     onChangeAddress(event) {
-        this.changePopover(event, 'show');
+        this.switchPopover();
     }
 
     onEditAddress(event, address) {
