@@ -95,7 +95,7 @@ $btn-disabled-color: #d3dbe2;
     &:hover {
         cursor: pointer; cursor: hand;
         background: $btn-disabled-background;
-    }               
+    }
     
     &.disabled {
         background: $btn-disabled-background;
@@ -124,7 +124,7 @@ $btn-disabled-color: #d3dbe2;
             &:hover {
                 cursor: default;
             }
-        }               
+        }
     }
     
     &.btn-red {
@@ -136,7 +136,6 @@ $btn-disabled-color: #d3dbe2;
             background: $btn-red-hover-background;
             border-color: $btn-red-hover-background;
         }
-     
     }
     
     &.trash {

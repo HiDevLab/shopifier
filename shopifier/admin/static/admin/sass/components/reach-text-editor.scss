@@ -6,10 +6,10 @@ reach-text-editor {
 //     box-sizing: border-box;
 //     position: relative;
     background: inherit;
-    border: 1px solid $input-border;
+    border: 1px solid #dddddd;
     border-radius: 3px;
     line-height: 24px;
-    font-size: $shopify-input-font-size;
+    font-size: 16px;
     width: 100%;
     margin: 10px 0;
 //     resize: none;
@@ -21,14 +21,14 @@ reach-text-editor {
 //      appearance: none;
     
     &:focus {
-        border-color: $input-focus-border;
+        border-color: #4293c2;
         background: transparent;
     }
     .edit-toolbar {
         flex: 1 1 0;
         display: flex;
-        border-bottom: 1px solid $input-border;
-        background: $btn-disabled-background;
+        border-bottom: 1px solid #dddddd;
+        background: #fafbfc;
         font-size: 14px;
         > .hide {
             display: none;
@@ -41,8 +41,8 @@ reach-text-editor {
                         padding: 5px 40px 5px 20px;
                         &:hover {
                             cursor: pointer; cursor: hand;
-                            background: $btn-blue-background;
-                            color: $btn-blue-color;
+                            background: #0069A6;
+                            color: #ffffff;
                         }
                     }
                 }
@@ -55,7 +55,7 @@ reach-text-editor {
         width: 100%;
         min-height: 280px;
         padding: 10px;
-        font-size: $shopify-font-size;
+        font-size: 14px;
         font-weight: normal;
         display: flex;
         border: none !important;
@@ -68,7 +68,7 @@ reach-text-editor {
 .tool {
 //     display: inline-block;
     position: relative;
-    padding: 8px 10px 0;
+    padding: 6px 10px;
 //     box-sizing: border-box;
 //     height: auto;
     font-family: FontAwesome;
@@ -80,11 +80,11 @@ reach-text-editor {
 //     vertical-align: middle;
 //     white-space: nowrap;
 
-    background: $btn-background;
-    color: $input-color;
+    background: #ffffff;
+    color: #31373d;
     border-width: 1px 0 1px 1px;
     border-style: solid;
-    border-color: $input-border;
+    border-color: #dddddd;
     > span {
         vertical-align: top;
     }
@@ -104,6 +104,61 @@ reach-text-editor {
 
     &:hover, &.select {
         cursor: pointer; cursor: hand;
-        background: $btn-disabled-background;
+        background: #fafbfc;
+    }
+}
+.rte-colors {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 132px;
+    line-height: 0;
+    padding: 10px;
+    .rte-color {
+        border: 0;
+        height: 16px;
+        width: 16px;
+        box-sizing: border-box;
+        &:hover, &.select {
+            cursor: pointer; cursor: hand;
+            background: #fafbfc;
+            border: 1px solid #333;
+        }
+    }
+}
+.rte-colors-title {
+    justify-content: center;
+    color: #798c9c;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    text-overflow: ellipsis;
+}
+.rte-colors-ref {
+    justify-content: center;
+    color: $color-ref;
+    font-weight: normal;
+    margin: 0 0 5px 0;
+    text-decoration: none;
+    &:hover {
+        cursor: pointer; cursor: hand;
+    }
+    &:focus, &:active {
+        border: 1px solid $color-ref;
+        background-color: #f5f6f7;
+    }
+}
+.rte-color-container {
+    width: 152px;
+    overflow: hidden;
+}
+.rte-color-sections {
+    transition: transform 0.2s linear;
+    &.bg {
+        transform: translateX(-100%);
+    }
+    &.txt {
+        transform: translateX(0);
     }
 }

@@ -1,71 +1,101 @@
+{% verbatim %}
 <label class="input-box input">
     Description
     <form class="edit-box">
         <div id="toolbar" class="row" class="edit-toolbar">
             <div class="row" [ngClass]="{hide:showHtml}">
                 <div id="base-formatting-popover" class="tool row left" title="Formatting"
-                (click)="onFormatting($event)">
-                    <span class="fa fa-font" aria-hidden="true"></span>
-                    <span class="fa fa-caret-down ml4" aria-hidden="true"></span>
+                (click)="onPopover($event, popover_formatting)">
+                    <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
                 <popover id="formatting-popover" class="down left color-default hide mt18">
-                    <div data-wysihtml5-command-group="formatBlock">
-                       <ul class="rows">
-                       {% verbatim %}
-                            <li  *ngFor="let format of formats" data-wysihtml5-command="formatBlock" attr.data-wysihtml5-command-value="{{ format.tag }}" unselectable="on">{{ format.title }}</li>
-                        {% endverbatim %}
-                        </ul>
-                    </div>
-                </popover>
-                
-                <div class="tool" data-wysihtml5-command="bold" title="Bold" unselectable="on">
-                    <span class="fa fa-bold" aria-hidden="true"></span>
-                </div>
-                <div class="tool"data-wysihtml5-command="italic" title="Italic" unselectable="on">
-                    <span class="fa fa-italic" aria-hidden="true"></span>
-                </div>
-                <div class="tool right"data-wysihtml5-command="underline" title="Underline" unselectable="on">
-                    <span class="fa fa-underline" aria-hidden="true"></span>
-                </div>
-                <div class="tool left"data-wysihtml5-command="insertUnorderedList" title="Bulleted list" unselectable="on">
-                    <span class="fa fa-list-ul" aria-hidden="true"></span>
-                </div>
-                <div class="tool"data-wysihtml5-command="insertOrderedList" title="Numbered list" unselectable="on">
-                    <span class="fa fa-list-ol" aria-hidden="true"></span>
-                </div>
-                <div class="tool"data-wysihtml5-command="Outdent" title="Outdent" unselectable="on">
-                    <span class="fa fa-outdent" aria-hidden="true"></span>
-                </div>
-                <div class="tool"data-wysihtml5-command="Indent" title="Indent" unselectable="on">
-                    <span class="fa fa-indent" aria-hidden="true"></span>
-                </div>
-                <div id="base-alignment-popover" class="tool row left" title="Alignment"
-                (click)="onAlignment($event)">
-                    <span class="fa fa-align-left" aria-hidden="true"></span>
-                    <span class="fa fa-caret-down ml4" aria-hidden="true"></span>
-                </div>
-                <popover id="alignment-popover" class="down right color-default hide mt18" data-behavior="showstyles">
                     <div>
                        <ul class="rows">
-                       {% verbatim %}
-                            <li *ngFor="let align of alignments" attr.data-wysihtml5-command="{{ align.command }}" unselectable="on">{{ align.title }}</li>
-                        {% endverbatim %}
+                            <li  *ngFor="let format of formats" (click)="commandFormatBlock(format.tag)">{{ format.title }}</li>
+                        </ul>
+                    </div>
+                </popover>
+
+                <div (click)="commandTag('bold')" title="Bold" class="tool fa fa-bold"></div>
+                <div (click)="commandTag('italic')" title="Italic" class="tool fa fa-italic"></div>
+                <div (click)="commandTag('underline')" title="Underline" class="tool right fa fa-underline"></div>
+                <div (click)="commandTag('insertUnorderedList')" title="Bulleted list" class="tool left fa fa-list-ul"></div>
+                <div (click)="commandTag('insertOrderedList')" title="Numbered list" class="tool fa fa-list-ol"></div>
+                <div (click)="commandTag('Outdent')" title="Outdent" class="tool fa fa-outdent"></div>
+                <div (click)="commandTag('Indent')" title="Indent" class="tool fa fa-indent"></div>
+                
+                <div id="base-alignment-popover" class="tool row left" title="Alignment" (click)="onPopover($event, popover_alignment)">
+                    <span class="fa fa-align-left" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
+                </div>
+                <popover id="alignment-popover" class="down color-default hide mt18">
+                    <div>
+                       <ul class="rows">
+                            <li *ngFor="let align of alignments" (click)="commandTag(align.command)">{{ align.title }}</li>
+                        </ul>
+                    </div>
+                </popover>
+                <div id="base-color-popover" class="tool row right" title="Color" (click)="onPopover($event, popover_color)">
+                    <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
+                </div>
+                <popover id="color-popover" class="down left color-default hide mt18">
+                    <div class="rte-color-container">
+                        <div class="columns rte-color-sections" [ngClass]="{bg: !textBackground, txt: textBackground}">
+                            <div class="rte-text-color-section">
+                                <div class="row rte-colors-title">Text color</div>
+                                <div *ngFor="let colors of palette">
+                                    <div class="row sep"></div>
+                                    <div class="rte-colors">
+                                        <div *ngFor="let color of colors" class="rte-color" title="{{ color.title }}" style="background-color: {{ color.color }};"
+                                        (click)="commandColor(color.color)"></div>
+                                    </div>
+                                </div>
+                                <div class="row rte-colors-ref" (click)="switchTextBackground($event)">Background color</div>
+                            </div>
+                            <div class="rte-bg-color-section">
+                                <div class="row rte-colors-title">Background color</div>
+                                <div *ngFor="let colors of palette">
+                                    <div class="row sep"></div>
+                                    <div class="rte-colors">
+                                        <div *ngFor="let color of colors" class="rte-color" title="{{ color.title }}" style="background-color: {{ color.color }};"
+                                        (click)="commandColor(color.color)"></div>
+                                    </div>
+                                </div>
+                                <div class="row rte-colors-ref" (click)="switchTextBackground($event)">Text color</div>
+                            </div>
+                        </div>
+                    </div>
+                </popover>
+
+                <div (click)="commandTag('')" title="Insert link" class="tool left fa fa-link"></div>
+    
+                <div id="base-table-popover" class="tool row right" title="Insert table" (click)="onPopover($event, popover_table)">
+                    <span class="fa fa-table" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
+                </div>
+                <popover id="table-popover" class="down color-default hide mt18" data-behavior="showstyles">
+                    <div>
+                       <ul class="rows"><li (click)="createTable()">Insert table</li></ul>
+                       <div class="row sep mh5"></div>
+                       <ul class="rows">
+                            <li *ngFor="let command of tables1" (click)="commandTable($event, command.command1, command.command2)">{{ command.title }}</li>
+                        </ul>
+                        <div class="row sep mh5"></div>
+                        <ul class="rows">
+                            <li *ngFor="let command of tables2" (click)="commandTable($event, command.command1, command.command2)">{{ command.title }}</li>
                         </ul>
                     </div>
                 </popover>
             </div>
-            
+
             <div class="row right w24">
-                <div class="tool left-right" data-wysihtml5-action="change_view" unselectable="on" (click)="hideView();">
-                    <span class="fa fa-angle-left" aria-hidden="true"></span>
-                    <span class="fa fa-angle-right" aria-hidden="true"></span>
+                <div class="tool left-right" data-wysihtml5-action="change_view" (click)="hideView();">
+                    <span class="fa fa-angle-left"></span><span class="ml3 fa fa-angle-right"></span>
                 </div>
             </div>
         </div>
-        <!-- <textarea id="editor" autosize rows="10" class="edit-textarea" placeholder="Enter text ...">
-        </textarea> -->
-        <div id="editor" data-placeholder="Enter text ..." class="edit-textarea autosize wysihtml-sandbox wysihtml-editor" contenteditable="true">
-        </div>
+        <textarea id="editor" autosize rows="10" class="edit-textarea" placeholder="Enter text ...">
+        </textarea>
+        <!-- <div id="editor" autofocus="" data-placeholder="Enter text ..." class="edit-textarea autosize wysihtml-sandbox wysihtml-editor" contenteditable="true">
+        </div> -->
     </form>
 </label>
-
+{% endverbatim %}
