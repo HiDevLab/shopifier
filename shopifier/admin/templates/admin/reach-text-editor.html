@@ -76,18 +76,18 @@
                        <ul class="rows"><li (click)="createTable()">Insert table</li></ul>
                        <div class="row sep mh5"></div>
                        <ul class="rows">
-                            <li *ngFor="let command of tables1" (click)="commandTable($event, command.command1, command.command2)">{{ command.title }}</li>
+                            <li *ngFor="let command of tables1" (click)="commandTable($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">{{ command.title }}</li>
                         </ul>
                         <div class="row sep mh5"></div>
                         <ul class="rows">
-                            <li *ngFor="let command of tables2" (click)="commandTable($event, command.command1, command.command2)">{{ command.title }}</li>
+                            <li *ngFor="let command of tables2" (click)="commandTable2($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">{{ command.title }}</li>
                         </ul>
                     </div>
                 </popover>
             </div>
 
-            <div class="row right w24">
-                <div class="tool left-right" data-wysihtml5-action="change_view" (click)="hideView();">
+             <div class="row right w24">
+                <div class="tool left-right" (click)="hideView();">
                     <span class="fa fa-angle-left"></span><span class="ml3 fa fa-angle-right"></span>
                 </div>
             </div>

@@ -369,6 +369,8 @@ export class AdminLeavePage {
 export class RichTextEditor {
     showHtml = false;
     textBackground = true;
+    tableTools = false;
+
     formats = [
         {title: 'Paragraph', tag: 'p'},
         {title: 'Heading 1', tag: 'h1'},
@@ -468,13 +470,12 @@ export class RichTextEditor {
     tables2 = [
         {title: 'Delete row', command1: 'deleteTableCells', command2: 'row'},
         {title: 'Delete column', command1: 'deleteTableCells', command2: 'column'},
-        {title: 'Delete table', command1: '', command2: ''},
+        {title: 'Delete table', command1: 'deleteTable', command2: ''},
     ]
 
 
     ngOnInit() {
         this.editor = new wysihtml5.Editor('editor', {
-            toolbar: 'toolbar',
             parserRules: wysihtml5ParserRules,
             stylesheets: ['/static/admin/wysihtml/css/wysihtml5.css']
         });
@@ -491,6 +492,14 @@ export class RichTextEditor {
         this.editor.currentView.sandbox.getDocument().addEventListener("click", () => {
             self.hidePopovers()
         });
+        
+        this.editor.on("tableselect:composer", () => {
+            this.tableTools = true;
+        });
+        this.editor.on("tableunselect:composer", () => {
+            this.tableTools = false;
+        });
+
     }
 
     onPopover(event, popover){
@@ -529,6 +538,13 @@ export class RichTextEditor {
     }
     hideView(){
         this.showHtml = !this.showHtml;
+        if (this.editor.currentView === this.editor.textarea || this.editor.currentView === "source") {
+            this.editor.fire("change_view", "composer");
+        } else {
+            this.editor.fire("change_view", "textarea");
+        }
+        this.hidePopovers();
+        this.editor.focus();
     }
 
     commandColor(color) {
@@ -551,15 +567,30 @@ export class RichTextEditor {
         this.editor.focus();
     }
     createTable() {
-        this.editor.composer.commands.exec('createTable', { rows: 1, cols: 1 });
+        this.editor.composer.commands.exec('createTable', { rows: 1, cols: 1, tableStyle: "width: 100%;" });
         this.hidePopovers();
         this.editor.focus();
     }
-    commandTable(command1, command2) {
+    commandTable2(event, command1, command2) {
+        if (command1 ==='deleteTable') {
+            let table = this.editor.composer.tableSelection.table;
+            let selCell = wysihtml5.dom.table.findCell(table, {'row': 0, 'col': 0});
+            while(table && selCell) {
+                this.editor.composer.tableSelection.select(selCell, selCell)
+                this.editor.composer.commands.exec('deleteTableCells', 'row');
+                selCell = wysihtml5.dom.table.findCell(table, {'row': 0, 'col': 0});
+            }
+        } else {
+            this.commandTable(event, command1, command2);
+        }
+        this.tableTools = false;
+    }
+    commandTable(event, command1, command2) {
+        if (!this.editor.composer.tableSelection.table) {
+            return;
+        }
         this.editor.composer.commands.exec(command1, command2);
         this.hidePopovers();
         this.editor.focus();
     }
-
 }
-

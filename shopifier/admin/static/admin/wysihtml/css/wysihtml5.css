@@ -131,3 +131,11 @@
 .wysiwyg-clear-left {
   clear: left;
 }
+
+table, td, th {
+    border: 1px dashed #CCC;
+}
+/* 
+table {
+    width: 100%;
+} */

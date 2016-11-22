@@ -44,7 +44,17 @@ reach-text-editor {
                             background: #0069A6;
                             color: #ffffff;
                         }
+                        &.disabled {
+                            color: #dddddd;
+                            cursor: default;
+                            &:hover {
+                                cursor: default;
+                                background: inherit;
+                                color: #dddddd;
+                            }
+                        }
                     }
+                    
                 }
             }
         }
@@ -137,7 +147,7 @@ reach-text-editor {
 }
 .rte-colors-ref {
     justify-content: center;
-    color: $color-ref;
+    color: #0078bd;
     font-weight: normal;
     margin: 0 0 5px 0;
     text-decoration: none;
@@ -145,7 +155,7 @@ reach-text-editor {
         cursor: pointer; cursor: hand;
     }
     &:focus, &:active {
-        border: 1px solid $color-ref;
+        border: 1px solid #0078bd;
         background-color: #f5f6f7;
     }
 }
