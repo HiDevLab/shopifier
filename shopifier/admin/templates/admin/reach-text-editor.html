@@ -66,9 +66,9 @@
                     </div>
                 </popover>
 
-                <div (click)="commandTag('')" title="Insert link" class="tool left fa fa-link"></div>
+                <div (click)="showLinkEdit=true" title="{{ linkToolTitle }}" class="tool left fa fa-link"></div>
     
-                <div id="base-table-popover" class="tool row right" title="Insert table" (click)="onPopover($event, popover_table)">
+                <div id="base-table-popover" class="tool row" title="Insert table" (click)="onPopover($event, popover_table)">
                     <span class="fa fa-table" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
                 <popover id="table-popover" class="down color-default hide mt18" data-behavior="showstyles">
@@ -86,6 +86,8 @@
                 </popover>
             </div>
 
+            <div (click)="clearFormatting()" title="Clear Formatting" class="tool right fa fa-ban"></div>
+
              <div class="row right w24">
                 <div class="tool left-right" (click)="hideView();">
                     <span class="fa fa-angle-left"></span><span class="ml3 fa fa-angle-right"></span>
@@ -98,4 +100,42 @@
         </div> -->
     </form>
 </label>
+
+ <modal-form *ngIf="showLinkEdit">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h2>Insert link</h2>
+            <a class="cross fa fa-times" aria-hidden="true"
+              (click)="showLinkEdit=false;"></a>
+        </div>
+        <div class="input-section rte-section">
+            <label class="input-box input">
+                Link to
+                <input class="rte-link-input" type="text" placeholder="http://" [(ngModel)]="linkTo">
+            </label>
+            <label class="rte-select"> 
+                Open this link in
+                <select [(ngModel)]="openlinkIn">
+                    <option>the same window</option>
+                    <option>a new window</option>
+                </select>
+            </label>
+        </div>
+        <p class="ml20 color-subdued">http:// is required for external links</p>
+        <div class="input-section rte-section">
+            <label class="input-box input">
+                Link title
+                <input class="rte-link-input" type="text" [(ngModel)]="linkTitle">
+            </label>
+        </div>
+        <p class="ml20 color-subdued">Used for accessibility and SEO</p>
+
+        <div class="modal-footer">
+            <a *ngIf="isLink" class="btn btn-red mr-auto" (click)="removeLink();">Remove link</a>
+            <a class="btn mr10" (click)="showLinkEdit=false;">Cancel</a>
+            <a class="btn btn-blue" (click)="insertLink();">{{ linkToolTitle }}</a>
+        </div>
+    </form>
+</modal-form>
+
 {% endverbatim %}

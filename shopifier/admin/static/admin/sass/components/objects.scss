@@ -78,9 +78,9 @@ $btn-disabled-color: #d3dbe2;
     overflow: hidden;
     box-sizing: border-box;
     height: auto;
-    line-height: 1;
+    line-height: $shopify-btn-font-size;
     font-size: $shopify-btn-font-size;
-    padding: 8.5px 15px;
+    padding: 7px 15px 13px;
     
     text-align: center;
     text-transform: none;
@@ -190,7 +190,7 @@ $color-ref: #0078bd;//#479ccf;
 
 $input-border: #dddddd; //#ebeef0;
 $input-background: #ffffff;
-$input-focus-border: #4293c2;
+$input-focus-border: #0078bd;
 $input-color: #31373d;
 $input-error-color: #ff5d5d;
 $input-error-border: #ff5d5d;

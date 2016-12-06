@@ -371,6 +371,13 @@ export class RichTextEditor {
     textBackground = true;
     tableTools = false;
 
+    showLinkEdit = false;
+    linkTo = '';
+    openlinkIn = 'the same window';
+    linkTitle = '';
+    isLink = false;
+    linkToolTitle = 'Insert link';
+    
     formats = [
         {title: 'Paragraph', tag: 'p'},
         {title: 'Heading 1', tag: 'h1'},
@@ -475,10 +482,45 @@ export class RichTextEditor {
 
 
     ngOnInit() {
+        let self = this;
         this.editor = new wysihtml5.Editor('editor', {
             parserRules: wysihtml5ParserRules,
             stylesheets: ['/static/admin/wysihtml/css/wysihtml5.css']
         });
+        this.document = this.editor.currentView.sandbox.getDocument();
+        wysihtml5.dom.delegate(this.document.body, 'a', 'click', (event) => {
+            let el = event.target;
+            self.linkTo = el.href;
+            self.linkTitle = el.title;
+            if (el.target === '_blank') {
+                self.openlinkIn = 'a new window';
+            } else {
+                self.openlinkIn = 'the same window';
+            }
+            self.showLinkEdit = true;
+        });
+        this.editor.on('interaction:composer', () => {
+            let selection = self.editor.composer.selection.getSelection();
+            let el = selection.focusNode.parentElement;
+            if (el.nodeName === 'A') {
+                self.linkTo = el.href;
+                self.linkTitle = el.title;
+                if (el.target === '_blank') {
+                    self.openlinkIn = 'a new window';
+                } else {
+                    self.openlinkIn = 'the same window';
+                }
+                self.isLink = true;
+                self.linkToolTitle = 'Update link';
+            } else {
+                self.linkTo = '';
+                self.linkTitle = '';
+                self.openlinkIn = 'the same window';
+                self.isLink = false;
+                self.linkToolTitle = 'Insert link';
+            }
+        });
+
         this.popover_formatting = document.querySelector('#formatting-popover');
         this.popover_alignment = document.querySelector('#alignment-popover');
         this.popover_color = document.querySelector('#color-popover');
@@ -488,18 +530,20 @@ export class RichTextEditor {
             this.popover_color, this.popover_table
         ]
 
-        let self = this;
-        this.editor.currentView.sandbox.getDocument().addEventListener("click", () => {
+        this.document.addEventListener('click', () => {
             self.hidePopovers()
         });
         
-        this.editor.on("tableselect:composer", () => {
+        this.editor.on('tableselect:composer', () => {
             this.tableTools = true;
         });
-        this.editor.on("tableunselect:composer", () => {
+        this.editor.on('tableunselect:composer', () => {
             this.tableTools = false;
         });
 
+    }
+    ngOnDestroy() {
+        this.editor.destroy();
     }
 
     onPopover(event, popover){
@@ -593,4 +637,25 @@ export class RichTextEditor {
         this.hidePopovers();
         this.editor.focus();
     }
+    insertLink() {
+        this.showLinkEdit = false;
+
+        if (this.openlinkIn==='the same window') {
+            this.editor.composer.commands.exec('createLink', { href: this.linkTo, target: '', title: this.linkTitle, toggle: true});
+        } else {
+            this.editor.composer.commands.exec('createLink', { href: this.linkTo, target: '_blank', title: this.linkTitle, toggle: true});
+        }
+        this.editor.focus();
+    }
+    removeLink() {
+        this.showLinkEdit = false;
+        this.editor.composer.commands.exec('removeLink');
+        this.editor.focus();
+    }
+
+    clearFormatting() {
+        this.editor.composer.commands.exec('removeFormat');
+    }
+
+
 }

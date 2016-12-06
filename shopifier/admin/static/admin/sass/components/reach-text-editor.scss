@@ -172,3 +172,65 @@ reach-text-editor {
         transform: translateX(0);
     }
 }
+
+.rte-link-input {
+    font-size: 14px;
+    height: 30px;
+}
+.rte-select {
+//     flex: 1 1 0;
+    text-align: left;
+    cursor: pointer;
+    display: block;
+    font-size: $shopify-font-size;
+    font-weight: normal;
+    background: $input-background;
+    color: $input-color; 
+    position: relative;
+    width: 140px;
+    margin: 0 30px 0 20px;    
+    > select {
+        position: relative;
+        color: #222;
+        background-color: #ddd;
+        margin-top: 5px;
+        position: relative;
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 1px;
+        box-sizing: border-box;
+        line-height: 24px;
+        font-size: 14px;
+        padding: 4px 2px 2px 4px;
+        resize: none;
+
+        vertical-align: top;
+        height: 30px;
+        width: 100%;
+        line-height: 16px;
+        
+        box-shadow: none;
+        background-image: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+         appearance: none;
+        
+        &:focus {
+            border-color: $input-focus-border;
+        }
+    }
+    &::AFTER {
+        content: "\f0d7";
+        position: absolute;
+        right: 10px;
+        top: 30px;
+        font-family: FontAwesome;
+        font-size: 1.1em;
+        color: #222;
+        pointer-events:none;
+    }
+}
+
+.rte-section {
+    
+}

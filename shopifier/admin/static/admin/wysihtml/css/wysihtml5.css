@@ -135,6 +135,9 @@
 table, td, th {
     border: 1px dashed #CCC;
 }
+a:hover {
+    cursor: pointer; cursor: hand;
+}
 /* 
 table {
     width: 100%;
