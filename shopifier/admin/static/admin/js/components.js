@@ -655,6 +655,7 @@ export class RichTextEditor {
 
     clearFormatting() {
         this.editor.composer.commands.exec('removeFormat');
+        this.editor.focus();
     }
 
 

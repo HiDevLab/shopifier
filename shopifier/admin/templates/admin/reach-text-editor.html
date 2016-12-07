@@ -37,7 +37,7 @@
                 <div id="base-color-popover" class="tool row right" title="Color" (click)="onPopover($event, popover_color)">
                     <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
-                <popover id="color-popover" class="down left color-default hide mt18">
+                <popover id="color-popover" class="down color-default hide mt18">
                     <div class="rte-color-container">
                         <div class="columns rte-color-sections" [ngClass]="{bg: !textBackground, txt: textBackground}">
                             <div class="rte-text-color-section">
@@ -84,11 +84,9 @@
                         </ul>
                     </div>
                 </popover>
-            </div>
-
             <div (click)="clearFormatting()" title="Clear Formatting" class="tool right fa fa-ban"></div>
-
-             <div class="row right w24">
+            </div>
+            <div class="row right w24">
                 <div class="tool left-right" (click)="hideView();">
                     <span class="fa fa-angle-left"></span><span class="ml3 fa fa-angle-right"></span>
                 </div>
