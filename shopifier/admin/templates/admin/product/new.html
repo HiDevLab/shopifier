@@ -1,5 +1,6 @@
+{% load static %}
 <div class="rows pt20 center" *ngIf="form.product">
-    <div class="row w24 left pl30">
+    <div class="row w15 left pl30">
         <div class="rows w16 ml30">
             <div class="form pb10">
                 {% with group='product' change='onSave' %}
@@ -10,12 +11,48 @@
                         [parrent_component]="self"></reach-text-editor> 
                 </div>
             </div>
-            <form class="form vw8 pt15 pb10" *ngIf="form.customer">
-                <div class="input-section">
-                    {% include "admin/textarea.html" with group="customer" control="note" placeholder="Add a note to this customer…" rows="1" %}
-                </div>
-            </form>
         </div>
     </div>
  </div>
 
+<div class="rows pt20 center" *ngIf="form.product">
+    <div class="row w15 left pl30">
+        <div class="rows w16 ml30">
+            <div class="form pt20" >
+                <div class="row mh20">
+                    <strong class="col mr-auto font16">Images</strong>
+                    
+                    <div class="col ref">Upload image
+                        <input type="file" accept="image/gif, image/jpeg, image/png" (change)="upLoadImage($event)">
+                    </div>
+
+                </div>
+                <ul class="images mh20 mb20" id="images">
+                    <li *ngFor="let image of images; let i = index;" (mouseover)="currentImg=i;" (mouseleave)="currentImg=undefined">
+                        <span>
+                            <img *ngIf="image.attachment" 
+                                src="{% verbatim %}{{ image.attachment }}{% endverbatim %}" 
+                                alt="" 
+                                attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
+                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
+                            <img *ngIf="image.src" 
+                                src="{% verbatim %}{{ image.src }}{% endverbatim %}" 
+                                alt="" 
+                                attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
+                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
+                            </span>
+                        <div [ngClass]="{hide : currentImg!=i}">
+                            <div class="row center" >
+                                <a class="btn trash fa fa-eye" aria-hidden="true" title="Preview"></a>
+                                <a class="btn trash fa fa-pencil" aria-hidden="true" title="Edit image" (click)="editImage(image.id)"></a>
+                                <a class="btn font9 bold" aria-hidden="true" title="Edit alt text">ALT</a>
+                                <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete"></a>
+                            </div>
+                        </div>
+                    </li>
+                    <li *ngIf="images.length<1"><span></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+ </div>

@@ -23,7 +23,8 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from shopifier.admin import serializers
-from shopifier.admin.models import User, UserLog, Customer, Address, Product
+from shopifier.admin.models import (
+    User, UserLog, Customer, Address, Product, ProductImage)
 
 
 # accounts
@@ -409,6 +410,14 @@ class SHPFViewSet(ModelViewSet):
                        'list': 'addresses',
                        'nonlist': 'customer_address',
                     },
+            'Product': {
+                       'list': 'products',
+                       'nonlist': 'product',
+                    },
+            'ProductImage': {
+                       'list': 'images',
+                       'nonlist': 'image',
+                    },
             }
 
     def __init__(self, *args, **kwargs):
@@ -565,3 +574,29 @@ class ProductViewSet(ModelViewSet):
             request, *args, **kwargs)
         response.status = status.HTTP_200_OK
         return response
+
+
+class ProductImageViewSet(SHPFViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = ProductImage.objects.all().order_by('product')
+    serializer_class = serializers.ProductImageSerializer
+
+    def get_queryset(self):
+        qs = super(ProductImageViewSet, self).get_queryset()
+        return qs.filter(product=self.product)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.product = get_object_or_404(Product, id=kwargs['product_id'])
+        return super(ProductImageViewSet, self).dispatch(
+            request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.validated_data['product'] = self.product
+        print serializer.validated_data.get('src')
+        serializer.validated_data['src'] = (
+            serializer.validated_data.get('src') or
+            serializer.validated_data.get('attachment')
+        )
+        if 'attachment' in serializer.validated_data:
+            del serializer.validated_data['attachment']
+        serializer.save()

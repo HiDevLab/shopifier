@@ -13,6 +13,10 @@ from pycountry import countries, subdivisions
 from shopifier.admin.tags import TagField, TagQuerySet
 
 
+def now():
+    return timezone.localtime(timezone.now())
+
+
 # accounts
 def user_log(sender, user, request, **kwargs):
     xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
@@ -52,7 +56,7 @@ class UserManager(BaseUserManager):
 
 
 def normalization_file_name(instance, filename):
-    return "avatar/img{}".format(os.path.splitext(filename)[1])
+    return 'avatar/img{}'.format(os.path.splitext(filename)[1])
 
 
 class User(AbstractBaseUser):
@@ -61,7 +65,7 @@ class User(AbstractBaseUser):
     email = models.EmailField(
         _('email address'), max_length=254, unique=True, blank=False
     )
-    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    date_joined = models.DateTimeField(_('date joined'), default=now)
     phone = models.CharField(_('Phone (optional)'), max_length=30, blank=True)
     www_site = models.CharField(
         _('Personal website address (optional)'), max_length=30, blank=True
@@ -116,7 +120,7 @@ class UserLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     session = models.ForeignKey(Session, null=True, on_delete=models.SET_NULL)
     ip = models.GenericIPAddressField(null=True)
-    visit_datetime = models.DateTimeField(null=True, default=timezone.now)
+    visit_datetime = models.DateTimeField(null=True, default=now)
 
     class Meta:
         ordering = ['-visit_datetime', 'id']
@@ -140,7 +144,7 @@ class Customer(models.Model):
         _('Customer accepts marketing'), default=False
     )
     created_at = models.DateTimeField(
-        _('When the customer was created'), default=timezone.now
+        _('When the customer was created'), default=now
     )
     default_address = models.OneToOneField(
         'Address', related_name='+', null=True
@@ -159,7 +163,7 @@ class Customer(models.Model):
         _('Customer is tax exempt'), default=True
     )
     updated_at = models.DateTimeField(
-        _('Information was updated'), default=timezone.now
+        _('Information was updated'), default=now
     )
     verified_email = models.BooleanField(default=True)
     objects = TagQuerySet.as_manager()
@@ -204,5 +208,21 @@ class Address(models.Model):
 class Product(models.Model):
 
     body_html = models.TextField(
-        _('Description'), blank=False, max_length=2048)
+        _('Description'),  max_length=2048)
     title = models.TextField(_('Title'), blank=False, max_length=254)
+
+
+def normalization_img_file_name(instance, filename):
+    return 'products/{}/img{}'.format(
+        instance.product.title, os.path.splitext(filename)[1])
+
+
+class ProductImage(models.Model):
+
+    product = models.ForeignKey(Product, related_name='images')
+    created_at = models.DateTimeField(default=now)
+    position = models.IntegerField()
+    src = models.ImageField(upload_to=normalization_img_file_name)
+    updated_at = models.DateTimeField(default=now)
+    alt_text = models.CharField(
+        _('Image alt text'), blank=True, max_length=254)

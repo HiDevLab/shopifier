@@ -1,5 +1,5 @@
 reach-text-editor {
-    width: 600px;
+    width: 100%;//600px;
 //     min-height: 280px;
 }
 .edit-box {
@@ -63,7 +63,7 @@ reach-text-editor {
     .edit-textarea {
         flex: 1 1 0;
         width: 100%;
-        min-height: 280px;
+//         min-height: 280px;
         padding: 10px;
         font-size: 14px;
         font-weight: normal;

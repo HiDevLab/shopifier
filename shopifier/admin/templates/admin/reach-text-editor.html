@@ -11,7 +11,7 @@
                 <popover id="formatting-popover" class="down left color-default hide mt18">
                     <div>
                        <ul class="rows">
-                            <li  *ngFor="let format of formats" (click)="commandFormatBlock(format.tag)">{{ format.title }}</li>
+                            <li *ngFor="let format of formats" (click)="commandFormatBlock(format.tag)">{{ format.title }}</li>
                         </ul>
                     </div>
                 </popover>

@@ -182,6 +182,13 @@ $color-ref: #0078bd;//#479ccf;
         text-decoration: underline;
         cursor: pointer; cursor: hand;
     }
+    > input[type="file"] {
+        position: absolute;
+        top: 0; right: 0;
+        opacity: 0;
+        filter: alpha(opacity=0);
+        cursor: pointer; 
+    }
 }
 
 
@@ -694,3 +701,87 @@ $tooltip-error-color: #ffffff;
         display: none !important;
     }
 }
+
+// Images
+
+.images {
+    display: table;
+    flex-wrap: wrap;
+    list-style: outside none none;
+    list-style: decimal inside none;
+    
+    > li {
+        float: left;
+        display : flex;
+        align-items : center;
+        vertical-align: top;
+        cursor: grab;
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
+        position: relative;
+//         transition: opacity 0.4s ease-in-out;
+        width: 115px;
+        height: 115px;
+        margin: 10px 10px 0 0;
+        > div {
+//             z-index: 20;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(49,55,61,0.75);
+            &.hide {
+                display: none;
+            }
+            a {
+                border: none;
+                color: $color-nav-selected;
+                background-color: transparent;
+                padding: 8px 3px;
+                &:hover {
+                    cursor: pointer; cursor: hand;
+                    background-color: transparent;
+                }
+            }
+//             opacity: 0;
+//             transition: opacity 0.1s ease-in-out;
+        }
+        > span {
+//             z-index: 30;
+            background-color: $background-main-btn-disabled;
+            width: 100%;
+            height: 100%;
+            display : flex;
+            align-items : center;
+            > img {
+//                 z-index: 10;
+                max-height: 100%;
+                max-width: 100%;
+                margin: auto;
+            }
+        }
+        &:first-of-type {
+            width: 240px;
+            height: 240px;
+        }
+   }
+}
+
+.gu-mirror img {
+    max-height: 100%;
+    width: 100%;
+}
+
+
+// [draggable] {
+//   -moz-user-select: none;
+//   -khtml-user-select: none;
+//   -webkit-user-select: none;
+//   user-select: none;
+//   /* Required to make elements draggable in old WebKit */
+//   -khtml-user-drag: element;
+//   -webkit-user-drag: element;
+// }

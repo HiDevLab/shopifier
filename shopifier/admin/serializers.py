@@ -1,5 +1,9 @@
 from __future__ import unicode_literals
 
+from django.core.validators import URLValidator
+from django.core.files.base import ContentFile
+from urllib import urlretrieve
+
 from django.conf import settings
 from django.contrib.gis.geoip2 import GeoIP2
 from django.core.signing import Signer
@@ -14,7 +18,8 @@ from rest_framework.response import Response
 from drf_extra_fields.fields import Base64ImageField
 from easy_thumbnails.files import get_thumbnailer
 
-from shopifier.admin.models import User, UserLog, Customer, Address, Product
+from shopifier.admin.models import (
+    User, UserLog, Customer, Address, Product, ProductImage)
 
 
 # accounts
@@ -89,9 +94,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, obj):
         if obj.avatar_image:
-            return "{}/{}".format(
-                settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url
-            )
+            return get_thumbnailer(obj.avatar_image)['avatar'].url
+#             return "{}/{}".format(
+#                 settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url
+#             )
 
     def get_store_name(self, obj):
         return settings.STORE_NAME
@@ -114,9 +120,10 @@ class UsersAdminSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, obj):
         if obj.avatar_image:
-            return "{}/{}".format(
-                settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url
-            )
+            return get_thumbnailer(obj.avatar_image)['avatar'].url
+#             return "{}/{}".format(
+#                 settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url
+#             )
 
     def get_visit_datetime(self, obj):
         m = UserLog.objects.filter(user=obj).aggregate(Max('visit_datetime'))
@@ -164,9 +171,10 @@ class UsersStaffSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, obj):
         if obj.avatar_image:
-            return '{}/{}'.join(
-                settings.Site, get_thumbnailer(obj.avatar_image)['avatar'].url
-            )
+            return get_thumbnailer(obj.avatar_image)['avatar'].url
+#             return '{}/{}'.join(
+#                 settings.Site, get_thumbnailer(obj.avatar_image)['avatar'].url
+#             )
 
 
 class UserSessionSerializer(serializers.ModelSerializer):
@@ -278,13 +286,40 @@ class AddressSerializer(SHPFSerializer):
 
 
 # products
-class ProductSerializer(serializers.ModelSerializer):
+class ProductSerializer(SHPFSerializer):
+
+    body_html = serializers.CharField(
+        label=_('Description'),
+        max_length=2048, required=False, allow_null=True, allow_blank=True
+    )
 
     class Meta:
         model = Product
         exclude = ()
 
-    def __init__(self, instance=None, data=empty, **kwargs):
-        if data is not empty:
-            data = data[data.keys()[0]]
-        super(ProductSerializer, self).__init__(instance, data, **kwargs)
+
+class ImageUrlField(serializers.ImageField):
+    def to_internal_value(self, data):
+        try:
+            URLValidator()(data)
+        except ValidationError:
+            raise ValidationError('Invalid Url')
+
+        file_, http_message = urlretrieve(data)
+        file_ = open(file_, 'rb')
+        return super(ImageUrlField, self).to_internal_value(
+            ContentFile(file_.read(), name=file_.name))
+
+
+class ProductImageSerializer(SHPFSerializer):
+
+    src = ImageUrlField(required=False)
+    attachment = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = ProductImage
+        read_only_fields = ('created_at', 'updated_at')
+        exclude = ('product',)
+
+
+

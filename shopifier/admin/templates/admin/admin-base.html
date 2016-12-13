@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
         {% compress css %}
             <link rel="stylesheet" type="text/x-scss" href="{% static 'admin/sass/style.scss' %}" />
         {% endcompress %}
@@ -27,6 +28,11 @@
         <script src="{% static 'admin/wysihtml/dist/wysihtml-toolbar.min.js' %}"></script>
         <!-- rules defining tags, attributes and classes that are allowed -->
         <script src="{% static 'admin/wysihtml/parser_rules/advanced_and_extended.js' %}"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
+
+        <!-- Load Feather code -->
+        <script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>
     </head>
 
     <body>

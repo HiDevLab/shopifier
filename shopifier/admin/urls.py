@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.conf.urls import url, include
+from django.conf.urls.static import static
 
 from rest_framework.routers import SimpleRouter, DefaultRouter
 
@@ -18,6 +20,8 @@ class JsonRouter(SimpleRouter):
 
 router = JsonRouter()
 router.register(r'products', views.ProductViewSet)
+router.register(
+    r'products/(?P<product_id>\d+)/images', views.ProductImageViewSet)
 router.register(r'customers', views.CustomerViewSet)
 router.register(
     r'customers/(?P<customer_id>\d+)/addresses', views.AddressViewSet)
@@ -55,4 +59,4 @@ urlpatterns = [
     url(r'^admin/.*$',
         views.TemplateView.as_view(template_name='admin/admin-base.html'),
         name='shopifier-admin')
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

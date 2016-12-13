@@ -155,6 +155,5 @@ bootstrap(AdminRouter, [
     }),
     FORM_PROVIDERS,
     AdminAuthService,
-    AdminUtils, 
-
+    AdminUtils,
 ]).then((appRef) => window.injector = appRef.injector);
