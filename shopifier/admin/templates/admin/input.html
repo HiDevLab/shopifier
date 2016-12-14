@@ -3,6 +3,6 @@
        {% if display %}*ngIf="{{ display }}"{% endif %}>
     {% templatetag openvariable %} form.{{ group }}_meta.{{ control }}.label {% templatetag closevariable %}
     <input [ngFormControl]="form.{{ group }}.controls.{{ control }}" 
-    (input)="{% if change %}{{ change }}{% else %}formChange{% endif %}=true"
+    (input)="{% if change %}{{ change }}{% else %}formChange=true{% endif %}"
     placeholder="{{ placeholder }}">
 </label>
