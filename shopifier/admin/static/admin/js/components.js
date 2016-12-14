@@ -535,13 +535,19 @@ export class RichTextEditor {
         });
         
         this.editor.on('tableselect:composer', () => {
-            this.tableTools = true;
+            self.tableTools = true;
         });
         this.editor.on('tableunselect:composer', () => {
-            this.tableTools = false;
+            self.tableTools = false;
+        });
+        this.editor.on('change', () => {
+            self.parrent_component.html_body = self.editor.getValue();
+            self.parrent_component._admin.notNavigate = true;
+            self.parrent_component.formChange = true;
         });
 
     }
+
     ngOnDestroy() {
         this.editor.destroy();
     }
@@ -657,6 +663,4 @@ export class RichTextEditor {
         this.editor.composer.commands.exec('removeFormat');
         this.editor.focus();
     }
-
-
 }

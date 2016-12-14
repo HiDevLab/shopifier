@@ -1,9 +1,9 @@
 {% load static %}
 <div class="rows pt20 center" *ngIf="form.product">
-    <div class="row w15 left pl30">
+    <div class="row w16 left pl30">
         <div class="rows w16 ml30">
             <div class="form pb10">
-                {% with group='product' change='onSave' %}
+                {% with group='product' change='onFormChange()' %}
                 {% include "admin/input-section.html" with control1="title" placeholder1="Short Sleeve T-Shirt" %}
                 {% endwith %}
                 <div class="input-section">
@@ -15,8 +15,8 @@
     </div>
  </div>
 
-<div class="rows pt20 center" *ngIf="form.product">
-    <div class="row w15 left pl30">
+<div class="rows pt20 center">
+    <div class="row w16 left pl30">
         <div class="rows w16 ml30">
             <div class="form pt20" >
                 <div class="row mh20">
@@ -25,7 +25,6 @@
                     <div class="col ref">Upload image
                         <input type="file" accept="image/gif, image/jpeg, image/png" (change)="upLoadImage($event)">
                     </div>
-
                 </div>
                 <ul class="images mh20 mb20" id="images">
                     <li *ngFor="let image of images; let i = index;" (mouseover)="currentImg=i;" (mouseleave)="currentImg=undefined">
@@ -46,7 +45,7 @@
                                 <a class="btn trash fa fa-eye" aria-hidden="true" title="Preview"></a>
                                 <a class="btn trash fa fa-pencil" aria-hidden="true" title="Edit image" (click)="editImage(image.id)"></a>
                                 <a class="btn font9 bold" aria-hidden="true" title="Edit alt text">ALT</a>
-                                <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete"></a>
+                                <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete" (click)="deleteImage(image.id)"></a>
                             </div>
                         </div>
                     </li>

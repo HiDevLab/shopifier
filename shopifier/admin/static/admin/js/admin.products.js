@@ -1,5 +1,4 @@
 import 'rxjs/Rx';
-// import 'dragula/dragula'
 
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
         Validators, Control, ControlGroup } from 'angular2/common';
@@ -114,21 +113,26 @@ export class Products extends BaseForm {
 })
 export class ProductsNew extends BaseForm {
     images = [];
+    html_body = undefined;
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
-            [Admin], [AdminUtils]];
+            [Admin], [AdminUtils], [RouteParams]];
     }
 
-    constructor(http, formbuilder, router, auth, admin, utils) {
+    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
         super(http, formbuilder, router, auth, admin, utils);
+        this._routeParams = routeparams;
+        this.product_id = this._routeParams.get('id');
     }
 
     ngOnInit() {
         let self = this;
         this.self = this; // for child components
-        this._admin.currentUrl({ 'url':'#', 'text': 'Add product'},1 );
-
+        if (!this.product_id) {
+            this._admin.currentUrl({ 'url':'#', 'text': 'Add product'},1 );
+        }
+        
         this._admin.headerButtons = [];
         this._admin.headerButtons.push({
             'text': 'Cancel', 'class': 'btn mr10', 
@@ -138,13 +142,17 @@ export class ProductsNew extends BaseForm {
             'text': 'Save product', 'class': 'btn btn-blue', 
             'click': this.onSave, 'primary': true, 'self': this 
         });
-        this.addForm(this.form, '/admin/products.json', 'product');
+        if (this.product_id) {
+            this.addForm(this.form, `/admin/products/${this.product_id}.json`, 'product');
+        } else {
+            this.addForm(this.form, '/admin/products.json', 'product');
+        }
 
         this.featherEditor = new Aviary.Feather({
             apiKey: 'be17668f224b43e98bce30693f23e136',
             apiVersion: 3,
-            theme: 'minimum',//theme: 'light', // Check out our new 'light' and 'dark' themes!
-            tools: 'all',//['enhance', 'orientation', 'focus', 'resize', 'crop', 'effects'],
+            theme: 'light',// Check out our new 'light' and 'dark' themes!
+            tools: 'all',
             appendTo: '',
             language: 'en',
             onSave: function(imageID, newURL) {
@@ -154,8 +162,8 @@ export class ProductsNew extends BaseForm {
                 self.featherEditor.close();
            },
            onError: function(errorObj) {alert(errorObj.message);}
-       });
-
+        });
+        dragula([document.querySelector('#images')]);
     }
 
     onSave(self) {
@@ -164,15 +172,23 @@ export class ProductsNew extends BaseForm {
         if(!self.groupValidate(self.form, 'product')) return;
         let product = {};
         product['product'] = self.form['product'].value;
-
-        self._http
-            .post('/admin/products.json', product )
-            .subscribe(
-                (data) => self.saveImages(data),
-                (err) => {
-                    self.apiErrors(self.form, 'product', err.json());
-                },
+        product.product['html_body'] = self.html_body;
+        if (!self.product_id) {
+            self._http.post('/admin/products.json', product )
+                .subscribe(
+                    (data) => {
+                        self.product_id = data.product.id
+                        self.saveImages(self);
+                    },
+                    (err) => {self.apiErrors(self.form, 'product', err.json());}
             );
+        } else {
+            self._http.put(`/admin/products/${self.product_id}.json`, product)
+                .subscribe(
+                    (data) => {self.saveImages(self);},
+                    (err) => {self.apiErrors(self.form, 'product', err.json());}
+            );
+        }
     }
 
     onCancel(self) {
@@ -181,48 +197,79 @@ export class ProductsNew extends BaseForm {
     }
 
     upLoadImage(event) {
+        this.deleteImage();
         let files = event.target.files;
         if (files && files[0]) {
             let reader = new FileReader();
             let self = this;
             
             reader.onload = (event) => {
-                let i = self.images.length;
-                self.images.push({attachment: event.target.result, id: `temp-${i}`, type: 'base64'});
+                self.images.push({
+                    attachment: event.target.result,
+                    id: `temp-${Math.floor(Math.random() * 1000)}`,
+                    type: 'base64'
+                });
                 self.formChange = true;
                 self._admin.notNavigate = true;
             };
             reader.readAsDataURL(files[0]);
-            let container = window.document.querySelector('#images');
-            dragula([container]);
         }
     }
 
-    saveImages(product) {
+    deleteImage(imageID) {
+        // delete image and/or refresh images from DOM
+        let container = window.document.querySelector('#images');
+        let images = container.querySelectorAll('img');
+        let new_images = [];
+        let image = {};
+        let field = '';
+        for(let i=0; i < images.length; i++) {
+            image = {
+                id: images[i].id,
+                position: i + 1,
+                alt: images[i].alt,
+                type: images[i].dataset.type,
+            };
+            field = (images[i].dataset.type === 'url') ? 'src' : 'attachment';
+            image[field] = images[i].src;
+            if (image.id != imageID) {
+                new_images.push(image);
+            }
+        };
+        this.images = new_images;
+    }
+
+    saveImages(self) {
+        self = self || this;
         let container = window.document.querySelector('#images');
         let images = container.querySelectorAll('img');
         let image = {};
-        let url = `/admin/products/${product.product.id}/images.json`;
-        this.images = [];
-        
+        let url = '';
+        self.images = [];
+        let field = '';
+
         for(let i=0; i < images.length; i++) {
-            image = {image: {position: i + 1}};
-            if (images[i].dataset.type === 'url') {
-                image['image']['src'] = images[i].src;
-            } else {
-                image['image']['attachment'] = images[i].src;
-            }
-            this._http
-                .post(url, image)
-                .subscribe(
-                    (data) => {
-                        data['image']['type'] = 'url';
-                        this.images.push(data['image']);
-                        dragula([container]);
-                    },
-                    (err) => {},
+            image = {image: {position: i + 1, alt: images[i].alt}};
+            field = (images[i].dataset.type === 'url') ? 'src' : 'attachment';
+            image['image'][field] = images[i].src;
+            if (images[i].id.startsWith('temp')) {
+                url = `/admin/products/${self.product_id}/images.json`;
+                self._http.post(url, image)
+                    .subscribe((data) => self.readImage(self, data, container), (err) => {}
                 );
+            } else {
+                url = `/admin/products/${self.product_id}/images/${images[i].id}.json`;
+                self._http.put(url, image)
+                    .subscribe((data) => self.readImage(self, data, container), (err) => {}
+                );
+            }
         }
+    }
+
+    readImage(self, data, container) {
+        data['image']['type'] = 'url';
+        self.images.push(data['image']);
+        self.images.sort((a, b) => {return a.position-b.position;}); 
     }
 
     editImage(id) {
@@ -246,26 +293,5 @@ export class ProductsNew extends BaseForm {
         xhr.open('GET', img.src);
         xhr.send();
         
-    }
-
-    getBase64Image(img) {
-        if (img.id.startsWith('temp-')) {
-            return img.src;
-        }
-        // Create an empty canvas element
-        let canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-    
-        // Copy the image contents to the canvas
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-    
-        // Get the data-URL formatted image
-        // Firefox supports PNG and JPEG. You could check img.src to
-        // guess the original format, but be aware the using "image/jpg"
-        // will re-encode the image.
-        var dataURL = canvas.toDataURL("image/png");
-        return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     }
 }

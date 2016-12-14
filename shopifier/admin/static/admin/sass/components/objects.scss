@@ -750,14 +750,12 @@ $tooltip-error-color: #ffffff;
 //             transition: opacity 0.1s ease-in-out;
         }
         > span {
-//             z-index: 30;
             background-color: $background-main-btn-disabled;
             width: 100%;
             height: 100%;
             display : flex;
             align-items : center;
             > img {
-//                 z-index: 10;
                 max-height: 100%;
                 max-width: 100%;
                 margin: auto;
@@ -770,9 +768,18 @@ $tooltip-error-color: #ffffff;
    }
 }
 
-.gu-mirror img {
-    max-height: 100%;
-    width: 100%;
+.gu-mirror {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+    img {
+        max-height: 100%;
+        width: 100%;
+    }
+    div {
+        display: none;
+    }
+
 }
 
 

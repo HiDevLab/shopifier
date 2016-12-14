@@ -592,7 +592,6 @@ class ProductImageViewSet(SHPFViewSet):
 
     def perform_create(self, serializer):
         serializer.validated_data['product'] = self.product
-        print serializer.validated_data.get('src')
         serializer.validated_data['src'] = (
             serializer.validated_data.get('src') or
             serializer.validated_data.get('attachment')
@@ -600,3 +599,6 @@ class ProductImageViewSet(SHPFViewSet):
         if 'attachment' in serializer.validated_data:
             del serializer.validated_data['attachment']
         serializer.save()
+
+    def perform_update(self, serializer):
+        self.perform_create(serializer)
