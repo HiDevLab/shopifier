@@ -249,6 +249,25 @@ export class BaseForm {
         self.disabledNextPage = !(self.current_page < self.last_page);
         self.disabledPrevPage = !(self.current_page > 1);
     }
+
+    onFormChange(self) {
+        self = self || this;
+        self._admin.notNavigate = true;
+        self.formChange = true;
+    }
+
+    routerCanDeactivate(prev, next) {
+        if (!this.formChange) {
+            return true;
+        }
+        this.showLeavePageDialog = true;
+        this.canDeactivate = new Promise(
+            (resolve, reject) => {
+                this.unloadPage = resolve;
+            }
+        );
+        return this.canDeactivate;
+    }
 }
 
 
@@ -747,23 +766,5 @@ export class CustomersEdit extends BaseForm{
                 () => this._router.navigate(['Customers']),
                 (err) => self.apiErrors(self.form, 'customer', err.json()),
             );
-    }
-
-    onFormChange() {
-        this._admin.notNavigate = true;
-        this.formChange = true;
-    }
-
-    routerCanDeactivate(prev, next) {
-        if (!this.formChange) {
-            return true;
-        }
-        this.showLeavePageDialog = true;
-        this.canDeactivate = new Promise(
-            (resolve, reject) => {
-                this.unloadPage = resolve;
-            }
-        );
-        return this.canDeactivate;
     }
 }
