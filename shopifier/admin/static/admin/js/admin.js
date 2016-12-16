@@ -119,6 +119,7 @@ export class Admin {
     forcePopupShow = false;
 
     currentUser = undefined;
+    settings = undefined;
 
     headerButtons = [];
 
@@ -139,7 +140,10 @@ export class Admin {
     }
 
     ngOnInit() {
-        this._auth.getCurrentUser().then(data => {this.currentUser = data;});
+        this._auth.getCurrentUser().then(data => {
+            this.currentUser = data;
+            this.settings = data['settings'];
+        });
     }
 
     refreshCurrentUser() {

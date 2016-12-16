@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
 
+import json
+
 from django.core.validators import URLValidator
 from django.core.files.base import ContentFile
 from urllib import urlretrieve
 
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib.gis.geoip2 import GeoIP2
 from django.core.signing import Signer
 from django.db.models import Max
@@ -87,6 +89,11 @@ class UserSerializer(serializers.ModelSerializer):
     avatar_image = Base64ImageField(required=False, allow_null=True)
     avatar = serializers.SerializerMethodField()
     store_name = serializers.SerializerMethodField()
+    settings = serializers.SerializerMethodField()
+
+    PRIVATE_SETTINGS = [
+        'STORE_NAME',
+    ]
 
     class Meta:
         model = User
@@ -95,12 +102,20 @@ class UserSerializer(serializers.ModelSerializer):
     def get_avatar(self, obj):
         if obj.avatar_image:
             return get_thumbnailer(obj.avatar_image)['avatar'].url
-#             return "{}/{}".format(
-#                 settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url
-#             )
+
+    def get_settings(self, obj):
+        return self.get_parameters()
+
+    @classmethod
+    def get_parameters(cls):
+        out = {
+            parameter: getattr(django_settings, parameter)
+            for parameter in cls.PRIVATE_SETTINGS
+        }
+        return json.dumps(out)
 
     def get_store_name(self, obj):
-        return settings.STORE_NAME
+        return django_settings.STORE_NAME
 
 
 class UsersAdminSerializer(serializers.ModelSerializer):
@@ -121,9 +136,6 @@ class UsersAdminSerializer(serializers.ModelSerializer):
     def get_avatar(self, obj):
         if obj.avatar_image:
             return get_thumbnailer(obj.avatar_image)['avatar'].url
-#             return "{}/{}".format(
-#                 settings.SITE, get_thumbnailer(obj.avatar_image)['avatar'].url
-#             )
 
     def get_visit_datetime(self, obj):
         m = UserLog.objects.filter(user=obj).aggregate(Max('visit_datetime'))
@@ -172,9 +184,6 @@ class UsersStaffSerializer(serializers.ModelSerializer):
     def get_avatar(self, obj):
         if obj.avatar_image:
             return get_thumbnailer(obj.avatar_image)['avatar'].url
-#             return '{}/{}'.join(
-#                 settings.Site, get_thumbnailer(obj.avatar_image)['avatar'].url
-#             )
 
 
 class UserSessionSerializer(serializers.ModelSerializer):
@@ -320,6 +329,3 @@ class ProductImageSerializer(SHPFSerializer):
         model = ProductImage
         read_only_fields = ('created_at', 'updated_at')
         exclude = ('product',)
-
-
-
