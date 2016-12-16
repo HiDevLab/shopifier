@@ -545,7 +545,10 @@ export class RichTextEditor {
             self.parrent_component._admin.notNavigate = true;
             self.parrent_component.formChange = true;
         });
-
+        //disable drop files in iframe
+        this.document.addEventListener('dragenter', this.disableDrop, false);
+        this.document.addEventListener('dragover', this.disableDrop, false);
+        this.document.addEventListener('drop', this.disableDrop, false);
     }
 
     ngOnDestroy() {
@@ -662,5 +665,11 @@ export class RichTextEditor {
     clearFormatting() {
         this.editor.composer.commands.exec('removeFormat');
         this.editor.focus();
+    }
+
+    disableDrop(evt) {
+        evt.preventDefault();
+        evt.dataTransfer.effectAllowed = "none";
+        evt.dataTransfer.dropEffect = "none";
     }
 }

@@ -18,16 +18,26 @@
 <div class="rows pt20 center">
     <div class="row w16 left pl30">
         <div class="rows w16 ml30">
-            <div class="form pt20" >
+            <div class="form pt20" id="drop-zone">
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Images</strong>
-                    
                     <div class="col ref">Upload image
                         <input type="file" accept="image/gif, image/jpeg, image/png" (change)="upLoadImage($event)">
                     </div>
                 </div>
-                <ul class="images mh20 mb20" id="images">
-                    <li *ngFor="let image of images; let i = index;" (mouseover)="currentImg=i;" (mouseleave)="currentImg=undefined">
+                <div class="dragover" [ngClass]="{visible: !images.length || dragOver}">
+                    <div [ngClass]="{hover : dragOver}">
+                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                        <div>Drop files to upload</div>
+                    </div>
+                </div>
+                <ul class="images mh20 mb20" id="images" [ngClass]="{hide: dragOver}">
+                    <li *ngFor="let image of images; let i = index;"
+                        (mouseover)="currentImg=i;"
+                        (mouseleave)="currentImg=undefined"
+                        (mousedown)="drabImg=true"
+                        (mouseup)="drabImg=undefined"
+                        [ngClass]="{grabbing : drabImg}">
                         <span>
                             <img *ngIf="image.attachment" 
                                 src="{% verbatim %}{{ image.attachment }}{% endverbatim %}" 
@@ -49,7 +59,7 @@
                             </div>
                         </div>
                     </li>
-                    <li *ngIf="images.length<1"><span></span></li>
+                    <li *ngIf="images.length<1" class="hidden" ><span></span></li>
                 </ul>
             </div>
         </div>

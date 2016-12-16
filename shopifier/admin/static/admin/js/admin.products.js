@@ -96,7 +96,7 @@ export class Products extends BaseForm {
     onAdd(self) {
         self._router.navigate(['NewProduct']);
     }
-    
+
     onEditProduct(product) {
         this.current_product_index = this.products.indexOf(product);
         let link = ['EditProduct', {'id': product.id }];
@@ -114,6 +114,7 @@ export class Products extends BaseForm {
 export class ProductsNew extends BaseForm {
     images = [];
     html_body = undefined;
+    dragOver = undefined;
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
@@ -147,9 +148,8 @@ export class ProductsNew extends BaseForm {
         } else {
             this.addForm(this.form, '/admin/products.json', 'product');
         }
-
-        this.featherEditor = new Aviary.Feather({
-            apiKey: 'be17668f224b43e98bce30693f23e136',
+//      apiKey: ???
+        this.featherEditor = new Aviary.Feather({ 
             apiVersion: 3,
             theme: 'light',// Check out our new 'light' and 'dark' themes!
             tools: 'all',
@@ -163,7 +163,16 @@ export class ProductsNew extends BaseForm {
            },
            onError: function(errorObj) {alert(errorObj.message);}
         });
+
         dragula([document.querySelector('#images')]);
+        this.dropzone = document.querySelector('#drop-zone');
+        this.dropzone.addEventListener('dragover', this.handleDragOver.bind(this), false);
+        this.dropzone.addEventListener('drop', this.upLoadImage.bind(this), false);
+
+        // disable drag and drop 
+        window.addEventListener('dragenter', this.disableDrop.bind(this), false);
+        window.addEventListener('dragover', this.disableDrop.bind(this), false);
+        window.addEventListener('drop', this.disableDrop.bind(this), false);
     }
 
     onSave(self) {
@@ -198,11 +207,12 @@ export class ProductsNew extends BaseForm {
 
     upLoadImage(event) {
         this.deleteImage();
-        let files = event.target.files;
+        event.stopPropagation();
+        event.preventDefault();
+        let files = event.target.files || event.dataTransfer.files;
+        let self = this;
         if (files && files[0]) {
             let reader = new FileReader();
-            let self = this;
-            
             reader.onload = (event) => {
                 self.images.push({
                     attachment: event.target.result,
@@ -211,6 +221,7 @@ export class ProductsNew extends BaseForm {
                 });
                 self.formChange = true;
                 self._admin.notNavigate = true;
+                self.dragOver  = undefined;
             };
             reader.readAsDataURL(files[0]);
         }
@@ -292,6 +303,30 @@ export class ProductsNew extends BaseForm {
         };
         xhr.open('GET', img.src);
         xhr.send();
-        
     }
+
+    handleDragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'copy';
+        this.dragOver = true;
+    }
+
+    disableDrop(evt) {
+        let el = evt.target;
+        if (el != this.dropzone && !this.childOf(el, this.dropzone)) {
+            this.dragOver = undefined;
+            evt.preventDefault();
+            evt.dataTransfer.effectAllowed = "none";
+            evt.dataTransfer.dropEffect = "none";
+        }
+    }
+
+    childOf(child, parrent) {
+        while(child !== parrent && child) {
+            child = child.parentNode;
+        }
+        return child === parrent;
+    }
+
 }

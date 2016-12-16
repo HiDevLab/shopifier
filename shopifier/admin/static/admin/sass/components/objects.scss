@@ -702,14 +702,16 @@ $tooltip-error-color: #ffffff;
     }
 }
 
-// Images
+// Product Images
 
 .images {
     display: table;
     flex-wrap: wrap;
     list-style: outside none none;
     list-style: decimal inside none;
-    
+    &.hide {
+        visibility: hidden;
+    }
     > li {
         float: left;
         display : flex;
@@ -719,12 +721,18 @@ $tooltip-error-color: #ffffff;
         cursor: -moz-grab;
         cursor: -webkit-grab;
         position: relative;
-//         transition: opacity 0.4s ease-in-out;
         width: 115px;
         height: 115px;
         margin: 10px 10px 0 0;
+        &.hidden {
+            visibility: hidden;
+        }
+        &.grabbing {
+            cursor: grabbing;
+            cursor: -moz-grabbing;
+            cursor: -webkit-grabbing;
+        }
         > div {
-//             z-index: 20;
             position: absolute;
             display: flex;
             flex-direction: column;
@@ -746,8 +754,6 @@ $tooltip-error-color: #ffffff;
                     background-color: transparent;
                 }
             }
-//             opacity: 0;
-//             transition: opacity 0.1s ease-in-out;
         }
         > span {
             background-color: $background-main-btn-disabled;
@@ -767,6 +773,37 @@ $tooltip-error-color: #ffffff;
         }
    }
 }
+.dragover {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    width: calc(100% - 40px);
+    height: calc(100% - 55px);
+    padding: 0 20px 20px 20px;
+    display: none;
+    &.visible {
+        display: block;
+    }
+    > div {
+        height: 100%;
+        color: $border-section-color;
+        display: flex;
+        flex-wrap: wrap;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        > i {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+        &.hover {
+            color: #0078bd;
+            border: dashed 4px #cae9f7;;
+        }
+    }
+}
 
 .gu-mirror {
     cursor: grabbing;
@@ -779,16 +816,4 @@ $tooltip-error-color: #ffffff;
     div {
         display: none;
     }
-
 }
-
-
-// [draggable] {
-//   -moz-user-select: none;
-//   -khtml-user-select: none;
-//   -webkit-user-select: none;
-//   user-select: none;
-//   /* Required to make elements draggable in old WebKit */
-//   -khtml-user-drag: element;
-//   -webkit-user-drag: element;
-// }
