@@ -211,7 +211,6 @@ class UserCheckToken1View(APIView):
     serializer_class = serializers.UserCheckTokenSerializer
 
     def post(self, request, format=None):
-
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -234,7 +233,6 @@ class UserCheckToken2View(APIView):
     token_generator = default_token_generator
 
     def post(self, request, format=None):
-
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
