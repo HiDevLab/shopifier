@@ -591,7 +591,7 @@ export class CustomersEdit extends BaseForm{
         let customer = this.api_data.customer;
         this._admin.currentUrl({
             'url': '#', 'text': `${customer.first_name} ${customer.last_name}`
-        });
+        }, 1);
 
         this.disabledNext = undefined;
         this.disabledPrev = undefined;
