@@ -105,7 +105,7 @@ export class Products extends BaseForm {
 }
 
 
-//-----------------------------------------------------------------ProductsNew 
+//---------------------------------------------------------------ProductsNew 
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new.html',
@@ -126,6 +126,12 @@ export class ProductsNew extends BaseForm {
         this._routeParams = routeparams;
         this.product_id = this._routeParams.get('id');
     }
+
+    ngOnDestroy() {
+        // for child components onDestroy isn't called automatically
+        this.rich_text_editor.ngOnDestroy();
+    }
+
 
     ngOnInit() {
         let self = this;

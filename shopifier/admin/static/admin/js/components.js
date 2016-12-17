@@ -483,6 +483,7 @@ export class RichTextEditor {
 
     ngOnInit() {
         let self = this;
+        this.parrent_component.rich_text_editor = this;
         this.editor = new wysihtml5.Editor('editor', {
             parserRules: wysihtml5ParserRules,
             stylesheets: ['/static/admin/wysihtml/css/wysihtml5.css']
@@ -552,6 +553,9 @@ export class RichTextEditor {
     }
 
     ngOnDestroy() {
+        this.document.removeEventListener('dragenter', this.disableDrop, false);
+        this.document.removeEventListener('dragover', this.disableDrop, false);
+        this.document.removeEventListener('drop', this.disableDrop, false);
         this.editor.destroy();
     }
 
