@@ -576,7 +576,7 @@ class ProductViewSet(ModelViewSet):
 
 class ProductImageViewSet(SHPFViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-    queryset = ProductImage.objects.all().order_by('product')
+    queryset = ProductImage.objects.all().order_by('product', 'position')
     serializer_class = serializers.ProductImageSerializer
 
     def get_queryset(self):
