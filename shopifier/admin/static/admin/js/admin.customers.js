@@ -33,7 +33,8 @@ export class BaseForm {
     api_data = {}
     form = {};    //tree controls
     formChange = false;
-
+    canDeactivate = undefined;
+    
     constructor(http, formbuilder, router, auth, admin, utils) {
         this._http = http;
         this._router = router;
@@ -497,8 +498,6 @@ export class CustomersNew extends BaseForm {
     pipes: [ProvincePipe]
 })
 export class CustomersEdit extends BaseForm{
-    canDeactivate = undefined;
-    
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
                 [Admin], [AdminUtils], [RouteParams]];
