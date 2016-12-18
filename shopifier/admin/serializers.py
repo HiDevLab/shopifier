@@ -329,3 +329,9 @@ class ProductImageSerializer(SHPFSerializer):
         model = ProductImage
         read_only_fields = ('created_at', 'updated_at')
         exclude = ('product',)
+
+    def update(self, instance, validated_data):
+        if not validated_data.get('src'):
+            validated_data['src'] = instance.src
+        return super(ProductImageSerializer, self).update(
+            instance, validated_data)
