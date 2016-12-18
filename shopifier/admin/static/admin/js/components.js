@@ -557,6 +557,7 @@ export class RichTextEditor {
         this.document.removeEventListener('dragover', this.disableDrop, false);
         this.document.removeEventListener('drop', this.disableDrop, false);
         this.editor.destroy();
+        this.parrent_component.rich_text_editor = undefined;
     }
 
     onPopover(event, popover){
