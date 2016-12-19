@@ -147,7 +147,7 @@ export class ProductsNew extends BaseForm {
         this._admin.notNavigate = false;
 
         if (this.product_id) {
-
+            this._admin.currentUrl({ 'url':'#', 'text': ''},1 );
         } else {
             this._admin.currentUrl({ 'url':'#', 'text': 'Add product'},1 );
         }
@@ -261,6 +261,14 @@ export class ProductsNew extends BaseForm {
     onCancel(self) {
         self = self || this;
         self._router.navigate(['Products']);
+    }
+
+    onDeleteProduct() {
+        this._http.delete(`/admin/products/${this.product_id}.json`)
+            .subscribe(
+                () => this._router.navigate(['Products']),
+                (err) => {self.apiErrors(self.form, 'product', err.json());},
+            );
     }
 
     // upload image from file

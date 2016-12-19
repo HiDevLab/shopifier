@@ -1,4 +1,5 @@
 {% load static %}
+{% include "admin/errorsbox.html" with class="section-profile" %}
 <div class="rows pt20 center" *ngIf="form.product">
     <div class="row w16 left pl30">
         <div class="rows w16 ml30">
@@ -64,7 +65,18 @@
             </div>
         </div>
     </div>
- </div>
+</div>
+
+<div class="separator mt20"></div>
+
+<div class="row p25 center">
+        <div class="row end w16 ph30">
+            <a class="btn btn-red mr-auto ml30" (click)="onDeleteProduct();">Delete Product</a>
+            <a class="btn btn-blue"
+            [ngClass]="{disabled : !formChange}"
+            (click)="onSave()"> Save</a>
+        </div> 
+</div>
 
 <leave-page 
     [parrent_component]="self">
