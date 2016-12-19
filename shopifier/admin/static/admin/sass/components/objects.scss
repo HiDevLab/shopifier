@@ -61,9 +61,8 @@ $btn-blue-background: #0069A6;
 $btn-blue-hover-background: #4293c2;
 $btn-blue-color: #ffffff;
 
-$btn-red-color: #ffffff;
-$btn-red-background:  #ff5d5d;
-$btn-red-hover-background:  #d83e3e;
+$btn-red-hover-color: #ffffff;
+$btn-red-hover-background:  #ff5d5d;
 
 $btn-color: #479ccf;
 $btn-background: #ffffff;
@@ -128,11 +127,8 @@ $btn-disabled-color: #d3dbe2;
     }
     
     &.btn-red {
-        background: $btn-red-background;
-        border-color: $btn-red-background;
-        color: $btn-red-color;
-        
         &:hover {
+            color: $btn-red-hover-color;
             background: $btn-red-hover-background;
             border-color: $btn-red-hover-background;
         }
