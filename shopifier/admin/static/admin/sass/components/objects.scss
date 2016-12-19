@@ -801,6 +801,16 @@ $tooltip-error-color: #ffffff;
     }
 }
 
+.modal-image {
+    max-height: 660px;
+    max-width: 620px;
+    padding: 20px;
+    overflow-y: auto;
+    > img {
+        max-width: 100%;
+    }
+}
+
 .gu-mirror {
     cursor: grabbing;
     cursor: -moz-grabbing;

@@ -213,9 +213,7 @@ export class ProductsNew extends BaseForm {
         this.setDataToControls(this.form, 'product', this.api_data.product);
 
         let product = this.api_data.product;
-        this._admin.currentUrl({
-            'url': '#', 'text': `${product.title}`
-        }, 1);
+        this._admin.currentUrl({'url': '#', 'text': `${product.title}`}, 1);
 
 //         this.disabledNext = undefined;
 //         this.disabledPrev = undefined;
@@ -244,7 +242,8 @@ export class ProductsNew extends BaseForm {
             self._http.post('/admin/products.json', product )
                 .subscribe(
                     (data) => {
-                        self.product_id = data.product.id
+                        self.product_id = data.product.id;
+                        self.getProductAfter.call(self, data);
                         self.saveImages(self);
                     },
                     (err) => {self.apiErrors(self.form, 'product', err.json());}
@@ -252,7 +251,10 @@ export class ProductsNew extends BaseForm {
         } else {
             self._http.put(`/admin/products/${self.product_id}.json`, product)
                 .subscribe(
-                    (data) => {self.saveImages(self);},
+                    (data) => {
+                        self.getProductAfter.call(self, data);
+                        self.saveImages(self);
+                    },
                     (err) => {self.apiErrors(self.form, 'product', err.json());}
             );
         }
@@ -292,6 +294,13 @@ export class ProductsNew extends BaseForm {
             };
             reader.readAsDataURL(files[0]);
         }
+    }
+
+    // image Preview
+    showImage(imageID) {
+        let img = this.container_images.querySelector(`[id='${imageID}']`);
+        this.imagePreviewSrc = img.src;
+        this.showImagePreview = true;
     }
 
     // delete image and/or refresh images from DOM

@@ -53,7 +53,7 @@
                             </span>
                         <div [ngClass]="{hide : currentImg!=i}">
                             <div class="row center" >
-                                <a class="btn trash fa fa-eye" aria-hidden="true" title="Preview"></a>
+                                <a class="btn trash fa fa-eye" aria-hidden="true" title="Preview" (click)="showImage(image.id)"></a>
                                 <a class="btn trash fa fa-pencil" aria-hidden="true" title="Edit image" (click)="editImage(image.id)"></a>
                                 <a class="btn font9 bold" aria-hidden="true" title="Edit alt text">ALT</a>
                                 <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete" (click)="deleteImage(image.id)"></a>
@@ -70,13 +70,24 @@
 <div class="separator mt20"></div>
 
 <div class="row p25 center">
-        <div class="row end w16 ph30">
-            <a class="btn btn-red mr-auto ml30" (click)="onDeleteProduct();">Delete Product</a>
-            <a class="btn btn-blue"
-            [ngClass]="{disabled : !formChange}"
-            (click)="onSave()"> Save</a>
-        </div> 
+    <div class="row end w16 ph30">
+        <a class="btn btn-red mr-auto ml30" (click)="onDeleteProduct();">Delete Product</a>
+        <a class="btn btn-blue"
+        [ngClass]="{disabled : !formChange}"
+        (click)="onSave()"> Save</a>
+    </div> 
 </div>
+
+<modal-form *ngIf="showImagePreview && imagePreviewSrc">
+    <form class="input-form" novalidate>
+        <div class="modal-image">
+            <img src="{% verbatim %}{{ imagePreviewSrc }}{% endverbatim %}">
+        </div>
+        <div class="modal-footer">
+            <a class="btn" (click)="showImagePreview=undefined">Done</a>
+        </div>
+    </form>
+</modal-form>
 
 <leave-page 
     [parrent_component]="self">
