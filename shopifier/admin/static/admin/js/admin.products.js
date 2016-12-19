@@ -118,6 +118,7 @@ export class ProductsNew extends BaseForm {
 
     html_body = undefined;
     dragOver = undefined;
+    ImageAltText = '';
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
@@ -301,6 +302,18 @@ export class ProductsNew extends BaseForm {
         let img = this.container_images.querySelector(`[id='${imageID}']`);
         this.imagePreviewSrc = img.src;
         this.showImagePreview = true;
+    }
+
+    editAltText(imageID) {
+        this.currentImage = this.container_images.querySelector(`[id='${imageID}']`);
+        this.altText = this.currentImage.alt;
+        this.showEditAltText = true;
+    }
+
+    saveAltText() {
+        this.currentImage.alt = this.altText;
+        this.showEditAltText=undefined;
+        this.formChange = true;
     }
 
     // delete image and/or refresh images from DOM

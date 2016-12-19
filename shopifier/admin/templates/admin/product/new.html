@@ -47,7 +47,7 @@
                                 id="{% verbatim %}{{ image.id }}{% endverbatim %}">
                             <img *ngIf="image.src" 
                                 src="{% verbatim %}{{ image.src }}{% endverbatim %}" 
-                                alt="" 
+                                alt="{% verbatim %}{{ image.alt }}{% endverbatim %}"  
                                 attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
                                 id="{% verbatim %}{{ image.id }}{% endverbatim %}">
                             </span>
@@ -55,7 +55,7 @@
                             <div class="row center" >
                                 <a class="btn trash fa fa-eye" aria-hidden="true" title="Preview" (click)="showImage(image.id)"></a>
                                 <a class="btn trash fa fa-pencil" aria-hidden="true" title="Edit image" (click)="editImage(image.id)"></a>
-                                <a class="btn font9 bold" aria-hidden="true" title="Edit alt text">ALT</a>
+                                <a class="btn font9 bold" aria-hidden="true" title="Edit alt text"(click)="editAltText(image.id)">ALT</a>
                                 <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete" (click)="deleteImage(image.id)"></a>
                             </div>
                         </div>
@@ -80,11 +80,35 @@
 
 <modal-form *ngIf="showImagePreview && imagePreviewSrc">
     <form class="input-form" novalidate>
-        <div class="modal-image">
+        <div class="preview-image">
             <img src="{% verbatim %}{{ imagePreviewSrc }}{% endverbatim %}">
         </div>
         <div class="modal-footer">
             <a class="btn" (click)="showImagePreview=undefined">Done</a>
+        </div>
+    </form>
+</modal-form>
+
+<modal-form *ngIf="showEditAltText && currentImage">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h2>Edit image alt text</h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showEditAltText=undefined"></a>
+        </div>
+        <div class="input-section">
+            <div class="image-133">
+                <img src="{% verbatim %}{{ currentImage.src }}{% endverbatim %}">
+            </div>
+             <label class="input input-box">Image alt text
+                <input [(ngModel)]="altText">
+                <span class="color-subdued row mt10">
+                    Write a brief description of this image to improve search engine optimization (SEO) and accessibility for visually impaired customers.
+                </span>
+            </label>
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="showEditAltText=undefined">Cancel</a>
+            <a class="btn btn-blue" (click)="saveAltText();">Done</a>
         </div>
     </form>
 </modal-form>

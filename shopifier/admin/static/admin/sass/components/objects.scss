@@ -261,7 +261,6 @@ $input-error-background: #fef6f5;
         > input {
             background: $input-error-background;
             border-color: $input-error-border;
-     
             &:focus {
                 border-color: $input-error-border;
             }
@@ -801,13 +800,27 @@ $tooltip-error-color: #ffffff;
     }
 }
 
-.modal-image {
+.preview-image {
     max-height: 660px;
     max-width: 620px;
     padding: 20px;
     overflow-y: auto;
     > img {
         max-width: 100%;
+    }
+}
+
+.image-133 {
+    background-color: $background-main-btn-disabled;
+    width: 133px;
+    height: 133px;
+    display : flex;
+    align-items : center;
+    margin: -5px 10px;
+    > img {
+        max-height: 100%;
+        max-width: 100%;
+        margin: auto;
     }
 }
 
