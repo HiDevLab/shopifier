@@ -482,12 +482,17 @@ export class RichTextEditor {
 
 
     ngOnInit() {
-        let self = this;
         this.parrent_component.rich_text_editor = this;
         this.editor = new wysihtml5.Editor('editor', {
             parserRules: wysihtml5ParserRules,
             stylesheets: ['/static/admin/wysihtml/css/wysihtml5.css']
         });
+        this.editor.on("load", this.onLoad.bind(this));
+    }
+
+    onLoad(){
+        let self = this;
+        this.editor.setValue(this.parrent_component.html_body, false);
         this.document = this.editor.currentView.sandbox.getDocument();
         wysihtml5.dom.delegate(this.document.body, 'a', 'click', (event) => {
             let el = event.target;
