@@ -220,7 +220,7 @@ def normalization_img_file_name(instance, filename):
 class ProductImage(models.Model):
 
     product = models.ForeignKey(Product, related_name='images')
-    created_at = models.DateTimeField(default=now)
+    created_at = models.DateTimeField(blank=True, null=True)
     position = models.IntegerField()
     src = models.ImageField(upload_to=normalization_img_file_name)
     updated_at = models.DateTimeField(default=now)

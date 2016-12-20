@@ -24,7 +24,7 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from shopifier.admin import serializers
 from shopifier.admin.models import (
-    User, UserLog, Customer, Address, Product, ProductImage)
+     now, User, UserLog, Customer, Address, Product, ProductImage)
 
 
 # accounts
@@ -588,8 +588,9 @@ class ProductImageViewSet(SHPFViewSet):
         return super(ProductImageViewSet, self).dispatch(
             request, *args, **kwargs)
 
-    def perform_create(self, serializer):
+    def perform_update(self, serializer):
         serializer.validated_data['product'] = self.product
+        serializer.validated_data['updated_at'] = now()
         serializer.validated_data['src'] = (
             serializer.validated_data.get('src') or
             serializer.validated_data.get('attachment')
@@ -598,5 +599,6 @@ class ProductImageViewSet(SHPFViewSet):
             del serializer.validated_data['attachment']
         serializer.save()
 
-    def perform_update(self, serializer):
-        self.perform_create(serializer)
+    def perform_create(self, serializer):
+        serializer.validated_data['created_at'] = now()
+        self.perform_update(serializer)
