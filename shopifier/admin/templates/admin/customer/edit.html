@@ -123,7 +123,7 @@
 
  <modal-form *ngIf="form.customer && showEdit">
     <form class="input-form" novalidate>
-        {% with group='customer' change='customerChange' %}
+        {% with group='customer' change='customerChange=true' %}
         <div class="modal-header">
             <h2>Edit customer</h2>
             <a class="cross fa fa-times" aria-hidden="true"
@@ -152,7 +152,7 @@
 
 <modal-form *ngIf="form.default_address && showEditAddress">
     <form class="input-form" novalidate>
-        {% with group='default_address' change='changeAddress' %}
+        {% with group='default_address' change='changeAddress=true' %}
         <div class="modal-header">
             <h2 *ngIf="current_address.id" >Edit address</h2>
             <h2 *ngIf="!current_address.id" >Create address</h2>
