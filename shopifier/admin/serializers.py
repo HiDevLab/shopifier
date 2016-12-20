@@ -1,14 +1,13 @@
 from __future__ import unicode_literals
 
 import json
-
-from django.core.validators import URLValidator
-from django.core.files.base import ContentFile
 from urllib import urlretrieve
 
 from django.conf import settings as django_settings
 from django.contrib.gis.geoip2 import GeoIP2
+from django.core.files.base import ContentFile
 from django.core.signing import Signer
+from django.core.validators import URLValidator
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 

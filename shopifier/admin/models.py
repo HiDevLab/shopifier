@@ -4,9 +4,9 @@ import os
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.sessions.models import Session
 from django.contrib.auth.signals import user_logged_in
+from django.contrib.sessions.models import Session
+from django.utils.translation import ugettext_lazy as _
 
 from pycountry import countries, subdivisions
 
