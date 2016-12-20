@@ -22,6 +22,9 @@
             <div class="form pt20" id="drop-zone">
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Images</strong>
+
+                    <a *ngIf="product_id" class="col ref mr20" (click)="showAddImageFromUrl=true;imageUrl = '';changeImageUrl=undefined;">Add image from URL</a>
+
                     <div class="col ref"><span *ngIf="!product_id">Upload image</span><span *ngIf="product_id">Add images</span>
                         <input type="file" multiple accept="image/gif, image/jpeg, image/png" (change)="addImages($event)">
                     </div>
@@ -109,6 +112,27 @@
         <div class="modal-footer">
             <a class="btn mr10" (click)="showEditAltText=undefined">Cancel</a>
             <a class="btn btn-blue" (click)="saveAltText();">Done</a>
+        </div>
+    </form>
+</modal-form>
+
+<modal-form *ngIf="showAddImageFromUrl">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h2>Add image from URL</h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showAddImageFromUrl=undefined"></a>
+        </div>
+        {% include "admin/errorsbox.html" with errors="urlImageErrors" class="row m10 mb20" %}
+        <div class="input-section">
+            <label class="input input-box">Paste image URL
+                <input [(ngModel)]="imageUrl"
+                (input)="changeImageUrl=true"
+                placeholder="http://">
+            </label>
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="showAddImageFromUrl=undefined">Cancel</a>
+            <a class="btn btn-blue" [ngClass]="{disabled : !changeImageUrl}" (click)="addImageFromUrl(imageUrl);">Add image</a>
         </div>
     </form>
 </modal-form>
