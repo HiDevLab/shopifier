@@ -119,6 +119,7 @@ export class ProductsNew extends BaseForm {
     body_html = '';
     dragOver = undefined;
     ImageAltText = '';
+    imageUrl = '';
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
@@ -228,8 +229,8 @@ export class ProductsNew extends BaseForm {
             data.images[i]['id'] = data.images[i]['id'].toString();
             images.push(data.images[i]);
         }
-        this.images = images;
-        this.api_images = images;
+        this.images = images.slice(0);
+        this.api_images = images.slice(0);
     }
 
     onSave(self) {
@@ -282,11 +283,11 @@ export class ProductsNew extends BaseForm {
         let files = event.target.files || event.dataTransfer.files;
         for(let i=0; i < files.length; i++) {
             let reader = new FileReader();
-            reader.onload = this.readerOnLoad.bind(this);
+            reader.onload = this.readerOnLoadImage.bind(this);
             reader.readAsDataURL(files[i]);
         }
     }
-    readerOnLoad(event) {
+    readerOnLoadImage(event) {
         this.images.push({
             attachment: event.target.result,
             id: `temp-${Math.floor(Math.random() * 1000)}`,
@@ -296,6 +297,28 @@ export class ProductsNew extends BaseForm {
         this._admin.notNavigate = true;
         this.dragOver  = undefined;
     };
+
+    addImageFromUrl(imageUrl) {
+        let self = this;
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = () => {
+            if (xhr.status == 200 && xhr.response.type === 'image/jpeg') {
+                self.images.push({
+                    src: imageUrl,
+                    id: `temp-${Math.floor(Math.random() * 1000)}`,
+                    type: 'url'
+                });
+                self.formChange = true;
+                self.urlImageErrors = [];
+                self.showAddImageFromUrl = undefined;
+            } else {
+                self.urlImageErrors = ['Invalid URL provided.'];
+            }
+        };
+        xhr.open('GET', imageUrl);
+        xhr.send();
+    }
 
     // image Preview
     showImage(imageID) {
