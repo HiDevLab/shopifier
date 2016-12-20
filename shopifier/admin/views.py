@@ -546,6 +546,18 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all().order_by('id')
     serializer_class = serializers.ProductSerializer
 
+    def filter_queryset(self, queryset):
+        since_id = self.request.query_params.get('since_id', None)
+        if since_id:
+            return Product.objects.filter(id__gt=since_id).order_by('id')
+
+        before_id = self.request.query_params.get('before_id', None)
+        if before_id:
+            return Product.objects.filter(id__lt=before_id).order_by('-id')
+
+        return super(ProductViewSet, self).filter_queryset(queryset)
+
+
     def list(self, request, *args, **kwargs):
         response = super(ProductViewSet, self).list(request, *args, **kwargs)
         response.data = {'products': response.data}

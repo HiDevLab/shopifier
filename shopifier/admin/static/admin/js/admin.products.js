@@ -108,7 +108,7 @@ export class Products extends BaseForm {
 //-------------------------------------------------------------ProductsNew(Edit) 
 @Component({
   selector: 'main',
-  templateUrl : 'templates/product/new.html',
+  templateUrl : 'templates/product/new-edit.html',
   directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage],
 })
 export class ProductsNew extends BaseForm {
@@ -148,13 +148,22 @@ export class ProductsNew extends BaseForm {
         this.self = this; // for child components
         this._admin.notNavigate = false;
 
+        this._admin.headerButtons = [];
         if (this.product_id) {
             this._admin.currentUrl({ 'url':'#', 'text': ''},1 );
+
+            this._admin.headerButtons.push({
+                'text': '', 'class': 'btn mr10 fa fa-chevron-left',
+                'click': this.onPrev, 'self': this, 'disabled' : 'disabledPrev'
+            });
+    
+            this._admin.headerButtons.push({
+                'text': '', 'class': 'btn mr10 fa fa-chevron-right', 
+                'click': this.onNext, 'self': this, 'disabled' : 'disabledNext'
+            });
         } else {
             this._admin.currentUrl({ 'url':'#', 'text': 'Add product'},1 );
         }
-
-        this._admin.headerButtons = [];
         this._admin.headerButtons.push({
             'text': 'Cancel', 'class': 'btn mr10', 
             'click': this.onCancel, 'self': this 
@@ -217,9 +226,54 @@ export class ProductsNew extends BaseForm {
         let product = this.api_data.product;
         this._admin.currentUrl({'url': '#', 'text': `${product.title}`}, 1);
 
-//         this.disabledNext = undefined;
-//         this.disabledPrev = undefined;
+        this.disabledNext = undefined;
+        this.disabledPrev = undefined;
     }
+
+    onNext(self){ // call from admin header
+        self = self || this;
+        let id = self.product_id;
+        self._http
+            .get(`/admin/products.json?since_id=${id}&limit=1&fields=id`)
+            .subscribe(
+                (data) => { 
+                    if (data.products.length > 0) {
+                        self._router.navigate(['EditProduct',
+                            {'id': data.products[0].id }]);
+                        self.disabledPrev = false;
+                        self.disabledNext = false;
+                    }
+                    else {
+                       self.disabledNext = true;
+                    }
+                },
+                (err) =>  self.disabledNext = true,
+            );
+    }
+
+    onPrev(self){ // call from admin header
+        self = self || this;
+        let id = self.product_id;
+        self._http
+            .get(`/admin/products.json?before_id=${id}&limit=1&fields=id`)
+            .subscribe(
+                (data) => {
+                    if (data.products.length > 0) {
+                        self._router.navigate(['EditProduct',
+                            {'id': data.products[0].id }]);
+                        self.disabledNext = false;
+                        self.disabledPrev = false;
+                    }
+                    else {
+                       self.disabledPrev = true;
+                    }
+                },
+                (err) => self.disabledPrev = undefined,
+            );
+    }
+
+
+
 
     getImagesAfter(data) {
         let images = [];
@@ -513,7 +567,7 @@ export class ProductsNew extends BaseForm {
 //---------------------------------------------------------------ProductsEdit 
 @Component({
   selector: 'main',
-  templateUrl : 'templates/product/new.html',
+  templateUrl : 'templates/product/new-edit.html',
   directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage],
 })
 export class ProductsEdit extends ProductsNew {
