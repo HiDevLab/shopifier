@@ -1,7 +1,8 @@
-<div class="rows pt20 center">
+{% include "admin/errorsbox.html" with class="section-profile" %}
+<div class="rows pt20 center" *ngIf="form.customer && form.default_address && api_data.customer">
     <div class="row w16 center pl30">
         <div class="rows w16 ml30">
-            <div class="form pb10" *ngIf="form.customer && form.default_address && api_data.customer">
+            <div class="form pb10">
                 <div class="row mb10 p20">
                     <span class="fa-stack fa-lg color-avatar font48">
                       <i class="fa fa-circle fa-stack-2x"></i>

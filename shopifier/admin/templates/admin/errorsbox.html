@@ -1,11 +1,15 @@
-<div *ngIf="errors.length> 0" class="{{ class }}">
+<div *ngIf="{% if errors %}{{ errors }}{% else %}errors{% endif %} && {% if errors %}{{ errors }}{% else %}errors{% endif %}.length" class="{{ class }}">
     <div  class="input-box">
         <div class="error-list">
             <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
             <div>
-                <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                {% if errors %}
+                    <h2> There is {% templatetag openvariable %} {{ errors }}.length {% templatetag closevariable %} errors</h2>
+                {% else %}
+                    <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                {% endif %}
                 <ul>
-                    <li *ngFor="let error of errors">
+                    <li *ngFor="let error of {% if errors %}{{ errors }}{% else %}errors{% endif %}">
                         {% verbatim %}{{ error }}{% endverbatim %}
                     </li>
                 </ul>

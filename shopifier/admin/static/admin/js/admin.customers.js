@@ -60,8 +60,10 @@ export class BaseForm {
     }
 
     addFormFromOptinons(form, data, alias) {
-        let group = data.actions[Object.keys(data.actions)[0]];
-        this.addGroup(form, group, alias);
+        if (data.actions) {
+            let group = data.actions[Object.keys(data.actions)[0]];
+            this.addGroup(form, group, alias);
+        }
     }
 
     addGroup(form, group, group_name) {
@@ -185,7 +187,11 @@ export class BaseForm {
                     (data) => this[afters[i]](data),
                     (err) => {
                         this.obj_errors = err;
-                        this.errors = this._utils.to_array(err.json());
+                        try {
+                            this.errors = this._utils.to_array(err.json());
+                        } catch(e) {
+                            console.log(err, e);
+                        }
                     },
                 );
         }
@@ -511,7 +517,8 @@ export class CustomersEdit extends BaseForm{
     ngOnInit() {
         this.self = this; // for child components
         this._admin.notNavigate = false;
-        
+        this._admin.currentUrl({'url': '#', 'text': ''}, 1);
+
         this._admin.headerButtons = [];
         this._admin.headerButtons.push({
             'text': '', 'class': 'btn mr10 fa fa-chevron-left',
