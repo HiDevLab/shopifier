@@ -23,9 +23,9 @@
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Images</strong>
 
-                    <a *ngIf="product_id" class="col ref mr20" (click)="showAddImageFromUrl=true;imageUrl = '';changeImageUrl=undefined;">Add image from URL</a>
+                    <a *ngIf="object_id" class="col ref mr20" (click)="showAddImageFromUrl=true;imageUrl = '';changeImageUrl=undefined;">Add image from URL</a>
 
-                    <div class="col ref"><span *ngIf="!product_id">Upload image</span><span *ngIf="product_id">Add images</span>
+                    <div class="col ref"><span *ngIf="!object_id">Upload image</span><span *ngIf="object_id">Add images</span>
                         <input type="file" multiple accept="image/gif, image/jpeg, image/png" (change)="addImages($event)">
                     </div>
                 </div>

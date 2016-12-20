@@ -10,7 +10,7 @@ import { Router, RouteParams, RouteConfig,
 import { Admin } from './admin';
 import { AdminAuthService, AdminUtils } from './admin.auth'
 import { RichTextEditor,  AdminLeavePage} from './components';
-import { BaseForm } from './admin.customers'
+import { BaseForm } from './admin.baseform'
 
 
 //------------------------------------------------------------------------------
@@ -129,7 +129,10 @@ export class ProductsNew extends BaseForm {
     constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
         super(http, formbuilder, router, auth, admin, utils);
         this._routeParams = routeparams;
-        this.product_id = this._routeParams.get('id');
+
+        this.object_id = this._routeParams.get('id');
+        this.model = 'product';
+        this.currentLink = 'NewProduct';
     }
 
     ngOnDestroy() {
@@ -149,7 +152,8 @@ export class ProductsNew extends BaseForm {
         this._admin.notNavigate = false;
 
         this._admin.headerButtons = [];
-        if (this.product_id) {
+        if (this.object_id) {
+            this.currentLink = 'EditProduct';
             this._admin.currentUrl({ 'url':'#', 'text': ''},1 );
 
             this._admin.headerButtons.push({
@@ -209,10 +213,10 @@ export class ProductsNew extends BaseForm {
 
 
     addFormAfter() {
-        if (this.product_id) {
+        if (this.object_id) {
             this.getAPIData([
-                    `/admin/products/${this.product_id}.json`,
-                    `/admin/products/${this.product_id}/images.json`
+                    `/admin/products/${this.object_id}.json`,
+                    `/admin/products/${this.object_id}/images.json`
                 ],
                 ['getProductAfter', 'getImagesAfter']
             );
@@ -229,49 +233,6 @@ export class ProductsNew extends BaseForm {
         this.disabledNext = undefined;
         this.disabledPrev = undefined;
     }
-
-    onNext(self){ // call from admin header
-        self = self || this;
-        let id = self.product_id;
-        self._http
-            .get(`/admin/products.json?since_id=${id}&limit=1&fields=id`)
-            .subscribe(
-                (data) => { 
-                    if (data.products.length > 0) {
-                        self._router.navigate(['EditProduct',
-                            {'id': data.products[0].id }]);
-                        self.disabledPrev = false;
-                        self.disabledNext = false;
-                    }
-                    else {
-                       self.disabledNext = true;
-                    }
-                },
-                (err) =>  self.disabledNext = true,
-            );
-    }
-
-    onPrev(self){ // call from admin header
-        self = self || this;
-        let id = self.product_id;
-        self._http
-            .get(`/admin/products.json?before_id=${id}&limit=1&fields=id`)
-            .subscribe(
-                (data) => {
-                    if (data.products.length > 0) {
-                        self._router.navigate(['EditProduct',
-                            {'id': data.products[0].id }]);
-                        self.disabledNext = false;
-                        self.disabledPrev = false;
-                    }
-                    else {
-                       self.disabledPrev = true;
-                    }
-                },
-                (err) => self.disabledPrev = undefined,
-            );
-    }
-
 
 
 
@@ -294,18 +255,18 @@ export class ProductsNew extends BaseForm {
         let product = {};
         product['product'] = self.form['product'].value;
         product.product['body_html'] = self.body_html;
-        if (!self.product_id) {
+        if (!self.object_id) {
             self._http.post('/admin/products.json', product )
                 .subscribe(
                     (data) => {
-                        self.product_id = data.product.id;
+                        self.object_id = data.product.id;
                         self.getProductAfter.call(self, data);
                         self.saveImages(self);
                     },
                     (err) => {self.apiErrors(self.form, 'product', err.json());}
             );
         } else {
-            self._http.put(`/admin/products/${self.product_id}.json`, product)
+            self._http.put(`/admin/products/${self.object_id}.json`, product)
                 .subscribe(
                     (data) => {
                         self.getProductAfter.call(self, data);
@@ -322,7 +283,7 @@ export class ProductsNew extends BaseForm {
     }
 
     onDeleteProduct() {
-        this._http.delete(`/admin/products/${this.product_id}.json`)
+        this._http.delete(`/admin/products/${this.object_id}.json`)
             .subscribe(
                 () => this._router.navigate(['Products']),
                 (err) => {self.apiErrors(self.form, 'product', err.json());},
@@ -463,7 +424,7 @@ export class ProductsNew extends BaseForm {
             });
         }
         if (!!Object.keys(data).length) {
-            let url = `/admin/products/${self.product_id}/images/${new_image.id}.json`;
+            let url = `/admin/products/${self.object_id}/images/${new_image.id}.json`;
             self._http.put(url, {image: data})
                 .subscribe((data) => {
                     self.getAPIImage(self, Object.assign({image: old_image}, data));
@@ -480,7 +441,7 @@ export class ProductsNew extends BaseForm {
         let data = {alt_text: new_image.alt_text, position: new_image.position};
         let field = (new_image.type === 'url') ? 'src' : 'attachment';
         data[field] = new_image.src;
-        let url = `/admin/products/${self.product_id}/images.json`;
+        let url = `/admin/products/${self.object_id}/images.json`;
         self._http.post(url, {image: data})
             .subscribe((data) => {self.getAPIImage(self, data);}, (err) => {});
     }
@@ -499,7 +460,7 @@ export class ProductsNew extends BaseForm {
             old_image = api_images[i];
             if (!self.findImage(old_image, dom_images)) {
                 self._http
-                    .delete(`/admin/products/${self.product_id}/images/${old_image.id}.json`)
+                    .delete(`/admin/products/${self.object_id}/images/${old_image.id}.json`)
                     .subscribe(() => {}, (err) => {});
             }
         }
