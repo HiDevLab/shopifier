@@ -116,7 +116,7 @@ export class ProductsNew extends BaseForm {
     images = [];
     api_images = [];
 
-    html_body = undefined;
+    body_html = '';
     dragOver = undefined;
     ImageAltText = '';
 
@@ -189,7 +189,7 @@ export class ProductsNew extends BaseForm {
         // drag over
         this.dropzone = document.querySelector('#drop-zone');
         this.dropzone.addEventListener('dragover', this.handleDragOver.bind(this), false);
-        this.dropzone.addEventListener('drop', this.upLoadImage.bind(this), false);
+        this.dropzone.addEventListener('drop', this.addImages.bind(this), false);
 
         // disable dragover and drop 
         window.addEventListener('dragenter', this.disableDrop.bind(this), false);
@@ -212,7 +212,7 @@ export class ProductsNew extends BaseForm {
     getProductAfter(data) {
         this.api_data = data;
         this.setDataToControls(this.form, 'product', this.api_data.product);
-
+        this.body_html = data.product.body_html;
         let product = this.api_data.product;
         this._admin.currentUrl({'url': '#', 'text': `${product.title}`}, 1);
 
@@ -238,7 +238,7 @@ export class ProductsNew extends BaseForm {
         if(!self.groupValidate(self.form, 'product')) return;
         let product = {};
         product['product'] = self.form['product'].value;
-        product.product['html_body'] = self.html_body;
+        product.product['body_html'] = self.body_html;
         if (!self.product_id) {
             self._http.post('/admin/products.json', product )
                 .subscribe(
@@ -274,28 +274,28 @@ export class ProductsNew extends BaseForm {
             );
     }
 
-    // upload image from file
-    upLoadImage(event) {
+    // upload images (dragover)
+    addImages(event) {
         this.deleteImage();
         event.stopPropagation();
         event.preventDefault();
         let files = event.target.files || event.dataTransfer.files;
-        let self = this;
-        if (files && files[0]) {
+        for(let i=0; i < files.length; i++) {
             let reader = new FileReader();
-            reader.onload = (event) => {
-                self.images.push({
-                    attachment: event.target.result,
-                    id: `temp-${Math.floor(Math.random() * 1000)}`,
-                    type: 'base64'
-                });
-                self.formChange = true;
-                self._admin.notNavigate = true;
-                self.dragOver  = undefined;
-            };
-            reader.readAsDataURL(files[0]);
+            reader.onload = this.readerOnLoad.bind(this);
+            reader.readAsDataURL(files[i]);
         }
     }
+    readerOnLoad(event) {
+        this.images.push({
+            attachment: event.target.result,
+            id: `temp-${Math.floor(Math.random() * 1000)}`,
+            type: 'base64'
+        });
+        this.formChange = true;
+        this._admin.notNavigate = true;
+        this.dragOver  = undefined;
+    };
 
     // image Preview
     showImage(imageID) {

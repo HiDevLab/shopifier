@@ -22,8 +22,8 @@
             <div class="form pt20" id="drop-zone">
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Images</strong>
-                    <div class="col ref">Upload image
-                        <input type="file" accept="image/gif, image/jpeg, image/png" (change)="upLoadImage($event)">
+                    <div class="col ref"><span *ngIf="!product_id">Upload image</span><span *ngIf="product_id">Add images</span>
+                        <input type="file" multiple accept="image/gif, image/jpeg, image/png" (change)="addImages($event)">
                     </div>
                 </div>
                 <div class="dragover" [ngClass]="{visible: !images.length || dragOver}">

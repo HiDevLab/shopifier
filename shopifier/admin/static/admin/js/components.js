@@ -492,8 +492,9 @@ export class RichTextEditor {
 
     onLoad(){
         let self = this;
-        this.editor.setValue(this.parrent_component.html_body, false);
+        this.editor.setValue(this.parrent_component.body_html, false);
         this.document = this.editor.currentView.sandbox.getDocument();
+        this.document.body.blur();
         wysihtml5.dom.delegate(this.document.body, 'a', 'click', (event) => {
             let el = event.target;
             self.linkTo = el.href;
@@ -547,10 +548,11 @@ export class RichTextEditor {
             self.tableTools = false;
         });
         this.editor.on('change', () => {
-            self.parrent_component.html_body = self.editor.getValue();
+            self.parrent_component.body_html = self.editor.getValue();
             self.parrent_component._admin.notNavigate = true;
             self.parrent_component.formChange = true;
         });
+
         //disable drop files in iframe
         this.document.addEventListener('dragenter', this.disableDrop, false);
         this.document.addEventListener('dragover', this.disableDrop, false);
