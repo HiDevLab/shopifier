@@ -293,34 +293,44 @@ class AddressSerializer(SHPFSerializer):
 
 
 # products
-class ProductSerializer(SHPFSerializer):
-
-    body_html = serializers.CharField(
-        label=_('Description'),
-        max_length=2048, required=False, allow_null=True, allow_blank=True
-    )
-#     images = ProductImageSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Product
-        exclude = ()
-
-
 class ImageUrlField(serializers.ImageField):
-
     def to_internal_value(self, data):
         try:
             URLValidator()(data)
         except ValidationError:
             raise ValidationError('Invalid Url')
-
         file_, http_message = urlretrieve(data)
         file_ = open(file_, 'rb')
         return super(ImageUrlField, self).to_internal_value(
             ContentFile(file_.read(), name=file_.name))
 
 
-class ProductImageSerializer(SHPFSerializer):
+class ProductImageSerializer(serializers.ModelSerializer):
+    src = ImageUrlField(required=False)
+    product_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductImage
+        exclude = ('product',)
+
+    def get_product_id(self, obj):
+        return obj.product.id
+
+
+class ProductSerializer(SHPFSerializer):
+
+    body_html = serializers.CharField(
+        label=_('Description'),
+        max_length=2048, required=False, allow_null=True, allow_blank=True
+    )
+    images = ProductImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        exclude = ()
+
+
+class ImageSerializer(SHPFSerializer):
 
     src = ImageUrlField(required=False)
     attachment = Base64ImageField(required=False, allow_null=True)
@@ -333,5 +343,5 @@ class ProductImageSerializer(SHPFSerializer):
     def update(self, instance, validated_data):
         if not validated_data.get('src'):
             validated_data['src'] = instance.src
-        return super(ProductImageSerializer, self).update(
+        return super(ImageSerializer, self).update(
             instance, validated_data)
