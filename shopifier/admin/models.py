@@ -226,3 +226,5 @@ class ProductImage(models.Model):
     updated_at = models.DateTimeField(default=now)
     alt_text = models.CharField(
         _('Image alt text'), blank=True, max_length=254)
+
+    ordering = ['product', 'position']
