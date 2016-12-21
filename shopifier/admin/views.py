@@ -422,6 +422,19 @@ class SHPFViewSet(ModelViewSet):
         self.repr = self.REPR[self.queryset.model.__name__]
         super(SHPFViewSet, self).__init__(*args, **kwargs)
 
+    def filter_queryset(self, queryset):
+        since_id = self.request.query_params.get('since_id', None)
+        if since_id:
+            return self.queryset.model.objects.filter(
+                id__gt=since_id).order_by('id')
+
+        before_id = self.request.query_params.get('before_id', None)
+        if before_id:
+            return self.queryset.model.objects.filter(
+                id__lt=before_id).order_by('-id')
+
+        return super(SHPFViewSet, self).filter_queryset(queryset)
+
     def list(self, request, *args, **kwargs):
         response = super(SHPFViewSet, self).list(request, *args, **kwargs)
         response.data = {self.repr['list']: response.data}
@@ -457,17 +470,6 @@ class CustomerViewSet(SHPFViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Customer.objects.all().order_by('id')
     serializer_class = serializers.CustomerSerializer
-
-    def filter_queryset(self, queryset):
-        since_id = self.request.query_params.get('since_id', None)
-        if since_id:
-            return Customer.objects.filter(id__gt=since_id).order_by('id')
-
-        before_id = self.request.query_params.get('before_id', None)
-        if before_id:
-            return Customer.objects.filter(id__lt=before_id).order_by('-id')
-
-        return super(CustomerViewSet, self).filter_queryset(queryset)
 
     @detail_route(methods=['post'])
     def account_activation_url(self, request, pk=None):
@@ -541,49 +543,10 @@ class AddressViewSet(SHPFViewSet):
 
 
 # Product
-class ProductViewSet(ModelViewSet):
+class ProductViewSet(SHPFViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Product.objects.all().order_by('id')
     serializer_class = serializers.ProductSerializer
-
-    def filter_queryset(self, queryset):
-        since_id = self.request.query_params.get('since_id', None)
-        if since_id:
-            return Product.objects.filter(id__gt=since_id).order_by('id')
-
-        before_id = self.request.query_params.get('before_id', None)
-        if before_id:
-            return Product.objects.filter(id__lt=before_id).order_by('-id')
-
-        return super(ProductViewSet, self).filter_queryset(queryset)
-
-
-    def list(self, request, *args, **kwargs):
-        response = super(ProductViewSet, self).list(request, *args, **kwargs)
-        response.data = {'products': response.data}
-        return response
-
-    def retrieve(self, request, *args, **kwargs):
-        response = super(ProductViewSet, self).retrieve(
-            request, *args, **kwargs)
-        response.data = {'product': response.data}
-        return response
-
-    def create(self, request, *args, **kwargs):
-        response = super(ProductViewSet, self).create(request, *args, **kwargs)
-        response.data = {'product': response.data}
-        return response
-
-    def update(self, request, *args, **kwargs):
-        response = super(ProductViewSet, self).update(request, *args, **kwargs)
-        response.data = {'product': response.data}
-        return response
-
-    def destroy(self, request, *args, **kwargs):
-        response = super(ProductViewSet, self).destroy(
-            request, *args, **kwargs)
-        response.status = status.HTTP_200_OK
-        return response
 
 
 class ProductImageViewSet(SHPFViewSet):
