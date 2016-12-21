@@ -239,6 +239,15 @@ class SHPFSerializer(serializers.ModelSerializer):
             data = data[data.keys()[0]]
         super(SHPFSerializer, self).__init__(instance, data, **kwargs)
 
+    def get_field_names(self, declared_fields, info):
+        meta_fields = set(
+            super(SHPFSerializer, self).get_field_names(declared_fields, info))
+        param = self.context['request'].query_params.get('fields', None)
+        if param:
+            fields = set(param.replace(' ', '').split(','))
+            return fields.intersection(meta_fields)
+        return meta_fields
+
 
 class CustomerAddressSerializer(SHPFSerializer):
     default = serializers.BooleanField(read_only=True)
@@ -274,16 +283,6 @@ class CustomerSerializer(SHPFSerializer):
         model = Customer
         exclude = ()
 
-    def get_field_names(self, declared_fields, info):
-        meta_fields = set(super(CustomerSerializer, self)
-                          .get_field_names(declared_fields, info))
-        param = self.context['request'].query_params.get('fields', None)
-        if param:
-            fields = set(param.replace(' ', '').split(','))
-            return fields.intersection(meta_fields)
-
-        return meta_fields
-
 
 class AddressSerializer(SHPFSerializer):
     default = serializers.BooleanField(read_only=True)
@@ -300,6 +299,7 @@ class ProductSerializer(SHPFSerializer):
         label=_('Description'),
         max_length=2048, required=False, allow_null=True, allow_blank=True
     )
+#     images = ProductImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
@@ -307,6 +307,7 @@ class ProductSerializer(SHPFSerializer):
 
 
 class ImageUrlField(serializers.ImageField):
+
     def to_internal_value(self, data):
         try:
             URLValidator()(data)
