@@ -98,7 +98,7 @@ export class Customers extends BaseForm {
 }
 
 
-//-----------------------------------------------------------------CustomersNew 
+//------------------------------------------------------------------------------CustomersNew 
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
@@ -119,7 +119,7 @@ export class CustomersNew extends BaseForm {
     }
 
     ngOnInit() {
-        this._admin.currentUrl({ 'url':'#', 'text': 'Add customer'});
+        this._admin.currentUrl({ 'url':'#', 'text': 'Add customer'}, 1);
 
         this._admin.headerButtons = [];
         this._admin.headerButtons.push({
