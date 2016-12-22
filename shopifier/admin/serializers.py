@@ -242,10 +242,12 @@ class SHPFSerializer(serializers.ModelSerializer):
     def get_field_names(self, declared_fields, info):
         meta_fields = set(
             super(SHPFSerializer, self).get_field_names(declared_fields, info))
-        param = self.context['request'].query_params.get('fields', None)
-        if param:
-            fields = set(param.replace(' ', '').split(','))
-            return fields.intersection(meta_fields)
+        request = self.context.get('request')
+        if request:
+            param = request.query_params.get('fields')
+            if param:
+                fields = set(param.replace(' ', '').split(','))
+                return fields.intersection(meta_fields)
         return meta_fields
 
 
