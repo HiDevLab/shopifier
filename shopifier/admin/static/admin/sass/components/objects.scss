@@ -5,11 +5,15 @@ $colors: (
     sky-darker: #c3cfd8,
     avatar: #4b9acc,
     tags: #798c9c,
+    green: #29bc94,
+    purple: #763eaf,
+    orange: #ff9517
 );
+
 
 @each $name, $color in $colors { 
     .color-#{$name}{
-        color: #{$color};
+        color: #{$color} !important;
     }
 }
 
@@ -22,7 +26,7 @@ $backgrounds: (
 
 @each $name, $color in $backgrounds { 
     .backgraund-#{$name}{
-        background-color: #{$color};
+        background-color: #{$color} !important;
     }
 }
 
@@ -64,7 +68,7 @@ $btn-blue-color: #ffffff;
 $btn-red-hover-color: #ffffff;
 $btn-red-hover-background:  #ff5d5d;
 
-$btn-color: #479ccf;
+$btn-color: #0078bd;
 $btn-background: #ffffff;
 $btn-border: #d3dbe2;
 $btn-disabled-background: #fafbfc;
@@ -538,8 +542,16 @@ popover {
 $tag-color: #005e94;
 $tag-background: #cae9f7 none repeat scroll 0 0;
 
+$tag-color-green: #ffffff;
+$tag-background-green: #29bc94 none repeat scroll 0 0;
 $tag-color-grey: #798c9c;
 $tag-background-grey: #ebeef0 none repeat scroll 0 0;
+$tag-color-purple: #ffffff;
+$tag-background-purple: #763eaf none repeat scroll 0 0;
+$tag-color-orange: #ffffff;
+$tag-background-orange: #ff9517 none repeat scroll 0 0;
+
+
 $tag-input-border: #d3dbe2;
 $tag-popover-select: #0078BD;
 
@@ -609,6 +621,18 @@ $tag-popover-select: #0078BD;
         color: $tag-color; 
         border-radius: 3px;
         cursor: default;
+        &.bggreen {
+            color: $tag-color-green; 
+            background: $tag-background-green;
+        }
+        &.bgpurple {
+            color: $tag-color-purple; 
+            background: $tag-background-purple;
+        }
+        &.bgorange {
+            color: $tag-color-orange; 
+            background: $tag-background-orange;
+        }
         & > a {
             font-size: 0.8rem;
             cursor: pointer;
@@ -834,5 +858,48 @@ $tooltip-error-color: #ffffff;
     }
     div {
         display: none;
+    }
+}
+
+
+// Product variants
+
+.new-variant-table {
+    overflow-x: auto; 
+    > table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        display: table;
+        border-color: grey;
+        overflow-x: auto;
+        tr {
+            display: table-row;
+            vertical-align: inherit;
+            &:last-child>td {
+                border-bottom: none;
+            }
+        }
+        > thead {
+            display: table-header-group;
+            vertical-align: middle;
+        }
+        > tbody {
+            display: table-row-group;
+            vertical-align: middle;
+            border-color: inherit;
+        }
+        td, th {
+            display: table-cell;
+            vertical-align: inherit;
+            text-align: left;
+            border-bottom: 1px solid $border-section-tab-color;
+            &:not(:first-child) {
+                min-width: 75px;
+            }
+        }
+        th {
+            padding: 6px 10px;
+        }
     }
 }

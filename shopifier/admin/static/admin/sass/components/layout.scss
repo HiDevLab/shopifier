@@ -115,10 +115,15 @@
     }
 }
 
+@for $i from 1 to 9 {
+    .flex-#{$i} {
+        flex: #{$i} !important;
+    }
+}
 
 @for $i from 5 to 100 {
     .font#{$i} {
-        font-size: #{$i}px;
+        font-size: #{$i}px !important;
     }
 }
 
@@ -142,7 +147,7 @@ $classes: (
       @each $name, $direct in $directions { 
         @for $i from 0 to 31 {
           &#{$name}#{$i} {
-            #{$class}#{$direct}: #{$i}px;
+            #{$class}#{$direct}: #{$i}px !important;
           }
        }
     }
@@ -151,12 +156,12 @@ $classes: (
 
 @for $i from 0 to 31 {
     .pv#{$i} {
-        padding-top: #{$i}px;
-        padding-bottom: #{$i}px;
+        padding-top: #{$i}px !important;
+        padding-bottom: #{$i}px !important;
     }
     .ph#{$i} {
-        padding-left: #{$i}px;
-        padding-right: #{$i}px;
+        padding-left: #{$i}px !important;
+        padding-right: #{$i}px !important;
     }
     .mv#{$i} {
         margin-top: #{$i}px;
@@ -172,19 +177,19 @@ $classes: (
 .m{
     @each $name, $direct in $directions { 
       &#{$name}-auto {
-        margin#{$direct}: auto;
+        margin#{$direct}: auto !important;
       }
   }
 }
 
 .mv-auto {
-    margin-top: auto;
-    margin-bottom: auto;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
 }
 
 .mh-auto {
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
     
@@ -192,6 +197,18 @@ $classes: (
     position: relative;
 }
 
+.hidden {
+    visibility: hidden; 
+}
+.visible {
+    visibility: visible;
+}
+.left {
+    text-align: left;
+}
+.right {
+    text-align: right;
+}
 
 p {
     margin-bottom: 15px;

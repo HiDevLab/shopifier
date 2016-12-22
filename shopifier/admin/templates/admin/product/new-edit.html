@@ -16,59 +16,9 @@
     </div>
  </div>
 
-<div class="rows pt20 center">
-    <div class="row w16 left pl30">
-        <div class="rows w16 ml30">
-            <div class="form pt20" id="drop-zone">
-                <div class="row mh20">
-                    <strong class="col mr-auto font16">Images</strong>
+{% include "admin/product/edit-images.html" %}
 
-                    <a *ngIf="object_id" class="col ref mr20" (click)="showAddImageFromUrl=true;imageUrl = '';changeImageUrl=undefined;">Add image from URL</a>
-
-                    <div class="col ref"><span *ngIf="!object_id">Upload image</span><span *ngIf="object_id">Add images</span>
-                        <input type="file" multiple accept="image/gif, image/jpeg, image/png" (change)="addImages($event)">
-                    </div>
-                </div>
-                <div class="dragover" [ngClass]="{visible: !images.length || dragOver}">
-                    <div [ngClass]="{hover : dragOver}">
-                        <i class="fa fa-picture-o" aria-hidden="true"></i>
-                        <div>Drop files to upload</div>
-                    </div>
-                </div>
-                <ul class="images mh20 mb20" id="images" [ngClass]="{hide: dragOver}">
-                    <li *ngFor="let image of images; let i = index;"
-                        (mouseover)="currentImg=i;"
-                        (mouseleave)="currentImg=undefined"
-                        (mousedown)="drabImg=true"
-                        (mouseup)="drabImg=undefined"
-                        [ngClass]="{grabbing : drabImg}">
-                        <span>
-                            <img *ngIf="image.attachment" 
-                                src="{% verbatim %}{{ image.attachment }}{% endverbatim %}" 
-                                alt="" 
-                                attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
-                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
-                            <img *ngIf="image.src" 
-                                src="{% verbatim %}{{ image.src }}{% endverbatim %}" 
-                                alt="{% verbatim %}{{ image.alt }}{% endverbatim %}"  
-                                attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
-                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
-                            </span>
-                        <div [ngClass]="{hide : currentImg!=i}">
-                            <div class="row center" >
-                                <a class="btn trash fa fa-eye" aria-hidden="true" title="Preview" (click)="showImage(image.id)"></a>
-                                <a class="btn trash fa fa-pencil" aria-hidden="true" title="Edit image" (click)="editImage(image.id)"></a>
-                                <a class="btn font9 bold" aria-hidden="true" title="Edit alt text"(click)="editAltText(image.id)">ALT</a>
-                                <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete" (click)="deleteImage(image.id)"></a>
-                            </div>
-                        </div>
-                    </li>
-                    <li *ngIf="images.length<1" class="hidden" ><span></span></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
+{% include "admin/product/edit-variants.html" %}
 
 <div class="separator mt20"></div>
 
@@ -77,65 +27,9 @@
         <a class="btn btn-red mr-auto ml30" (click)="onDeleteProduct();">Delete Product</a>
         <a class="btn btn-blue"
         [ngClass]="{disabled : !formChange}"
-        (click)="onSave()"> Save</a>
+        (click)="onSave()"> Save Product</a>
     </div> 
 </div>
-
-<modal-form *ngIf="showImagePreview && imagePreviewSrc">
-    <form class="input-form" novalidate>
-        <div class="preview-image">
-            <img src="{% verbatim %}{{ imagePreviewSrc }}{% endverbatim %}">
-        </div>
-        <div class="modal-footer">
-            <a class="btn" (click)="showImagePreview=undefined">Done</a>
-        </div>
-    </form>
-</modal-form>
-
-<modal-form *ngIf="showEditAltText && currentImage">
-    <form class="input-form up" novalidate>
-        <div class="modal-header">
-            <h2>Edit image alt text</h2>
-            <a class="cross fa fa-times" aria-hidden="true" (click)="showEditAltText=undefined"></a>
-        </div>
-        <div class="input-section">
-            <div class="image-133">
-                <img src="{% verbatim %}{{ currentImage.src }}{% endverbatim %}">
-            </div>
-             <label class="input input-box">Image alt text
-                <input [(ngModel)]="altText">
-                <span class="color-subdued row mt10">
-                    Write a brief description of this image to improve search engine optimization (SEO) and accessibility for visually impaired customers.
-                </span>
-            </label>
-        </div>
-        <div class="modal-footer">
-            <a class="btn mr10" (click)="showEditAltText=undefined">Cancel</a>
-            <a class="btn btn-blue" (click)="saveAltText();">Done</a>
-        </div>
-    </form>
-</modal-form>
-
-<modal-form *ngIf="showAddImageFromUrl">
-    <form class="input-form up" novalidate>
-        <div class="modal-header">
-            <h2>Add image from URL</h2>
-            <a class="cross fa fa-times" aria-hidden="true" (click)="showAddImageFromUrl=undefined"></a>
-        </div>
-        {% include "admin/errorsbox.html" with errors="urlImageErrors" class="row m10 mb20" %}
-        <div class="input-section">
-            <label class="input input-box">Paste image URL
-                <input [(ngModel)]="imageUrl"
-                (input)="changeImageUrl=true"
-                placeholder="http://">
-            </label>
-        </div>
-        <div class="modal-footer">
-            <a class="btn mr10" (click)="showAddImageFromUrl=undefined">Cancel</a>
-            <a class="btn btn-blue" [ngClass]="{disabled : !changeImageUrl}" (click)="addImageFromUrl(imageUrl);">Add image</a>
-        </div>
-    </form>
-</modal-form>
 
 <leave-page 
     [parrent_component]="self">

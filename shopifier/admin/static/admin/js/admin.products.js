@@ -33,7 +33,7 @@ export class AdminProductsTransfers {
 }
 
 
-//---------------------------------------------------------------------Products
+//------------------------------------------------------------------------------Products
 @Component({
   selector: 'main',
   templateUrl: 'templates/product/products.html',
@@ -105,7 +105,7 @@ export class Products extends BaseForm {
 }
 
 
-//-------------------------------------------------------------ProductsNew(Edit) 
+//------------------------------------------------------------------------------ProductsNew(Edit) 
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
@@ -117,9 +117,13 @@ export class ProductsNew extends BaseForm {
     api_images = [];
 
     body_html = '';
+
     dragOver = undefined;
     ImageAltText = '';
     imageUrl = '';
+
+    options = [{name: 'Size', values: [], val: '', tooltipError: 0, focus: 0}];
+    variants = [];
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
@@ -290,6 +294,7 @@ export class ProductsNew extends BaseForm {
             );
     }
 
+//------------------------------------------------------------------------Images
     // upload images (dragover)
     addImages(event) {
         this.deleteImage();
@@ -305,7 +310,7 @@ export class ProductsNew extends BaseForm {
     readerOnLoadImage(event) {
         this.images.push({
             attachment: event.target.result,
-            id: `temp-${Math.floor(Math.random() * 1000)}`,
+            id: `temp-${this.getId()}`,
             type: 'base64'
         });
         this.formChange = true;
@@ -522,10 +527,123 @@ export class ProductsNew extends BaseForm {
         }
         return child === parent;
     }
+
+//----------------------------------------------------------------------Variants
+
+     addOption() {
+        let names = ['Size', 'Color', 'Material'];
+        let current_names = [];
+        for (let i in this.options) {current_names.push(this.options[i].name);}
+        for (let i in names) {
+            let name = names[i];
+            if (current_names.indexOf(name) < 0) {
+                this.options.push(
+                    {
+                        name: name, values: [], val: '', tooltipError: 0,
+                        focus: 0
+                    }
+                );
+                return;
+            }
+        }
+    }
+
+    deleteOption(i) {
+        this.options.splice(i, 1);
+        this.refreshVariants();
+    }
+
+    deleteOptionValue(option, j) {
+        option.values.splice(j, 1);
+        this.refreshVariants();
+    }
+
+    changeOptionValue(option) {
+        if (option.val) {
+            if (option.values.indexOf(option.val) > -1 ) {
+                option.tooltipError = true;
+                setTimeout((option)=> { option.tooltipError = false; }, 5000, option);
+                return;
+            }
+            option.values.push(option.val.trim());
+            option.val = '';
+            this.formChange = true;
+            this._admin.notNavigate = true;
+            this.refreshVariants();
+        }
+    }
+
+    onKeyUpOptionValue(event, option) {
+        if (event.code == 'Backspace' && option.val.length < 1 ) {
+            option.values.pop();
+            this.refreshVariants();
+        }
+    }
+//     addTag(i, value) {
+//         this.options[i].values.push(value);
+//         this.formChange = true;
+//         this._admin.notNavigate = true;
+//     }
+
+    refreshVariants() {
+        let options1 = this.options[0].values;
+        let options2 = [];
+        let options3 = [];
+        this.variants = [];
+        if (this.options.length > 1) {
+            options2 = this.options[1].values;
+        }
+        if (this.options.length > 2) {
+            options3 = this.options[2].values;
+        }
+
+        for (let i1 in options1 ) {
+            if (!options2.length) {
+                this.variants.push({ 
+                    select: 1, 
+                    option1: options1[i1], 
+                    option2: '', 
+                    option3: '', 
+                    price: 0.00, 
+                    sku: '', 
+                    barcode: ''
+                });
+            } else {
+                for (let i2 in options2 ) {
+                    if (!options3.length) {
+                        this.variants.push({ 
+                            select: 1, 
+                            option1: options1[i1], 
+                            option2: options2[i2], 
+                            option3: '', 
+                            price: 0.00, 
+                            sku: '', 
+                            barcode: ''
+                        });
+                    } else {
+                        for (let i3 in options3 ) {
+                            this.variants.push({ 
+                                select: 1, 
+                                option1: options1[i1], 
+                                option2: options2[i2], 
+                                option3: options3[i3], 
+                                price: 0.00, 
+                                sku: '', 
+                                barcode: ''
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    getId(){
+        return Math.floor(Math.random() * 1000);
+    }
 }
 
-
-//---------------------------------------------------------------ProductsEdit 
+//------------------------------------------------------------------------------ProductsEdit 
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
