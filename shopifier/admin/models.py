@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.signals import user_logged_in
+from django.contrib.postgres.fields import ArrayField, JSONField
 from django.contrib.sessions.models import Session
 from django.utils.translation import ugettext_lazy as _
 
@@ -205,11 +206,16 @@ class Address(models.Model):
 
 
 # products
+def default_options():
+    return [{'Size': []}]
+
+
 class Product(models.Model):
 
     body_html = models.TextField(
         _('Description'),  max_length=2048)
     title = models.TextField(_('Title'), blank=False, max_length=254)
+    options = JSONField(blank=True, null=True)
 
 
 def normalization_img_file_name(instance, filename):
