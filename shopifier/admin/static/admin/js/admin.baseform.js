@@ -310,4 +310,8 @@ export class BaseForm {
                 (err) => self.disabledPrev = undefined,
             );
     }
+
+    DOMElement(selector) {
+        return window.document.querySelector(selector)
+    }
 }

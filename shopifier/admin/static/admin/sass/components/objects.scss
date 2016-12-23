@@ -611,7 +611,7 @@ $tag-popover-select: #0078BD;
     display: flex;
     flex-wrap: wrap;
     list-style: outside none none;
-    
+    cursor: text;
     > li {
         cursor: pointer;
         position: relative;

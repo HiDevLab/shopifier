@@ -21,7 +21,9 @@
                                 <input class="backgraund-form mt0" [(ngModel)]="option.name">
                             </label>
                             <div class="input-tags flex-3 mv-auto">
-                                <ul class="apply-tags backgraund-form" [ngClass]="{focus: option.focus}">
+                                <ul class="apply-tags backgraund-form"
+                                    [ngClass]="{focus: option.focus}"
+                                    (click)="DOMElement('#option-'+i).focus()">
                                     <li *ngFor="let value of option.values; let j=index" [ngClass]="{bggreen: i==0, bgpurple: i==1, bgorange: i==2}">
                                         {% verbatim %}{{ value }}{% endverbatim %}
                                         <a class="fa fa-times" aria-hidden="true" (click)="deleteOptionValue(option,j)"></a>
@@ -31,7 +33,7 @@
                                             [ngClass]="{hide: !option.tooltipError}">
                                             Oops, you've already used this option value.
                                         </div>
-                                        <input class="backgraund-form" [(ngModel)]="option.val"
+                                        <input class="backgraund-form" [(ngModel)]="option.val" [attr.id]="'option-'+i"
                                         (change)="changeOptionValue(option)"
                                         (keydown)="onKeyUpOptionValue($event, option)"
                                         (focus)="option.focus=true"
