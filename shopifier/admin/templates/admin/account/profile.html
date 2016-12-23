@@ -40,8 +40,8 @@
                 <div class="input-box">
                     <div class="avatar" *ngIf="user">
                         {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
-                        <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
-                        <img *ngIf="new_avatar"  src="{% verbatim %}{{ new_avatar }}{% endverbatim %}">
+                        <img *ngIf="user.avatar" [attr.src]="user.avatar">
+                        <img *ngIf="new_avatar" [attr.src]="new_avatar">
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@
             <div class="input-section">
                 <div class="input-box" *ngIf="!emailChange">
                     <p>Email address</p>
-                    <span>{% verbatim %}{{ user.email }}{% endverbatim %} <a class="ref" (click)="emailChange=true">Change email</a></span>
+                    <span>{% verbatim %}{{ user.email }}{% endverbatim %}<a class="ref" (click)="emailChange=true">Change email</a></span>
                 </div>    
                 <div class="input-box" *ngIf="emailChange">
                     <label class="input" [ngClass]="{err: obj_errors['email']}">
