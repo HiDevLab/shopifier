@@ -529,7 +529,6 @@ export class ProductsNew extends BaseForm {
     }
 
 //----------------------------------------------------------------------Variants
-
      addOption() {
         let names = ['Size', 'Color', 'Material'];
         let current_names = [];
@@ -562,7 +561,8 @@ export class ProductsNew extends BaseForm {
         if (option.val) {
             if (option.values.indexOf(option.val) > -1 ) {
                 option.tooltipError = true;
-                setTimeout((option)=> { option.tooltipError = false; }, 5000, option);
+                setTimeout(
+                    (option)=> {option.tooltipError = false;}, 3000, option);
                 return;
             }
             option.values.push(option.val.trim());
@@ -570,6 +570,7 @@ export class ProductsNew extends BaseForm {
             this.formChange = true;
             this._admin.notNavigate = true;
             this.refreshVariants();
+            option.tooltipError = false;
         }
     }
 
@@ -604,7 +605,7 @@ export class ProductsNew extends BaseForm {
                     option1: options1[i1], 
                     option2: '', 
                     option3: '', 
-                    price: 0.00, 
+                    price: '0.00', 
                     sku: '', 
                     barcode: ''
                 });
@@ -616,7 +617,7 @@ export class ProductsNew extends BaseForm {
                             option1: options1[i1], 
                             option2: options2[i2], 
                             option3: '', 
-                            price: 0.00, 
+                            price: '0.00', 
                             sku: '', 
                             barcode: ''
                         });
@@ -627,7 +628,7 @@ export class ProductsNew extends BaseForm {
                                 option1: options1[i1], 
                                 option2: options2[i2], 
                                 option3: options3[i3], 
-                                price: 0.00, 
+                                price: '0.00', 
                                 sku: '', 
                                 barcode: ''
                             });

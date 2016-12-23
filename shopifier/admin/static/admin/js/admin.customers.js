@@ -242,7 +242,7 @@ export class CustomersNew extends BaseForm {
 }
 
 
-//-----------------------------------------------------------------CustomersEdit
+//------------------------------------------------------------------------------CustomersEdit
 @Component({
     selector: 'main',
     templateUrl : 'templates/customer/edit.html',
