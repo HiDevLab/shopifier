@@ -22,6 +22,8 @@ router = JsonRouter()
 router.register(r'products', views.ProductViewSet)
 router.register(
     r'products/(?P<product_id>\d+)/images', views.ProductImageViewSet)
+router.register(
+    r'products/(?P<product_id>\d+)/variants', views.ProductVariantViewSet)
 router.register(r'customers', views.CustomerViewSet)
 router.register(
     r'customers/(?P<customer_id>\d+)/addresses', views.AddressViewSet)

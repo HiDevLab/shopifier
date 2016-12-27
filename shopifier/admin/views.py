@@ -24,7 +24,8 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from shopifier.admin import serializers
 from shopifier.admin.models import (
-     now, User, UserLog, Customer, Address, Product, ProductImage)
+     now, User, UserLog, Customer, Address, Product, ProductImage,
+     ProductVariant)
 
 
 # accounts
@@ -416,6 +417,10 @@ class SHPFViewSet(ModelViewSet):
                        'list': 'images',
                        'nonlist': 'image',
                     },
+            'ProductVariant': {
+                       'list': 'variants',
+                       'nonlist': 'variant',
+                    },
             }
 
     def __init__(self, *args, **kwargs):
@@ -572,6 +577,30 @@ class ProductImageViewSet(SHPFViewSet):
         )
         if 'attachment' in serializer.validated_data:
             del serializer.validated_data['attachment']
+        serializer.save()
+
+    def perform_create(self, serializer):
+        serializer.validated_data['created_at'] = now()
+        self.perform_update(serializer)
+
+
+class ProductVariantViewSet(SHPFViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = ProductVariant.objects.all()
+    serializer_class = serializers.VariantSerializer
+
+    def get_queryset(self):
+        qs = super(ProductVariantViewSet, self).get_queryset()
+        return qs.filter(product=self.product)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.product = get_object_or_404(Product, id=kwargs['product_id'])
+        return super(ProductVariantViewSet, self).dispatch(
+            request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        serializer.validated_data['product'] = self.product
+        serializer.validated_data['updated_at'] = now()
         serializer.save()
 
     def perform_create(self, serializer):
