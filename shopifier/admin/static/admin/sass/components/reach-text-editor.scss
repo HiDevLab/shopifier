@@ -33,31 +33,6 @@ reach-text-editor {
         > .hide {
             display: none;
         }
-        popover {
-            div {
-                ul {
-                    padding: 5px 0;
-                    li {
-                        padding: 5px 40px 5px 20px;
-                        &:hover {
-                            cursor: pointer; cursor: hand;
-                            background: #0069A6;
-                            color: #ffffff;
-                        }
-                        &.disabled {
-                            color: #dddddd;
-                            cursor: default;
-                            &:hover {
-                                cursor: default;
-                                background: inherit;
-                                color: #dddddd;
-                            }
-                        }
-                    }
-                    
-                }
-            }
-        }
     }
 
     .edit-textarea {

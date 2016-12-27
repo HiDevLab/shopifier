@@ -9,8 +9,8 @@
                     <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
                 <popover id="formatting-popover" class="down left color-default hide mt18">
-                    <div>
-                       <ul class="rows">
+                    <div class="default-popover">
+                       <ul>
                             <li *ngFor="let format of formats" (click)="commandFormatBlock(format.tag)">{{ format.title }}</li>
                         </ul>
                     </div>
@@ -28,8 +28,8 @@
                     <span class="fa fa-align-left" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
                 <popover id="alignment-popover" class="down color-default hide mt18">
-                    <div>
-                       <ul class="rows">
+                    <div class="default-popover">
+                       <ul>
                             <li *ngFor="let align of alignments" (click)="commandTag(align.command)">{{ align.title }}</li>
                         </ul>
                     </div>
@@ -72,8 +72,8 @@
                     <span class="fa fa-table" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
                 <popover id="table-popover" class="down color-default hide mt18" data-behavior="showstyles">
-                    <div>
-                       <ul class="rows"><li (click)="createTable()">Insert table</li></ul>
+                    <div class="default-popover">
+                       <ul><li (click)="createTable()">Insert table</li></ul>
                        <div class="row sep mh5"></div>
                        <ul class="rows">
                             <li *ngFor="let command of tables1" (click)="commandTable($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">{{ command.title }}</li>

@@ -537,6 +537,34 @@ popover {
 
 }
 
+.default-popover {
+    ul {
+        padding: 5px 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        position: relative;
+        li {
+            padding: 5px 40px 5px 20px;
+            &:hover {
+                cursor: pointer; cursor: hand;
+                background: #0069A6;
+                color: #ffffff;
+            }
+            &.disabled {
+                color: #dddddd;
+                cursor: default;
+                &:hover {
+                    cursor: default;
+                    background: inherit;
+                    color: #dddddd;
+                }
+            }
+        }
+        
+    }
+}
+
 
 // tags
 $tag-color: #005e94;
@@ -900,6 +928,129 @@ $tooltip-error-color: #ffffff;
         }
         th {
             padding: 6px 10px;
+        }
+    }
+}
+
+
+.edit-variant-table {
+    overflow-x: auto; 
+    .select-bulk {
+        padding: 10px 5px;
+        display: table-cell;
+        vertical-align: inherit;
+        text-align: left;
+        background: transparent;
+        > div {
+            > div {
+                display: inline-block;
+                padding: 6px 10px 6px 5px;
+                border-radius: 1px;
+                border: 1px solid $border-section-tab-color;
+                cursor: pointer;
+                color: $color-ref;
+                &:first-child {
+                    background-color: $background-main-btn-disabled;
+                    color: #95a7b7;
+                }
+                &:hover {
+                    background-color: $background-main-btn-disabled;
+                }
+            }
+        }
+    }
+    > table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        display: table;
+        border-color: grey;
+        overflow-x: auto;
+        font-size: $shopify-font-size;
+        tr {
+            display: table-row;
+            vertical-align: inherit;
+        }
+        > thead {
+            display: table-header-group;
+            vertical-align: middle;
+        }
+        > tbody {
+            display: table-row-group;
+            vertical-align: middle;
+            border-color: inherit;
+            > tr:hover > td {
+                background: $list-background-hover;
+                cursor: pointer; 
+                > input {
+                    border-color: $btn-border;
+                    &:focus {
+                        border-color: $input-focus-border;
+                    }
+                }
+            }
+        }
+        th {
+            padding: 8px 10px;
+            display: table-cell;
+            vertical-align: inherit;
+            text-align: left;
+            background: transparent;
+            &.image {
+                width: 16px;
+            }
+            &.select {
+                padding: 10px 5px;
+                > div {
+                    padding: 6px;
+                    border: 1px solid $border-section-tab-color;
+                }
+                span {
+                    color: $color-ref;
+                }
+            }
+        }
+        td {
+            padding: 6px 10px;
+            display: table-cell;
+            vertical-align: inherit;
+            text-align: left;
+            background: transparent;
+        }
+        td {
+            border-top: 1px solid $border-section-tab-color;
+            > input {
+                width: 95px;
+                background: $input-background;
+                height: 32px;
+                font-size: $shopify-font-size;
+                padding: 5px 6px;
+                box-sizing: border-box;
+                border: 1px solid transparent;
+                border-radius: 3px;
+                vertical-align: middle;
+            }
+            &.image {
+                padding: 4px 6px;
+                > div {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color:  $border-section-color;
+                    background-color: $background-main-btn-disabled;
+                    width: 38px;
+                    height: 38px;
+                    border: 1px solid $border-section-tab-color;
+                    font-size: 24px;
+                    &:hover {
+                        cursor: pointer;
+                        background-color: $background-main-btn-disabled;
+                    }
+                }
+            }
+        }
+        td.select > .input{
+            background-color: inherit;
         }
     }
 }
