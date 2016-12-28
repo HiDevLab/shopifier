@@ -65,7 +65,7 @@ export class BaseForm {
         
         let keys = Object.keys(group);
 
-        for (let i in keys) {
+        for (let i=0; i < keys.length; i++) {
             let ctrl = keys[i];
             if ('children' in group[ctrl])
                 this.addGroup(form, group[ctrl].children, ctrl);
@@ -126,7 +126,7 @@ export class BaseForm {
         let keys = Object.keys(form[group_name].controls);
         this.obj_errors = {};
         this.errors = [];
-        for (let i in keys) {
+        for (let i=0; i < keys.length; i++) {
             let ctrl = keys[i];
             if (!form[group_name].controls[ctrl].valid) {
                 this.obj_errors[ctrl] = true;
@@ -147,7 +147,7 @@ export class BaseForm {
         this.obj_errors = {};
         this.errors = [];
         let keys = Object.keys(form[group_name + '_meta']);
-        for (let i in keys) {
+        for (let i=0; i < keys.length; i++) {
             let ctrl = keys[i];
             form[group_name + '_meta'][ctrl].error = false;
         }
@@ -158,7 +158,7 @@ export class BaseForm {
         this.obj_errors = {};
         this.errors = [];
 
-        for (let i in keys) {
+        for (let i=0; i < keys.length; i++) {
             let ctrl = keys[i];
             for (let j in errors[ctrl]) {
                 this.obj_errors[ctrl] = true;
@@ -171,7 +171,7 @@ export class BaseForm {
     }
 
     getAPIData(urls, afters) {
-        for(let i in urls) {
+        for(let i=0; i < urls.length; i++) {
             this._http
                 .get(urls[i])
                 .subscribe(
@@ -193,7 +193,7 @@ export class BaseForm {
         let meta = form[group_name + '_meta'];
 
         let keys = Object.keys(group.controls);
-        for (let i in keys) {
+        for (let i=0; i < keys.length; i++) {
             let ctrl = keys[i];
             let control = group.controls[ctrl];
             if (obj[ctrl])
@@ -314,4 +314,16 @@ export class BaseForm {
     DOMElement(selector) {
         return window.document.querySelector(selector)
     }
+
+    // find instance in collection by id
+    findObject(object, collection) {
+        for (let i=0; i < collection.length; i++) {
+            if (object.id === collection[i].id) {
+                return collection[i];
+            }
+        }
+        return undefined;
+    }
+
+
 }
