@@ -1,7 +1,10 @@
-<div class="rows pt20 center" style="display: none;">
+<div class="rows pt20 center">
     <div class="row w16 left pl30">
         <div class="rows w16 ml30">
-            <div class="form pt20" id="drop-zone">
+            <div class="form pt20"
+                [attr.data-dropzone]="true" 
+                (dragover)="handleDragOver($event)"
+                (drop)="addImages($event)">
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Images</strong>
 
@@ -13,7 +16,7 @@
                 </div>
                 <div class="dragover" [ngClass]="{visible: !images.length || dragOver}">
                     <div [ngClass]="{hover : dragOver}">
-                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                        <i class="fa fa-picture-o"></i>
                         <div>Drop files to upload</div>
                     </div>
                 </div>

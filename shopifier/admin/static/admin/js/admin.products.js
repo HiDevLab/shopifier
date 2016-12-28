@@ -208,11 +208,6 @@ export class ProductsNew extends BaseForm {
         this.container_images = this.DOMElement('#images');
         dragula([this.container_images]);
 
-        // drag over
-        this.dropzone = this.DOMElement('#drop-zone');
-        this.dropzone.addEventListener('dragover', this.handleDragOver.bind(this), false);
-        this.dropzone.addEventListener('drop', this.addImages.bind(this), false);
-
         // disable dragover and drop 
         window.addEventListener('dragenter', this.disableDrop.bind(this), false);
         window.addEventListener('dragover', this.disableDrop.bind(this), false);
@@ -255,8 +250,6 @@ export class ProductsNew extends BaseForm {
         this.disabledNext = undefined;
         this.disabledPrev = undefined;
     }
-
-
 
     getImagesAfter(data) {
         let images = [];
@@ -568,12 +561,23 @@ export class ProductsNew extends BaseForm {
 
     disableDrop(evt) {
         let el = evt.target;
-        if (el != this.dropzone && !this.childOf(el, this.dropzone)) {
+        if (!this.hasAttr(el, 'dropzone')) {
             this.dragOver = undefined;
             evt.preventDefault();
             evt.dataTransfer.effectAllowed = "none";
             evt.dataTransfer.dropEffect = "none";
         }
+    }
+
+    // check has element(parrent) attr or not 
+    hasAttr(el, attr) {
+        while(el) {
+            if (el.dataset && el.dataset[attr]) {
+                return true;
+            }
+            el = el.parentNode;
+        }
+        return false;
     }
 
     childOf(child, parent) {
