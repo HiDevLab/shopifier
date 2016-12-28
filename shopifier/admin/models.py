@@ -233,4 +233,63 @@ class ProductImage(models.Model):
     alt_text = models.CharField(
         _('Image alt text'), blank=True, max_length=254)
 
-    ordering = ['product', 'position']
+    class Meta:
+        ordering = ['product', 'position']
+
+
+class ProductVariant(models.Model):
+
+    barcode = models.CharField(
+        _('Barcode (ISBN, UPC, GTIN, etc.)'), blank=True, max_length=15)
+    compare_at_price = models.DecimalField(
+        _('Compare at price)'), max_digits=10, decimal_places=2, default=0)
+    created_at = models.DateTimeField(blank=True, null=True)
+    fulfillment_service = models.CharField(
+        _('FULFILLMENT SERVICE'),
+        choices=(
+            ('manual', 'Manual'),
+            ('choice_fulfillment', 'Choice Fulfillment')),
+        default='manual', max_length=15
+    )
+    grams = models.IntegerField(_('Weight'), default=0)
+    image = models.ForeignKey(ProductImage, related_name='variants', null=True)
+    inventory_management = models.CharField(
+        _('Inventory policy'),
+        choices=(
+            ('', "Don't track inventory"),
+            ('shopifier', "Shopifier tracks this product's inventory")),
+        default='shopifier', max_length=15, blank=True
+    )
+    inventory_policy = models.CharField(
+        _("Allow customers to purchase this product when it's out of stock"),
+        choices=(
+            ('deny', 'deny'),
+            ('continue', 'continue')),
+        default='deny', max_length=15
+    )
+    inventory_quantity = models.IntegerField(_('Quantity'), default=0)
+    old_inventory_quantity = models.IntegerField(default=0)
+    inventory_quantity_adjustment = models.IntegerField(default=0)
+#     metafield
+    option1 = models.CharField(blank=True, null=True, max_length=254)
+    option2 = models.CharField(blank=True, null=True, max_length=254)
+    option3 = models.CharField(blank=True, null=True, max_length=254)
+    position = models.IntegerField()
+    price = models.DecimalField(_('Price)'), max_digits=10, decimal_places=2)
+    product = models.ForeignKey(Product, related_name='variants')
+    requires_shipping = models.BooleanField(
+        _('This product requires shipping'), default=True)
+    sku = models.CharField(
+        _('SKU (Stock Keeping Unit)'), blank=True, max_length=50)
+    taxable = models.BooleanField(
+        _('Charge taxes on this product'), default=False)
+    title = models.TextField(_('Title'), blank=True, max_length=254)
+    updated_at = models.DateTimeField(default=now)
+    weight = models.FloatField(_('Weight'), default=0)
+    weight_unit = models.CharField(
+        choices=(('lb', 'lb'), ('oz', 'oz'), ('kg', 'kg'), ('g', 'g')),
+        default='kg', max_length=5
+    )
+
+    class Meta:
+        ordering = ['product', 'position']

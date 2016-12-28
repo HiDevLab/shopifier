@@ -20,7 +20,7 @@ from drf_extra_fields.fields import Base64ImageField
 from easy_thumbnails.files import get_thumbnailer
 
 from shopifier.admin.models import (
-    User, UserLog, Customer, Address, Product, ProductImage)
+    User, UserLog, Customer, Address, Product, ProductImage, ProductVariant)
 
 
 # accounts
@@ -319,6 +319,14 @@ class ProductImageSerializer(serializers.ModelSerializer):
         return obj.product.id
 
 
+class ProductVariantSerializer(SHPFSerializer):
+
+    class Meta:
+        model = ProductVariant
+        read_only_fields = ('created_at', 'updated_at')
+        exclude = ('product',)
+
+
 class ProductSerializer(SHPFSerializer):
 
     body_html = serializers.CharField(
@@ -326,6 +334,7 @@ class ProductSerializer(SHPFSerializer):
         max_length=2048, required=False, allow_null=True, allow_blank=True
     )
     images = ProductImageSerializer(many=True, read_only=True)
+    variants = ProductVariantSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
@@ -347,3 +356,11 @@ class ImageSerializer(SHPFSerializer):
             validated_data['src'] = instance.src
         return super(ImageSerializer, self).update(
             instance, validated_data)
+
+
+class VariantSerializer(SHPFSerializer):
+
+    class Meta:
+        model = ProductVariant
+        read_only_fields = ('created_at', 'updated_at')
+        exclude = ('product',)
