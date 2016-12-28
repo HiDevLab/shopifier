@@ -1,99 +1,111 @@
-<div *ngIf="!object_id" class="rows pt20 center">
+<div *ngIf="object_id" class="rows pt20 center">
     <div class="row w16 left pl30">
-        <div class="rows w16 ml30">
-            <div class="form pt20">
+        <div class="rows ml30" [ngClass]="{w16: options.length==1,w20: options.length==2,w24: options.length==3}">
+            <div class="form p20">
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Variants</strong>
-                    <a *ngIf="!showNewOptionsEdit" class="col ref" (click)="showNewOptionsEdit=true">Add variant</a>
-                    <a *ngIf="showNewOptionsEdit" class="col ref" (click)="showNewOptionsEdit=false">Cancel</a>
+                    <a class="col ref mr20" (click)="showReorderVariants=true">Reorder variants</a>
+                    <a class="col ref mr20" (click)="showEditOptions=true">Edit options</a>
+                    <a class="col ref" >Add variant</a>
                 </div>
-                <div class="row m20">
-                    Add variants if this product comes in multiple versions, like different sizes or colors.
-                </div>
-                <div *ngIf="showNewOptionsEdit" class="backgraund-grey row pt10">
-                    <div class="rows">
-                        <div class="input-section">
-                            <div class="input-box">Option name</div>
-                            <div class="input-box flex-3">Option values</div>
-                        </div>
-                        <div *ngFor="let option of options; let i = index;" class="input-section backgraund-grey">
-                            <label class="backgraund-grey input input-box mv-auto mr10">
-                                <input class="backgraund-form mt0" [(ngModel)]="option.name">
+                <ul *ngIf="options" class="row wrap mv20">
+                    <li class="mr15"> Select: </li>
+                    <li class="ref color-subdued mr15" (click)="selectVariants(1)">All</li>
+                    <li class="ref color-subdued mr15" (click)="selectVariants(0)">None</li>
+                    <span class="row wrap" *ngFor="let option of options;let i = index;" >
+                        <li *ngFor="let val of option.values" 
+                            class="ref mr15" [ngClass]="{colorgreen: i==0, colorpurple: i==1, colororange: i==2}"
+                            (click)="filterVariants(i, val)">
+                            {% templatetag openvariable %}val{% templatetag closevariable %}
+                        </li>
+                    </span>
+                </ul>
+                <div *ngIf="countSelectedVariants()[0]" class="select-bulk">
+                    <div>
+                        <div class="input">
+                            <input type="checkbox" id="select-bulk-variants" [(ngModel)]="selectAllVariants" (click)="selectVariants(0)">
+                            <label for="select-bulk-variants">
+                                <i *ngIf="!selectAllVariants" class="fa fa-minus"></i>
+                                <i *ngIf="selectAllVariants" class="fa fa-check"></i>
                             </label>
-                            <div class="input-tags flex-3 mv-auto">
-                                <ul class="apply-tags backgraund-form"
-                                    [ngClass]="{focus: option.focus}"
-                                    (click)="DOMElement('#option-'+i).focus()">
-                                    <li *ngFor="let value of option.values; let j=index" [ngClass]="{bggreen: i==0, bgpurple: i==1, bgorange: i==2}">
-                                        {% verbatim %}{{ value }}{% endverbatim %}
-                                        <a class="fa fa-times" aria-hidden="true" (click)="deleteOptionValue(option,j)"></a>
-                                    </li>
-                                    <li>
-                                        <div class="tooltip-error bottom45"
-                                            [ngClass]="{hide: !option.tooltipError}">
-                                            Oops, you've already used this option value.
-                                        </div>
-                                        <input class="backgraund-form" [(ngModel)]="option.val" [attr.id]="'option-'+i"
-                                        (change)="changeOptionValue(option)"
-                                        (keydown)="onKeyUpOptionValue($event, option)"
-                                        (focus)="option.focus=true"
-                                        (blur)="option.focus=false">
-                                    </li>
+                            {% templatetag openvariable %}countSelectedVariants()[1]{% templatetag closevariable %}
+                        </div>
+                        <div>
+                            <a>Edit variants</a>
+                        </div>
+                        <div id="base-bulk-actions" (click)="refreshDOM(); onPopover($event, popover_bulk_actions)">
+                            <a>Bulk actions</a>
+                            <span class="fa fa-caret-down ml3"></span>
+                        </div>
+                        <popover id="bulk-actions" class="down color-default hide mt18">
+                            <div class="default-popover">
+                               <ul>
+                                    <li>Change prices</li>
+                                    <li [ngClass]="{disabled:!updateInventory}">Update inventory</li>
+                                    <li>Update images</li>
+                                    <li>Delete Variants</li>
+                                    <li>Continue sellingwhen sold out</li>
+                                    <li>Stop selling when sold out</li>
+                                    <li class="disabled">DUPLICATE VARIANS</li>
+                                </ul>
+                                <div class="row sep mh5"></div>
+                                <ul>
+                                    <li>... in another Size</li>
                                 </ul>
                             </div>
-                            <a class="btn trash fa fa-trash mv-auto mh10 p9 font16" aria-hidden="true" title="remove"
-                                [ngClass]="{hidden: options.length<2}"
-                                (click)="deleteOption(i)">
-                            </a>
-                        </div>
-                        <div *ngIf="options.length<3" class="input-section">
-                            <a class="btn mh10" (click)="addOption()">Add another option</a>
-                        </div>
-                        <div *ngIf="variants && variants.length" class="rows">
-                            <div class="row mh20 mt20">Modify the variants to be created:</div>
-                            <div class="row m20 new-variant-table">
-                                <table class="">
-                                    <thead>
-                                        <tr><th></th><th>Variant</th><th>Price</th><th>SKU</th><th>Barcode</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let variant of variants; let k = index">
-                                            <td>
-                                                <span class="input-box input backgraund-grey pr0">
-                                                    <input type="checkbox" [attr.id]="'var-'+k" [(ngModel)]="variant.select">
-                                                    <label [attr.for]="'var-'+k"><i class="fa fa-check backgraund-form" aria-hidden="true"></i></label>
-                                                </span>
-                                            </td>
-                                            <td> 
-                                                <span class="input-box">
-                                                    <span class="row color-green">{% verbatim %}{{ variant.option1 }}{% endverbatim %}</span>
-                                                    <span class="row color-purple">{% verbatim %}{{ variant.option2 }}{% endverbatim %}</span>
-                                                    <span class="row color-orange">{% verbatim %}{{ variant.option3 }}{% endverbatim %}</span>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <label class="backgraund-grey input input-box">
-                                                    <input class="backgraund-form mt0" [(ngModel)]="variant.price">
-                                                </label>
-                                            </td>
-                                            <td>
-                                                <label class="backgraund-grey input input-box">
-                                                    <input class="backgraund-form mt0" [(ngModel)]="variant.sku">
-                                                </label>
-                                            </td>
-                                            <td>
-                                                <label class="backgraund-grey input input-box">
-                                                    <input class="backgraund-form mt0" [(ngModel)]="variant.barcode">
-                                                </label>
-                                            </td>
-                                        </tr>
-                                     </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        </popover>
                     </div>
+                </div>
+                <div class="rows edit-variant-table">
+                    <table class="row min-w24 w-auto">
+                        <thead *ngIf="!countSelectedVariants()[0]">
+                            <tr>
+                                <th class="select">
+                                     <div class="input">
+                                        <input type="checkbox" id="select-all-variants" [(ngModel)]="selectAllVariants" (click)="selectVariants(1)">
+                                        <label for="select-all-variants">
+                                            <i class="fa fa-check" aria-hidden="true"></i>
+                                        </label>
+                                        <span class="fa fa-caret-down" aria-hidden="true"></span>
+                                    </div>
+                                </th>
+                                <th class="image"></th>
+                                <th *ngFor="let option of options; let i = index;">
+                                    {% templatetag openvariable %}option.name{% templatetag closevariable %}
+                                </th>
+                                <th>Price</th><th>SKU</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let variant of variants; let k = index" [ngClass]="{selected: variant.select}">
+                                <td class="select">
+                                    <span class="input">
+                                        <input type="checkbox" [attr.id]="'var-'+k" [(ngModel)]="variant.select">
+                                        <label [attr.for]="'var-'+k"><i class="fa fa-check backgraund-form" aria-hidden="true"></i></label>
+                                    </span>
+                                </td>
+                                <td class="image">
+                                    <div>
+                                        <a class="fa fa-picture-o"></a>
+                                    </div>
+                                </td>
+                                <td *ngIf="variant.option1" class="option">
+                                    <input class="color-green" [(ngModel)]="variant.option1">
+                                </td>
+                                <td *ngIf="variant.option2" class="option">
+                                    <input class="color-purple" [(ngModel)]="variant.option2">
+                                 </td>
+                                <td *ngIf="variant.option3"  class="option">
+                                    <input class="color-orange" [(ngModel)]="variant.option3">
+                                </td>
+                                <td><input [(ngModel)]="variant.price"></td>
+                                <td><input [(ngModel)]="variant.sku"></td>
+                                <td><a class="btn">Edit</a><a class="btn fa fa-trash"></a></td>
+                            </tr>
+                         </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
- </div>
+</div>

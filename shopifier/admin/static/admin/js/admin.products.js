@@ -9,7 +9,7 @@ import { Router, RouteParams, RouteConfig,
 
 import { Admin } from './admin';
 import { AdminAuthService, AdminUtils } from './admin.auth'
-import { RichTextEditor,  AdminLeavePage} from './components';
+import { RichTextEditor,  AdminLeavePage, Popover} from './components';
 import { BaseForm } from './admin.baseform'
 
 
@@ -109,7 +109,7 @@ export class Products extends BaseForm {
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
-  directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage],
+  directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage, Popover],
 })
 export class ProductsNew extends BaseForm {
     container_images = undefined;
@@ -124,6 +124,8 @@ export class ProductsNew extends BaseForm {
 
     options = [{name: 'Size', values: [], val: '', tooltipError: 0, focus: 0}];
     variants = [];
+    api_variants = [];
+    selectAllVariants = 0;
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
@@ -200,12 +202,14 @@ export class ProductsNew extends BaseForm {
            onError: (errorObj) => {alert(errorObj.message);}
         });
 
+        this.refreshDOM();
+
         // drag and drop
-        this.container_images = document.querySelector('#images');
+        this.container_images = this.DOMElement('#images');
         dragula([this.container_images]);
 
         // drag over
-        this.dropzone = document.querySelector('#drop-zone');
+        this.dropzone = this.DOMElement('#drop-zone');
         this.dropzone.addEventListener('dragover', this.handleDragOver.bind(this), false);
         this.dropzone.addEventListener('drop', this.addImages.bind(this), false);
 
@@ -215,14 +219,20 @@ export class ProductsNew extends BaseForm {
         window.addEventListener('drop', this.disableDrop.bind(this), false);
     }
 
+    refreshDOM() {
+        this.popover_bulk_actions = this.DOMElement('#bulk-actions');
+        this.popovers = [this.popover_bulk_actions];
+    }
+
 
     addFormAfter() {
         if (this.object_id) {
             this.getAPIData([
                     `/admin/products/${this.object_id}.json`,
-                    `/admin/products/${this.object_id}/images.json`
+                    `/admin/products/${this.object_id}/images.json`,
+                    `/admin/products/${this.object_id}/variants.json`
                 ],
-                ['getProductAfter', 'getImagesAfter']
+                ['getProductAfter', 'getImagesAfter', 'getVariantsAfter']
             );
         }
     }
@@ -233,6 +243,14 @@ export class ProductsNew extends BaseForm {
         this.body_html = data.product.body_html;
         let product = this.api_data.product;
         this._admin.currentUrl({'url': '#', 'text': `${product.title}`}, 1);
+        this.options = [];
+        for (let i=0; i < data.product.options.length; i++) {
+            Object.assign(
+                data.product.options[i],
+                {val: '', tooltipError: 0, focus: 0}
+            );
+            this.options.push(data.product.options[i]);
+        }
 
         this.disabledNext = undefined;
         this.disabledPrev = undefined;
@@ -242,15 +260,30 @@ export class ProductsNew extends BaseForm {
 
     getImagesAfter(data) {
         let images = [];
-        for (let i in data.images) {
-            data.images[i]['type'] = 'url';
-            data.images[i]['alt'] = data.images[i]['alt_text']
-            data.images[i]['id'] = data.images[i]['id'].toString();
+        for (let i=0; i < data.images.length; i++) {
+            Object.assign(data.images[i], {
+                type: 'url', 
+                alt: data.images[i].alt_text,
+                id: data.images[i].id.toString()
+            });
             images.push(data.images[i]);
         }
         this.images = images.slice(0);
         this.api_images = images.slice(0);
     }
+
+    getVariantsAfter(data) {
+        let variants = [];
+        for (let i=0; i < data.variants.length; i++) {
+            Object.assign(data.variants[i], {
+                select: 0, id: data.variants[i].id.toString()
+            });
+            variants.push(data.variants[i]);
+        }
+        this.variants = variants.slice(0);
+        this.api_variants = variants.slice(0);
+    }
+
 
     onSave(self) {
         self = self || this;
@@ -259,6 +292,26 @@ export class ProductsNew extends BaseForm {
         let product = {};
         product['product'] = self.form['product'].value;
         product.product['body_html'] = self.body_html;
+        let options = [];
+        if (self.options[0].values.length) {
+            options.push({
+                name: self.options[0].name,
+                values: self.options[0].values
+            });
+        }
+        if (self.options.length > 1 && self.options[1].values.length) {
+            options.push({
+                name:self.options[1].name,
+                values: self.options[1].values
+            });
+        }
+        if (self.options.length > 2 && self.options[2].values.length) {
+            options.push({
+                name:self.options[2].name,
+                values: self.options[2].values
+            });
+        }
+        product.product['options'] = options;
         if (!self.object_id) {
             self._http.post('/admin/products.json', product )
                 .subscribe(
@@ -266,18 +319,20 @@ export class ProductsNew extends BaseForm {
                         self.object_id = data.product.id;
                         self.getProductAfter.call(self, data);
                         self.saveImages(self);
+                        self.saveVariants(self);
                     },
                     (err) => {self.apiErrors(self.form, 'product', err.json());}
-            );
+                );
         } else {
             self._http.put(`/admin/products/${self.object_id}.json`, product)
                 .subscribe(
                     (data) => {
                         self.getProductAfter.call(self, data);
                         self.saveImages(self);
+                        self.saveVariants(self);
                     },
                     (err) => {self.apiErrors(self.form, 'product', err.json());}
-            );
+                );
         }
     }
 
@@ -532,8 +587,10 @@ export class ProductsNew extends BaseForm {
      addOption() {
         let names = ['Size', 'Color', 'Material'];
         let current_names = [];
-        for (let i in this.options) {current_names.push(this.options[i].name);}
-        for (let i in names) {
+        for (let i=0; i < this.options.length; i++) {
+            current_names.push(this.options[i].name);
+        }
+        for (let i=0; i < names.length; i++) {
             let name = names[i];
             if (current_names.indexOf(name) < 0) {
                 this.options.push(
@@ -598,44 +655,196 @@ export class ProductsNew extends BaseForm {
             options3 = this.options[2].values;
         }
 
-        for (let i1 in options1 ) {
+        for (let i1=0; i1 < options1.length; i1++ ) {
             if (!options2.length) {
                 this.variants.push({ 
                     select: 1, 
                     option1: options1[i1], 
-                    option2: '', 
-                    option3: '', 
-                    price: '0.00', 
-                    sku: '', 
-                    barcode: ''
+                    option2: null, option3: null,
+                    price: '0.00', sku: '', barcode: ''
                 });
             } else {
-                for (let i2 in options2 ) {
+                for (let i2=0; i2 < options2.length; i2++) {
                     if (!options3.length) {
                         this.variants.push({ 
                             select: 1, 
-                            option1: options1[i1], 
-                            option2: options2[i2], 
-                            option3: '', 
-                            price: '0.00', 
-                            sku: '', 
-                            barcode: ''
+                            option1: options1[i1],
+                            option2: options2[i2],
+                            option3: null,
+                            price: '0.00', sku: '', barcode: ''
                         });
                     } else {
-                        for (let i3 in options3 ) {
+                        for (let i3=0; i3 < options3.length; i3++) {
                             this.variants.push({ 
                                 select: 1, 
-                                option1: options1[i1], 
-                                option2: options2[i2], 
+                                option1: options1[i1],
+                                option2: options2[i2],
                                 option3: options3[i3], 
-                                price: '0.00', 
-                                sku: '', 
-                                barcode: ''
+                                price: '0.00', sku: '', barcode: ''
                             });
                         }
                     }
                 }
             }
+        }
+    }
+
+    saveVariants(self) {
+        self = self || this;
+        let api_variants = self.api_variants.slice(0);
+        let variants = [];
+        self.api_variants= [];
+        let variant = {};
+        let position = 1;
+        // delete unselected variants
+        for(let i=0; i < self.variants.length; i++) {
+            variant = self.variants[i];
+            if (variant.select) {
+                variant['position'] = position++;
+                delete variant.select;
+                variants.push(variant);
+            }
+        }
+        self.variants= [];
+
+        // delete variants in DB
+        for(let i=0; i < api_variants.length; i++) {
+            old_variant = api_variants[i];
+            if (!self.findObject(old_variant, variants)) {
+                self._http
+                    .delete(`/admin/products/${self.object_id}/variants/${old_variant.id}.json`)
+                    .subscribe(() => {}, (err) => {});
+            }
+        }
+
+        for(let i=0; i < variants.length; i++) {
+            let new_variant = variants[i];
+            let old_variant = self.findObject(new_variant, api_variants);
+            if (old_variant) {
+                self.updateVariant(self, new_variant, old_variant);
+            } else {
+                self.newVariant(self, new_variant);
+            }
+        }
+        self.formChange = false;
+    }
+
+    // get variant from api data
+    getAPIVariant(self, data) {
+        data.variant.id = data.variant.id.toString();
+        data.variant['select'] = 0;
+        self.variants.push(data.variant);
+        self.api_variants.push(data.variant);
+        self.variants.sort((a, b) => {return a.position-b.position;}); 
+    }
+
+    // add new variant
+    newVariant(self, variant) {
+        delete variant.select;
+        let url = `/admin/products/${self.object_id}/variants.json`;
+        self._http.post(url, {variant: variant})
+            .subscribe((data) => {self.getAPIVariant(self, data);}, (err) => {});
+    }
+
+
+   // update variant if it necessary
+    updatevariant(self, new_image, old_image) {
+//         let data = {};
+//         if (new_image.alt_text != old_image.alt_text ||
+//             new_image.position != old_image.position) {
+//             data = {
+//                 alt_text: new_image.alt_text,
+//                 position: new_image.position
+//             };
+//         }
+//         if (new_image.src != old_image.src) { 
+//             Object.assign(data, {
+//                 position: new_image.position,
+//                 src: new_image.src
+//             });
+//         }
+//         if (!!Object.keys(data).length) {
+//             let url = `/admin/products/${self.object_id}/images/${new_image.id}.json`;
+//             self._http.put(url, {image: data})
+//                 .subscribe((data) => {
+//                     self.getAPIImage(self, Object.assign({image: old_image}, data));
+//                 }, (err) => {});
+//         } else {
+//             self.images.push(new_image);
+//             self.api_images.push(new_image);
+//             self.images.sort((a, b) => {return a.position-b.position;}); 
+//         }
+    }
+
+    selectVariants(set) {
+        this.variants.forEach((v)=> {v.select = set;});
+        this.selectAllVariants = set;
+    }
+
+    countSelectedVariants() {
+        let count = 0;
+        this.variants.forEach((v)=> {if (v.select) {count++};});
+        if (count === this.variants.length) {
+            this.selectAllVariants = 1;
+        } else {
+            this.selectAllVariants = 0;
+        }
+        
+        switch(count) {
+            case 0:
+                return [0, ''];
+            case 1:
+                return [1, '1 variant selected'];
+        }
+        return [count, `${count} variants selected`];
+    }
+
+    filterVariants(option, filter) {
+        let eq = false;
+        this.variants.forEach((v)=> {
+            switch(option){
+                case 0:
+                    eq = (v.option1 === filter);
+                    break;
+                case 1:
+                    eq = (v.option2 === filter);
+                    break;
+                default:
+                    eq = (v.option3 === filter);
+            }
+            v.select = (eq) ? 1:0;
+        });
+    }
+
+
+
+    onPopover(event, popover){
+        event.preventDefault();
+        event.stopPropagation();
+        this.hidePopovers(popover);
+        this.switchPopover(popover);
+    }
+
+    hidePopover(popover) {
+        if (popover.classList.contains('show')) {
+            popover.classList.remove('show');
+            popover.classList.add('hide');
+        }
+    }
+    hidePopovers(exclude) {
+        for (let i in this.popovers) {
+            if (this.popovers[i] != exclude) {
+                this.hidePopover(this.popovers[i]);
+            }
+        }
+    }
+    switchPopover(popover, event) {
+        let show = popover.classList.contains('hide');
+        popover.classList.remove(show ? 'hide' : 'show');
+        popover.classList.add(show ? 'show' : 'hide');
+        if (show) {
+            let event = new Event('show');
+            popover.dispatchEvent(event);
         }
     }
 
@@ -648,7 +857,7 @@ export class ProductsNew extends BaseForm {
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
-  directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage],
+  directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage, Popover],
 })
 export class ProductsEdit extends ProductsNew {
 }

@@ -15,6 +15,10 @@ $colors: (
     .color-#{$name}{
         color: #{$color} !important;
     }
+    .color#{$name}{
+        color: #{$color} !important;
+    }
+
 }
 
 //background
@@ -301,12 +305,14 @@ $input-error-background: #fef6f5;
         &[type="checkbox"] {
             display: none;
             & + label {
-                font-weight: 100;
+//                 font-weight: 100;
                 cursor: pointer; cursor: hand;
                 > i {
+                    text-align: center;
                     border: 1px solid $input-border;
                     border-radius: 3px;
                     color: $input-background; 
+                    background-color: $background-main-color;
                     margin-right: 10px;
                 }
             }
@@ -316,7 +322,8 @@ $input-error-background: #fef6f5;
                 > i {
                     transition: all .2s;
                     color: $color-ref;
-                    border-color: $color-ref;   
+                    border-color: $color-ref;
+                    background-color: $background-main-color;
                 }
             }
         }
@@ -330,9 +337,8 @@ $input-error-background: #fef6f5;
         font-size: 1.5em;
         color: #1a1a1a;
         pointer-events:none;
-        
         > option:checked {
-            background: $background-main-color;
+            background-color: $background-main-color;
         } 
     }
 }
@@ -539,6 +545,7 @@ popover {
 
 .default-popover {
     ul {
+        line-height: 24px;
         padding: 5px 0;
         display: flex;
         flex-direction: column;
@@ -935,30 +942,6 @@ $tooltip-error-color: #ffffff;
 
 .edit-variant-table {
     overflow-x: auto; 
-    .select-bulk {
-        padding: 10px 5px;
-        display: table-cell;
-        vertical-align: inherit;
-        text-align: left;
-        background: transparent;
-        > div {
-            > div {
-                display: inline-block;
-                padding: 6px 10px 6px 5px;
-                border-radius: 1px;
-                border: 1px solid $border-section-tab-color;
-                cursor: pointer;
-                color: $color-ref;
-                &:first-child {
-                    background-color: $background-main-btn-disabled;
-                    color: #95a7b7;
-                }
-                &:hover {
-                    background-color: $background-main-btn-disabled;
-                }
-            }
-        }
-    }
     > table {
         width: 100%;
         border-collapse: separate;
@@ -979,13 +962,19 @@ $tooltip-error-color: #ffffff;
             display: table-row-group;
             vertical-align: middle;
             border-color: inherit;
-            > tr:hover > td {
-                background: $list-background-hover;
-                cursor: pointer; 
-                > input {
-                    border-color: $btn-border;
-                    &:focus {
-                        border-color: $input-focus-border;
+            > tr {
+                &.selected, &.selected > td > input {
+                    background-color: #fffbe9;
+                }
+                &:hover > td {
+                    background: $list-background-hover;
+                    cursor: pointer; 
+                    > input {
+                        border-color: $btn-border;
+                        background-color: $input-background;
+                        &:focus {
+                            border-color: $input-focus-border;
+                        }
                     }
                 }
             }
@@ -1000,7 +989,7 @@ $tooltip-error-color: #ffffff;
                 width: 16px;
             }
             &.select {
-                padding: 10px 5px;
+                padding: 10px 5px 10px 0;
                 > div {
                     padding: 6px;
                     border: 1px solid $border-section-tab-color;
@@ -1011,11 +1000,26 @@ $tooltip-error-color: #ffffff;
             }
         }
         td {
-            padding: 6px 10px;
+            padding: 6px 5px;
             display: table-cell;
             vertical-align: inherit;
             text-align: left;
             background: transparent;
+            &:last-child {
+                padding: 6px 0 6px 10px;
+                text-align: end;
+                > .btn {
+                    padding: 6px 10px;
+                    text-align: right;
+                    &:first-child {
+                        border-radius: 3px 0 0 3px;
+                    }
+                    &:last-child {
+                        border-radius: 0 3px 3px 0;
+                        border-left: none;
+                    }
+                }
+            }
         }
         td {
             border-top: 1px solid $border-section-tab-color;
@@ -1029,6 +1033,11 @@ $tooltip-error-color: #ffffff;
                 border: 1px solid transparent;
                 border-radius: 3px;
                 vertical-align: middle;
+            }
+            &.option {
+                > input {
+                    width: 170px;
+                }
             }
             &.image {
                 padding: 4px 6px;
@@ -1049,8 +1058,42 @@ $tooltip-error-color: #ffffff;
                 }
             }
         }
-        td.select > .input{
-            background-color: inherit;
+        td.select {
+            min-width: 50px;
+            > .input{
+                background-color: inherit;
+            }
+        }
+    }
+}
+
+.select-bulk {
+    padding: 10px 5px 10px 0;
+    display: table-cell;
+    vertical-align: inherit;
+    text-align: left;
+    background: transparent;
+    position: relative;
+    
+    label i.fa-minus {
+        width: 14px !important;
+        color: $color-ref !important;
+    }
+    > div {
+        > div {
+            display: inline-block;
+            padding: 6px 10px 6px 5px;
+            border-radius: 1px;
+            border: 1px solid $border-section-tab-color;
+            cursor: pointer;
+            color: $color-ref;
+            &:first-child {
+                background-color: $background-main-btn-disabled;
+                color: #95a7b7;
+            }
+            &:hover {
+                background-color: $background-main-btn-disabled;
+            }
         }
     }
 }
