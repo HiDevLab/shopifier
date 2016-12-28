@@ -35,7 +35,9 @@
     display: flex;
     flex-direction: row;
     position: relative;
-//    flex-wrap: wrap;
+    &.wrap {
+        flex-wrap: wrap;
+    }
 }
 
 .col {
@@ -109,10 +111,25 @@
     .vh#{$i} {
         height: calc(99.99vh / 24 * #{$i});
     }
-    
     .h#{$i} {
         height: calc(99.99% / 24 * #{$i});
     }
+    .min-w#{$i} {
+        min-width: calc(99.99% / 24 * #{$i});
+    }
+    .min-vw#{$i} {
+        min-width: calc(99.99vw / 24 * #{$i});
+    }
+    .min-vh#{$i} {
+        min-height: calc(99.99vh / 24 * #{$i});
+    }
+    .min-h#{$i} {
+        min-height: calc(99.99% / 24 * #{$i});
+    }
+}
+
+.w-auto {
+    width: auto;
 }
 
 @for $i from 1 to 9 {
