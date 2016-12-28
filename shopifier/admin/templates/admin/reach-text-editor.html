@@ -75,11 +75,11 @@
                     <div class="default-popover">
                        <ul><li (click)="createTable()">Insert table</li></ul>
                        <div class="row sep mh5"></div>
-                       <ul class="rows">
+                       <ul>
                             <li *ngFor="let command of tables1" (click)="commandTable($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">{{ command.title }}</li>
                         </ul>
                         <div class="row sep mh5"></div>
-                        <ul class="rows">
+                        <ul>
                             <li *ngFor="let command of tables2" (click)="commandTable2($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">{{ command.title }}</li>
                         </ul>
                     </div>
