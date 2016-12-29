@@ -119,6 +119,8 @@ export class ProductsNew extends BaseForm {
     body_html = '';
 
     dragOver = undefined;
+    dragOverVariant = undefined;
+    currentVariant = undefined;
     ImageAltText = '';
     imageUrl = '';
 
@@ -206,18 +208,98 @@ export class ProductsNew extends BaseForm {
 
         // drag and drop
         this.container_images = this.DOMElement('#images');
-        dragula([this.container_images]);
+//         this.container_images2 = this.DOMElement('#test');
+        this.drake = dragula(
+            [this.container_images],
+            {revertOnSpill: true,}
+        );
+        this.drake.on('drop', this.dropImage.bind(this));
+        this.drake.on('shadow', this.shadowImage.bind(this));
+        this.drake.on('drag', this.dragImage.bind(this));
+        this.drake.on('dragend', this.dragEnd.bind(this));
 
         // disable dragover and drop 
         window.addEventListener('dragenter', this.disableDrop.bind(this), false);
         window.addEventListener('dragover', this.disableDrop.bind(this), false);
         window.addEventListener('drop', this.disableDrop.bind(this), false);
+        window.addEventListener('dragend', this.dragEnd.bind(this), false);
     }
 
     refreshDOM() {
         this.popover_bulk_actions = this.DOMElement('#bulk-actions');
         this.popovers = [this.popover_bulk_actions];
     }
+
+
+    shadowImage(el) {
+//         console.log(el, 'shadow');
+        el = el.parentNode;
+        if(el.nodeName==='TR' && el.dataset && el.dataset.variant) {
+            this.currentVariant = el.dataset.variant;
+        } else {
+            this.currentVariant = undefined;
+        }
+    }
+
+    dropImage(el) {
+//         console.log(el, 'drop');
+        if (
+            el.parentNode && el.parentNode.dataset && el.dataset &&
+            el.parentNode.dataset.variant && el.dataset.image) {
+                Object.assign(
+                    this.variants[el.parentNode.dataset.variant],
+                    {img: this.images[el.dataset.image]});
+                this.drake.cancel(true);
+        }
+    }
+
+    dragImage(el) {
+//         console.log(el, 'drag');
+        if (el.nodeName != 'LI') {
+            this.drake.cancel(true);
+//             console.log(el, 'drag', true);
+        }
+    }
+
+    dragEnd(el) {
+//         console.log(el, 'end');
+        this.currentVariant = undefined;
+    }
+
+    dragLeave(evt) {
+        let el = evt.target;
+        console.log(el, 'dragleave');
+        if (!this.hasAttr(el, 'dropzone')) {
+            this.dragOver = undefined;
+            this.dragOverVariant = undefined;
+            evt.preventDefault();
+            this.currentVariant = undefined;
+        }
+    }
+
+    handleDragOver(evt, flag) {
+//         console.log(evt.target, 'handle');
+        evt.stopPropagation();
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'copy';
+        this[flag] = true;
+    }
+
+    disableDrop(evt) {
+        let el = evt.target;
+        if (!this.hasAttr(el, 'dropzone')) {
+            this.dragOver = undefined;
+            this.dragOverVariant = undefined;
+            evt.preventDefault();
+            evt.dataTransfer.effectAllowed = "none";
+            evt.dataTransfer.dropEffect = "none";
+            this.currentVariant = undefined;
+        }
+//         console.log(el, this.dragOver, 'disabledrop');
+    }
+
+
+
 
 
     addFormAfter() {
@@ -275,6 +357,13 @@ export class ProductsNew extends BaseForm {
         }
         this.variants = variants.slice(0);
         this.api_variants = variants.slice(0);
+        setTimeout(()=> { 
+            let table = window.document.querySelectorAll('#variants-table tr')
+            for (let i=0; i < table.length; i++) {
+                this.drake.containers.push(table[i]);
+            }
+        }, 100);
+        
     }
 
 
@@ -344,8 +433,9 @@ export class ProductsNew extends BaseForm {
 
 //------------------------------------------------------------------------Images
     // upload images (dragover)
-    addImages(event) {
+    addImages(event, variant) {
         this.deleteImage();
+        this.currentVariant = variant;
         event.stopPropagation();
         event.preventDefault();
         let files = event.target.files || event.dataTransfer.files;
@@ -364,6 +454,14 @@ export class ProductsNew extends BaseForm {
         this.formChange = true;
         this._admin.notNavigate = true;
         this.dragOver  = undefined;
+        this.dragOverVariant  = undefined;
+        if (this.isIndex(this.currentVariant)) {
+            Object.assign(
+                this.variants[this.currentVariant],
+                {img: this.images[this.images.length-1]}
+            );
+            this.currentVariant = undefined;
+        }
     };
 
     addImageFromUrl(imageUrl) {
@@ -550,23 +648,6 @@ export class ProductsNew extends BaseForm {
         };
         xhr.open('GET', img.src);
         xhr.send();
-    }
-
-    handleDragOver(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        evt.dataTransfer.dropEffect = 'copy';
-        this.dragOver = true;
-    }
-
-    disableDrop(evt) {
-        let el = evt.target;
-        if (!this.hasAttr(el, 'dropzone')) {
-            this.dragOver = undefined;
-            evt.preventDefault();
-            evt.dataTransfer.effectAllowed = "none";
-            evt.dataTransfer.dropEffect = "none";
-        }
     }
 
     // check has element(parrent) attr or not 

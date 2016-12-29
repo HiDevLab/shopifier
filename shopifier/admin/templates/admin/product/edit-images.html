@@ -2,9 +2,10 @@
     <div class="row w16 left pl30">
         <div class="rows w16 ml30">
             <div class="form pt20"
-                [attr.data-dropzone]="true" 
-                (dragover)="handleDragOver($event)"
-                (drop)="addImages($event)">
+                (dragover)="handleDragOver($event, 'dragOver')"
+                (drop)="addImages($event)"
+                [attr.data-dropzone]="true"
+                [attr.data-dragzone]="true">
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Images</strong>
 
@@ -21,7 +22,8 @@
                     </div>
                 </div>
                 <ul class="images mh20 mb20" id="images" [ngClass]="{hide: dragOver}">
-                    <li *ngFor="let image of images; let i = index;"
+                    <li *ngFor="let image of images; let i = index;" type="none"
+                        attr.data-image="{% verbatim %}{{ i }}{% endverbatim %}"
                         (mouseover)="currentImg=i;"
                         (mouseleave)="currentImg=undefined"
                         (mousedown)="drabImg=true"
@@ -32,12 +34,14 @@
                                 src="{% verbatim %}{{ image.attachment }}{% endverbatim %}" 
                                 alt="" 
                                 attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
-                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
+                                id="{% verbatim %}{{ image.id }}{% endverbatim %}"
+                                (drag)="dragImage($event, image)">
                             <img *ngIf="image.src" 
                                 src="{% verbatim %}{{ image.src }}{% endverbatim %}" 
                                 alt="{% verbatim %}{{ image.alt }}{% endverbatim %}"  
                                 attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
-                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
+                                id="{% verbatim %}{{ image.id }}{% endverbatim %}"
+                                (drag)="dragImage($event, image)">
                             </span>
                         <div [ngClass]="{hide : currentImg!=i}">
                             <div class="row center" >

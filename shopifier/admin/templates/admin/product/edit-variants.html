@@ -76,31 +76,47 @@
                                 <th>Price</th><th>SKU</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr *ngFor="let variant of variants; let k = index" [ngClass]="{selected: variant.select}">
-                                <td class="select">
+                        <tbody id="variants-table">
+                            <tr *ngFor="let variant of variants; let k = index"
+                                attr.data-variant="{% verbatim %}{{ k }}{% endverbatim %}"
+                                [ngClass]="{selected: variant.select}"
+                                (dragover)="handleDragOver($event, dragOverVariant); currentVariant=k"
+                                (drop)="addImages($event, k)"
+                                [attr.data-dropzone]="true">
+                                <td class="select" [ngClass]="{hide: currentVariant==k}">
                                     <span class="input">
                                         <input type="checkbox" [attr.id]="'var-'+k" [(ngModel)]="variant.select">
                                         <label [attr.for]="'var-'+k"><i class="fa fa-check backgraund-form" aria-hidden="true"></i></label>
                                     </span>
                                 </td>
-                                <td class="image">
-                                    <div>
+                                <td class="image" [ngClass]="{hide: currentVariant==k}">
+                                    <div *ngIf="!variant.img">
                                         <a class="fa fa-picture-o"></a>
                                     </div>
+                                    <span *ngIf="variant.img" >
+                                        <img src="{% verbatim %}{{variant.img.attachment || variant.img.src}}{% endverbatim %}">
+                                    </span>
                                 </td>
-                                <td *ngIf="variant.option1" class="option">
+                                <td *ngIf="variant.option1" class="option" [ngClass]="{hide: currentVariant==k}">
                                     <input class="color-green" [(ngModel)]="variant.option1">
                                 </td>
-                                <td *ngIf="variant.option2" class="option">
+                                <td *ngIf="variant.option2" class="option" [ngClass]="{hide: currentVariant==k}">
                                     <input class="color-purple" [(ngModel)]="variant.option2">
                                  </td>
-                                <td *ngIf="variant.option3"  class="option">
+                                <td *ngIf="variant.option3"  class="option" [ngClass]="{hide: currentVariant==k}">
                                     <input class="color-orange" [(ngModel)]="variant.option3">
                                 </td>
-                                <td><input [(ngModel)]="variant.price"></td>
-                                <td><input [(ngModel)]="variant.sku"></td>
-                                <td><a class="btn">Edit</a><a class="btn fa fa-trash"></a></td>
+                                <td [ngClass]="{hide: currentVariant==k}"><input [(ngModel)]="variant.price"></td>
+                                <td [ngClass]="{hide: currentVariant==k}"><input [(ngModel)]="variant.sku"></td>
+                                <td [ngClass]="{hide: currentVariant==k}"><a class="btn">Edit</a><a class="btn fa fa-trash"></a></td>
+                                <span *ngIf="isIndex(currentVariant) && currentVariant==k" class="hover" (dragleave)="dragLeave($event)">
+                                    <div>
+                                        Drop to set the variant image for 
+                                        <span class="color-green">{% templatetag openvariable %}variant.option1{% templatetag closevariable %}</span>
+                                        <span *ngIf="variant.option2" class="color-purple">, {% templatetag openvariable %}variant.option2{% templatetag closevariable %}</span>
+                                        <span *ngIf="variant.option3" class="color-orange">, {% templatetag openvariable %}variant.option3{% templatetag closevariable %}</span>
+                                    </div>
+                                </span>
                             </tr>
                          </tbody>
                     </table>

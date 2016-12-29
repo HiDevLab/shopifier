@@ -312,7 +312,7 @@ export class BaseForm {
     }
 
     DOMElement(selector) {
-        return window.document.querySelector(selector)
+        return window.document.querySelector(selector);
     }
 
     // find instance in collection by id
@@ -325,5 +325,9 @@ export class BaseForm {
         return undefined;
     }
 
+    isIndex(x) {
+        x = Number(x);
+        return Number.isInteger(x) && x > -1;
+    }
 
 }

@@ -953,6 +953,9 @@ $tooltip-error-color: #ffffff;
         tr {
             display: table-row;
             vertical-align: inherit;
+            > li {
+                 display: none;
+            }
         }
         > thead {
             display: table-header-group;
@@ -965,6 +968,17 @@ $tooltip-error-color: #ffffff;
             > tr {
                 &.selected, &.selected > td > input {
                     background-color: #fffbe9;
+                }
+                > .hover {
+                    display: flex;
+                    justify-content: center;
+                    width: 100%;
+                    position: absolute;
+                    left: 0;
+                    border-top: 1px solid $border-section-tab-color;
+                    > div {
+                        margin: 12px;
+                    }
                 }
                 &:hover > td {
                     background: $list-background-hover;
@@ -1042,26 +1056,46 @@ $tooltip-error-color: #ffffff;
             &.image {
                 padding: 4px 6px;
                 > div {
+                    width: 32px;
+                    height: 26px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     color:  $border-section-color;
                     background-color: $background-main-btn-disabled;
-                    width: 38px;
-                    height: 38px;
                     border: 1px solid $border-section-tab-color;
                     font-size: 24px;
+                    > img {
+                        max-height: 100%;
+                        max-width: 100%;
+                        margin: auto;
+                    }
                     &:hover {
                         cursor: pointer;
                         background-color: $background-main-btn-disabled;
                     }
                 }
+                > span {
+                    background-color: $background-main-btn-disabled;
+                    width: 32px;
+                    height: 26px;
+                    display : flex;
+                    align-items : center;
+                    > img {
+                        max-height: 100%;
+                        max-width: 100%;
+                        margin: auto;
+                    }
+                }
             }
-        }
-        td.select {
-            min-width: 50px;
-            > .input{
-                background-color: inherit;
+            &.select {
+                min-width: 50px;
+                > .input{
+                    background-color: inherit;
+                }
+            }
+            &.hide {
+                visibility: hidden;
             }
         }
     }
