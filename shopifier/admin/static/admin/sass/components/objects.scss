@@ -15,10 +15,9 @@ $colors: (
     .color-#{$name}{
         color: #{$color} !important;
     }
-    .color#{$name}{
+    .color_#{$name}{
         color: #{$color} !important;
     }
-
 }
 
 //background
