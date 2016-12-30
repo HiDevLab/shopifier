@@ -1,5 +1,3 @@
-import 'rxjs/Rx';
-
 import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
         Validators, Control, ControlGroup } from 'angular2/common';
 import { Component, Pipe } from 'angular2/core';
@@ -118,8 +116,7 @@ export class ProductsNew extends BaseForm {
 
     body_html = '';
 
-    dragOver = undefined;
-    dragOverVariant = undefined;
+    dragOverImg = undefined;
     currentVariant = undefined;
     ImageAltText = '';
     imageUrl = '';
@@ -211,25 +208,26 @@ export class ProductsNew extends BaseForm {
 //         this.container_images2 = this.DOMElement('#test');
         this.drake = dragula(
             [this.container_images],
-            {revertOnSpill: true,}
+            {
+                revertOnSpill: true,
+                moves: (el, source) => {
+                    return this.hasAttr(source, 'dragzone');
+                }
+            }
         );
         this.drake.on('drop', this.dropImage.bind(this));
         this.drake.on('shadow', this.shadowImage.bind(this));
-        this.drake.on('drag', this.dragImage.bind(this));
         this.drake.on('dragend', this.dragEnd.bind(this));
 
         // disable dragover and drop 
         window.addEventListener('dragenter', this.disableDrop.bind(this), false);
         window.addEventListener('dragover', this.disableDrop.bind(this), false);
-        window.addEventListener('drop', this.disableDrop.bind(this), false);
-        window.addEventListener('dragend', this.dragEnd.bind(this), false);
     }
 
     refreshDOM() {
         this.popover_bulk_actions = this.DOMElement('#bulk-actions');
         this.popovers = [this.popover_bulk_actions];
     }
-
 
     shadowImage(el) {
 //         console.log(el, 'shadow');
@@ -253,32 +251,12 @@ export class ProductsNew extends BaseForm {
         }
     }
 
-    dragImage(el) {
-//         console.log(el, 'drag');
-        if (el.nodeName != 'LI') {
-            this.drake.cancel(true);
-//             console.log(el, 'drag', true);
-        }
-    }
-
     dragEnd(el) {
 //         console.log(el, 'end');
         this.currentVariant = undefined;
     }
 
-    dragLeave(evt) {
-        let el = evt.target;
-        console.log(el, 'dragleave');
-        if (!this.hasAttr(el, 'dropzone')) {
-            this.dragOver = undefined;
-            this.dragOverVariant = undefined;
-            evt.preventDefault();
-            this.currentVariant = undefined;
-        }
-    }
-
-    handleDragOver(evt, flag) {
-//         console.log(evt.target, 'handle');
+    dragOver(evt, flag) {
         evt.stopPropagation();
         evt.preventDefault();
         evt.dataTransfer.dropEffect = 'copy';
@@ -288,14 +266,13 @@ export class ProductsNew extends BaseForm {
     disableDrop(evt) {
         let el = evt.target;
         if (!this.hasAttr(el, 'dropzone')) {
-            this.dragOver = undefined;
-            this.dragOverVariant = undefined;
+            this.dragOverImg = undefined;
             evt.preventDefault();
             evt.dataTransfer.effectAllowed = "none";
             evt.dataTransfer.dropEffect = "none";
             this.currentVariant = undefined;
         }
-//         console.log(el, this.dragOver, 'disabledrop');
+//         console.log(el, this.dragOverImg, 'disabledrop');
     }
 
 
@@ -453,8 +430,7 @@ export class ProductsNew extends BaseForm {
         });
         this.formChange = true;
         this._admin.notNavigate = true;
-        this.dragOver  = undefined;
-        this.dragOverVariant  = undefined;
+        this.dragOverImg  = undefined;
         if (this.isIndex(this.currentVariant)) {
             Object.assign(
                 this.variants[this.currentVariant],
