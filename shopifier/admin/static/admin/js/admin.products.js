@@ -146,9 +146,9 @@ export class ProductsNew extends BaseForm {
             this.rich_text_editor.ngOnDestroy();
         }
 
-        window.removeEventListener('dragenter', this.disableDrop.bind(this), false);
-        window.removeEventListener('dragover', this.disableDrop.bind(this), false);
-        window.removeEventListener('drop', this.disableDrop.bind(this), false);
+        window.removeEventListener('dragenter', this.disableDrop, false);
+        window.removeEventListener('dragover', this.disableDrop, false);
+        window.removeEventListener('dragleave', this.dragLeave, false);
     }
 
     ngOnInit() {
@@ -205,7 +205,6 @@ export class ProductsNew extends BaseForm {
 
         // drag and drop
         this.container_images = this.DOMElement('#images');
-//         this.container_images2 = this.DOMElement('#test');
         this.drake = dragula(
             [this.container_images],
             {
@@ -222,6 +221,7 @@ export class ProductsNew extends BaseForm {
         // disable dragover and drop 
         window.addEventListener('dragenter', this.disableDrop.bind(this), false);
         window.addEventListener('dragover', this.disableDrop.bind(this), false);
+        window.addEventListener('dragleave', this.dragLeave.bind(this), false);
     }
 
     refreshDOM() {
@@ -229,8 +229,8 @@ export class ProductsNew extends BaseForm {
         this.popovers = [this.popover_bulk_actions];
     }
 
+    //dragula event
     shadowImage(el) {
-//         console.log(el, 'shadow');
         el = el.parentNode;
         if(el.nodeName==='TR' && el.dataset && el.dataset.variant) {
             this.currentVariant = el.dataset.variant;
@@ -238,9 +238,8 @@ export class ProductsNew extends BaseForm {
             this.currentVariant = undefined;
         }
     }
-
+    //dragula event
     dropImage(el) {
-//         console.log(el, 'drop');
         if (
             el.parentNode && el.parentNode.dataset && el.dataset &&
             el.parentNode.dataset.variant && el.dataset.image) {
@@ -250,19 +249,25 @@ export class ProductsNew extends BaseForm {
                 this.drake.cancel(true);
         }
     }
-
+    //dragula event
     dragEnd(el) {
-//         console.log(el, 'end');
         this.currentVariant = undefined;
     }
-
+    //window event
+    dragLeave(evt) {
+        if (evt.screenX==0 && evt.screenY==0) {
+            this.currentVariant = undefined;
+            this.dragOverImg = undefined;
+        }
+    }
+    //window event
     dragOver(evt, flag) {
         evt.stopPropagation();
         evt.preventDefault();
         evt.dataTransfer.dropEffect = 'copy';
         this[flag] = true;
     }
-
+    //window event
     disableDrop(evt) {
         let el = evt.target;
         if (!this.hasAttr(el, 'dropzone')) {
@@ -272,12 +277,7 @@ export class ProductsNew extends BaseForm {
             evt.dataTransfer.dropEffect = "none";
             this.currentVariant = undefined;
         }
-//         console.log(el, this.dragOverImg, 'disabledrop');
     }
-
-
-
-
 
     addFormAfter() {
         if (this.object_id) {
