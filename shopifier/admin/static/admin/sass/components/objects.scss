@@ -159,7 +159,18 @@ $btn-disabled-color: #d3dbe2;
         filter: alpha(opacity=0);
         cursor: pointer; 
     }
-
+    //button one unit
+    &.unit {
+        border-radius: 0;
+        border-left: none;
+    }
+    &.unit-left {
+        border-radius: 3px 0 0 3px;
+    }
+    &.unit-right {
+        border-radius: 0 3px 3px 0;
+        border-left: none;
+    }
 }
 
 $btn-cross-color: #ebeef0;
@@ -993,11 +1004,13 @@ $tooltip-error-color: #ffffff;
             }
         }
         th {
-            padding: 8px 10px;
+            padding: 8px 8px;
             display: table-cell;
             vertical-align: inherit;
             text-align: left;
             background: transparent;
+            overflow: hidden;
+            max-width: 150px;
             &.image {
                 width: 16px;
             }
@@ -1024,20 +1037,13 @@ $tooltip-error-color: #ffffff;
                 > .btn {
                     padding: 6px 10px;
                     text-align: right;
-                    &:first-child {
-                        border-radius: 3px 0 0 3px;
-                    }
-                    &:last-child {
-                        border-radius: 0 3px 3px 0;
-                        border-left: none;
-                    }
                 }
             }
         }
         td {
             border-top: 1px solid $border-section-tab-color;
             > input {
-                width: 95px;
+                width: 80px;
                 background: $input-background;
                 height: 32px;
                 font-size: $shopify-font-size;
@@ -1049,7 +1055,7 @@ $tooltip-error-color: #ffffff;
             }
             &.option {
                 > input {
-                    width: 170px;
+                    width: 150px;
                 }
             }
             &.image {
