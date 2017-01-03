@@ -315,19 +315,23 @@ export class BaseForm {
         return window.document.querySelector(selector);
     }
 
-    // find instance in collection by id
-    findObject(object, collection) {
-        for (let i=0; i < collection.length; i++) {
-            if (object.id === collection[i].id) {
-                return collection[i];
+    isIndex(x) {
+        let n = Number(x);
+        return Number.isInteger(n) && n > -1;
+    }
+
+    findIndex(container, parameter, value) {
+        return container.findIndex((element) => {
+            return element[parameter] == value;
+        });
+    }
+
+    find(container, parameter, value) {
+        for(let i=0; i<container.length; i++) {
+            if (container[i][parameter] == value) {
+                return container[i];
             }
         }
         return undefined;
     }
-
-    isIndex(x) {
-        x = Number(x);
-        return Number.isInteger(x) && x > -1;
-    }
-
 }

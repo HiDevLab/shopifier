@@ -1,0 +1,27 @@
+<modal-form *ngIf="showBulkUpdateImages">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h2>Update Images</h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showAddImageFromUrl=undefined"></a>
+        </div>
+        <div class="input-section">
+             <ul class="bulk-images mh20 mb20" id="images" [ngClass]="{hide: dragOverImg}">
+                <li *ngFor="let image of images.slice(bulkImagesPage*10,bulkImagesPage*10+10); let i = index;" type="none"
+                [ngClass]="{select: bulkCurrentImage==image.id}"
+                (click)="bulkCurrentImage=image.id">
+                    <span><img [attr.src]="image.src"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a class="btn unit-left fa fa-chevron-left" [ngClass]="{disabled : !bulkImagesPage}" (click)="bulkImagesPrevPage()"></a>
+            <a class="btn unit-right fa fa-chevron-right" [ngClass]="{disabled : bulkImagesPage*10>=images.length-10}"(click)="bulkImagesNextPage()"></a>
+            <a class="btn btn-red mr-auto ml30" (click)="bulkImagesRemove()">Remove Images</a>
+            <a class="btn mr10" (click)="showBulkUpdateImages=false">Cancel</a>
+            <a class="btn mr10">Add image
+                <input type="file" multiple accept="image/gif, image/jpeg, image/png" (change)="addImages($event)">
+            </a>
+            <a class="btn btn-blue" [ngClass]="{disabled : !bulkCurrentImage}" (click)="bulkImageSave(bulkCurrentImage)">Save</a>
+        </div>
+    </form>
+</modal-form>

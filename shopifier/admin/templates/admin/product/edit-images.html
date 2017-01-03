@@ -22,37 +22,35 @@
                     </div>
                 </div>
                 <ul class="images mh20 mb20" id="images" [ngClass]="{hide: dragOverImg}">
-                    <li *ngFor="let image of images; let i = index;" type="none"
-                        attr.data-image="{% verbatim %}{{ i }}{% endverbatim %}"
-                        (mouseover)="currentImg=i;"
+                    <li *ngFor="let image of (images.length<12 || showAllImages)?images:images.slice(0,11); let i = index;" type="none"
+                        [attr.data-image]="image.id"
+                        (mouseover)="currentImg=image.id;"
                         (mouseleave)="currentImg=undefined"
                         (mousedown)="drabImg=true"
                         (mouseup)="drabImg=undefined"
                         [ngClass]="{grabbing : drabImg}"
                         [attr.data-dragzone]="true">
                         <span>
-                            <img *ngIf="image.attachment" 
-                                src="{% verbatim %}{{ image.attachment }}{% endverbatim %}" 
-                                alt="" 
-                                attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
-                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
-                            <img *ngIf="image.src" 
-                                src="{% verbatim %}{{ image.src }}{% endverbatim %}" 
-                                alt="{% verbatim %}{{ image.alt }}{% endverbatim %}"  
-                                attr.data-type="{% verbatim %}{{ image.type }}{% endverbatim %}"
-                                id="{% verbatim %}{{ image.id }}{% endverbatim %}">
+                            <img
+                                [attr.src]="image.attachment || image.src"
+                                [attr.alt]="image.alt" 
+                                [attr.data-type]="image.type"
+                                [attr.id]="image.id">
                             </span>
-                        <div [ngClass]="{hide : currentImg!=i}">
+                        <div [ngClass]="{hide : currentImg!=image.id}">
                             <div class="row center" >
                                 <a class="btn trash fa fa-eye" aria-hidden="true" title="Preview" (click)="showImage(image.id)"></a>
                                 <a class="btn trash fa fa-pencil" aria-hidden="true" title="Edit image" (click)="editImage(image.id)"></a>
                                 <a class="btn font9 bold" aria-hidden="true" title="Edit alt text"(click)="editAltText(image.id)">ALT</a>
-                                <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete" (click)="deleteImage(image.id)"></a>
+                                <a class="btn trash fa fa-trash" aria-hidden="true" title="Delete" (click)="onDeleteImage(image)"></a>
                             </div>
                         </div>
                     </li>
                     <li *ngIf="images.length<1" class="hidden" ><span></span></li>
                 </ul>
+                <div *ngIf="images.length>11 && !showAllImages"class="row center mb20">
+                    <a class="ref" (click)="showAllImages=true">Show all images</a>
+                </div>
             </div>
         </div>
     </div>
@@ -110,6 +108,25 @@
         <div class="modal-footer">
             <a class="btn mr10" (click)="showAddImageFromUrl=undefined">Cancel</a>
             <a class="btn btn-blue" [ngClass]="{disabled : !changeImageUrl}" (click)="addImageFromUrl(imageUrl);">Add image</a>
+        </div>
+    </form>
+</modal-form>
+
+
+<modal-form *ngIf="showDeleteImage">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h2>Delete this image?</h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showDeleteImage=undefined"></a>
+        </div>
+        <div class="input-section">
+            <div class="input-box">
+                Are you sure you want to delete this image and remove it from all variants? This action cannot be reversed.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="showDeleteImage=undefined">Cancel</a>
+            <a class="btn btn-red" (click)="deleteImage();showDeleteImage=undefined">Delete</a>
         </div>
     </form>
 </modal-form>

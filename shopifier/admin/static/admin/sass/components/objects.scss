@@ -1136,3 +1136,44 @@ $tooltip-error-color: #ffffff;
         }
     }
 }
+
+.bulk-images {
+    display: table;
+    flex-wrap: wrap;
+    list-style: outside none none;
+    list-style: decimal inside none;
+    &.hide {
+        visibility: hidden;
+    }
+    > li {
+        float: left;
+        display : flex;
+        align-items : center;
+        vertical-align: top;
+        cursor: pointer;
+        position: relative;
+        width: 95px;
+        height: 95px;
+        margin: 10px 10px 0 0;
+        border: 1px solid $border-section-tab-color;
+        &:hover {
+            border-color: $border-section-tab-color;
+        }
+        &.select {
+            border-color: $btn-color;
+            border-radius: 3px;
+        }
+        > span {
+            background-color: $background-main-btn-disabled;
+            width: 100%;
+            height: 100%;
+            display : flex;
+            align-items : center;
+            > img {
+                max-height: 100%;
+                max-width: 100%;
+                margin: auto;
+            }
+        }
+    }
+}

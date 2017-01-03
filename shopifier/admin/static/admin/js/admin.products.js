@@ -91,8 +91,8 @@ export class Products extends BaseForm {
 //         });
 //     }
 
-    onAdd(self) {
-        self._router.navigate(['NewProduct']);
+    onAdd() {
+        this._router.navigate(['NewProduct']);
     }
 
     onEditProduct(product) {
@@ -117,6 +117,7 @@ export class ProductsNew extends BaseForm {
     body_html = '';
 
     dragOverImg = undefined;
+    showAllImages = false;
     currentVariant = undefined;
     ImageAltText = '';
     imageUrl = '';
@@ -125,6 +126,12 @@ export class ProductsNew extends BaseForm {
     variants = [];
     api_variants = [];
     selectAllVariants = 0;
+
+    inventoryManagement = false;
+
+    showBulkUpdateImages = false;
+    bulkImagesPage = 0;
+    bulkCurrentImage = undefined;
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
@@ -152,7 +159,6 @@ export class ProductsNew extends BaseForm {
     }
 
     ngOnInit() {
-        let self = this;
         this.self = this; // for child components
         this._admin.notNavigate = false;
 
@@ -185,21 +191,17 @@ export class ProductsNew extends BaseForm {
         this.addForm(this.form, '/admin/products.json', 'product');
 
         // Image Editor (apiKey: ???)
-        this.featherEditor = new Aviary.Feather({ 
-            apiVersion: 3,
-            theme: 'light',// Check out our new 'light' and 'dark' themes!
-            tools: 'all',
-            appendTo: '',
-            language: 'en',
-            onSave: (imageID, newURL) => {
-                let img = document.getElementById(imageID);
-                img.src = newURL;
-                img.dataset.type = 'url';
-                self.featherEditor.close();
-                self.formChange = true;
-           },
-           onError: (errorObj) => {alert(errorObj.message);}
-        });
+        this.featherEditor = new Aviary.Feather(
+            { 
+                apiVersion: 3,
+                theme: 'light',// Check out our new 'light' and 'dark' themes!
+                tools: 'all',
+                appendTo: '',
+                language: 'en',
+                onSave: this.saveImage.bind(this),
+                onError: (errorObj) => {alert(errorObj.message);}
+            }
+        );
 
         this.refreshDOM();
 
@@ -227,56 +229,6 @@ export class ProductsNew extends BaseForm {
     refreshDOM() {
         this.popover_bulk_actions = this.DOMElement('#bulk-actions');
         this.popovers = [this.popover_bulk_actions];
-    }
-
-    //dragula event
-    shadowImage(el) {
-        el = el.parentNode;
-        if(el.nodeName==='TR' && el.dataset && el.dataset.variant) {
-            this.currentVariant = el.dataset.variant;
-        } else {
-            this.currentVariant = undefined;
-        }
-    }
-    //dragula event
-    dropImage(el) {
-        if (
-            el.parentNode && el.parentNode.dataset && el.dataset &&
-            el.parentNode.dataset.variant && el.dataset.image) {
-                Object.assign(
-                    this.variants[el.parentNode.dataset.variant],
-                    {img: this.images[el.dataset.image]});
-                this.drake.cancel(true);
-        }
-    }
-    //dragula event
-    dragEnd(el) {
-        this.currentVariant = undefined;
-    }
-    //window event
-    dragLeave(evt) {
-        if (evt.screenX==0 && evt.screenY==0) {
-            this.currentVariant = undefined;
-            this.dragOverImg = undefined;
-        }
-    }
-    //window event
-    dragOver(evt, flag) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        evt.dataTransfer.dropEffect = 'copy';
-        this[flag] = true;
-    }
-    //window event
-    disableDrop(evt) {
-        let el = evt.target;
-        if (!this.hasAttr(el, 'dropzone')) {
-            this.dragOverImg = undefined;
-            evt.preventDefault();
-            evt.dataTransfer.effectAllowed = "none";
-            evt.dataTransfer.dropEffect = "none";
-            this.currentVariant = undefined;
-        }
     }
 
     addFormAfter() {
@@ -316,7 +268,6 @@ export class ProductsNew extends BaseForm {
             Object.assign(data.images[i], {
                 type: 'url', 
                 alt: data.images[i].alt_text,
-                id: data.images[i].id.toString()
             });
             images.push(data.images[i]);
         }
@@ -326,11 +277,16 @@ export class ProductsNew extends BaseForm {
 
     getVariantsAfter(data) {
         let variants = [];
+        this.inventoryManagement = false;
         for (let i=0; i < data.variants.length; i++) {
             Object.assign(data.variants[i], {
                 select: 0, id: data.variants[i].id.toString()
             });
             variants.push(data.variants[i]);
+            this.inventoryManagement = (
+                this.inventoryManagement ||
+                data.variants[i].inventory_management==='shopifier'
+            );
         }
         this.variants = variants.slice(0);
         this.api_variants = variants.slice(0);
@@ -344,118 +300,201 @@ export class ProductsNew extends BaseForm {
     }
 
 
-    onSave(self) {
-        self = self || this;
-
-        if(!self.groupValidate(self.form, 'product')) return;
+    onSave() {
+        if(!this.groupValidate(this.form, 'product')) return;
         let product = {};
-        product['product'] = self.form['product'].value;
-        product.product['body_html'] = self.body_html;
+        product['product'] = this.form['product'].value;
+        product.product['body_html'] = this.body_html;
         let options = [];
-        if (self.options[0].values.length) {
+        if (this.options[0].values.length) {
             options.push({
-                name: self.options[0].name,
-                values: self.options[0].values
+                name: this.options[0].name,
+                values: this.options[0].values
             });
         }
-        if (self.options.length > 1 && self.options[1].values.length) {
+        if (this.options.length > 1 && this.options[1].values.length) {
             options.push({
-                name:self.options[1].name,
-                values: self.options[1].values
+                name:this.options[1].name,
+                values: this.options[1].values
             });
         }
-        if (self.options.length > 2 && self.options[2].values.length) {
+        if (this.options.length > 2 && this.options[2].values.length) {
             options.push({
-                name:self.options[2].name,
-                values: self.options[2].values
+                name:this.options[2].name,
+                values: this.options[2].values
             });
         }
         product.product['options'] = options;
-        if (!self.object_id) {
-            self._http.post('/admin/products.json', product )
+        if (!this.object_id) {
+            this._http.post('/admin/products.json', product )
                 .subscribe(
                     (data) => {
-                        self.object_id = data.product.id;
-                        self.getProductAfter.call(self, data);
-                        self.saveImages(self);
-                        self.saveVariants(self);
+                        this.object_id = data.product.id;
+                        this.getProductAfter(data);
+                        this.saveImages();
+                        this.saveVariants();
                     },
-                    (err) => {self.apiErrors(self.form, 'product', err.json());}
+                    (err) => {this.apiErrors(this.form, 'product', err.json());}
                 );
         } else {
-            self._http.put(`/admin/products/${self.object_id}.json`, product)
+            this._http.put(`/admin/products/${this.object_id}.json`, product)
                 .subscribe(
                     (data) => {
-                        self.getProductAfter.call(self, data);
-                        self.saveImages(self);
-                        self.saveVariants(self);
+                        this.getProductAfter(data);
+                        this.saveImages();
+                        this.saveVariants();
                     },
-                    (err) => {self.apiErrors(self.form, 'product', err.json());}
+                    (err) => {this.apiErrors(this.form, 'product', err.json());}
                 );
         }
     }
 
-    onCancel(self) {
-        self = self || this;
-        self._router.navigate(['Products']);
+    onCancel() {
+        this._router.navigate(['Products']);
     }
 
     onDeleteProduct() {
         this._http.delete(`/admin/products/${this.object_id}.json`)
             .subscribe(
                 () => this._router.navigate(['Products']),
-                (err) => {self.apiErrors(self.form, 'product', err.json());},
+                (err) => {this.apiErrors(this.form, 'product', err.json());},
             );
     }
 
 //------------------------------------------------------------------------Images
+    //dragula event
+    shadowImage(el) {
+        el = el.parentNode;
+        if(el.nodeName==='TR' && el.dataset && el.dataset.variant) {
+            this.currentVariant = el.dataset.variant;
+        } else {
+            this.currentVariant = undefined;
+        }
+    }
+    //dragula event
+    dropImage(el) {
+        if (
+            el.parentNode && el.parentNode.dataset && el.dataset &&
+            el.parentNode.dataset.variant && el.dataset.image) {
+                Object.assign(
+                    this.find(this.variants, 'id', el.parentNode.dataset.variant),
+                    {image: this.find(this.images, 'id', el.dataset.image)});
+                this.drake.cancel(true);
+        }
+    }
+    //dragula event
+    dragEnd(el) {
+        this.currentVariant = undefined;
+        this.refreshImagesFromDOM();
+        this.formChange = true;
+        this._admin.notNavigate = true;
+    }
+    //window event
+    dragLeave(evt) {
+        if (evt.clientX <= 0 && evt.clientY <= 0) {
+            this.currentVariant = undefined;
+            this.dragOverImg = undefined;
+        }
+    }
+    //window event
+    dragOver(evt, flag) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'copy';
+        this[flag] = true;
+    }
+    //window event
+    disableDrop(evt) {
+        let el = evt.target;
+        if (!this.hasAttr(el, 'dropzone')) {
+            this.dragOverImg = undefined;
+            evt.preventDefault();
+            evt.dataTransfer.effectAllowed = "none";
+            evt.dataTransfer.dropEffect = "none";
+            this.currentVariant = undefined;
+        }
+    }
+
     // upload images (dragover)
     addImages(event, variant) {
-        this.deleteImage();
         this.currentVariant = variant;
         event.stopPropagation();
         event.preventDefault();
         let files = event.target.files || event.dataTransfer.files;
         for(let i=0; i < files.length; i++) {
             let reader = new FileReader();
-            reader.onload = this.readerOnLoadImage.bind(this);
+            reader.onload = (evt) => {
+                this.addImage(evt.target.result, 'attachment')
+            };
             reader.readAsDataURL(files[i]);
         }
+        event.target.files = null;
     }
-    readerOnLoadImage(event) {
-        this.images.push({
-            attachment: event.target.result,
-            id: `temp-${this.getId()}`,
-            type: 'base64'
-        });
-        this.formChange = true;
-        this._admin.notNavigate = true;
-        this.dragOverImg  = undefined;
-        if (this.isIndex(this.currentVariant)) {
+
+    // add new image
+    addImage(src, type, position) {
+        if (this.object_id) {
+            let data = {};
+            data[type] = src;
+            if (position) {
+                data['position'] = position;
+            }
+            let url = `/admin/products/${this.object_id}/images.json`;
+            this._http.post(url, {image: data})
+                .subscribe((data) => {
+                    this.getAPIImage(data);
+                },
+                (err) => {}
+            );
+        } else {
+            if (type==='src') {
+                this.images.push({src: src, id: -this.getId(), type: type });
+            } else {
+                this.images.push({ attachment: src, id: -this.getId(), type: type });
+            }
+            if (this.currentVariant) {
+                Object.assign(
+                    this.find(this.variants, 'id', this.currentVariant),
+                    {image: this.images[this.images.length-1]}
+                );
+                this.currentVariant = undefined;
+            }
+            this.dragOverImg = undefined;
+            this.formChange = true;
+            this._admin.notNavigate = true;
+        }
+    }
+
+
+    // get image from api data
+    getAPIImage(data) {
+        let image = data.image;
+        Object.assign(
+            image, {type: 'src', alt: image.alt_text}
+        );
+        this.images.push(image);
+        this.api_images.push(image);
+        this.images.sort((a, b) => {return a.position-b.position;});
+        if (this.currentVariant) {
             Object.assign(
-                this.variants[this.currentVariant],
-                {img: this.images[this.images.length-1]}
+                this.find(this.variants, 'id', this.currentVariant),
+                {image: this.images[this.images.length-1]}
             );
             this.currentVariant = undefined;
         }
-    };
+        this.dragOverImg = undefined;
+    }
 
     addImageFromUrl(imageUrl) {
-        let self = this;
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
         xhr.onload = () => {
             if (xhr.status == 200 && xhr.response.type === 'image/jpeg') {
-                self.images.push({
-                    src: imageUrl,
-                    id: `temp-${Math.floor(Math.random() * 1000)}`,
-                    type: 'url'
-                });
-                self.formChange = true;
-                self.urlImageErrors = [];
-                self.showAddImageFromUrl = undefined;
+                this.addImage(imageUrl, 'src')
+                this.urlImageErrors = [];
+                this.showAddImageFromUrl = undefined;
             } else {
-                self.urlImageErrors = ['Invalid URL provided.'];
+                this.urlImageErrors = ['Invalid URL provided.'];
             }
         };
         xhr.open('GET', imageUrl);
@@ -481,61 +520,61 @@ export class ProductsNew extends BaseForm {
         this.formChange = true;
     }
 
-    // delete image and/or refresh images from DOM
-    deleteImage(imageID) {
+    onDeleteImage(image) {
+        this.currentImage = image;
+        if(this.object_id) {
+            this.showDeleteImage = true;
+        } else {
+            this.deleteImage();
+        }
+    }
+
+    // delete image
+    deleteImage() {
+        let id = this.currentImage.id;
+        let index = this.findIndex(this.images, 'id', id);
+        if (this.isIndex(index)) {
+            this.images.splice(index, 1);
+        }
+        index = this.findIndex(this.api_images, 'id', id);
+        if (this.isIndex(index)) {
+            this.api_images.splice(index, 1);
+            this._http
+                .delete(`/admin/products/${this.object_id}/images/${id}.json`)
+                .subscribe(() => {}, (err) => {}
+            );
+        }
+        this.variants.forEach((variant) => {
+            if (variant.image && variant.image.id == id) {
+                variant.image = undefined;
+            }
+        });
+        this.formChange = true;
+        this._admin.notNavigate = true;
+    }
+
+    refreshImagesFromDOM(){
         let dom_images = this.container_images.querySelectorAll('img');
         let images = [];
         let image = {};
         let field = '';
         for(let i=0; i < dom_images.length; i++) {
             image = {
-                id: dom_images[i].id,
+                id: Number(dom_images[i].id),
                 position: i + 1,
                 alt: dom_images[i].alt,
                 type: dom_images[i].dataset.type,
             };
             field = (dom_images[i].dataset.type === 'url') ? 'src' : 'attachment';
             image[field] = dom_images[i].src;
-            if (image.id != imageID) {
-                images.push(image);
-            }
+            images.push(image);
         };
         this.images = images;
-        this.formChange = true;
     }
 
-    // find image in collection (api_images, images, dom_images)
-    findImage(image, images) {
-        for (let i=0; i < images.length; i++) {
-            if (image.id === images[i].id) {
-                return images[i];
-            }
-        }
-        return undefined;
-    }
-
-    // get image from api data
-    getAPIImage(self, data) {
-        data['image']['type'] = 'url';
-        data['image']['alt'] = data['image']['alt_text'];
-        data['image']['id'] = data['image']['id'].toString();
-        self.images.push(data['image']);
-        self.api_images.push(data['image']);
-        self.images.sort((a, b) => {return a.position-b.position;}); 
-    }
-
-    getDOMImage(image, position) {
-        return {
-            id: image.id,
-            src: image.src,
-            alt_text: image.alt,
-            type: image.dataset.type,
-            position: position
-        }
-    }
 
     // update image if it necessary
-    updateImage(self, new_image, old_image) {
+    updateImage(new_image, old_image) {
         let data = {};
         if (new_image.alt_text != old_image.alt_text ||
             new_image.position != old_image.position) {
@@ -551,73 +590,67 @@ export class ProductsNew extends BaseForm {
             });
         }
         if (!!Object.keys(data).length) {
-            let url = `/admin/products/${self.object_id}/images/${new_image.id}.json`;
-            self._http.put(url, {image: data})
+            let url = `/admin/products/${this.object_id}/images/${new_image.id}.json`;
+            this._http.put(url, {image: data})
                 .subscribe((data) => {
-                    self.getAPIImage(self, Object.assign({image: old_image}, data));
+                    this.getAPIImage(Object.assign({image: old_image}, data));
                 }, (err) => {});
         } else {
-            self.images.push(new_image);
-            self.api_images.push(new_image);
-            self.images.sort((a, b) => {return a.position-b.position;}); 
+            this.images.push(new_image);
+            this.api_images.push(new_image);
+            this.images.sort((a, b) => {return a.position-b.position;}); 
         }
     }
 
-    // add new image
-    newImage(self, new_image) {
-        let data = {alt_text: new_image.alt_text, position: new_image.position};
-        let field = (new_image.type === 'url') ? 'src' : 'attachment';
-        data[field] = new_image.src;
-        let url = `/admin/products/${self.object_id}/images.json`;
-        self._http.post(url, {image: data})
-            .subscribe((data) => {self.getAPIImage(self, data);}, (err) => {});
+    // save after feather edition
+    saveImage(imageID, newURL) {
+        let image = this.find(this.images, 'id', imageID);
+        image.src = newURL;
+        image.attachment = undefined;
+        image.type = 'src';
+        this.featherEditor.close();
+        if (imageID > 0) {
+            let url = `/admin/products/${this.object_id}/images/${imageID}.json`;
+            this._http.put(url, {image: {src: newURL}})
+                .subscribe(
+                    (data) => {
+                        image.src = data.image.src;
+                        image.id = data.image.id;
+                    },
+                    (err) => {}
+                );
+        }
     }
 
-    saveImages(self) {
-        self = self || this;
-        let dom_images = self.container_images.querySelectorAll('img');
-        let new_image = {};
+    saveImages() {
         let old_image = {};
-        let api_images = self.api_images.slice(0);
-        self.images= [];
-        self.api_images= [];
-        
-        // delete images in DB
-        for(let i=0; i < api_images.length; i++) {
-            old_image = api_images[i];
-            if (!self.findImage(old_image, dom_images)) {
-                self._http
-                    .delete(`/admin/products/${self.object_id}/images/${old_image.id}.json`)
-                    .subscribe(() => {}, (err) => {});
-            }
-        }
+        let images = this.images.slice(0);
+        this.images = [];
 
-        for(let i=0; i < dom_images.length; i++) {
-            new_image = self.getDOMImage(dom_images[i], i + 1);
-            old_image = self.findImage(new_image, api_images);
+        images.forEach((image) => {
+            old_image = this.find(this.api_images, 'id', image.id);
             if (old_image) {
-                self.updateImage(self, new_image, old_image);
+                this.updateImage(image, old_image);
             } else {
-                self.newImage(self, new_image);
+                this.addImage(image.src || image.attachment, image.type, image.position);
             }
-        }
-        self.formChange = false;
+        });
+        this.formChange = false;
     }
 
     editImage(id) {
         let img_id = String(id);
         let img = document.getElementById(img_id);
-        if (img_id.startsWith('temp-')) {
+        if (id < 0) {
             this.featherEditor.launch({image: img_id, url: img.src});
             return false;
         }
-        let self = this;
         var xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
         xhr.onload = () => {
             var reader = new FileReader();
             reader.onloadend = () => {
-                self.featherEditor.launch({image: img_id, url: reader.result});
+                this.featherEditor.launch({image: img_id, url: reader.result});
                 return false;
             }
             reader.readAsDataURL(xhr.response);
@@ -750,66 +783,55 @@ export class ProductsNew extends BaseForm {
         }
     }
 
-    saveVariants(self) {
-        self = self || this;
-        let api_variants = self.api_variants.slice(0);
+    saveVariants() {
+        let api_variants = this.api_variants.slice(0);
         let variants = [];
-        self.api_variants= [];
-        let variant = {};
-        let position = 1;
+        this.api_variants= [];
+        let old_variant = {};
+
         // delete unselected variants
-        for(let i=0; i < self.variants.length; i++) {
-            variant = self.variants[i];
-            if (variant.select) {
-                variant['position'] = position++;
-                delete variant.select;
-                variants.push(variant);
-            }
+        if (!this.object_id) {
+            this.variants.forEach((variant, index) => {
+                if (variant.select) {
+                    variant['position'] = index + 1;
+                    variants.push(variant);
+                }
+            });
+        } else {
+            variants = this.variants.slice(0);
         }
-        self.variants= [];
+        this.variants= [];
 
-        // delete variants in DB
-        for(let i=0; i < api_variants.length; i++) {
-            old_variant = api_variants[i];
-            if (!self.findObject(old_variant, variants)) {
-                self._http
-                    .delete(`/admin/products/${self.object_id}/variants/${old_variant.id}.json`)
-                    .subscribe(() => {}, (err) => {});
-            }
-        }
-
-        for(let i=0; i < variants.length; i++) {
-            let new_variant = variants[i];
-            let old_variant = self.findObject(new_variant, api_variants);
+        variants.forEach((variant) => {
+            old_variant = this.find(api_variants, 'id', variant.id);
             if (old_variant) {
-                self.updateVariant(self, new_variant, old_variant);
+                this.updateVariant(variant, old_variant);
             } else {
-                self.newVariant(self, new_variant);
+                this.newVariant(variant);
             }
-        }
-        self.formChange = false;
+        });
+        this.formChange = false;
     }
 
     // get variant from api data
-    getAPIVariant(self, data) {
-        data.variant.id = data.variant.id.toString();
+    getAPIVariant(data) {
         data.variant['select'] = 0;
-        self.variants.push(data.variant);
-        self.api_variants.push(data.variant);
-        self.variants.sort((a, b) => {return a.position-b.position;}); 
+        this.variants.push(data.variant);
+        this.api_variants.push(data.variant);
+        this.variants.sort((a, b) => {return a.position-b.position;}); 
     }
 
     // add new variant
-    newVariant(self, variant) {
+    newVariant(variant) {
         delete variant.select;
-        let url = `/admin/products/${self.object_id}/variants.json`;
-        self._http.post(url, {variant: variant})
-            .subscribe((data) => {self.getAPIVariant(self, data);}, (err) => {});
+        let url = `/admin/products/${this.object_id}/variants.json`;
+        this._http.post(url, {variant: variant})
+            .subscribe((data) => {this.getAPIVariant(data);}, (err) => {});
     }
 
 
    // update variant if it necessary
-    updatevariant(self, new_image, old_image) {
+    updateVariant(new_image, old_image) {
 //         let data = {};
 //         if (new_image.alt_text != old_image.alt_text ||
 //             new_image.position != old_image.position) {
@@ -843,8 +865,14 @@ export class ProductsNew extends BaseForm {
     }
 
     countSelectedVariants() {
-        let count = 0;
-        this.variants.forEach((v)=> {if (v.select) {count++};});
+        this.bulkVariants = [];
+        this.variants.forEach((v) => {
+            if (v.select) {
+                this.bulkVariants.push(v);
+                count++
+            };
+        });
+        let count = this.bulkVariants.length;
         if (count === this.variants.length) {
             this.selectAllVariants = 1;
         } else {
@@ -875,6 +903,40 @@ export class ProductsNew extends BaseForm {
             }
             v.select = (eq) ? 1:0;
         });
+    }
+
+//------------------------------------------------------------------bulkActions
+    onBulkUpdateImage() {
+        this.showBulkUpdateImages=true;
+        this.bulkImagesPage=0;
+        this.bulkCurrentImage=undefined;
+        this.hidePopovers();
+    }
+
+    bulkImagesRemove() {
+        this.bulkVariants.forEach((variant) => {
+            variant.image = null; 
+        });
+        this.showBulkUpdateImages = false;
+    }
+
+    bulkImageSave(id) {
+        let image = this.find(this.images, 'id', id)
+        this.bulkVariants.forEach((variant) => {
+            variant.image = image; 
+        });
+        this.showBulkUpdateImages = false;
+    }
+
+
+    bulkImagesNextPage() {
+        this.bulkCurrentImage = undefined;
+        this.bulkImagesPage++;
+    }
+
+    bulkImagesPrevPage() {
+        this.bulkCurrentImage = undefined;
+        this.bulkImagesPage--;
     }
 
 
