@@ -581,6 +581,7 @@ class ProductImageViewSet(SHPFViewSet):
 
     def perform_create(self, serializer):
         serializer.validated_data['created_at'] = now()
+        serializer.validated_data['position'] = self.get_queryset().count() + 1
         self.perform_update(serializer)
 
 

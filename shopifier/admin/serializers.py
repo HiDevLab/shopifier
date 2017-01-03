@@ -345,6 +345,7 @@ class ImageSerializer(SHPFSerializer):
 
     src = ImageUrlField(required=False)
     attachment = Base64ImageField(required=False, allow_null=True)
+    position = serializers.IntegerField(required=False)
 
     class Meta:
         model = ProductImage
