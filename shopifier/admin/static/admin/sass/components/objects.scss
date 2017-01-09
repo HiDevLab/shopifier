@@ -71,6 +71,12 @@ $btn-blue-color: #ffffff;
 $btn-red-hover-color: #ffffff;
 $btn-red-hover-background:  #ff5d5d;
 
+$btn-delete-color: #ffffff;
+$btn-delete-background:  #ff5d5d;
+$btn-delete-hover-background:  #d83e3e;
+$btn-delete-border: #ff5d5d;
+$btn-delete-hover-border: #d83e3e;
+
 $btn-color: #0078bd;
 $btn-background: #ffffff;
 $btn-border: #d3dbe2;
@@ -140,7 +146,17 @@ $btn-disabled-color: #d3dbe2;
             border-color: $btn-red-hover-background;
         }
     }
-    
+
+    &.btn-delete {
+        background: $btn-delete-background;
+        color: $btn-delete-color;
+        border-color: $btn-delete-border;
+        &:hover {
+            background: $btn-delete-hover-background;
+            border-color: $btn-delete-hover-border;
+        }
+    }
+
     &.trash {
         padding: 6px 7px;
         line-height: 14px;

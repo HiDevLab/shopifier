@@ -1,15 +1,21 @@
 .login {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-weight: 200;
-    
+    transform: translateY(-15vh);
+
     h1 {
         color: rgb(49,55,61);
         margin: 90px 0 0 0;
         font-size: 30px;
-    }    
+    }
 
     h2 {
         color: rgb(149,167,183);
@@ -21,7 +27,6 @@
     div {
         position: relative;
     }
-    
     input+i {
         position: absolute;
         top: 50%;
@@ -39,8 +44,6 @@
         color: rgb(149,167,183);
         cursor: pointer; cursor: hand;
     }
-       
-    
     .login-box {
         display: flex;
         flex-direction: column;
@@ -72,7 +75,7 @@
                 font-size: 22px;
             }
         }
-        
+
         .dialog-status ~ .dialog-input {
             background-color: #fffbe5 !important;
             border: 1px solid #fed600 !important;
@@ -80,11 +83,11 @@
                 background: inherit !important;
             }
         }
-        
+
         .dialog-input:first-of-type {
             border-radius: 8px 8px 0 0;
         }
-        
+
         .dialog-input {
             color: rgb(149,167,183);
             line-height: 24px;
@@ -132,7 +135,6 @@
             border-color: transparent;
             > ul {
                 padding-left: 20px;
-                
                 > li {
                     padding-left:    5px;
                     list-style-type: disc;

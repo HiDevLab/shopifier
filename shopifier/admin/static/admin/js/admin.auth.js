@@ -1,12 +1,18 @@
-import { Component, Injectable, Injector } from 'angular2/core';
-import { FORM_DIRECTIVES, FormBuilder, Validators } from 'angular2/common';
-import { Router, RouteParams, CanActivate,
-         ROUTER_DIRECTIVES } from 'angular2/router';
-import { Http } from 'angular2/http';
 import 'rxjs/Rx';
 
+import { CommonModule } from '@angular/common';
+import { NgModule, Component, Directive, Injectable, Injector } from '@angular/core';
+import { HttpModule, ConnectionBackend, Http, Headers, 
+        Request, RequestOptions, RequestMethod } from '@angular/http';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
+        Validators } from '@angular/forms';
+import { RouterModule, Router, Routes, ActivatedRoute } from '@angular/router';
 
-//------------------------------------------------------------------------------
+
+// @Directive({ selector: 'modal-form'})
+// export class ModalFormDirective {}
+
+//------------------------------------------------------------------------------AdminUtils
 @Injectable()
 export class AdminUtils {
 
@@ -34,7 +40,7 @@ export class AdminUtils {
 }
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminAuthService
 @Injectable()
 export class AdminAuthService {
 
@@ -106,32 +112,10 @@ export class AdminAuthService {
 }
 
 
-export function getCurrentUser(_found, _re_direct) {
-    let _auth = window.injector.get(AdminAuthService);
-    let router = window.injector.get(Router);
-    return _auth.getCurrentUser()
-        .then(() => 
-        {
-            let _u = false;
-            let _ret = _found ? !_u : _u;
-            if(!_ret) { router.navigate([_re_direct]); }
-            return _ret;
-        },
-        ()=>
-        {
-            let _u = true;
-            let _ret = _found ? !_u : _u;
-            if(!_ret) { router.navigate([_re_direct]); }
-            return _ret;
-        });
-}
-
-
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminAuthLogout
 @Component({
-    selector      : 'section',
-    template      : '',   
-    directives    : [ROUTER_DIRECTIVES],
+    selector      : 'body',
+    template      : '',
 })
 export class AdminAuthLogout {
 
@@ -145,19 +129,65 @@ export class AdminAuthLogout {
     }
 
     ngOnInit() {
-        this._auth.logOut()
-            .then( () => this._router.navigate(['/Login']))
+        this._auth.logOut().then(() => {
+            this._router.navigate(['/auth/login']);
+        });
     }
-
 }
 
 
-//------------------------------------------------------------------------------
-@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
+//------------------------------------------------------------------------------CanActivateAdmin
+@Injectable()
+export class CanActivateAdmin {
+    static get parameters() {
+        return [[AdminAuthService], [Router]];
+    }
+
+    constructor(authService, router) {
+        this._auth = authService;
+        this._router = router;
+        this._re_direct = '/auth/login';
+        this._found = true;
+    }
+
+    canActivate() {
+        return this._auth.getCurrentUser()
+        .then(() =>  {
+            let _u = false;
+            let _ret = this._found ? !_u : _u;
+            if(!_ret) { this._router.navigate([this._re_direct]); }
+            return _ret;
+        },
+        ()=>
+        {
+            let _u = true;
+            let _ret = this._found ? !_u : _u;
+            if(!_ret) { this._router.navigate([this._re_direct]); }
+            return _ret;
+        });
+    }
+}
+
+
+//------------------------------------------------------------------------------CanActivateLogin
+@Injectable()
+export class CanActivateLogin extends CanActivateAdmin {
+    static get parameters() {
+        return [[AdminAuthService], [Router]];
+    }
+
+    constructor(authService, router) {
+        super(authService, router);
+        this._re_direct = '/home';
+        this._found = false;
+    }
+}
+
+
+//------------------------------------------------------------------------------AdminAuthLogin
 @Component({
-    selector      : 'section',
-    templateUrl   : 'templates/auth/login.html',
-    directives    : [FORM_DIRECTIVES],
+    selector: 'body',
+    templateUrl: 'templates/auth/login.html',
 })
 export class AdminAuthLogin {
     message = '';
@@ -171,39 +201,36 @@ export class AdminAuthLogin {
         this._auth = authService;
         this._router = router;
         this.lform = formbuilder.group({
-                    'email':    ['', this._auth.emailValidator],
-                    'password': ['', Validators.required]
-                }); 
+            'email':    ['', this._auth.emailValidator],
+            'password': ['', Validators.required]
+        }); 
     }
 
     goLogin() {
         if(this.lform.controls['email'].status == 'INVALID') {
-
             this.errors = this.lform.controls['email'].errors;
-            this.lform.controls['password'].updateValue('');
-            this.lform.controls['email'].updateValue('');
+            this.lform.controls['password'].setValue('');
+            this.lform.controls['email'].setValue('');
         }
         else {
-            this._auth
-                .logIn(this.lform.value)
-                .then(  () => this._router.navigate(['/Admin/Home']),
-                        (err) => {
-                                this.errors = err.json();
-                                this.lform.controls['password']
-                                    .updateValue('');
-                        }
-                );
+            this._auth.logIn(this.lform.value).then(
+                () => {
+                    this._router.navigate(['../home'])
+                },
+                (err) => {
+                    this.errors = err.json();
+                    this.lform.controls['password'].setValue('');
+                }
+            );
         }
     }
 }
 
 
-//------------------------------------------------------------------------------
-@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
+//------------------------------------------------------------------------------AdminAuthRecover
 @Component({
-    selector      : 'section',
-    templateUrl   : 'templates/auth/recover.html',
-    directives    : [FORM_DIRECTIVES],
+    selector: 'body',
+    templateUrl: 'templates/auth/recover.html',
 })
 export class AdminAuthRecover {
     message = '';
@@ -219,18 +246,18 @@ export class AdminAuthRecover {
         this._auth = authService;
         this._router = router;
         this.lform = formbuilder.group({
-                        'email': ['', this._auth.emailValidator]
-                    }); 
+            'email': ['', this._auth.emailValidator]
+        }); 
     }
 
     goRecover() {
         if(this.lform.controls['email'].status == 'INVALID') {
             this.errors = this.lform.controls['email'].errors;
-            this.lform.controls['email'].updateValue('', true, true);
+            this.lform.controls['email'].setValue('', true, true);
         }
         else {
             this._http.post('/api/recover/', this.lform.value )
-                    .subscribe(() => this._router.navigate(['Login']),
+                    .subscribe(() => this._router.navigate(['/auth/login']),
                                (err) => this.errors = err.json()
                     );
         }
@@ -238,12 +265,10 @@ export class AdminAuthRecover {
 }
 
 
-//------------------------------------------------------------------------------
-@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
+//------------------------------------------------------------------------------AdminAuthReset
 @Component({
-    selector      : 'section',
-    templateUrl   : 'templates/auth/reset.html',
-    directives    : [FORM_DIRECTIVES],
+    selector: 'body',
+    templateUrl: 'templates/auth/reset.html',
 })
 export class AdminAuthReset {
     message = '';
@@ -251,10 +276,10 @@ export class AdminAuthReset {
     email = '';
     pk = 0; 
     token = '';
+    sub = undefined;
 
     static get parameters() {
-        return [[Http], [AdminAuthService],
-                [FormBuilder], [Router], [RouteParams]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], [ActivatedRoute]];
     }
 
     constructor(http, authService, formbuilder, router, routeparams) {
@@ -270,13 +295,19 @@ export class AdminAuthReset {
 
     //The link to reset your password is no longer valid. to recover
     ngOnInit() {
-          this.pk = this._routeParams.get('pk');
-          this.token = this._routeParams.get('token');
-          let user = {'pk': this.pk, 'token': this.token };
-          this._http.post('/api/check_token2/', user)
-                .subscribe((data) => this.currentUser = data,
-                           (err) => this._router.navigate(['Recover'])
-                );
+        this.sub = this._routeParams.params.subscribe((params) => {
+              this.pk = params.pk;
+              this.token = params.token;
+              let user = {'pk': this.pk, 'token': this.token };
+              this._http.post('/api/check_token2/', user)
+                    .subscribe((data) => this.currentUser = data,
+                               (err) => this._router.navigate(['auth/recover'])
+                    );
+        });
+    }
+
+    ngOnDestroy() {
+        this.sub.unsubscribe();
     }
 
     goReset() {
@@ -284,27 +315,27 @@ export class AdminAuthReset {
             || this.lform.controls['password2'].status == 'INVALID' ) {
 
             this.errors = 'There was an error updating your password';
-            this.lform.controls['password2'].updateValue('', true, true);
-            this.lform.controls['password1'].updateValue('', true, true);
+            this.lform.controls['password2'].setValue('');
+            this.lform.controls['password1'].setValue('');
         }
 
         else if (   this.lform.controls['password1'].value 
                     != this.lform.controls['password2'].value ) {
 
             this.errors = 'There was an error updating your password';
-            this.lform.controls['password2']._value ='';
-            this.lform.controls['password1']._value ='';
+            this.lform.controls['password2'].setValue('');
+            this.lform.controls['password1'].setValue('');
         }
 
         else {
             let user = {
-                            'pk': this.pk, 
-                            'token': this.token, 
-                            'password': this.lform.controls['password1'].value
-                        };
+                        'pk': this.pk, 
+                        'token': this.token, 
+                        'password': this.lform.controls['password1'].value
+                    };
 
             this._http.post('/api/reset/', user)
-                    .subscribe(() => this._router.navigate(['/Admin/Home']),
+                    .subscribe(() => this._router.navigate(['/home']),
                                (err) => this.errors = err.json()
                     );
         }
@@ -312,24 +343,20 @@ export class AdminAuthReset {
 }
 
 
-//------------------------------------------------------------------------------
-//@CanActivate(() => getCurrentUser(false, '/Admin/Home'))
+//------------------------------------------------------------------------------AdminAuthAccept
 @Component({
-    selector      : 'section',
+    selector      : 'body',
     templateUrl   : 'templates/auth/accept.html',
-    directives    : [FORM_DIRECTIVES, ROUTER_DIRECTIVES],
 })
 export class AdminAuthAccept {
     errors = [];
     obj_errors = {};
-
     user = undefined;
-
     declineInvitation = undefined;
+    sub = undefined;
 
     static get parameters() {
-        return [[Http], [AdminAuthService],
-                [FormBuilder], [Router], [RouteParams]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], [ActivatedRoute]];
     }
 
     constructor(http, authService, formbuilder, router, routeparams) {
@@ -351,13 +378,14 @@ export class AdminAuthAccept {
     }
 
     ngOnInit() {
-        let id = this._routeParams.get('id');
-        this.token = this._routeParams.get('token');
-        let data = {'pk': id, 'token': this.token };
-        this._http.post('/api/check_token1/', data)
-                .subscribe((data) => this.onInit(data),
-                            (err) => this._router.navigate(['WrongToken'])
-                );
+        this.sub = this._routeParams.params.subscribe((params) => {
+            this.token = params.token;
+            let data = {'pk': params.id, 'token': this.token };
+            this._http.post('/api/check_token1/', data)
+                    .subscribe((data) => this.onInit(data),
+                                (err) => this._router.navigate(['/auth/wrong_token'])
+                    );
+        });
     }
 
     onInit(data) {
@@ -374,13 +402,17 @@ export class AdminAuthAccept {
         this.lform.controls['password1'].updateValue('');
     }
 
+    ngOnDestroy() {
+        this.sub.unsubscribe();
+    }
+
     createAccount(){
         this._http
             .post('/api/user-activate/', this.lform.value )
-            .subscribe(() => this._router.navigate(['/Admin/Home']),
+            .subscribe(() => this._router.navigate(['/home']),
                        (err) => { 
-                                this.obj_errors = err.json(); 
-                                this.errors = this._auth.to_array(err.json());
+                            this.obj_errors = err.json(); 
+                            this.errors = this._auth.to_array(err.json());
                         }, 
             );
     }
@@ -389,18 +421,116 @@ export class AdminAuthAccept {
         let data = {'pk': this.user.id, 'token': this.token};
         this._http
             .post('/api/user-decline/', data )
-            .subscribe( () => this._router.navigate(['Login']),
-                        () => this._router.navigate(['Login']), 
+            .subscribe( () => this._router.navigate(['/auth/login']),
+                        () => this._router.navigate(['/auth/login']), 
             );
     }
 }
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminAuthWrongToken
 @Component({
-    selector      : 'section',
+    selector      : 'body',
     templateUrl   : 'templates/auth/wrong-token.html',
-    directives: [ROUTER_DIRECTIVES],
 })
 export class AdminAuthWrongToken {
 }
+
+
+//------------------------------------------------------------------------------SuperHttp
+@Injectable()
+export class SuperHttp extends Http {
+  
+    static get parameters() {
+        return [[ConnectionBackend], [RequestOptions]];
+    }
+    constructor(backend, defaultOptions) {
+        super(backend, defaultOptions);
+        this.requestoptions = new RequestOptions({});
+        this.requestoptions.headers = new Headers({
+                    'Accept': 'application/json; charset=utf-8',
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'X-CSRFToken': ''
+                });
+    }
+
+    csrfToken() {
+        let value = '; ' + document.cookie;
+        let parts = value.split('; csrftoken=');
+        if (parts.length == 2){ 
+            this.requestoptions
+                .headers.set('X-CSRFToken', parts.pop().split(";").shift());
+        }
+    }
+
+    request(method, url, data){
+        this.csrfToken();
+        this.requestoptions.method = RequestMethod[method];
+        this.requestoptions.url= url;
+        this.requestoptions.body = (data) ? JSON.stringify(data) : undefined;
+        let request = new Request(this.requestoptions);
+        return super.request(request).map(res => res.json());
+    }
+
+    post(url, data) {
+        return this.request('Post', url, data);
+    }
+
+    put(url, data) {
+        return this.request('Put', url, data);
+    }
+
+    patch(url, data) {
+        return this.request('Patch', url, data);
+    }
+
+    get(url) {
+        return this.request('Get', url);
+    }
+
+    options(url) {
+        return this.request('Options', url);
+    }
+
+    delete(url) {
+        this.csrfToken();
+        return super.delete(url, {headers: this.requestoptions.headers});
+    }
+}
+
+
+//------------------------------------------------------------------------------AdminAuthModule
+const routes = [
+    { path : 'auth/login', component : AdminAuthLogin, canActivate: [CanActivateLogin] },
+    { path : 'auth/logout', component : AdminAuthLogout },
+    { path : 'auth/recover', component : AdminAuthRecover, canActivate: [CanActivateLogin] },
+    { path : 'auth/reset/:pk/:token', component : AdminAuthReset, canActivate: [CanActivateLogin] },
+    { path : 'auth/accept/:id/:token', component : AdminAuthAccept, canActivate: [CanActivateLogin] },
+    { path : 'auth/wrong_token', component : AdminAuthWrongToken }
+]
+export const authRouting = RouterModule.forChild(routes);
+
+
+@NgModule({
+    imports: [
+        FormsModule, ReactiveFormsModule, CommonModule, HttpModule,
+        authRouting
+    ],
+    providers: [
+        AdminAuthService,
+        AdminUtils,
+        CanActivateLogin,
+        CanActivateAdmin,
+        SuperHttp
+    ],
+    declarations: [
+//         ModalFormDirective,
+        AdminAuthLogin,
+        AdminAuthLogout,
+        AdminAuthRecover,
+        AdminAuthReset,
+        AdminAuthAccept,
+        AdminAuthWrongToken, 
+    ]
+})
+export class AdminAuthModule {}

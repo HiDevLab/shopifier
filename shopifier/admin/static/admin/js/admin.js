@@ -1,16 +1,16 @@
-import { Component } from 'angular2/core';
-import { ROUTER_DIRECTIVES, Router, RouteConfig, CanActivate } from 'angular2/router'
-import { FORM_DIRECTIVES } from 'angular2/common';
-import { Location } from 'angular2/platform/common';
+import { Component } from '@angular/core';
+import { ROUTER_DIRECTIVES, Router, CanActivate } from '@angular/router'
+import { FORM_DIRECTIVES } from '@angular/forms'
+import { Location } from '@angular/common'
 
-import { getCurrentUser, AdminAuthService, AdminUtils } from './admin.auth'
+import { AdminAuthService, AdminUtils } from './admin.auth'
 import { Nav, PopUpMenu } from './nav'
 
 import { AdminOrders } from './admin.orders'
 import { 
     Products, ProductsNew, ProductsEdit, AdminProductsTransfers, 
     AdminProductsCollections
-} from './admin.products'
+} from './admin.products';
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
 import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
 
@@ -35,85 +35,84 @@ export class AdminSearch {
 
 
 //------------------------------------------------------------------------------
-@CanActivate(() => getCurrentUser(true, 'Login'))
 @Component({
-    selector: 'admin',
+    selector: 'body',
     templateUrl: 'templates/admin.html',
     directives: [ROUTER_DIRECTIVES],
 })
-@RouteConfig([
-    {
-        path : '/',
-        redirectTo: ['Home'],
-    }, 
-     
-    {
-        path : '/home',
-        name : 'Home',
-        component : AdminHome
-    },
-
-    {
-        path : '/search',
-        name : 'Search',
-        component : AdminSearch
-    },
-
-    {
-        path : '/orders/...',
-        name : 'Orders',
-        component : AdminOrders,
-    },
-
-    {
-        path : '/settings/...',
-        name : 'Settings',
-        component : AdminSettings,
-    },
-
-    {
-        path : '/products/collections',
-        name : 'Collections',
-        component : AdminProductsCollections
-    },
-
-    {
-        path : '/products',
-        name : 'Products',
-        component : Products
-    },
-    {
-        path : '/products/new',
-        name : 'NewProduct',
-        component : ProductsNew,
-    },
-    {
-        path : '/products/:id',
-        name : 'EditProduct',
-        component : ProductsEdit,
-    },
-    {
-        path : '/transfers',
-        name : 'Transfers',
-        component : AdminProductsTransfers
-    },
-
-    {
-        path : '/customers',
-        name : 'Customers',
-        component : Customers,
-    },
-    {
-        path : '/customers/new',
-        name : 'NewCustomer',
-        component : CustomersNew,
-    },
-    {
-        path : '/customers/:id',
-        name : 'EditCustomer',
-        component : CustomersEdit,
-    },
-])
+// @RouteConfig([
+//     {
+//         path : '/',
+//         redirectTo: ['Home'],
+//     }, 
+//      
+//     {
+//         path : '/home',
+//         name : 'Home',
+//         component : AdminHome
+//     },
+// 
+//     {
+//         path : '/search',
+//         name : 'Search',
+//         component : AdminSearch
+//     },
+// 
+//     {
+//         path : '/orders/...',
+//         name : 'Orders',
+//         component : AdminOrders,
+//     },
+// 
+//     {
+//         path : '/settings/...',
+//         name : 'Settings',
+//         component : AdminSettings,
+//     },
+// 
+//     {
+//         path : '/products/collections',
+//         name : 'Collections',
+//         component : AdminProductsCollections
+//     },
+// 
+//     {
+//         path : '/products',
+//         name : 'Products',
+//         component : Products
+//     },
+//     {
+//         path : '/products/new',
+//         name : 'NewProduct',
+//         component : ProductsNew,
+//     },
+//     {
+//         path : '/products/:id',
+//         name : 'EditProduct',
+//         component : ProductsEdit,
+//     },
+//     {
+//         path : '/transfers',
+//         name : 'Transfers',
+//         component : AdminProductsTransfers
+//     },
+// 
+//     {
+//         path : '/customers',
+//         name : 'Customers',
+//         component : Customers,
+//     },
+//     {
+//         path : '/customers/new',
+//         name : 'NewCustomer',
+//         component : CustomersNew,
+//     },
+//     {
+//         path : '/customers/:id',
+//         name : 'EditCustomer',
+//         component : CustomersEdit,
+//     },
+// ])
 export class Admin {
     navs = Nav;
     popups = PopUpMenu;
@@ -151,6 +150,11 @@ export class Admin {
             this.settings = data['settings'];
         });
     }
+
+    ngAfterViewInit() {
+        this._router.navigate(['/home']);
+    }
+
 
     refreshCurrentUser() {
         this._auth.refreshCurrentUser()

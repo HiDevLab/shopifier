@@ -40,10 +40,10 @@
                 <div>
                     <ul>
                         <li>
-                            <a [routerLink]="['Settings/Profile', {'id': currentUser.id }]"> Your profile</a>
+                            <a [routerLink]="['/settings/profile', {'id': currentUser.id }]"> Your profile</a>
                         </li>
                         <li>
-                            <a [routerLink]="['Logout']"> Log out</a>
+                            <a [routerLink]="['/auth/logout']"> Log out</a>
                         </li>
                     </ul>
                 </div>
@@ -86,7 +86,7 @@
       </div>  
   </header>
   
-<router-outlet></router-outlet>
+  <router-outlet></router-outlet>
 
 </section>
 

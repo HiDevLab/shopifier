@@ -1,8 +1,8 @@
-<div class="login">
+<div class="login" *ngIf="lform">
     <h1>Hidevlab</h1>
     <h2>Log in to manage your store</h2>
     
-    <form name="loginForm" class="login-box" [ngFormModel]="lform" (ngSubmit)="goLogin()" novalidate>
+    <form [formGroup]="lform" class="login-box" novalidate>
         {% csrf_token %}
        
         <div *ngIf="errors" class="dialog-status">
@@ -10,17 +10,16 @@
             <i class="fa fa-exclamation-triangle"></i>
         </div>
         <div class="dialog-input">
-            <input type="email" class="login-input" [ngFormControl]="lform.controls['email']" placeholder="Email" autofocus>
+            <input type="email" class="login-input" formControlName="email" required placeholder="Email" autofocus>
             <i class="fa fa-envelope"></i>
         </div>
         <div class="dialog-input">
-            <input type="password" class="login-input" [ngFormControl]="lform.controls['password']" placeholder="Password"/>
+            <input type="password" class="login-input" formControlName="password" required placeholder="Password"/>
             <i class="fa fa-lock"></i>
-            <a href="/admin/auth/recover">     
-               <i class="fa fa-question-circle-o" title="Forgot your password?"></i>      
+            <a [routerLink]="['/auth/recover']">
+               <i class="fa fa-question-circle-o" title="Forgot your password?"></i>
             </a>
         </div>
-        <button class="login-btn" type="submit">Log in</button>
+        <button class="login-btn" type="submit" (click)="goLogin()">Log in</button>
     </form>
 </div>
-

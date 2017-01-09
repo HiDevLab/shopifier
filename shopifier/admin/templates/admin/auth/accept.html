@@ -1,6 +1,5 @@
-<modal-form *ngIf="user" class="notransparent">
-    <form class="input-form up10 minus40" [ngFormModel]="lform" novalidate>
-        {% csrf_token %}
+<div *ngIf="user" class="modal-form notransparent">
+    <form [formGroup]="lform" class="input-form up10 minus40" novalidate>{% csrf_token %}
         <div class="modal-header">
             <h1>
                 <strong>Create an account for shopifier</strong>
@@ -35,7 +34,7 @@
             <div class="input-box">    
                 <label class="input" [ngClass]="{err: obj_errors['email']}">
                     Email
-                    <input [ngFormControl]="lform.controls['email']" (input)="formChange=true">
+                    <input formControlName="email" (input)="formChange=true">
                 </label>
             </div>
         </div>
@@ -43,21 +42,21 @@
              <div class="input-box">   
                 <label class="input" [ngClass]="{err: obj_errors['first_name']}">
                     First Name
-                    <input [ngFormControl]="lform.controls['first_name']" (input)="formChange=true">
+                    <input formControlName="first_name" (input)="formChange=true">
                 </label>
             </div>    
             <div class="input-box">
                 <label class="input" [ngClass]="{err: obj_errors['last_name']}">
                    Last Name
-                    <input [ngFormControl]="lform.controls['last_name']" (input)="formChange=true"> 
+                    <input formControlName="last_name" (input)="formChange=true"> 
                 </label>
             </div>
         </div>
         <div class="input-section">
-            <div class="input-box">    
+            <div class="input-box">
                 <label class="input" [ngClass]="{err: obj_errors['phone']}">
                     Phone <span class="note">(optional)</span>
-                    <input [ngFormControl]="lform.controls['phone']" (input)="formChange=true">
+                    <input formControlName="phone" (input)="formChange=true">
                 </label>        
             </div>    
         </div>
@@ -65,15 +64,15 @@
             <div class="input-box">    
                 <label class="input" [ngClass]="{err: obj_errors['password1']}">
                     Password
-                    <input type="password" [ngFormControl]="lform.controls['password1']" (input)="formChange=true">
-                </label>        
+                    <input type="password" formControlName="password1" (input)="formChange=true">
+                </label>
             </div>    
         </div>
         <div class="input-section">
             <div class="input-box">    
                 <label class="input" [ngClass]="{err: obj_errors['password2']}">
                     Confirm password
-                    <input type="password" [ngFormControl]="lform.controls['password2']" (input)="formChange=true">
+                    <input type="password" formControlName="password2" (input)="formChange=true">
                 </label>        
             </div>    
         </div>
@@ -91,9 +90,9 @@
             <a class="btn btn-blue" (click)="createAccount()">Create account</a>
         </div>
     </form>
-</modal-form>
+</div>
 
-<modal-form class="notransparent" *ngIf="declineInvitation">
+<div class="modal-form notransparent" *ngIf="declineInvitation">
     <form class="input-form up minus40" novalidate>
         <div class="modal-header">
             <h1>
@@ -109,7 +108,7 @@
             </div>
         </div>
         <div class="input-section">
-            <div class="input-box">    
+            <div class="input-box">
                 <div>
                     <span class="note">By proceeding, you are agreeing to the </span><a class="ref">Terms & Conditions</a>
                 </div>        
@@ -121,4 +120,4 @@
             <a class="btn btn-blue" (click)="declineInvitationt()">Submit</a>
         </div>
     </form>
-</modal-form>
+</div>

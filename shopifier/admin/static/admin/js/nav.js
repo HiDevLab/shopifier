@@ -2,14 +2,14 @@ export var Nav = [
     {
         'icon': 'search',
         'text': 'Search',
-        'url': '/Admin/Search',
+        'url': '/search',
         'uri': '/admin/search',
         'submenu': [],
     },
     {
         'icon': 'home',
         'text': 'Home',
-        'url': '/Admin/Home',
+        'url': '/home',
         'uri': '/admin/home',
         'submenu': [],
     },
