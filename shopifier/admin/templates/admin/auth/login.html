@@ -2,9 +2,7 @@
     <h1>Hidevlab</h1>
     <h2>Log in to manage your store</h2>
     
-    <form [formGroup]="lform" class="login-box" novalidate>
-        {% csrf_token %}
-       
+    <form [formGroup]="lform" class="login-box" novalidate>{% csrf_token %}
         <div *ngIf="errors" class="dialog-status">
             {% verbatim %}{{errors.detail}}{% endverbatim %}
             <i class="fa fa-exclamation-triangle"></i>

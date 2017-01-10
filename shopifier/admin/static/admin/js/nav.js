@@ -82,21 +82,21 @@ export var Nav = [
              {
                  'icon': 'cog',
                  'text': 'General',
-                 'url': '/Admin/Settings/General',
+                 'url': '/settings/general',
                  'uri': '/admin/settings/general',
                  'type': 'component',
              },
              {
                  'icon': 'shopping-cart',
                  'text': 'Checkout',
-                 'url': '/Admin/Settings/Checkout',
+                 'url': '/settings/checkout',
                  'uri': '/admin/settings/checkout',
                  'type': 'component',
              },
              {
                  'icon': 'cog',
                  'text': 'Account',
-                 'url': '/Admin/Settings/Account',
+                 'url': '/settings/account',
                  'uri': '/admin/settings/account',
                  'type': 'component',
              }

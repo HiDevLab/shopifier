@@ -41,8 +41,8 @@
                                <ul>
                                     <li>Change prices</li>
                                     <li [ngClass]="{disabled:!updateInventory}">Update inventory</li>
-                                    <li (click)="onBulkUpdateImage()">Update images</li>
-                                    <li>Delete Variants</li>
+                                    <li (click)="getBulk();onBulkUpdateImage();">Update images</li>
+                                    <li (click)="getBulk(); showDeleteVariants=true; hidePopovers();">Delete Variants</li>
                                     <li>Continue sellingwhen sold out</li>
                                     <li>Stop selling when sold out</li>
                                     <li class="disabled">DUPLICATE VARIANS</li>
@@ -108,7 +108,10 @@
                                 <td *ngIf="inventoryManagement" [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.inventory_quantity"></td>
                                 <td [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.price"></td>
                                 <td [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.sku"></td>
-                                <td [ngClass]="{hide: currentVariant==variant.id}"><a class="btn unit-left">Edit</a><a class="btn unit-right fa fa-trash"></a></td>
+                                <td [ngClass]="{hide: currentVariant==variant.id}">
+                                    <a class="btn unit-left">Edit</a>
+                                    <a class="btn unit-right fa fa-trash" (click)="bulkVariants=[variant];showDeleteVariants=true;"></a>
+                                </td>
                                 <span *ngIf="currentVariant==variant.id" class="hover">
                                     <div>
                                         Drop to set the variant image for 

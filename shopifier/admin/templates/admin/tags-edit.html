@@ -52,7 +52,7 @@
 </ul>
 
 
-<modal-form *ngIf="showAllTags">
+<div *ngIf="showAllTags" class="modal-form">
     <form class="input-form up10" novalidate>
         <div class="modal-header">
             <h2>Tags</h2>
@@ -98,6 +98,6 @@
                 (click)="parrent_component.saveTags(parrent_component); showAllTags=false; tagsChange=false">Apply changes</a>
         </div>
     </form>
-</modal-form>
+</div>
 
 

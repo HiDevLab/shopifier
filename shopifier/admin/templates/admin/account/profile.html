@@ -34,8 +34,7 @@
     </div>
     
     <div *ngIf="isAdmin || isUser" class="section-content">
-        <form>
-        {% csrf_token %}
+        <form [formGroup]="lform">{% csrf_token %}
             <div class="input-section">
                 <div class="input-box">
                     <div class="avatar" *ngIf="user">
@@ -54,7 +53,7 @@
             <div class="input-section">
                 <div class="input-box row">
                      <div class="btn mr10">Upload photo
-                        <input type="file"  accept="image/gif, image/jpeg, image/png" (change)="upLoadAvatar($event)">
+                        <input type="file" accept="image/gif, image/jpeg, image/png" (change)="upLoadAvatar($event)">
                      </div>
                     
                      <a class="btn" 
@@ -65,34 +64,34 @@
                 </div>
             </div>
             <div class="input-section">
-                <div class="input-box">                
+                <div class="input-box">
                     <label class="input" [ngClass]="{err: obj_errors['first_name']}">
                         First Name
-                        <input [ngFormControl]="lform.controls['first_name']"  (input)="onFormChange()">
+                        <input formControlName="first_name" (input)="onFormChange()">
                     </label>    
                 </div>
                 <div class="input-box">
                     <label class="input" [ngClass]="{err: obj_errors['last_name']}">
                         Last Name
-                        <input [ngFormControl]="lform.controls['last_name']" (input)="onFormChange()">
+                        <input formControlName="last_name" (input)="onFormChange()">
                     </label>   
                 </div>
             </div>
             <div class="input-section">
                 <div class="input-box" *ngIf="!emailChange">
                     <p>Email address</p>
-                    <span>{% verbatim %}{{ user.email }}{% endverbatim %}<a class="ref" (click)="emailChange=true">Change email</a></span>
+                    <span>{% verbatim %}{{ user.email }} {% endverbatim %}<a class="ref" (click)="emailChange=true">Change email</a></span>
                 </div>    
                 <div class="input-box" *ngIf="emailChange">
                     <label class="input" [ngClass]="{err: obj_errors['email']}">
                         Email address
-                        <input [ngFormControl]="lform.controls['email']" (input)="onFormChange()">
+                        <input formControlName="email" (input)="onFormChange()">
                     </label>   
                 </div>
                 <div class="input-box">
                     <label class="input">
                         Phone (optional)
-                        <input [ngFormControl]="lform.controls['phone']" (input)="onFormChange()">
+                        <input formControlName="phone" (input)="onFormChange()">
                     </label>
                 </div>   
             </div>
@@ -100,7 +99,7 @@
                 <div class="input-box">
                     <label class="input">
                         Personal website address (optional)
-                        <input [ngFormControl]="lform.controls['www_site']" (input)="onFormChange()">
+                        <input formControlName="www_site" (input)="onFormChange()">
                     </label>
                 </div>   
             </div>
@@ -108,7 +107,7 @@
                 <div class="input-box">
                     <label class="input">
                         Bio (optional)
-                        <textarea [ngFormControl]="lform.controls['bio']" (input)="onFormChange()"></textarea>
+                        <textarea formControlName="bio" (input)="onFormChange()"></textarea>
                     </label>
                 </div>   
             </div>
@@ -118,16 +117,16 @@
                 </div>   
             </div>
             <div class="input-section"  *ngIf="passwordChange">
-                <div class="input-box">                
+                <div class="input-box">
                     <label class="input" [ngClass]="{err: obj_errors['password1']}">
                         New password
-                        <input type="password" [ngFormControl]="lform.controls['password1']"  (input)="onFormChange()">
+                        <input type="password" formControlName="password1"  (input)="onFormChange()">
                     </label>    
                 </div>
                 <div class="input-box">
                     <label class="input" [ngClass]="{err: obj_errors['password2']}">
                         Confirm new password
-                        <input type="password" [ngFormControl]="lform.controls['password2']" (input)="onFormChange()">
+                        <input type="password" formControlName="password2" (input)="onFormChange()">
                     </label>   
                 </div>
             </div>
@@ -220,9 +219,8 @@
     </div> 
 </div>
 
-<modal-form *ngIf="confirmPassword">
-    <form class="input-form up" [ngFormModel]="lform" novalidate>
-        {% csrf_token %}
+<div *ngIf="confirmPassword" class="modal-form">
+    <form class="input-form up" [formGroup]="lform" novalidate>{% csrf_token %}
         <div class="modal-header">
             <h2>
                 Please confirm your password
@@ -234,7 +232,7 @@
              <div class="input-box">
                 <label class="input">
                     Enter your current password to save changes to {% verbatim %}{{ user.first_name }}{% endverbatim %}'s account.
-                    <input type="password" [ngFormControl]="lform.controls['admin_password']">
+                    <input type="password" formControlName="admin_password">
                 </label>
             </div>    
         </div>        
@@ -253,10 +251,10 @@
             <a class="btn btn-blue" (click)="onSaveAdmin()">Confirm</a>
         </div>
     </form>
-</modal-form>
+</div>
 
 
-<modal-form *ngIf="expireSessions">
+<div *ngIf="expireSessions" class="modal-form">
     <form class="input-form up">
         <div class="modal-header">
             <h2>
@@ -276,9 +274,9 @@
             <a class="btn btn-blue" (click)="deleteSessions(); expireSessions=false;">Yes</a>
         </div>
     </form>
-</modal-form>
+</div>
 
-<modal-form *ngIf="showSetAdmin">
+<div *ngIf="showSetAdmin" class="modal-form">
     <form *ngIf="!user.is_admin" class="input-form up">
         <div class="modal-header">
             <h2>
@@ -332,7 +330,7 @@
          <div class="input-section">
             <div class="input-box">
                 You are taking away ownership of your store to another user:
-            </div>            
+            </div>
         </div>
         
          <div class="input-section">
@@ -343,8 +341,8 @@
                         <li type="disc">Your account will be admin account.</li>
                         <li type="disc">This action can be undone.</li>
                     </ul>
-                </div>    
-            </div>            
+                </div>
+            </div>
         </div>
         <div class="input-section">
             <div class="input-box">
@@ -358,7 +356,7 @@
             <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, taking away ownership</a>
         </div>
     </form>
-</modal-form>
+</div>
 
  <leave-page 
     [parrent_component]="self">

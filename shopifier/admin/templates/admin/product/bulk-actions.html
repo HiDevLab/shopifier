@@ -16,12 +16,46 @@
         <div class="modal-footer">
             <a class="btn unit-left fa fa-chevron-left" [ngClass]="{disabled : !bulkImagesPage}" (click)="bulkImagesPrevPage()"></a>
             <a class="btn unit-right fa fa-chevron-right" [ngClass]="{disabled : bulkImagesPage*10>=images.length-10}"(click)="bulkImagesNextPage()"></a>
-            <a class="btn btn-red mr-auto ml30" (click)="bulkImagesRemove()">Remove Images</a>
-            <a class="btn mr10" (click)="showBulkUpdateImages=false">Cancel</a>
+            <a class="btn btn-red mr-auto ml30" (click)="bulkImagesRemove();">Remove Images</a>
+            <a class="btn mr10" (click)="showBulkUpdateImages=false;">Cancel</a>
             <a class="btn mr10">Add image
                 <input type="file" multiple accept="image/gif, image/jpeg, image/png" (change)="addImages($event)">
             </a>
             <a class="btn btn-blue" [ngClass]="{disabled : !bulkCurrentImage}" (click)="bulkImageSave(bulkCurrentImage)">Save</a>
+        </div>
+    </form>
+</modal-form>
+
+<modal-form *ngIf="showDeleteVariants">
+    <form class="input-form up" novalidate>
+        <div class="modal-header">
+            <h2 *ngIf="bulkVariants.length>1">Are you sure you want to delete the selected variants?</h2>
+            <h2 *ngIf="bulkVariants.length==1">Delete 
+                {% verbatim %}
+                    {{ bulkVariants[0].option1 }} 
+                    <span *ngIf="bulkVariants[0].option2"> / {{ bulkVariants[0].option2 }}</span>
+                    <span *ngIf="bulkVariants[0].option3"> / {{ bulkVariants[0].option3 }}</span>
+                {% endverbatim %}?
+            </h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showDeleteVariants=undefined"></a>
+        </div>
+        <div class="input-section">
+            <div *ngIf="bulkVariants.length>1" class="p10">You cannot recover deleted product variants, do you wish to continue?</div>
+            <div *ngIf="bulkVariants.length==1" class="p10">
+                Are you sure you want to delete the variant 
+                {% verbatim %}
+                    <span class="bold">
+                        {{ bulkVariants[0].option1 }} 
+                        <span *ngIf="bulkVariants[0].option2"> / {{ bulkVariants[0].option2 }}</span>
+                        <span *ngIf="bulkVariants[0].option3"> / {{ bulkVariants[0].option3 }}</span>
+                    </span>
+                {% endverbatim %}
+                ? This action cannot be reversed.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="showDeleteVariants=undefined;">Cancel</a>
+            <a class="btn btn-delete" (click)="deleteVariants();showDeleteVariants=undefined;">Delete</a>
         </div>
     </form>
 </modal-form>

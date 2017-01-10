@@ -1,4 +1,4 @@
-<modal-form *ngIf="parrent_component.showLeavePageDialog">
+<div *ngIf="parrent_component.showLeavePageDialog" class="modal-form">
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h1>
@@ -16,4 +16,4 @@
             <a class="btn btn-red" (click)= "onClick(parrent_component, true)">Leav page</a>
         </div>
     </form>
-</modal-form>
+</div>

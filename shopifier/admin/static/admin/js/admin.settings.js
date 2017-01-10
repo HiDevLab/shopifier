@@ -1,22 +1,23 @@
-import { Component, DynamicComponentLoader, ViewContainerRef } from 'angular2/core';
-import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators, Control } from 'angular2/common';
-import { Http } from 'angular2/http'
+import { CommonModule } from '@angular/common';
+import { NgModule, Component, DynamicComponentLoader, ViewContainerRef } from '@angular/core';
+import { Http } from '@angular/http';
+import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router'
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import 'rxjs/Rx'
 
 import { AdminAuthService, AdminUtils } from './admin.auth'
 import { Admin } from './admin'
+import { BaseForm } from './admin.baseform'
+import { AdminComponentsModule } from './components';
 
-import { AdminLeavePage } from './components';
 
-
-//-----------------------------------------------------------AdminAccountProfile
+//------------------------------------------------------------------------------AdminAccountProfile
 @Component({
-    selector      : 'profile',
+    selector : 'profile',
     templateUrl: 'templates/account/profile.html',
-    directives    : [FORM_DIRECTIVES, AdminLeavePage],
 })
 export class AdminAccountProfile {
+    lform = undefined;
     errors = [];
     obj_errors = {};
     user = undefined;
@@ -36,35 +37,37 @@ export class AdminAccountProfile {
 
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], 
-            [RouteParams], [Admin], [AdminUtils] ];
+            [ActivatedRoute], [Admin], [AdminUtils], [Router] ];
     }
-    constructor(http, authService, formbuilder, routeparams, admin, utils ) {
+    constructor(http, authService, formbuilder, params, admin, utils, router ) {
         this._http = http;
         this._admin = admin;
-        this._routeParams = routeparams;
+        this._params = params.snapshot.params;
         this._auth = authService;
         this._utils = utils;
+        this._router = router;
         
         this.lform = formbuilder.group({
-            'first_name': ['', Validators.required],
-            'last_name': ['', Validators.required],
-            'phone': [''],
-            'www_site': [''],
-            'bio': [''],
-            'avatar_image': [''],
-            'is_admin': [''],
-            'admin_password': [''],
-            'password1': [''],
-            'password2': [''],
-        }); 
-        
-        let e = new Control('')
-        this.lform.addControl('email',e);
+            first_name: ['', Validators.required],
+            last_name: ['', Validators.required],
+            phone: '123456',
+            www_site: '',
+            bio: '',
+            avatar_image: '',
+            is_admin: '',
+            admin_password: '',
+            password1: '',
+            password2: '',
+            email: ''
+        });
+        this.controls = this.lform.controls;
+//         let ctrl = new FormControl('');
+//         this.lform.addControl('email', ctrl);
     }
 
     ngOnInit() {
         this.self = this; // for child components
-        let id = this._routeParams.get('id');
+        let id = this._params.id;
         this._http
             .get(`/api/admin/${id}/`)
             .subscribe( 
@@ -120,48 +123,48 @@ export class AdminAccountProfile {
             'click': this.onSave, 'primary': true, 'self': this
         });
         
-        for (let control in this.lform.controls) {
+        for (let control in this.controls) {
             if (control != 'avatar_image') {
-                this.lform.controls[control].updateValue(undefined);
-                this.lform.controls[control]
-                    .updateValue(this.user[control], true, true);
+                this.controls[control].setValue(undefined);
+                this.controls[control].setValue(this.user[control]);
             }
         }
     }
-    
+
     cls() {
         this.confirmPassword = false;
         for (let control in this.lform.controls) {
             if (control != 'avatar_image') {
-                this.lform.controls[control].updateValue(undefined);
-                this.lform.controls[control]
-                    .updateValue(this.user[control], true, true);
+                this.controls[control].setValue(undefined);
+                this.controls[control].setValue(this.user[control]);
             }
         }
     }
 
-    onSave(self) {
-        if (!self) 
-            self = this;
+    onSave() {
         if  (
-                self.lform.controls['email'].value != self.user.email || 
-                self.lform.controls['password1'].value ||
-                self.lform.controls['password2'].value
+                this.controls['email'].value != this.user.email || 
+                this.controls['password1'].value ||
+                this.controls['password2'].value
             ){
-                self.lform.controls['admin_password'].updateValue('');
-                self.confirmPassword = true;
+                this.controls['admin_password'].setValue('');
+                this.confirmPassword = true;
         }
         else {
-            self.onSaveAdmin();
+            this.onSaveAdmin();
         }
     }
     
     onSaveAdmin() { // admin permissions
-        if (this.new_avatar)
-            this.lform.controls['avatar_image'].updateValue(this.new_avatar);
-
+        let data = Object.assign({}, this.lform.value); 
+        
+        if (this.new_avatar) {
+            data['avatar_image'] = this.new_avatar;
+        } else {
+            delete data['avatar_image'];
+        }
         this._http
-            .patch(`/api/admin/${this.user.id}/`, this.lform.value )
+            .patch(`/api/admin/${this.user.id}/`, data )
             .subscribe(
                 (data) => {
                     if (this.isUser) {
@@ -218,7 +221,7 @@ export class AdminAccountProfile {
         }
         this.new_avatar = null;
         this.user.avatar = null;
-        this.lform.controls['avatar_image'].updateValue(null);
+        this.controls['avatar_image'].setValue(null);
     }
 
     getSessions(id) {
@@ -242,19 +245,6 @@ export class AdminAccountProfile {
         this._admin.notNavigate = true;
         this.formChange = true;
     }
-
-    routerCanDeactivate(prev, next) {
-        if (!this.formChange) {
-            return true;
-        }
-        this.showLeavePageDialog = true;
-        this.canDeactivate = new Promise(
-            (resolve, reject) => {
-                this.unloadPage = resolve;
-            }
-        );
-        return this.canDeactivate;
-    }
 }
 
 
@@ -262,7 +252,6 @@ export class AdminAccountProfile {
 @Component({
     selector      : 'sessions',
     templateUrl: 'templates/account/del-sessions.html',
-    directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccountDeleteSessions {
     show = false;
@@ -296,7 +285,6 @@ export class AdminAccountDeleteSessions {
 @Component({
     selector      : 'delete',
     templateUrl: 'templates/account/delete.html',
-    directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccountDelete {
     show = false;
@@ -330,7 +318,6 @@ export class AdminAccountDelete {
 @Component({
     selector      : 'invite',
     templateUrl: 'templates/account/invaite.html',
-    directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccountInvite {
     show = false;
@@ -388,7 +375,6 @@ export class AdminAccountInvite {
 @Component({
     selector      : 'main',
     templateUrl: 'templates/account/account.html',
-    directives    : [FORM_DIRECTIVES],
 })
 export class AdminAccount {
     currentUser = null;
@@ -414,7 +400,6 @@ export class AdminAccount {
     }
 
     ngOnInit() {
-        
         this._admin.currentUrl();
         
         this._http.get('/api/admin/')
@@ -480,7 +465,9 @@ export class AdminAccount {
 export class AdminSettingsGeneral {
     component = 'General';
     static get parameters() {return [[Admin]];}
-    constructor(admin) {this._admin = admin;}
+    constructor(admin) {
+        this._admin = admin;
+    }
     ngOnInit() {this._admin.currentUrl();}
 }
 
@@ -493,39 +480,44 @@ export class AdminSettingsCheckout {
     ngOnInit() {this._admin.currentUrl();}
 }
 
+// 
+// @Component({
+//   selector: 'main',
+//   template : '<router-outlet></router-outlet>',
+//   directives: [ROUTER_DIRECTIVES],
+// })
+// @RouteConfig([
+// 
+//     {
+//         path : '/account/:id',
+//         name : 'Profile',
+//         component : AdminAccountProfile,
+//     },
+//     {
+//         path : '/general',
+//         name : 'General',
+//         component : AdminSettingsGeneral,
+//     },
+//     {
+//         path : '/account',
+//         name : 'Account',
+//         component : AdminAccount,
+//     },
+// ])
+// export class AdminSettings {
+// }
 
-//------------------------------------------------------------------------------ 
-@Component({
-  selector: 'main',
-  template : '<router-outlet></router-outlet>',
-  directives: [ROUTER_DIRECTIVES],
+@NgModule({
+    imports: [
+        FormsModule, ReactiveFormsModule, CommonModule,
+        AdminComponentsModule
+    ],
+    providers: [
+    ],
+    declarations: [
+        AdminAccountProfile,
+        AdminSettingsCheckout,
+        AdminSettingsGeneral
+    ]
 })
-@RouteConfig([
-    {
-         path : '/',
-         redirectTo: ['General'],
-     }, 
-
-    {
-        path : '/account/:id',
-        name : 'Profile',
-        component : AdminAccountProfile,
-    },
-    {
-        path : '/general',
-        name : 'General',
-        component : AdminSettingsGeneral,
-    },
-    {
-        path : '/checkout',
-        name : 'Checkout',
-        component : AdminSettingsCheckout,
-    },
-    {
-        path : '/account',
-        name : 'Account',
-        component : AdminAccount,
-    },
-])
-export class AdminSettings {
-}
+export class AdminSettingsModule {}

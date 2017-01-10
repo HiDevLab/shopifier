@@ -99,7 +99,7 @@
     </form>
 </label>
 
- <modal-form *ngIf="showLinkEdit">
+ <div *ngIf="showLinkEdit" class="modal-form">
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h2>Insert link</h2>
@@ -134,6 +134,6 @@
             <a class="btn btn-blue" (click)="insertLink();">{{ linkToolTitle }}</a>
         </div>
     </form>
-</modal-form>
+</div>
 
 {% endverbatim %}
