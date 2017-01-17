@@ -1,26 +1,23 @@
-<modal-form [ngClass]="{hideDelete: !show}">
-    <form class="input-form up" novalidate>
-        {% csrf_token %}
+<div class="modal-form" *ngIf="show">
+    <form class="input-form up" novalidate>{% csrf_token %}
         <div class="modal-header">
             <h2>
                 Remove user account for {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}?
             </h2>
-            <a class="cross fa fa-times" aria-hidden="true"
-              (click)="show=false"></a>
+            <a class="cross fa fa-times" aria-hidden="true"(click)="show=false"></a>
         </div>
          <div class="input-section">
             <div class="input-box">
-                <div>Are you sure you want to remove the user account for 
+                <div>Are you sure you want to remove the user account for
                     <strong>
                         {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
                     </strong>? This action cannot be reversed.
                 </div>
-            </div>            
+            </div>
         </div>
         <div class="modal-footer">
-            <a class="btn mr10"
-            (click)="show=false">Cancel</a>
-            <a class="btn btn-red" (click)="goDelete()">Delete</a>
+            <a class="btn mr10" (click)="show=false">Cancel</a>
+            <a class="btn btn-delete" (click)="goDelete()">Delete</a>
         </div>
     </form>
-</modal-form>
+</div>

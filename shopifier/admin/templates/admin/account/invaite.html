@@ -1,6 +1,5 @@
-<modal-form [ngClass]="{hideInvite: !show}">
-    <form class="input-form" [ngFormModel]="lform" novalidate>
-        {% csrf_token %}
+<div *ngIf= "parent && show" class="modal-form">
+    <form class="input-form" [formGroup]="form" novalidate>{% csrf_token %}
         <div class="modal-header">
             <h2>
                 Add staff member
@@ -9,34 +8,34 @@
               (click)="show=false"></a>
         </div>
         {% include "admin/errorsbox.html" with class="input-section" %}
-        
+
         <div class="input-section">
-             <div class="input-box">   
+             <div class="input-box">
                 <label class="input" [ngClass]="{err: obj_errors['first_name']}">
                     First Name
-                    <input [ngFormControl]="lform.controls['first_name']" (input)="boolInvite=true">
+                    <input formControlName="first_name" (input)="formChange=true">
                 </label>
             </div>    
             <div class="input-box">
                 <label class="input" [ngClass]="{err: obj_errors['last_name']}">
                    Last Name
-                    <input [ngFormControl]="lform.controls['last_name']" (input)="boolInvite=true"> 
+                    <input formControlName="last_name" (input)="formChange=true"> 
                 </label>
             </div>
         </div>
         <div class="input-section">
-            <div class="input-box">    
+            <div class="input-box">
                 <label class="input" [ngClass]="{err: obj_errors['email']}">
                     Email
-                    <input [ngFormControl]="lform.controls['email']" (input)="boolInvite=true">
-                </label>        
-            </div>    
+                    <input formControlName="email" (input)="formChange=true">
+                </label>
+            </div>
         </div>
         
         <div class="modal-footer">
             <a class="btn mr10"
             (click)="show=false">Cancel</a>
-            <a class="btn btn-blue" (click)="goInvite()" [ngClass]="{disabled: !boolInvite}">Send invite</a>
+            <a class="btn btn-blue" (click)="goInvite();show=false;" [ngClass]="{disabled: !formChange}">Send invite</a>
         </div>
     </form>
-</modal-form>
+</div>

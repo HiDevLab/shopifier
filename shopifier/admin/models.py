@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 
 import os
+from user_agents import parse
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.signals import user_logged_in
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.contrib.postgres.fields import JSONField, ArrayField
 from django.contrib.sessions.models import Session
 from django.utils.translation import ugettext_lazy as _
 
@@ -22,12 +24,14 @@ def now():
 def user_log(sender, user, request, **kwargs):
     xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
     ip = request.META.get('REMOTE_ADDR', xff.split(',')[0]) or None
-
     request.session.modified = True
     request.session.save()
     s = Session.objects.get(pk=request.session.session_key)
-    user_log = UserLog.objects.create(user=user, session=s, ip=ip)
-    user_logged_in.connect(user_log)
+    user_agent = parse(request.META.get('HTTP_USER_AGENT'))
+    UserLog.objects.create(
+        user=user, session=s, ip=ip, user_agent=str(user_agent))
+
+user_logged_in.connect(user_log)
 
 
 class UserManager(BaseUserManager):
@@ -81,6 +85,10 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(_('staff status'), default=False,)
     is_admin = models.BooleanField(default=False)
+    receive_announcements = models.BooleanField(
+        _('Allow important notifications to be sent by email'), default=False)
+    permissions = ArrayField(
+        models.CharField(max_length=20, blank=False), default=['full'])
 
     objects = UserManager()
 
@@ -122,6 +130,7 @@ class UserLog(models.Model):
     session = models.ForeignKey(Session, null=True, on_delete=models.SET_NULL)
     ip = models.GenericIPAddressField(null=True)
     visit_datetime = models.DateTimeField(null=True, default=now)
+    user_agent = models.CharField(blank=True, max_length=254)
 
     class Meta:
         ordering = ['-visit_datetime', 'id']

@@ -1,7 +1,7 @@
 <div class="section">
     <div class="section-annotation">
         <div>
-            <h2>Account overview</h2>
+            <h2 class="bold">Account overview</h2>
             <p></p> 
             <p>
                 An overview of your current plan. Grow your business by upgrading your plan features. View our
@@ -16,7 +16,7 @@
         <div class="card">
             <div class="section">
                 <div class="cell">
-                    <label>Memeber since</label>                                
+                    <label>Memeber since</label> 
                     <span *ngIf="currentUser">{% verbatim %}{{ setDate(currentUser.date_joined) | date:'longDate' }}{% endverbatim %}</span>
                 </div>
                 <div class="cell">
@@ -34,74 +34,69 @@
 
 <div class="section" *ngIf="currentUser">
     <div class="section-annotation">
-        <div *ngIf="currentUser.is_admin">
-            <h2>Staff members</h2>
-            <p></p>
-            <p>You can give other people admin access to your Shopifier store.</p>
-            <p>
-                <a *ngIf="invite_user" class="btn" 
-                (click)="goInvite()">Add staff member</a>
-            </p>
-            <br>
-            <p>You can log other staff members out of your Shopifier store.</p>
-            <p>
-                <a *ngIf="delete_sessions" class="btn"
-                (click)="goDeleteSessions()">Expire user sessions</a>
-            </p>
+        <div>
+            <h2 class="row bold">Accounts and permissions</h2>
         </div>
     </div>
     <div class="section-content">
-        <div class="card">
-            <div class="section">
-                <div class="table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Admin Access</th>
-                                <th>Last Login Date</th>
-                                <th></th>
-                            </tr>
-                        </thead> 
-                        <tbody *ngIf="users">
-                            <tr *ngFor="let user of users">
-                                <td>
-                                    <div class="avatar" *ngIf="user">
-                                        {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
-                                        <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
-                                    </div>
-                                </td>
-                                <td>
-                                    <a class="ref" *ngIf="user.is_active" (click)="goProfile(user)" >{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}</a>
-                                    <a class="ref" *ngIf="!user.is_active" (click)="goProfile(user)">{% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %} - invited</a>     
-                                </td>
-                                <td>
-                                    <a class="email">
-                                      {% verbatim %}{{ user.email }}{% endverbatim %} 
-                                    </a>
-                                </td>
-                                <td [ngSwitch]="user.is_admin">
-                                    <span *ngSwitchWhen="true">Account owner</span>
-                                    <span *ngSwitchDefault>Full access</span>
-                                </td>
-                                <td [ngSwitch]="user.visit_datetime">
-                                    <span *ngSwitchWhen="null">No sessions found</span>
-                                    <span *ngSwitchDefault>{% verbatim %}{{setDate(user.visit_datetime) | date:'yMMMMd mmss'}}{% endverbatim %}</span>
-                                </td>
-                                
-                                <td>
-                                    <a *ngIf="delete_user" class="btn trash fa fa-trash" aria-hidden="true" title="Delete user"
-                                        [ngClass]="{hide: currentUser.id==user.id || !currentUser.is_admin}"
-                                        (click)="goDelete(user)">
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <div class="card pb20">
+            <div class="row p20 pb0">
+                <h3 class="bold">Account owners</h3>
+            </div>
+            <div class="row p20 pb0" *ngFor="let user of (users | boolean:'is_admin':true)">
+                <div class="avatar" *ngIf="user">
+                    {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
+                    <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
+                </div>
+                <div class="rows">
+                    <a class="ref pl20 pt5" (click)="goProfile(user)">
+                        {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
+                    </a>
+                    <div *ngIf="!user.is_active" class="pl20 pt5">Invitation Sent</div>
+                    <div *ngIf="user.is_active" [ngSwitch]="user.visit_datetime" class="pl20 pt5">
+                        <div *ngSwitchCase="null">No sessions found</div>
+                        <div *ngSwitchDefault>{% verbatim %}{{setDate(user.visit_datetime) | date:'EEEE, MMMM d, y HH:mm Z'}}{% endverbatim %}</div>
+                    </div>
                 </div>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
+<div class="section no-border" *ngIf="currentUser">
+    <div class="section-annotation"> </div>
+    <div class="section-content">
+        <div class="card pb20">
+            <div class="row p20 pb0">
+                <h3 class="bold">Staff accounts</h3>
+                <a *ngIf="currentUser.is_admin" class="ref ml-auto">Log out all staff accounts</a>
+                <a *ngIf="currentUser.is_admin" class="ref ml20" (click)="goInvite()">Add staff account</a>
+            </div>
+            <div class="row p20 pb0" *ngFor="let user of (users | boolean:'is_admin':false)">
+                <div class="avatar" *ngIf="user">
+                    {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
+                    <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
+                </div>
+                <div class="rows">
+                    <a class="ref pl20 pt5" (click)="goProfile(user)">
+                        {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
+                    </a>
+                    <div *ngIf="!user.is_active" class="pl20 pt5">Invitation Sent</div>
+                    <div *ngIf="user.is_active" [ngSwitch]="user.visit_datetime" class="pl20 pt5">
+                        <div *ngSwitchCase="null">No sessions found</div>
+                        <div *ngSwitchDefault>{% verbatim %}{{setDate(user.visit_datetime) | date:'EEEE, MMMM d, y HH:mm Z'}}{% endverbatim %}</div>
+                    </div>
+                </div>
+                <div class="row tr" [ngSwitch]="user.permissions[0]">
+                    <span *ngSwitchCase="'full'">Full access</span>
+                    <span *ngSwitchDefault>Limited access</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<account_invite
+    [parent]="this"
+    [self]="'invite_user'">
+</account_invite>

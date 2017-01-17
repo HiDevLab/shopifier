@@ -132,6 +132,11 @@
     width: auto;
 }
 
+.h-auto {
+    height: auto;
+}
+
+
 @for $i from 1 to 9 {
     .flex-#{$i} {
         flex: #{$i} !important;

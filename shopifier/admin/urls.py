@@ -20,6 +20,7 @@ class JsonRouter(SimpleRouter):
 
 router = JsonRouter()
 router.register(r'products', views.ProductViewSet)
+router.register(r'users', views.UsersAPIViewSet)
 router.register(
     r'products/(?P<product_id>\d+)/images', views.ProductImageViewSet)
 router.register(

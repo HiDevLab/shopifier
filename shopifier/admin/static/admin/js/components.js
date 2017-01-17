@@ -1,6 +1,7 @@
-import { Component, ElementRef, HostListener,
-         Directive, Pipe} from 'angular2/core';
-import { CommonModule, ORM_PROVIDERS, FORM_DIRECTIVES } from 'angular2/common';
+import { NgModule, Component, ElementRef, HostListener, Directive, Pipe, Input} from '@angular/core';
+import { CommonModule, ORM_PROVIDERS, FORM_DIRECTIVES } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 //------------------------------------------------------------------------------
 // Steve Papa
 //------------------------------------------------------------------------------
@@ -20,6 +21,8 @@ class App {
 }
 */
 
+
+//------------------------------------------------------------------------------Autosize
 @Directive({
     selector: 'textarea[autosize]'
 })
@@ -49,6 +52,7 @@ export class Autosize {
 }
 
 
+//------------------------------------------------------------------------------Popover
 @Directive({
     selector: 'popover'
 })
@@ -106,11 +110,26 @@ export class Popover {
 }
 
 
+//------------------------------------------------------------------------------booleanPipe
+@Pipe({
+    name: 'boolean',
+    pure: false
+})
+export class booleanPipe {
+    transform(array, parameter, val) {
+    return array.filter( (value) => {
+        return !!value[parameter] == val;
+    });
+  }
+}
+
+
+//------------------------------------------------------------------------------ArrayLengthPipe
 @Pipe({
     name: 'length',
     pure: false
 })
-export class ArrayLengthPipe{
+export class ArrayLengthPipe {
     transform(array, max) {
     return array.filter( value => {
         return array.indexOf(value) < max;
@@ -118,11 +137,12 @@ export class ArrayLengthPipe{
   }
 }
 
+//------------------------------------------------------------------------------NotInPipe
 @Pipe({
     name: 'not_in',
     pure: false,
 })
-export class NotInPipe{
+export class NotInPipe {
     transform(all_tags, tags) {
         if (!all_tags) {
             return [];
@@ -136,11 +156,13 @@ export class NotInPipe{
       }
 }
 
+
+//------------------------------------------------------------------------------StartsWithPipe
 @Pipe({
     name: 'stastartswith',
     pure: false
 })
-export class StartsWithPipe{
+export class StartsWithPipe {
     transform(tags, filter) {
         if (!tags) {
             return [];
@@ -155,7 +177,7 @@ export class StartsWithPipe{
 }
 
 
-//-----------------------------------------------------------------AdminTagsEdit
+//------------------------------------------------------------------------------AdminTagsEdit
 @Component({
     selector: 'tags',
     templateUrl: 'templates/tags-edit.html',
@@ -344,13 +366,14 @@ export class AdminTagsEdit {
 }
 
 
-//----------------------------------------------------------------AdminLeavePage
+//------------------------------------------------------------------------------AdminLeavePage
 @Component({
     selector: 'leave-page',
     templateUrl: 'templates/leave-page.html',
-    inputs: ['parrent_component']
+//     inputs: ['parrent_component']
 })
 export class AdminLeavePage {
+    @Input() parrent_component = null;
     onClick(parrent_component, val) {
         parrent_component.unloadPage(val);
         parrent_component.showLeavePageDialog = false;
@@ -359,7 +382,7 @@ export class AdminLeavePage {
 }
 
 
-//----------------------------------------------------------------RichTextEditor
+//------------------------------------------------------------------------------RichTextEditor
 @Component({
     selector: 'reach-text-editor',
     templateUrl: 'templates/reach-text-editor.html',
@@ -685,3 +708,38 @@ export class RichTextEditor {
         evt.dataTransfer.dropEffect = "none";
     }
 }
+
+
+//------------------------------------------------------------------------------AdminComponentsModule
+@NgModule({
+    imports: [
+        CommonModule, FormsModule, ReactiveFormsModule
+    ],
+    declarations: [
+        AdminLeavePage,
+        Autosize,
+        Popover,
+        ArrayLengthPipe,
+        NotInPipe,
+        AdminTagsEdit,
+        StartsWithPipe,
+        AdminLeavePage,
+        RichTextEditor,
+        booleanPipe
+    ],
+    exports: [
+        AdminLeavePage,
+        Autosize,
+        Popover,
+        booleanPipe,
+        ArrayLengthPipe,
+        NotInPipe,
+        AdminTagsEdit,
+        StartsWithPipe,
+        AdminLeavePage,
+        RichTextEditor,
+    ]
+
+})
+export class AdminComponentsModule {}
+

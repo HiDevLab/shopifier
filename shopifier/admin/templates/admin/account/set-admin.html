@@ -1,0 +1,41 @@
+<div *ngIf="showSetAdmin" class="modal-form">
+    <form *ngIf="!user.is_admin" class="input-form up">{% csrf_token %}
+        <div class="modal-header">
+            <h2>Confirm Account Ownership Granting</h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showSetAdmin=false"></a>
+        </div>
+         <div class="ph20"> You are granting ownership of your store from another user:</div>
+         <ul class="rows m20 ph20">
+            <li type="disc">They will have complete control of the shop, including billing.</li>
+            <li type="disc">Your account will be admin account.</li>
+            <li type="disc">This action can be undone.</li>
+        </ul>
+        <div class="ph20">
+            Are you sure you want to granting ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="showSetAdmin=false">Cancel</a>
+            <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, granting ownership</a>
+        </div>
+    </form>
+
+    <form *ngIf="user.is_admin" class="input-form up">{% csrf_token %}
+        <div class="modal-header">
+            <h2>Confirm Account Ownership taking away</h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showSetAdmin=false"></a>
+        </div>
+         <div class="ph20">You are taking away ownership of your store to another user:</div>
+         <ul class="rows m20 ph20">
+            <li type="disc">They will not have complete control of the shop, including billing.</li>
+            <li type="disc">Your account will be admin account.</li>
+            <li type="disc">This action can be undone.</li>
+        </ul>
+        <div class="ph20">
+            Are you sure you want to taking away ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="showSetAdmin=false">Cancel</a>
+            <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, granting ownership</a>
+        </div>
+    </form>
+</div>

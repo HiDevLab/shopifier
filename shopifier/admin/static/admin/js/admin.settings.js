@@ -1,102 +1,135 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, Component, DynamicComponentLoader, ViewContainerRef } from '@angular/core';
 import { Http } from '@angular/http';
-import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router'
+import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import 'rxjs/Rx'
+import 'rxjs/Rx';
 
-import { AdminAuthService, AdminUtils } from './admin.auth'
-import { Admin } from './admin'
-import { BaseForm } from './admin.baseform'
+import { AdminAuthService, AdminUtils } from './admin.auth';
+import { Admin } from './admin';
+import { BaseForm } from './admin.baseform';
 import { AdminComponentsModule } from './components';
 
 
 //------------------------------------------------------------------------------AdminAccountProfile
+export var Permissions = [
+    {
+        group: 'General',
+        permissions: 
+        [
+            {name: 'Home', api: 'home', select: 0},
+            {name: 'Orders', api: 'orders', select: 0},
+            {name: 'Customers', api: 'customers', select: 0},
+            {name: 'Discounts', api: 'discounts', select: 0},
+            {name: 'Products', api: 'products', select: 0},
+            {name: 'Transfers', api: 'transfers', select: 0},
+            {name: 'Inventory', api: 'inventory', select: 0},
+            {name: 'Collections', api: 'collections', select: 0},
+            {name: 'Gift cards', api: 'gift_cards', select: 0},
+            {name: 'Reports', api: 'reports', select: 0},
+        ],
+    },
+    {
+        group: 'Configuration',
+        permissions: 
+        [
+            {name: 'Applications', api: 'applications', select: 0},
+            {name: 'Settings', api: 'settings', select: 0},
+            {name: 'Domains', api: 'domains', select: 0},
+        ],
+    },
+    {
+        group: 'Sales channels',
+        permissions: 
+        [
+            {name: 'Overviews', api: 'overviews', select: 0},
+            {name: 'Blog Posts & Pages', api: 'pages', select: 0},
+            {name: 'Navigation', api: 'navigation', select: 0},
+            {name: 'Themes', api: 'themes', select: 0},
+            {name: 'Locations', api: 'locations', select: 0},
+            {name: 'Order Creation', api: 'order_creation', select: 0},
+        ]
+    }
+]
+
+
 @Component({
     selector : 'profile',
     templateUrl: 'templates/account/profile.html',
 })
-export class AdminAccountProfile {
-    lform = undefined;
-    errors = [];
-    obj_errors = {};
+export class AdminAccountProfile extends BaseForm {
     user = undefined;
     sessions = [];
     new_avatar = null;
     
-    formChange = false;
     emailChange = false;
     passwordChange = false;
     confirmPassword = false;
     expireSessions = false;
     showSetAdmin = false;
-    canDeactivate = undefined;
+
+    log_out_mobile = 0;
+    admin_password = '';
     
     isUser = false;    //currentUser is this user
     isAdmin = false;    //currentUser is admin
 
+    full_permissions = 1;
+    permissions = [];
+
+    delete_user = null;
+
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder], 
-            [ActivatedRoute], [Admin], [AdminUtils], [Router] ];
+        return [[Http], [FormBuilder], [Router], [ActivatedRoute],
+                [AdminAuthService], [Admin], [AdminUtils]];
     }
-    constructor(http, authService, formbuilder, params, admin, utils, router ) {
-        this._http = http;
-        this._admin = admin;
-        this._params = params.snapshot.params;
-        this._auth = authService;
-        this._utils = utils;
-        this._router = router;
-        
-        this.lform = formbuilder.group({
-            first_name: ['', Validators.required],
-            last_name: ['', Validators.required],
-            phone: '123456',
-            www_site: '',
-            bio: '',
-            avatar_image: '',
-            is_admin: '',
-            admin_password: '',
-            password1: '',
-            password2: '',
-            email: ''
-        });
-        this.controls = this.lform.controls;
-//         let ctrl = new FormControl('');
-//         this.lform.addControl('email', ctrl);
+
+    constructor(http, fb, router, params, auth, admin, utils, routeparams) {
+        super(http, fb, router, auth, admin, utils);
+        this.object_id = params.snapshot.params.id;
+        this.model = 'user';
+        this.currentLink = '/settings/account';
     }
 
     ngOnInit() {
         this.self = this; // for child components
-        let id = this._params.id;
-        this._http
-            .get(`/api/admin/${id}/`)
-            .subscribe( 
-                (data) => this.onInit(data),
-                (err) => {
-                    this.obj_errors = err; 
-                    this.errors = this._utils.to_array(err.json()); 
-                }, 
-            ); 
-        this.getSessions(id);
+        this._admin.notNavigate = false;
+
+        this.addForm(this.form, `/admin/users/${this.object_id}.json`, 'user');
+
+        this.getSessions(this.object_id);
         this._auth.getCurrentUser().then(data => this.currentUser = data);
     }
 
-    onInit(data) {
-        this.user = data;
-        this.errors = [];
-        this.obj_errors = {};
+    addFormAfter() {
+        this.getAPIData([`/admin/users/${this.object_id}.json`],
+            ['getUserAfter']
+        );
+    }
+
+    getUserAfter(data) {
+        this.settings = JSON.parse(this._admin.settings);
+        this.api_data = data;
+        this.setDataToControls(this.form, 'user', this.api_data.user);
+        this.user = this.api_data.user;
+        this.getPermissions();
+
+        this.disabledNext = undefined;
+        this.disabledPrev = undefined;
+
         this.new_avatar = null;
-        this.formChange = false;
-        this._admin.notNavigate = false;
         this.emailChange = false;
         this.passwordChange = false;
         this.confirmPassword = false;
         this.expireSessions = false;
         this.showSetAdmin = false;
-        this.canDeactivate = undefined;
-        
+
         this.isUser = this.user.id == this._auth._currentUser.id;// no correct
         this.isAdmin = this._auth._currentUser.is_admin;
+
+        ['password1', 'password2', 'admin_password'].forEach((control) => {
+            this.form.user.controls[control].setValue('');
+        }, this);
 
         this._admin.currentUrl({
             'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
@@ -119,35 +152,67 @@ export class AdminAccountProfile {
         }
 
         this._admin.headerButtons.push({
-            'text': 'Save', 'class': 'btn btn-blue', 
-            'click': this.onSave, 'primary': true, 'self': this
+            'text': 'Cancel', 'class': 'btn mr10', 
+            'click': this.onCancel, 'self': this 
         });
-        
-        for (let control in this.controls) {
-            if (control != 'avatar_image') {
-                this.controls[control].setValue(undefined);
-                this.controls[control].setValue(this.user[control]);
+        this._admin.headerButtons.push ({
+            'text': 'Save', 'class': 'btn btn-blue', 
+            'click': this.onSave, 'primary': true, 'self': this 
+        });
+    }
+
+    clsPermissions() {
+        this.permissions.forEach((group) => {
+            group.permissions.forEach((permission) => {
+                permission.select = 0;
+            });
+        });
+    }
+
+    getPermissions() {
+        this.permissions = Permissions.slice(0);
+        if (this.user.permissions[0] === 'full') {
+            this.full_permissions = 1;
+        } else {
+            this.full_permissions = 0;
+            for (let group of this.permissions) {
+                for (let permission of group.permissions) {
+                    if (this.user.permissions.indexOf(permission.api) === -1) {
+                        permission.select = 0;
+                    } else {
+                        permission.select = 1;
+                    }
+                }
             }
         }
     }
 
-    cls() {
-        this.confirmPassword = false;
-        for (let control in this.lform.controls) {
-            if (control != 'avatar_image') {
-                this.controls[control].setValue(undefined);
-                this.controls[control].setValue(this.user[control]);
-            }
+    setPermissions() {
+        let out = [];
+        if (this.full_permissions) {
+            out.push('full');
+        } else {
+            this.permissions.forEach((group) => {
+                group.permissions.forEach((permission) => {
+                    if(permission.select) {
+                        out.push(permission.api);
+                    }
+                });                    if (this.isUser) {
+                        this._admin.refreshCurrentUser();
+                    }
+
+            });
         }
+        return out;
     }
 
     onSave() {
-        if  (
-                this.controls['email'].value != this.user.email || 
-                this.controls['password1'].value ||
-                this.controls['password2'].value
+        if (
+                this.form.user.controls['email'].value != this.user.email || 
+                this.form.user.controls['password1'].value ||
+                this.form.user.controls['password2'].value
             ){
-                this.controls['admin_password'].setValue('');
+                this.admin_password = '';
                 this.confirmPassword = true;
         }
         else {
@@ -156,47 +221,55 @@ export class AdminAccountProfile {
     }
     
     onSaveAdmin() { // admin permissions
-        let data = Object.assign({}, this.lform.value); 
-        
+        if(!this.groupValidate(this.form, 'user')) return;
+        let data = Object.assign({}, this.form.user.value);
+        if (
+                this.form.user.controls['password1'].value ||
+                this.form.user.controls['password2'].value) {
+            data['admin_password'] = this.admin_password;
+        } else {
+            delete data['admin_password'];
+            delete data['password1'];
+            delete data['password2'];
+        }
+
         if (this.new_avatar) {
             data['avatar_image'] = this.new_avatar;
         } else {
             delete data['avatar_image'];
         }
-        this._http
-            .patch(`/api/admin/${this.user.id}/`, data )
+        data.permissions = this.setPermissions();
+        
+        this._http.patch(`/admin/users/${this.object_id}.json`, { user: data })
             .subscribe(
                 (data) => {
                     if (this.isUser) {
                         this._admin.refreshCurrentUser();
                     }
-                    this.onInit(data);
+                    this.getUserAfter(data);
                 },
-                (err) => { 
-                    this.obj_errors = err.json(); 
-                    this.errors = this._utils.to_array(err.json());
-                    this.cls();
-                },
+                (err) => this.apiErrors(this.form, 'user', err.json()), 
             );
+            this.formChange = false;
+            this._admin.notNavigate = false;
     }
 
-    setAdmin(self) {
-        self.showSetAdmin = true;
+    setAdmin() {
+        this.showSetAdmin = true;
     }
 
     addOwnership() {
         this.user.is_admin = !this.user.is_admin;
-        let data = {'is_admin': this.user.is_admin};
-        this._http
-            .patch(`/api/admin/${this.user.id}/`, data)
+        let data = {is_admin: this.user.is_admin, permissions: ['full']};
+        this._http.patch(`/admin/users/${this.object_id}.json`, { user: data })
             .subscribe(
-                (data) => this.onInit(data),
-                (err) => { 
-                        this.obj_errors = err.json(); 
-                        this.errors = this._utils.to_array(err.json());
-                        this.cls();
-                }, 
-            );  
+                (data) => {
+                    this.getUserAfter(data);
+                },
+                (err) => {
+                    this.apiErrors(this.form, 'user', err.json());
+                }
+            );
     }
 
     upLoadAvatar(event) {
@@ -206,7 +279,7 @@ export class AdminAccountProfile {
             let self = this;
             
             reader.onload = (event) => {
-                self.new_avatar =  event.target.result;
+                self.new_avatar = event.target.result;
                 self.formChange = true;
                 self._admin.notNavigate = true;
             };
@@ -224,16 +297,24 @@ export class AdminAccountProfile {
         this.controls['avatar_image'].setValue(null);
     }
 
+    onDeleteAccount() {
+        this.delete_user.show = true;
+        this.delete_user.user = this.user;
+    }
+
+
     getSessions(id) {
-        this._http
-            .get(`/api/admin/${id}/session/`)
-            .subscribe( data => this.sessions = data);
+        this._http.get(`/api/admin/${id}/session/`)
+            .subscribe((data) => {
+                this.sessions = data;
+                console.log(data);
+            }
+        );
     }
 
     deleteSessions() {
-        this._http
-            .delete(`/api/admin/${this.user.id}/deletesession/`)
-            .subscribe( () => this.getSessions(this.user.id) );
+        this._http.delete(`/api/admin/${this.user.id}/deletesession/`)
+            .subscribe(() => this.getSessions(this.user.id));
     }
 
     setDate (date) {
@@ -241,16 +322,15 @@ export class AdminAccountProfile {
         return d;
     }
 
-    onFormChange() {
-        this._admin.notNavigate = true;
-        this.formChange = true;
+    onCancel() {
+        this._router.navigate(['/settings/account']);
     }
 }
 
 
 //------------------------------------------------------------------------------
 @Component({
-    selector      : 'sessions',
+    selector : 'sessions',
     templateUrl: 'templates/account/del-sessions.html',
 })
 export class AdminAccountDeleteSessions {
@@ -263,7 +343,7 @@ export class AdminAccountDeleteSessions {
         return [[Http], [Admin]];
     }
     constructor(http, admin) {
-        this._http = http;
+        this._http = userRefreshhttp;
         this._admin = admin;
         
     }
@@ -281,14 +361,14 @@ export class AdminAccountDeleteSessions {
 }
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminAccountDelete
 @Component({
-    selector      : 'delete',
+    selector : 'account_delete',
     templateUrl: 'templates/account/delete.html',
+    inputs: ['parent', 'self']
 })
 export class AdminAccountDelete {
     show = false;
-    parrent = null;
     user = {};
     errors = [];
     obj_errors = {};
@@ -300,32 +380,36 @@ export class AdminAccountDelete {
         this._http = http;
         this._admin = admin;
     }
-    
+    ngOnInit() {
+        this.parent[this.self] = this;
+    }
+
     goDelete() {
         this._http.delete(`/api/admin/${this.user.id}/`)
-                .subscribe( () => { 
-                                    this.show=false;
-                                    this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been removed`);
-                                  },
-                            () => {}, 
-                            () => this.parrent.userRefresh() 
-                 );
+            .subscribe( 
+                (data) => { 
+                    this.show = false;
+                    this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been removed`);
+                  },
+            (err) => {}, 
+            () => { this.parent.onCancel(); }
+        );
     }
 }
 
 
-//------------------------------------------------------------------------------
-@Component({
-    selector      : 'invite',
+//------------------------------------------------------------------------------AdminAccountInvite
+@Component({    
+    selector : 'account_invite',
     templateUrl: 'templates/account/invaite.html',
+    inputs: ['parent', 'self']
 })
 export class AdminAccountInvite {
     show = false;
-    parrent = null;
     errors = [];
     obj_errors = {};
     first_nameErr = true;
-    boolInvite = false;
+    formChange = false;
     
     static get parameters() {
         return [[Http], [FormBuilder], [AdminUtils], [Admin]];
@@ -334,67 +418,58 @@ export class AdminAccountInvite {
         this._http = http;
         this._utils = utils;
         this._admin = admin;
-        this.lform = formbuilder.group({
-                    'email':    ['', this._utils.emailValidator],
-                    'first_name': ['', Validators.required],
-                    'last_name': ['', Validators.required],
-                }); 
+        this.form = formbuilder.group({
+            'email': ['', this._utils.emailValidator],
+            'first_name': ['', Validators.required],
+            'last_name': ['', Validators.required],
+        }); 
     }
-    
+
+    ngOnInit() {
+        this.parent[this.self] = this;
+    }
+
     goInvite () {
-        /*
-        if(this.lform.controls['email'].status == 'INVALID' ||
-            this.lform.controls['first_name'].status == 'INVALID' ||
-            this.lform.controls['last_name'].status == 'INVALID') {
-            //novalid
-            return;
-        }
-        */
-        this._http.post('/api/user-invite/', this.lform.value)
-                .subscribe( data => { 
-                                        this.show=false;
-                                        this._admin.footer(`${this.lform.controls['first_name'].value} ${this.lform.controls['last_name'].value} has been invited`);
-                                    },
-                            err => { this.obj_errors = err.json(); this.errors = this._utils.to_array(err.json()); }, 
-                            () => this.parrent.userRefresh() 
-                 );                                
+        this._http.post('/api/user-invite/', this.form.value)
+            .subscribe( 
+                (data) => { 
+                    this.show = false;
+                    this._admin.footer(`${this.form.value.first_name} ${this.form.value.last_name} has been invited`);
+                },
+                (err) => { 
+                    this.obj_errors = err.json();
+                    this.errors = this._utils.to_array(err.json());
+                }, 
+                () => this.parent.userRefresh() 
+        );
     }
-    
-    
+
     cls () {
-        for (let control in this.lform.controls) {
-            this.lform.controls[control].updateValue('', true, true);
-        }
+        this.form.reset();
+        this.formChange = false;
         this.obj_errors = {};
         this.errors = [];
     }
 }
 
 
-//------------------------------------------------------------------------------
-@Component({
-    selector      : 'main',
-    templateUrl: 'templates/account/account.html',
-})
+//------------------------------------------------------------------------------AdminAccount
+@Component({ selector: 'main', templateUrl: 'templates/account/account.html' })
 export class AdminAccount {
     currentUser = null;
-    users = [];    
+    users = [];
 
 //modal
     invite_user = null;
-    delete_user = null;
     delete_sessions = null;
         
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder], [Router], 
-        [DynamicComponentLoader], [ViewContainerRef], [Admin]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], [Admin]];
     }
      
-    constructor(http, authService, formbuilder, router, dcl, viewContainerRef, admin) {
+    constructor(http, authService, formbuilder, router, admin) {
         this._http = http;
         this._router = router;
-        this.dcl = dcl;
-        this.viewContainerRef = viewContainerRef;
         this._auth = authService;
         this._admin = admin;
     }
@@ -406,24 +481,12 @@ export class AdminAccount {
             .subscribe( data => this.users = data ); 
         
         this._auth.getCurrentUser().then(data => this.currentUser = data );
-        
-        this.dcl.loadNextToLocation(AdminAccountInvite,  this.viewContainerRef)
-            .then((compRef)=> {
-                this.invite_user = compRef.instance;
-                this.invite_user.parrent = this; 
-            });      
-        
-        this.dcl.loadNextToLocation(AdminAccountDelete,  this.viewContainerRef)
-            .then((compRef)=> {
-                this.delete_user = compRef.instance;
-                this.delete_user.parrent = this; 
-            });
-        
-        this.dcl.loadNextToLocation(AdminAccountDeleteSessions,  this.viewContainerRef)
-            .then((compRef)=> {
-                this.delete_sessions = compRef.instance;
-                this.delete_sessions.parrent = this; 
-            });    
+        this._admin.headerButtons = [];
+//         this.dcl.loadNextToLocation(AdminAccountDeleteSessions,  this.viewContainerRef)
+//             .then((compRef)=> {
+//                 this.delete_sessions = compRef.instance;
+//                 this.delete_sessions.parrent = this; 
+//             });    
     }
         
     setDate (date) {
@@ -435,32 +498,28 @@ export class AdminAccount {
         this.invite_user.show = true;
         this.invite_user.cls();
     }
-    
-    goDelete(user) {
-        this.delete_user.show = true;
-        this.delete_user.user = user;
-    }
-    
+
     goDeleteSessions() {
         this.delete_sessions.show = true;
     }
     
     goProfile(user) {
         let link;
-        if (user.token && this.currentUser.is_admin)
-            link = ['/Accept', {'id': user.id, 'token': user.token }];
-        else
-            link = ['Profile', {'id': user.id }];
+        if (user.token && this.currentUser.is_admin) {
+             link = ['/auth/accept', user.id, user.token];
+        } else {
+            link = ['/settings/account', user.id];
+        }
         this._router.navigate(link);
     }
     
     userRefresh() {
-       this._http.get('/api/admin/')
-            .subscribe( data => this.users = data );  
+       this._http.get('/api/admin/').subscribe( data => this.users = data );
     }
 }
 
-//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------AdminSettingsGeneral
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
 export class AdminSettingsGeneral {
     component = 'General';
@@ -471,7 +530,7 @@ export class AdminSettingsGeneral {
     ngOnInit() {this._admin.currentUrl();}
 }
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminSettingsCheckout
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
 export class AdminSettingsCheckout {
     component = 'Checkout';
@@ -480,33 +539,8 @@ export class AdminSettingsCheckout {
     ngOnInit() {this._admin.currentUrl();}
 }
 
-// 
-// @Component({
-//   selector: 'main',
-//   template : '<router-outlet></router-outlet>',
-//   directives: [ROUTER_DIRECTIVES],
-// })
-// @RouteConfig([
-// 
-//     {
-//         path : '/account/:id',
-//         name : 'Profile',
-//         component : AdminAccountProfile,
-//     },
-//     {
-//         path : '/general',
-//         name : 'General',
-//         component : AdminSettingsGeneral,
-//     },
-//     {
-//         path : '/account',
-//         name : 'Account',
-//         component : AdminAccount,
-//     },
-// ])
-// export class AdminSettings {
-// }
 
+//------------------------------------------------------------------------------AdminSettingsModule
 @NgModule({
     imports: [
         FormsModule, ReactiveFormsModule, CommonModule,
@@ -515,6 +549,9 @@ export class AdminSettingsCheckout {
     providers: [
     ],
     declarations: [
+        AdminAccount,
+        AdminAccountInvite,
+        AdminAccountDelete,
         AdminAccountProfile,
         AdminSettingsCheckout,
         AdminSettingsGeneral

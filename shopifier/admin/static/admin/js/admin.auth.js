@@ -6,7 +6,7 @@ import { HttpModule, ConnectionBackend, Http, Headers,
         Request, RequestOptions, RequestMethod } from '@angular/http';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
         Validators } from '@angular/forms';
-import { RouterModule, Router, Routes, ActivatedRoute } from '@angular/router';
+import { RouterModule, Router, Routes, ActivatedRoute,  CanDeactivate, CanActivate } from '@angular/router';
 
 
 // @Directive({ selector: 'modal-form'})
@@ -17,7 +17,7 @@ import { RouterModule, Router, Routes, ActivatedRoute } from '@angular/router';
 export class AdminUtils {
 
     emailValidator(control) {
-        if (control.value
+        if (control.value && control.value
             .match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
             return null;
         }   else {
@@ -150,7 +150,7 @@ export class CanActivateAdmin {
         this._found = true;
     }
 
-    canActivate() {
+    canActivate(component, route, state) {
         return this._auth.getCurrentUser()
         .then(() =>  {
             let _u = false;
@@ -165,6 +165,24 @@ export class CanActivateAdmin {
             if(!_ret) { this._router.navigate([this._re_direct]); }
             return _ret;
         });
+    }
+}
+
+
+//------------------------------------------------------------------------------CanDeactivateGuard
+@Injectable()
+export class CanDeactivateGuard {
+     canDeactivate(component) {
+        if (!component.formChange) {
+            return true;
+        }
+        component.showLeavePageDialog = true;
+        component.canDeactivate = new Promise(
+            (resolve, reject) => {
+                component.unloadPage = resolve;
+            }
+        );
+        return component.canDeactivate;
     }
 }
 
@@ -276,17 +294,16 @@ export class AdminAuthReset {
     email = '';
     pk = 0; 
     token = '';
-    sub = undefined;
 
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], [Router], [ActivatedRoute]];
     }
 
-    constructor(http, authService, formbuilder, router, routeparams) {
+    constructor(http, authService, formbuilder, router, params) {
         this._http = http;
         this._auth = authService;
         this._router = router;
-        this._routeParams = routeparams;
+        this._params = params.snapshot.params;
         this.lform = formbuilder.group({
                     'password1': ['',Validators.minLength(6)],
                     'password2': ['',Validators.minLength(6)]
@@ -295,19 +312,13 @@ export class AdminAuthReset {
 
     //The link to reset your password is no longer valid. to recover
     ngOnInit() {
-        this.sub = this._routeParams.params.subscribe((params) => {
-              this.pk = params.pk;
-              this.token = params.token;
-              let user = {'pk': this.pk, 'token': this.token };
-              this._http.post('/api/check_token2/', user)
-                    .subscribe((data) => this.currentUser = data,
-                               (err) => this._router.navigate(['auth/recover'])
-                    );
-        });
-    }
-
-    ngOnDestroy() {
-        this.sub.unsubscribe();
+        this.pk = this._params.pk;
+        this.token = this._params.token;
+        let user = {'pk': this.pk, 'token': this.token };
+        this._http.post('/api/check_token2/', user)
+                .subscribe((data) => this.currentUser = data,
+                           (err) => this._router.navigate(['auth/recover'])
+                );
     }
 
     goReset() {
@@ -353,39 +364,37 @@ export class AdminAuthAccept {
     obj_errors = {};
     user = undefined;
     declineInvitation = undefined;
-    sub = undefined;
 
     static get parameters() {
         return [[Http], [AdminAuthService], [FormBuilder], [Router], [ActivatedRoute]];
     }
 
-    constructor(http, authService, formbuilder, router, routeparams) {
+    constructor(http, authService, formbuilder, router, params) {
         this._http = http;
         this._auth = authService;
         this._router = router;
-        this._routeParams = routeparams;
+        this._params = params.snapshot.params;
 
         this.lform = formbuilder.group({
             'first_name': ['', Validators.required],
             'last_name': ['', Validators.required],
-            'phone': [''],
-            'email': [''],
-            'password1': [''],
-            'password2': [''],
-            'token': [''],
-            'id': [''],
+            'phone': '',
+            'email': '',
+            'password1': '',
+            'password2': '',
+            'token': '',
+            'id': '',
         }); 
     }
 
     ngOnInit() {
-        this.sub = this._routeParams.params.subscribe((params) => {
-            this.token = params.token;
-            let data = {'pk': params.id, 'token': this.token };
-            this._http.post('/api/check_token1/', data)
-                    .subscribe((data) => this.onInit(data),
-                                (err) => this._router.navigate(['/auth/wrong_token'])
-                    );
-        });
+        this.token = this._params.token;
+        let data = {'pk': this._params.id, 'token': this.token };
+        this._http.post('/api/check_token1/', data)
+            .subscribe(
+                (data) => this.onInit(data),
+                (err) => this._router.navigate(['/auth/wrong_token'])
+        );
     }
 
     onInit(data) {
@@ -394,16 +403,12 @@ export class AdminAuthAccept {
         this.obj_errors = {};
 
         for (let control in this.lform.controls) {
-            this.lform.controls[control].updateValue(undefined);
+            this.lform.controls[control].setValue(undefined);
             this.lform.controls[control]
-                .updateValue(this.user[control],true, true);
+                .setValue(this.user[control]);
         }
-        this.lform.controls['token'].updateValue(this.token);
-        this.lform.controls['password1'].updateValue('');
-    }
-
-    ngOnDestroy() {
-        this.sub.unsubscribe();
+        this.lform.controls['token'].setValue(this.token);
+        this.lform.controls['password1'].setValue('');
     }
 
     createAccount(){
@@ -493,20 +498,23 @@ export class SuperHttp extends Http {
     }
 
     delete(url) {
-        this.csrfToken();
-        return super.delete(url, {headers: this.requestoptions.headers});
+        return this.request('Delete', url);
+//         this.csrfToken();
+//         return super.delete(url, {headers: this.requestoptions.headers});
     }
 }
 
 
 //------------------------------------------------------------------------------AdminAuthModule
 const routes = [
-    { path : 'auth/login', component : AdminAuthLogin, canActivate: [CanActivateLogin] },
-    { path : 'auth/logout', component : AdminAuthLogout },
-    { path : 'auth/recover', component : AdminAuthRecover, canActivate: [CanActivateLogin] },
-    { path : 'auth/reset/:pk/:token', component : AdminAuthReset, canActivate: [CanActivateLogin] },
-    { path : 'auth/accept/:id/:token', component : AdminAuthAccept, canActivate: [CanActivateLogin] },
-    { path : 'auth/wrong_token', component : AdminAuthWrongToken }
+    {path: 'auth', children: [
+        { path : 'login', component : AdminAuthLogin, canActivate: [CanActivateLogin] },
+        { path : 'logout', component : AdminAuthLogout },
+        { path : 'recover', component : AdminAuthRecover, canActivate: [CanActivateLogin] },
+        { path : 'reset/:pk/:token', component : AdminAuthReset, canActivate: [CanActivateLogin] },
+        { path : 'accept/:id/:token', component : AdminAuthAccept, },
+        { path : 'wrong_token', component : AdminAuthWrongToken }
+    ]}
 ]
 export const authRouting = RouterModule.forChild(routes);
 
@@ -521,6 +529,7 @@ export const authRouting = RouterModule.forChild(routes);
         AdminUtils,
         CanActivateLogin,
         CanActivateAdmin,
+        CanDeactivateGuard,
         SuperHttp
     ],
     declarations: [

@@ -1,8 +1,7 @@
 {% include "admin/errorsbox.html" with class="section-profile" %}
 <div *ngIf="user" class="section-profile ">
     <div class="section-annotation">
-        <h3>Account information</h3>
-        <p>All information relevant to the account.</p>
+        <h3 class="bold">Account information</h3>
     </div>
     <div *ngIf="!isAdmin && !isUser"class="section-content">
         <form>
@@ -34,7 +33,14 @@
     </div>
     
     <div *ngIf="isAdmin || isUser" class="section-content">
-        <form [formGroup]="lform">{% csrf_token %}
+        <form [formGroup]="form.user">{% csrf_token %}
+            {% with group='user' change='onFormChange()' %}
+            <div class="input-section">
+                <h3 class="bold ml10" [ngSwitch]="user.is_admin">
+                    <span *ngSwitchCase="true">Account owner profile</span>
+                    <span *ngSwitchDefault>Staff profile</span>
+                </h3>
+            </div>
             <div class="input-section">
                 <div class="input-box">
                     <div class="avatar" *ngIf="user">
@@ -68,7 +74,7 @@
                     <label class="input" [ngClass]="{err: obj_errors['first_name']}">
                         First Name
                         <input formControlName="first_name" (input)="onFormChange()">
-                    </label>    
+                    </label>
                 </div>
                 <div class="input-box">
                     <label class="input" [ngClass]="{err: obj_errors['last_name']}">
@@ -95,14 +101,7 @@
                     </label>
                 </div>   
             </div>
-            <div class="input-section">
-                <div class="input-box">
-                    <label class="input">
-                        Personal website address (optional)
-                        <input formControlName="www_site" (input)="onFormChange()">
-                    </label>
-                </div>   
-            </div>
+            <div class="row sep mt20 mb10"></div><h3 class="row bold pv10 ph20">DETAILS</h3>
             <div class="input-section">
                 <div class="input-box">
                     <label class="input">
@@ -111,103 +110,142 @@
                     </label>
                 </div>   
             </div>
-            <div class="input-section" *ngIf="!passwordChange">
-                <div class="input-box">
-                    <a class="ref" (click)="passwordChange=true">Change password</a>
-                </div>   
-            </div>
-            <div class="input-section"  *ngIf="passwordChange">
-                <div class="input-box">
-                    <label class="input" [ngClass]="{err: obj_errors['password1']}">
-                        New password
-                        <input type="password" formControlName="password1"  (input)="onFormChange()">
-                    </label>    
-                </div>
-                <div class="input-box">
-                    <label class="input" [ngClass]="{err: obj_errors['password2']}">
-                        Confirm new password
-                        <input type="password" formControlName="password2" (input)="onFormChange()">
-                    </label>   
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div *ngIf="isAdmin || isUser" class="separator"></div>
-
-<div *ngIf="user && isAdmin" class="section-profile">
-    <div class="section-annotation">
-        <h3>Recent login history</h3>
-        <p>Access from an ISP, Location, or IP address you don't recognize may indicate that the account has been compromised and should be reviewed further.</p>
-        <p><a class="btn" (click)="expireSessions=true"> Expire user's sessions </a></p>
-   
-    </div>
-    
-     <div class="section-content">
-        <div class="card">
-            <div class="section">
-                <div class="table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>IP</th>
-                                <th>ISP</th>
-                                <th>Location</th>
-                                <th></th>
-                            </tr>
-                        </thead> 
-                        <tbody *ngIf="sessions">
-                            <tr  class="wide" *ngFor="let session of sessions">
-                                 <td>
-                                    {% verbatim %}{{ setDate(session.visit_datetime) | date:'EEEE at jm' }}{% endverbatim %}
-                                </td>
-                                <td>
-                                    {% verbatim %}{{ session.ip }}{% endverbatim %} 
-                                </td>
-                                <td>
-                                    {% verbatim %}{{ session.isp }}{% endverbatim %}
-                                </td>
-                                <td>
-                                    {% verbatim %}{{ session.city + ', ' + session.country }}{% endverbatim %}
-                                </td>
-                                
-                                <td>
-                                    <a class="btn fa fa-info-circle" aria-hidden="true" title="Firefox 46 on ubuntu">
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>    
-    </div>
-</div>
-
-<div *ngIf="isAdmin" class="separator"></div>
-
-<div *ngIf="user && isAdmin" class="section-profile ">
-    <div class="section-annotation">
-        <h3>Admin Access</h3>
-        <p>Select the sections that Ivan should have access to.</p>
-    </div>
-    
-    <div class="section-content">
-        <form>
             <div class="input-section">
                 <div class="input-box">
-                    <div class="input">
-                        <input type="checkbox" id="checkbox-id"
-                        (change)="onFormChange()">
-                        <label for="checkbox-id"><i class="fa fa-check" aria-hidden="true"></i>Limit admin access for {% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</label>
-                    </div>
-                </div>    
+                    <label class="input">
+                        Personal website address (optional)
+                        <input formControlName="www_site" (input)="onFormChange()">
+                    </label>
+                </div>   
             </div>
+            <div class="row sep mt20 mb10"></div><h3 class="row bold pv10 ph20">NOTIFICATIONS</h3>
+            <div class="input-section">
+                {% include "admin/checkbox.html" with control="receive_announcements" %}
+            </div>
+            <p class="ml25 pl20 mb10 color-subdued">We periodically send out important news about Shopify to our users via email. We keep the email volume to an absolute minimum.</p>
+
+            <span *ngIf="isUser" class="mb10">
+                <div class="row sep mt20 mb10"></div><h3 class="row bold pv10 ph20">PASSWORD RESET</h3>
+                <div class="row pv10 ph20">
+                    Change the password you use to login to {% templatetag openvariable %} settings.STORE_NAME {% templatetag closevariable %}.
+                </div>
+                <div class="input-section" *ngIf="!passwordChange">
+                    <div class="row ml10">
+                        <a class="btn" (click)="passwordChange=true">Change password</a>
+                    </div>   
+                </div>
+                <div class="input-section" *ngIf="passwordChange">
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors['password1']}">
+                            New password
+                            <input type="password" formControlName="password1" (input)="onFormChange()">
+                        </label>
+                    </div>
+                    <div class="input-box">
+                        <label class="input" [ngClass]="{err: obj_errors['password2']}">
+                            Confirm new password
+                            <input type="password" formControlName="password2" (input)="onFormChange()">
+                        </label>
+                    </div>
+                </div>
+            </span>
         </form>
     </div>
 </div>
+
+<span *ngIf="user && isAdmin && sessions.length">
+    <div class="separator"></div>
+    <div class="section-profile">
+        <div class="section-annotation">
+            <h3>Recent login history</h3>
+            <p>Access from an ISP, Location, or IP address you don’t recognize may indicate that the account has been compromised and should be reviewed further.</p>
+        </div>
+         <div class="section-content">
+            <div class="card">
+                <div class="section">
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr><th>Date</th><th>IP</th><th>ISP</th><th>Location</th><th></th>
+                                </tr>
+                            </thead>
+                            {% verbatim %}
+                            <tbody *ngIf="sessions">
+                                <tr  class="wide" *ngFor="let session of sessions">
+                                     <td>{{ setDate(session.visit_datetime) | date:'EEEE' }} at {{ setDate(session.visit_datetime) | date:'shortTime' }}</td>
+                                    <td>{{ session.ip }}</td>
+                                    <td>{{ session.isp }}</td>
+                                    <td>{{ session.city + ', ' + session.country }}</td>
+                                    <td><a class="btn fa fa-info-circle" aria-hidden="true" [attr.title]="session.user_agent"></a></td>
+                                </tr>
+                            </tbody>
+                            {% endverbatim %}
+                        </table>
+                    </div>
+                </div>
+                <div class="input-section">
+                    <div class="row ml10 mb10">
+                        <a class="btn" (click)="expireSessions=true">Log Out {% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+
+<span  *ngIf="user && !user.is_admin && isAdmin">
+    <div class="separator"></div>
+    <div class="section-profile">
+        <div class="section-annotation">
+            <h3 class="bold">Admin Access</h3>
+        </div>
+        
+        <div class="section-content">
+            <form class="p10">{% csrf_token %}
+                <h3 class="p10 bold">CUSTOMIZE PERMISSIONS</h3>
+                <div class="p10">Enable or restrict {% verbatim %}{{user.first_name}}{% endverbatim %}'s access to various parts of this store.</div>
+                <div class="input p10">
+                    <input type="checkbox" [attr.id]="full_permissions-id" [(ngModel)]="full_permissions"  [ngModelOptions]="{standalone: true}"
+                    (click)="onFormChange();clsPermissions();">
+                    <label [attr.for]="full_permissions-id"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %} has full permissions</label>
+                </div>
+                <div *ngIf="!full_permissions" class="p10">
+                    <div class="pv10 bold">Select the areas of admin this staff account will be able to access</div>
+                    <div class="columns mv10 h-auto">
+                        <div class="col mr30" *ngFor="let group of permissions;">
+                            {% templatetag openvariable %} group.group {% templatetag closevariable %}
+                            <div class="input mt15" *ngFor="let perm of group.permissions;">
+                                <input type="checkbox" [attr.id]="perm.api+'-id'" [(ngModel)]="perm.select" [ngModelOptions]="{standalone: true}"
+                                (click)="onFormChange()">
+                                <label [attr.for]="perm.api+'-id'"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}{{perm.name}}{% endverbatim %}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</span>
+
+<span *ngIf="user && isAdmin && currentUser.id!=user.id">
+    <div class="separator"></div>
+    <div class="section-profile ">
+        <div class="section-annotation">
+            <h3 class="bold">Remove account</h3>
+        </div>
+        
+        <div class="section-content">
+            <form class="p10">{% csrf_token %}
+                <h3 class="p10 bold">Delete account</h3>
+                <div class="p10">Deleted staff accounts will be permanently removed from your store. This action cannot be reversed.</div>
+                <div class="row m10">
+                    <a class="btn btn-red" (click)="onDeleteAccount()">Delete account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</span>
+
 
 <div *ngIf="isAdmin" class="separator"></div>
 
@@ -220,7 +258,7 @@
 </div>
 
 <div *ngIf="confirmPassword" class="modal-form">
-    <form class="input-form up" [formGroup]="lform" novalidate>{% csrf_token %}
+    <form class="input-form up" novalidate>{% csrf_token %}
         <div class="modal-header">
             <h2>
                 Please confirm your password
@@ -231,31 +269,32 @@
         <div class="input-section">
              <div class="input-box">
                 <label class="input">
-                    Enter your current password to save changes to {% verbatim %}{{ user.first_name }}{% endverbatim %}'s account.
-                    <input type="password" formControlName="admin_password">
+                    Enter your current password to save changes to your account.
+                    <input type="password" [(ngModel)]="admin_password" name="admin_password">
                 </label>
             </div>    
         </div>        
         <div class="input-section" *ngIf="passwordChange">
              <div class="input-box">
-                <p>Changing {% verbatim %}{{ user.first_name }}{% endverbatim %}'s password will log {% verbatim %}{{ user.first_name }}{% endverbatim %} out of your store on all web browsers.</p>
+                <p>Changing your password will log you out of your store on all web browsers.</p>
                 <div class="input">
-                    <input type="checkbox" id="checkbox-id2">
-                    <label for="checkbox-id2"><i class="fa fa-check" aria-hidden="true"></i>Also log {% verbatim %}{{ user.first_name }}{% endverbatim %} out of your store on Shopifier</label>
+                    <input type="checkbox" id="checkbox-id2" [(ngModel)]="log_out_mobile" name="log_out_mobile">
+                    <label for="checkbox-id2"><i class="fa fa-check" aria-hidden="true"></i>Also log out of your store on Shopify Mobile and/or Shopify POS</label>
                 </div>
-            </div>    
-        </div>        
+            </div>
+        </div>
         <div class="modal-footer">
             <a class="btn mr10"
             (click)="confirmPassword=false">Cancel</a>
-            <a class="btn btn-blue" (click)="onSaveAdmin()">Confirm</a>
+            <a class="btn btn-blue" (click)="onSaveAdmin();confirmPassword=false">Confirm</a>
         </div>
+        {% endwith %}
     </form>
 </div>
 
 
 <div *ngIf="expireSessions" class="modal-form">
-    <form class="input-form up">
+    <form class="input-form up">{% csrf_token %}
         <div class="modal-header">
             <h2>
                 Expire Current User's Sessions
@@ -276,87 +315,12 @@
     </form>
 </div>
 
-<div *ngIf="showSetAdmin" class="modal-form">
-    <form *ngIf="!user.is_admin" class="input-form up">
-        <div class="modal-header">
-            <h2>
-                Confirm Account Ownership Granting
-            </h2>
-            
-            <a class="cross fa fa-times" aria-hidden="true"
-              (click)="showSetAdmin=false"></a>
-        </div>
-         
-         <div class="input-section">
-            <div class="input-box">
-                You are granting ownership of your store from another user:
-            </div>
-        </div>
-        
-         <div class="input-section">
-            <div class="input-box">
-                <div class="input-box">
-                    <ul class="input-box"> 
-                        <li type="disc">They will have complete control of the shop, including billing.</li>
-                        <li type="disc">Your account will be admin account.</li>
-                        <li type="disc">This action can be undone.</li>
-                    </ul>
-                </div>    
-            </div>
-        </div>
-        <div class="input-section">
-            <div class="input-box">
-               Are you sure you want to granting ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
-            </div>
-        </div>
-        
-        <div class="modal-footer">
-            <a class="btn mr10"
-            (click)="showSetAdmin=false">Cancel</a>
-            <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, granting ownership</a>
-        </div>
-    </form>
-    
-    <form *ngIf="user.is_admin" class="input-form up">
-        <div class="modal-header">
-            <h2>
-                Confirm Account Ownership taking away
-            </h2>
-            
-            <a class="cross fa fa-times" aria-hidden="true"
-              (click)="showSetAdmin=false"></a>
-        </div>
-         
-         <div class="input-section">
-            <div class="input-box">
-                You are taking away ownership of your store to another user:
-            </div>
-        </div>
-        
-         <div class="input-section">
-            <div class="input-box">
-                <div class="input-box">
-                    <ul class="input-box"> 
-                        <li type="disc">They will not have complete control of the shop, including billing.</li>
-                        <li type="disc">Your account will be admin account.</li>
-                        <li type="disc">This action can be undone.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="input-section">
-            <div class="input-box">
-               Are you sure you want to taking away ownership of your store to {% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %} ?
-            </div>
-        </div>
-        
-        <div class="modal-footer">
-            <a class="btn mr10"
-            (click)="showSetAdmin=false">Cancel</a>
-            <a class="btn btn-blue" (click)="addOwnership(); showSetAdmin=false;">Yes, taking away ownership</a>
-        </div>
-    </form>
-</div>
+{% include "admin/account/set-admin.html" %}
+
+<account_delete
+    [parent]="this"
+    [self]="'delete_user'">
+</account_delete>
 
  <leave-page 
     [parrent_component]="self">

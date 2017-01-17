@@ -12,11 +12,11 @@ main > div.section {
     padding: 20px 0 0 0;
     max-width: 1036px;
     border-top: 1px solid $border-section-color; 
-    
-    &:first-of-type {
-        border: none;   
+
+    &:first-of-type, &.no-border {
+        border: none;
     }
-   
+
     h2 {
         color: $color-section-annotation-title;
     }
@@ -48,7 +48,7 @@ main > div.section {
 }
 
 
-main > div.section div.section-content > div.card, profile > div.section-profile div.section-content > div.card {
+main > div.section div.section-content > div.card, div.section-profile div.section-content > div.card {
             padding: 0;
             align-items: center;
             width: 100%;
@@ -77,7 +77,7 @@ main > div.section div.section-content > div.card, profile > div.section-profile
                     > label {
                         display: block;
                         font-weight: bold;
-                        margin-bottom: 5px;                       
+                        margin-bottom: 5px;
                     }
                 }
 

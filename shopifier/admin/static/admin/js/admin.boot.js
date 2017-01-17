@@ -11,15 +11,11 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { Admin, AdminHome, AdminSearch } from './admin';
-import { AdminAuthModule, SuperHttp, CanActivateAdmin } from './admin.auth';
+import { AdminAuthModule, SuperHttp, CanActivateAdmin, CanDeactivateGuard } from './admin.auth';
 import { Customers } from './admin.customers';
-
-
-@Component({
-  selector: "body",
-  template : "<router-outlet></router-outlet>",
-})
-export class AdminRouter {}
+import { AdminComponentsModule } from './components';
+import { AdminSettingsModule, AdminSettingsGeneral, AdminSettingsCheckout,
+    AdminAccount, AdminAccountProfile } from './admin.settings';
 
 
 import {enableProdMode} from '@angular/core';
@@ -30,12 +26,20 @@ enableProdMode();
   selector: 'body',
   template : '<router-outlet></router-outlet>',
 })
-export class RootComponent {}
+export class AdminRoot {}
 
 const routes = [
+//     { path : '', component: Admin, canActivate: [CanActivateAdmin], children: [
     { path : '', component: Admin, canActivate: [CanActivateAdmin], children: [
+        { path : '', redirectTo: '/home', pathMatch: 'full' },
         { path : 'home', component : AdminHome },
         { path : 'search', component : AdminSearch, },
+        { path : 'settings', redirectTo: '/settings/general', pathMatch: 'full'},
+        { path : 'settings/general', component : AdminSettingsGeneral },
+        { path : 'settings/checkout', component : AdminSettingsCheckout },
+        { path : 'settings/account', component : AdminAccount },
+        { path : 'settings/account/:id', component : AdminAccountProfile, canDeactivate: [CanDeactivateGuard] },
+
     ]},
 ]
 export const routing = RouterModule.forRoot(routes);
@@ -44,9 +48,12 @@ export const routing = RouterModule.forRoot(routes);
     imports: [
         RouterModule.forRoot(routes), 
         BrowserModule,
-        AdminAuthModule
+        AdminAuthModule,
+        AdminComponentsModule,
+        AdminSettingsModule
     ],
     providers: [
+        Admin,
         {
             provide: Http, 
             useFactory: (backend, defaultOptions) => new SuperHttp(backend, defaultOptions),
@@ -54,14 +61,14 @@ export const routing = RouterModule.forRoot(routes);
         },
     ],
     declarations: [ 
-        RootComponent,
+        AdminRoot,
         Admin,
         AdminHome,
         AdminSearch,
     ],
     schemas: [NO_ERRORS_SCHEMA],
-    bootstrap: [RootComponent]
+    bootstrap: [AdminRoot]
 })
-export class AppModule {}
+export class AdminModule {}
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+platformBrowserDynamic().bootstrapModule(AdminModule);

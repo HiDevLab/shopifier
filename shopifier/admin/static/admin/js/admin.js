@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { ROUTER_DIRECTIVES, Router, CanActivate } from '@angular/router'
-import { FORM_DIRECTIVES } from '@angular/forms'
+import { Router, ActivatedRoute, CanActivate } from '@angular/router'
 import { Location } from '@angular/common'
 
 import { AdminAuthService, AdminUtils } from './admin.auth'
@@ -38,7 +37,6 @@ export class AdminSearch {
 @Component({
     selector: 'body',
     templateUrl: 'templates/admin.html',
-    directives: [ROUTER_DIRECTIVES],
 })
 // @RouteConfig([
 //     {
@@ -135,13 +133,14 @@ export class Admin {
     cacheHeaderNav = undefined;
 
     static get parameters() {
-        return [[Router], [AdminAuthService], [Location]];
+        return [[Router], [AdminAuthService], [Location], [ActivatedRoute]];
     }
 
-    constructor(router, authService, location) {
+    constructor(router, authService, location, params) {
         this._auth = authService;
         this._router = router;
         this._location = location;
+        this._params = params.snapshot.params;
     }
 
     ngOnInit() {
@@ -150,11 +149,6 @@ export class Admin {
             this.settings = data['settings'];
         });
     }
-
-    ngAfterViewInit() {
-        this._router.navigate(['/home']);
-    }
-
 
     refreshCurrentUser() {
         this._auth.refreshCurrentUser()

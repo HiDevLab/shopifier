@@ -66,6 +66,7 @@ class LoginView(APIView):
             )
         else:
             content = {'detail': _('Your email or password was incorrect')}
+            
             return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -168,7 +169,7 @@ class UserActivateView(APIView):
 
     def post(self, request, format=None):
 
-        serializer = UsersAdminSerializer2(data=request.data)
+        serializer = serializers.UsersAdminSerializer2(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         serializer = self.serializer_class(data=request.data)
@@ -304,7 +305,7 @@ class UserPasswordRecoverView(APIView):
         send_mail(
             subject=subject,
             message=render_to_string(self.txt_template_name, context),
-            from_email=DEFAULT_FROM_EMAIL,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
             html_message=render_to_string(self.email_template_name, context),
         )
@@ -345,7 +346,7 @@ class UsersAdminViewSet(ModelViewSet):
     def deletesession(self, request, pk=None):
         user = self.get_object()
         [s.delete() for s in Session.objects.all()
-            if int(s.get_decoded().get('_auth_user_id')) == user.id]
+            if int(s.get_decoded().get('_auth_user_id') or 0) == user.id]
         content = {'success': 'Sessions Expired.'}
         return Response(content, status=status.HTTP_200_OK)
 
@@ -401,6 +402,10 @@ class SessionsExpire(APIView):
 # features shpf API
 class SHPFViewSet(ModelViewSet):
     REPR = {
+            'User': {
+                        'list': 'users',
+                        'nonlist': 'user',
+                        },
             'Customer': {
                         'list': 'customers',
                         'nonlist': 'customer',
@@ -469,6 +474,32 @@ class SHPFViewSet(ModelViewSet):
 def get_token(email):
     signer = Signer()
     return signer.signature(email)
+
+
+class UsersAPIViewSet(SHPFViewSet):
+    permission_classes = (permissions.IsAdminUser,)
+    queryset = User.objects.all().order_by('id')
+    serializer_class = serializers.UsersAPISerializer
+
+    def perform_update(self, serializer):
+        data = serializer.validated_data
+
+        if ('admin_password' in data and
+                not self.request.user.check_password(data['admin_password'])):
+            content = {
+                'admin_password': _('Current password did not match records')}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+
+        if 'password1' in data:
+            user = self.get_object()
+            user.set_password(data['password1'])
+            user.save(update_fields=('password',))
+            if user == self.request.user:
+                user = authenticate(
+                    **{'email': user.email, 'password': data['password1']})
+                login(self.request, user)
 
 
 class CustomerViewSet(SHPFViewSet):

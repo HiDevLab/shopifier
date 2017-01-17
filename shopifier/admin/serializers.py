@@ -251,6 +251,40 @@ class SHPFSerializer(serializers.ModelSerializer):
         return meta_fields
 
 
+class UsersAPISerializer(SHPFSerializer):
+
+    avatar_image = Base64ImageField(required=False, allow_null=True)
+    is_admin = serializers.BooleanField(read_only=False)
+    is_active = serializers.BooleanField(read_only=False)
+    is_staff = serializers.BooleanField(read_only=True)
+    date_join = serializers.DateTimeField(read_only=True)
+    avatar = serializers.SerializerMethodField()
+    admin_password = serializers.CharField(
+        required=False, read_only=False)
+    password1 = serializers.CharField(required=False, read_only=False)
+    password2 = serializers.CharField(required=False, read_only=False)
+
+    class Meta:
+        model = User
+        exclude = ('password',)
+
+    def get_avatar(self, obj):
+        if obj.avatar_image:
+            return get_thumbnailer(obj.avatar_image)['avatar'].url
+
+    def validate(self, data):
+        err = {'password1': _("Password confirmation doesn't match Password"),
+               'password2': _("Password confirmation doesn't match Password")}
+
+        if 'password1' in data or 'password2' in data:
+            if 'password1' not in data and 'password2' in data:
+                raise serializers.ValidationError(err)
+
+            if data['password1'] != data['password2']:
+                raise serializers.ValidationError(err)
+        return super(UsersAPISerializer, self).validate(data)
+
+
 class CustomerAddressSerializer(SHPFSerializer):
     default = serializers.BooleanField(read_only=True)
     country_name = serializers.CharField(read_only=True,

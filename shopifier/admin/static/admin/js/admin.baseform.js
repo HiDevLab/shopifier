@@ -1,14 +1,11 @@
 import 'rxjs/Rx';
 
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
-        Validators, Control, ControlGroup } from 'angular2/common';
-import { Component, Pipe } from 'angular2/core';
-import { Http } from 'angular2/http'
-import { Router, RouteParams, RouteConfig,
-    ROUTER_DIRECTIVES } from 'angular2/router';
+import { FormBuilder, Validators, FormControl, ControlGroup } from '@angular/forms';
+import { Http } from '@angular/http';
+import { Router, Routes } from '@angular/router';
 
 import { Admin } from './admin';
-import { AdminAuthService, AdminUtils } from './admin.auth'
+import { AdminAuthService, AdminUtils } from './admin.auth';
 import { 
     Autosize, Popover, ArrayLengthPipe, AdminLeavePage, AdminTagsEdit
 } from './components';
@@ -96,16 +93,16 @@ export class BaseForm {
         };
         form[group_name + '_meta'][ctrl_name].type = group[ctrl_name].type;
 
-        let control = new Control('', Validators.compose(validators));
+        let control = new FormControl('', Validators.compose(validators));
 
         if (group[ctrl_name].type==='choice'){
             form[group_name + '_meta'][ctrl_name].choices =
                                                 group[ctrl_name].choices;
-            control.updateValue(group[ctrl_name].choices[0].value);
+            control.setValue(group[ctrl_name].choices[0].value);
         }
-        if (group[ctrl_name].type==='boolean') control.updateValue(false);
-        if (group[ctrl_name].type==='datetime') control.updateValue(undefined);
-        if (group[ctrl_name].type==='list') control.updateValue([]);
+        if (group[ctrl_name].type==='boolean') control.setValue(false);
+        if (group[ctrl_name].type==='datetime') control.setValue(undefined);
+        if (group[ctrl_name].type==='list') control.setValue([]);
 
         form[group_name].addControl(ctrl_name, control);
     }
@@ -197,13 +194,13 @@ export class BaseForm {
             let ctrl = keys[i];
             let control = group.controls[ctrl];
             if (obj[ctrl])
-                control.updateValue(obj[ctrl]);
+                control.setValue(obj[ctrl]);
             else {
-                control.updateValue(undefined);
+                control.setValue(undefined);
                 if (meta[ctrl].type==='choice')
-                    control.updateValue(meta[ctrl].choices[0].value);
+                    control.setValue(meta[ctrl].choices[0].value);
                 if (meta[ctrl].type==='boolean')
-                    control.updateValue(false);
+                    control.setValue(false);
             }
         }
     }
@@ -255,18 +252,6 @@ export class BaseForm {
         self.formChange = true;
     }
 
-    routerCanDeactivate(prev, next) {
-        if (!this.formChange) {
-            return true;
-        }
-        this.showLeavePageDialog = true;
-        this.canDeactivate = new Promise(
-            (resolve, reject) => {
-                this.unloadPage = resolve;
-            }
-        );
-        return this.canDeactivate;
-    }
 
     // for EditForm
     onNext(self){ // call from admin header
@@ -327,11 +312,18 @@ export class BaseForm {
     }
 
     find(container, parameter, value) {
-        for(let i=0; i<container.length; i++) {
-            if (container[i][parameter] == value) {
-                return container[i];
+        for (let item of container) {
+            if (item[parameter] == value) {
+                return item;
             }
         }
         return undefined;
+    }
+
+    splice(container, parameter, value, count) {
+        let index = this.findIndex(container, parameter, value);
+        if (this.isIndex(index)){
+            container.splice(index, count || 1);
+        }
     }
 }
