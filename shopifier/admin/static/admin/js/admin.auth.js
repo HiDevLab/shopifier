@@ -1,7 +1,7 @@
 import 'rxjs/Rx';
-
 import { CommonModule } from '@angular/common';
-import { NgModule, Component, Directive, Injectable, Injector } from '@angular/core';
+import { NgModule, Component, Directive, Injectable, Injector,
+    ComponentFactoryResolver, ViewContainerRef, Compiler } from '@angular/core';
 import { HttpModule, ConnectionBackend, Http, Headers, 
         Request, RequestOptions, RequestMethod } from '@angular/http';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
@@ -15,6 +15,47 @@ import { RouterModule, Router, Routes, ActivatedRoute,  CanDeactivate, CanActiva
 //------------------------------------------------------------------------------AdminUtils
 @Injectable()
 export class AdminUtils {
+    static get parameters() {
+        return [[Compiler]];
+    }
+    constructor(compiler) {
+        this.compiler = compiler;
+    }
+
+    openDialog(parent, vcr, template) {
+        let ret = new Promise((resolve, reject) => {
+            @Component({ selector: 'dialog-comp', templateUrl: template})
+            class DynamicHtmlComponent {
+                constructor() {
+                    this.parent = parent;
+                }
+                resolve(result) {
+                    component.destroy();
+                    resolve(result);
+                }
+
+                reject(reason) {
+                    component.destroy();
+                    reject(reason);
+                }
+
+            };
+            @NgModule({
+                imports: [FormsModule, ReactiveFormsModule, CommonModule,],
+                declarations: [DynamicHtmlComponent]
+            })
+            class DynamicHtmlModule {}
+            let component = undefined;
+            this.compiler.compileModuleAndAllComponentsAsync(DynamicHtmlModule)
+                .then((factory) => {
+                    let compFactory = factory.componentFactories.find(
+                        x => x.componentType === DynamicHtmlComponent);
+                    component = vcr.createComponent(compFactory, 0);
+            });
+        });
+        return ret;
+    }
+
 
     emailValidator(control) {
         if (control.value && control.value
@@ -501,6 +542,14 @@ export class SuperHttp extends Http {
         return this.request('Delete', url);
 //         this.csrfToken();
 //         return super.delete(url, {headers: this.requestoptions.headers});
+    }
+    template(url) {
+        this.csrfToken();
+        this.requestoptions.method = RequestMethod['Get'];
+        this.requestoptions.url= url;
+        this.requestoptions.body = undefined;
+        let request = new Request(this.requestoptions);
+        return super.request(request);
     }
 }
 

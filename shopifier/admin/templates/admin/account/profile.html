@@ -239,7 +239,7 @@
                 <h3 class="p10 bold">Delete account</h3>
                 <div class="p10">Deleted staff accounts will be permanently removed from your store. This action cannot be reversed.</div>
                 <div class="row m10">
-                    <a class="btn btn-red" (click)="onDeleteAccount()">Delete account</a>
+                    <a class="btn btn-red" (click)="deleteAccount()">Delete account</a>
                 </div>
             </form>
         </div>
@@ -317,10 +317,10 @@
 
 {% include "admin/account/set-admin.html" %}
 
-<account_delete
+<!-- <account_delete
     [parent]="this"
     [self]="'delete_user'">
-</account_delete>
+</account_delete> -->
 
  <leave-page 
     [parrent_component]="self">

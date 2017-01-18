@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule, Component } from '@angular/core';
+import { NgModule, Component, ViewContainerRef } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -81,12 +81,13 @@ export class AdminAccountProfile extends BaseForm {
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
-                [AdminAuthService], [Admin], [AdminUtils]];
+                [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef]];
     }
 
-    constructor(http, fb, router, params, auth, admin, utils) {
-        super(http, fb, router, auth, admin, utils);
+    constructor(http, fb, router, params, auth, admin, utils, vcr) {
+        super(http, fb, router, auth, admin, utils, vcr);
         this.object_id = params.snapshot.params.id;
+        this.vcr = vcr;
         this.model = 'user';
         this.currentLink = '/settings/account';
         this.cancelLink = '/settings/account';
@@ -298,9 +299,28 @@ export class AdminAccountProfile extends BaseForm {
         this.controls['avatar_image'].setValue(null);
     }
 
-    onDeleteAccount() {
-        this.delete_user.show = true;
-        this.delete_user.user = this.user;
+    deleteAccount() {
+//         let factory = this._cfr.resolveComponentFactory(AdminAccountDelete);
+//         let ref = this._vcr.createComponent(factory);
+//         ref.instance.parent = this;
+//         ref.changeDetectorRef.detectChanges();
+// @NgModule({ entryComponents: [ AdminAccountDelete,]}]
+
+           this._utils.openDialog(this, this.vcr, 'templates/account/delete.html')
+                .then(
+                (result) => {
+                    this._http.delete(`/api/admin/${this.user.id}/`)
+                        .subscribe(
+                            (data) => { 
+                                this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been removed`);
+                            },
+                            (err) => {}, 
+                            () => this.onCancel()
+                        );
+                },
+                (reason) => {
+                }
+           );
     }
 
 
@@ -322,7 +342,6 @@ export class AdminAccountProfile extends BaseForm {
         return d;
     }
 }
-
 
 //------------------------------------------------------------------------------AdminAccountDeleteSessions
 @Component({
@@ -354,43 +373,6 @@ export class AdminAccountDeleteSessions {
                             } 
                  );
     }   
-}
-
-
-//------------------------------------------------------------------------------AdminAccountDelete
-@Component({
-    selector : 'account_delete',
-    templateUrl: 'templates/account/delete.html',
-    inputs: ['parent', 'self']
-})
-export class AdminAccountDelete {
-    show = false;
-    user = {};
-    errors = [];
-    obj_errors = {};
-    
-    static get parameters() {
-        return [[Http], [Admin]];
-    }
-    constructor(http, admin) {
-        this._http = http;
-        this._admin = admin;
-    }
-    ngOnInit() {
-        this.parent[this.self] = this;
-    }
-
-    goDelete() {
-        this._http.delete(`/api/admin/${this.user.id}/`)
-            .subscribe( 
-                (data) => { 
-                    this.show = false;
-                    this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been removed`);
-                  },
-            (err) => {}, 
-            () => { this.parent.onCancel(); }
-        );
-    }
 }
 
 
@@ -547,10 +529,9 @@ export class AdminSettingsCheckout {
     declarations: [
         AdminAccount,
         AdminAccountInvite,
-        AdminAccountDelete,
         AdminAccountProfile,
         AdminSettingsCheckout,
-        AdminSettingsGeneral
-    ]
+        AdminSettingsGeneral,
+    ],
 })
 export class AdminSettingsModule {}
