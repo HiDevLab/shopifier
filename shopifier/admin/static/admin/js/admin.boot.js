@@ -11,8 +11,10 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { Admin, AdminHome, AdminSearch } from './admin';
-import { AdminAuthModule, SuperHttp, CanActivateAdmin, CanDeactivateGuard } from './admin.auth';
-import { Customers } from './admin.customers';
+import { AdminAuthModule, SuperHttp, CanActivateAdmin,
+    CanDeactivateGuard } from './admin.auth';
+import { AdminCustomersModule, AdminCustomers,
+    AdminCustomersNew, AdminCustomersEdit } from './admin.customers';
 import { AdminComponentsModule } from './components';
 import { AdminSettingsModule, AdminSettingsGeneral, AdminSettingsCheckout,
     AdminAccount, AdminAccountProfile } from './admin.settings';
@@ -39,7 +41,9 @@ const routes = [
         { path : 'settings/checkout', component : AdminSettingsCheckout },
         { path : 'settings/account', component : AdminAccount },
         { path : 'settings/account/:id', component : AdminAccountProfile, canDeactivate: [CanDeactivateGuard] },
-
+        { path : 'customers', component : AdminCustomers },
+        { path : 'customers/new', component : AdminCustomersNew, },
+        { path : 'customers/:id', component : AdminCustomersEdit, canDeactivate: [CanDeactivateGuard] },
     ]},
 ]
 export const routing = RouterModule.forRoot(routes);
@@ -50,7 +54,8 @@ export const routing = RouterModule.forRoot(routes);
         BrowserModule,
         AdminAuthModule,
         AdminComponentsModule,
-        AdminSettingsModule
+        AdminSettingsModule,
+        AdminCustomersModule
     ],
     providers: [
         Admin,

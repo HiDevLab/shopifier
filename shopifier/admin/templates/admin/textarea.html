@@ -2,7 +2,7 @@
        [ngClass]="{err: form.{{ group }}_meta.{{ control }}.error}"
        {% if display %}*ngIf="{{ display }}"{% endif %}>
     {% templatetag openvariable %} form.{{ group }}_meta.{{ control }}.label {% templatetag closevariable %}
-    <textarea autosize rows="{{ rows }}" [ngFormControl]="form.{{ group }}.controls.{{ control }}" 
+    <textarea autosize rows="{{ rows }}" formControlName="{{ control }}"
         (input)="formChange=true"
         placeholder="{{ placeholder }}">
     </textarea>

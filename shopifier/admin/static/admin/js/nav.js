@@ -69,7 +69,7 @@ export var Nav = [
     {
         'icon': 'users',
         'text': 'Customers',
-        'url': '/Admin/Customers',
+        'url': '/customers',
         'uri': '/admin/customers',
         'type': 'router',
         'submenu': [],

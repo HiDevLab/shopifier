@@ -254,45 +254,41 @@ export class BaseForm {
 
 
     // for EditForm
-    onNext(self){ // call from admin header
-        self = self || this;
-        let id = self.object_id;
-        self._http
-            .get(`/admin/${self.model}s.json?since_id=${id}&limit=1&fields=id`)
+    onNext(){ // call from admin header
+        let id = this.object_id;
+        this._http
+            .get(`/admin/${this.model}s.json?since_id=${id}&limit=1&fields=id`)
             .subscribe(
                 (data) => { 
-                    if (data[`${self.model}s`].length) {
-                        self._router.navigate([self.currentLink,
-                            {'id': data[`${self.model}s`][0].id }]);
-                        self.disabledPrev = false;
-                        self.disabledNext = false;
+                    if (data[`${this.model}s`].length) {
+                        this._router.navigate([self.currentLink, data[`${this.model}s`][0].id]);
+                        this.disabledPrev = false;
+                        this.disabledNext = false;
                     }
                     else {
-                       self.disabledNext = true;
+                       this.disabledNext = true;
                     }
                 },
-                (err) =>  self.disabledNext = true,
+                (err) =>  this.disabledNext = true,
             );
     }
     // for EditForm
-    onPrev(self){ // call from admin header
-        self = self || this;
-        let id = self.object_id;
-        self._http
-            .get(`/admin/${self.model}s.json?before_id=${id}&limit=1&fields=id`)
+    onPrev(){ // call from admin header
+        let id = this.object_id;
+        this._http
+            .get(`/admin/${this.model}s.json?before_id=${id}&limit=1&fields=id`)
             .subscribe(
                 (data) => {
-                    if (data[`${self.model}s`].length) {
-                        self._router.navigate([self.currentLink,
-                            {'id': data[`${self.model}s`][0].id }]);
+                    if (data[`${this.model}s`].length) {
+                        self._router.navigate([self.currentLink, data[`${this.model}s`][0].id]);
                         self.disabledNext = false;
                         self.disabledPrev = false;
                     }
                     else {
-                       self.disabledPrev = true;
+                       this.disabledPrev = true;
                     }
                 },
-                (err) => self.disabledPrev = undefined,
+                (err) => this.disabledPrev = undefined,
             );
     }
 
@@ -326,4 +322,9 @@ export class BaseForm {
             container.splice(index, count || 1);
         }
     }
+
+    onCancel() {
+        this._router.navigate([this.cancelLink]);
+    }
+
 }

@@ -739,7 +739,6 @@ export class RichTextEditor {
         AdminLeavePage,
         RichTextEditor,
     ]
-
 })
 export class AdminComponentsModule {}
 

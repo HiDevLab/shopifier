@@ -1,24 +1,23 @@
 import 'rxjs/Rx';
 
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
-        Validators, Control, ControlGroup } from 'angular2/common';
-import { Component, Pipe } from 'angular2/core';
-import { Http } from 'angular2/http'
-import { Router, RouteParams, RouteConfig,
-    ROUTER_DIRECTIVES } from 'angular2/router';
+import { CommonModule } from '@angular/common';
+import { NgModule, Component, Pipe } from '@angular/core';
+import { Http } from '@angular/http';
+import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
+    Validators } from '@angular/forms';
 
+import { AdminAuthService, AdminUtils } from './admin.auth';
 import { Admin } from './admin';
-import { BaseForm } from './admin.baseform'
-import { AdminAuthService, AdminUtils } from './admin.auth'
-import { 
-    Autosize, Popover, ArrayLengthPipe, AdminLeavePage, AdminTagsEdit
-} from './components';
+import { BaseForm } from './admin.baseform';
+import { AdminComponentsModule, Autosize, Popover, ArrayLengthPipe,
+    AdminLeavePage, AdminTagsEdit } from './components';
 
 
 @Pipe({
     name: 'province'
 })
-export class ProvincePipe{
+export class ProvincePipe {
     transform(regions, country) {
     return regions.filter((region) => {
         return region.value.substr(0, 2) === country;
@@ -26,22 +25,21 @@ export class ProvincePipe{
   }
 }
 
-//---------------------------------------------------------------------Customers
+//------------------------------------------------------------------------------AdminCustomers
 @Component({
   selector: 'main',
   templateUrl: 'templates/customer/customers.html',
-  directives: [FORM_DIRECTIVES],
 })
-export class Customers extends BaseForm {
+export class AdminCustomers extends BaseForm {
 
     static get parameters() {
-        return [[Http], [FormBuilder], [Router], [AdminAuthService],
-                [Admin], [AdminUtils]];
+        return [[Http], [FormBuilder], [Router], [AdminAuthService], [Admin], [AdminUtils]];
     }
 
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
-        super(http, formbuilder, router, auth, admin, utils);
+    constructor(http, fb, router, auth, admin, utils, routeparams) {
+        super(http, fb, router, auth, admin, utils);
     }
+
 
     ngOnInit() {
         this._admin.currentUrl();
@@ -71,7 +69,7 @@ export class Customers extends BaseForm {
     }
 
     getPaginationAfter() {
-        if (this.last_page == 1)
+        if (this.last_page === 1)
             return;
 
         this._admin.headerButtons.unshift({
@@ -86,26 +84,25 @@ export class Customers extends BaseForm {
         });
     }
 
-    onAdd(self) {
-        self._router.navigate(['NewCustomer']);
+    onAdd() {
+        this._router.navigate(['/customers/new']);
     }
     
     onEditCustomer(customer) {
         this.current_customer_index = this.customers.indexOf(customer);
-        let link = ['EditCustomer', {'id': customer.id }];
+        let link = ['/customers/', customer.id];
         this._router.navigate(link);
     }
 }
 
 
-//------------------------------------------------------------------------------CustomersNew 
+//------------------------------------------------------------------------------AdminCustomersNew 
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
-  directives: [FORM_DIRECTIVES, Autosize],
   pipes: [ProvincePipe, ArrayLengthPipe]
 })
-export class CustomersNew extends BaseForm {
+export class AdminCustomersNew extends BaseForm {
     tags = [];
     all_tags = [];
 
@@ -116,6 +113,7 @@ export class CustomersNew extends BaseForm {
 
     constructor(http, formbuilder, router, auth, admin, utils) {
         super(http, formbuilder, router, auth, admin, utils);
+        this.cancelLink = '/customers';
     }
 
     ngOnInit() {
@@ -156,8 +154,7 @@ export class CustomersNew extends BaseForm {
         if (this.tag) {
             if (this.tags.indexOf(this.tag) > -1 ) {
                 this.tooltipError = true;
-                let self = this;
-                setTimeout(()=> { self.tooltipError = false; }, 5000);
+                setTimeout(()=> { this.tooltipError = false; }, 5000);
                 return;
             }
             this.tags.push(this.tag.trim());
@@ -180,20 +177,18 @@ export class CustomersNew extends BaseForm {
         this._admin.notNavigate = true;
     }
 
-    onSave(self) {
-        self = self || this;
-
-        if(!self.groupValidate(self.form, 'customer')) return;
+    onSave() {
+        if(!this.groupValidate(this.form, 'customer')) return;
         let customer = {};
-        customer['customer'] = self.form['customer'].value;
-        customer.customer.tags = self.tags;
+        customer['customer'] = this.form['customer'].value;
+        customer.customer.tags = this.tags;
 
-        self._http
+        this._http
             .post('/admin/customers.json', customer )
             .subscribe(
-                (data) => self.saveAddress(data),
+                (data) => this.saveAddress(data),
                 (err) => {
-                    self.apiErrors(self.form, 'customer', err.json());
+                    this.apiErrors(this.form, 'customer', err.json());
                 },
             );
     }
@@ -226,42 +221,34 @@ export class CustomersNew extends BaseForm {
             .put(`/admin/customers/${c_id}/addresses/${a_id}/default.json`)
             .subscribe(
                 (data) => {
-                    let link = ['EditCustomer', {'id': customer.customer.id }];
-                    this._router.navigate(link);
+                    this._router.navigate(['customers/', customer.customer.id]);
                 },
                 (err) => {
-                    this.apiErrors(this.form, 'default_address' ,err.json());
+                    this.apiErrors(this.form, 'default_address', err.json());
                 },
             );
-    }
-
-    onCancel(self) {
-        self = self || this;
-        self._router.navigate(['Customers']);
     }
 }
 
 
-//------------------------------------------------------------------------------CustomersEdit
+//------------------------------------------------------------------------------AdminCustomersEdit
 @Component({
     selector: 'main',
     templateUrl : 'templates/customer/edit.html',
-    directives: [
-        FORM_DIRECTIVES, Autosize, Popover, AdminTagsEdit, AdminLeavePage
-    ],
     pipes: [ProvincePipe]
 })
-export class CustomersEdit extends BaseForm{
+export class AdminCustomersEdit extends BaseForm{
     static get parameters() {
-        return [[Http], [FormBuilder], [Router], [AdminAuthService],
-                [Admin], [AdminUtils], [RouteParams]];
+        return [[Http], [FormBuilder], [Router], [ActivatedRoute],
+                [AdminAuthService], [Admin], [AdminUtils]];
     }
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
-        super(http, formbuilder, router, auth, admin, utils);
-        this._routeParams = routeparams;
-        this.object_id = this._routeParams.get('id');
+
+    constructor(http, fb, router, params, auth, admin, utils) {
+        super(http, fb, router, auth, admin, utils);
+        this.object_id = params.snapshot.params.id;
         this.model = 'customer';
-        this.currentLink = 'EditCustomer';
+        this.currentLink = '/customers/';
+        this.cancelLink = '/customers';
     }
 
     ngOnInit() {
@@ -319,42 +306,41 @@ export class CustomersEdit extends BaseForm{
         }
     }
 
-    onSaveNote(self) {
-        self = self || this;
+    onSaveNote() {
         let customer = {
             'customer': {
-                'note':self.form.customer.controls.note.value,
-                'tags':self.tags
+                'note':this.form.customer.controls.note.value,
+                'tags':this.tags
             }
         };
-        self._http
-            .patch(`/admin/customers/${self.object_id}.json`, customer)
+        this._http
+            .patch(`/admin/customers/${this.object_id}.json`, customer)
             .subscribe(
                 (data) => {
-                    self.getCustomerAfter(data);
-                    self.getAPIData(['/admin/customers/tags.json'],
+                    this.getCustomerAfter(data);
+                    this.getAPIData(['/admin/customers/tags.json'],
                                     ['getTagsAfter']);
                 },
-                (err) => self.apiErrors(self.form, 'customer', err.json()),
+                (err) => this.apiErrors(this.form, 'customer', err.json()),
             );
-            self.formChange = false;
-            self._admin.notNavigate = false;
+            this.formChange = false;
+            this._admin.notNavigate = false;
     }
 
-    saveTags(self) {
-        let customer = {'customer': {'tags':self.tags}};
-        self._http
-            .patch(`/admin/customers/${self.object_id}.json`, customer)
+    saveTags() {
+        let customer = {'customer': {'tags': this.tags}};
+        this._http
+            .patch(`/admin/customers/${this.object_id}.json`, customer)
             .subscribe(
                 (data) => { 
-                    self.getCustomerAfter(data);
-                    self.getAPIData(['/admin/customers/tags.json'],
+                    this.getCustomerAfter(data);
+                    this.getAPIData(['/admin/customers/tags.json'],
                                     ['getTagsAfter']);
                 },
-                (err) => self.apiErrors(self.form, 'customer', err.json()),
+                (err) => this.apiErrors(this.form, 'customer', err.json()),
             );
-        self.formChange = false;
-        self._admin.notNavigate = false;
+        this.formChange = false;
+        this._admin.notNavigate = false;
     }
 
     onEditCustomer() {
@@ -376,7 +362,7 @@ export class CustomersEdit extends BaseForm{
                     this.getCustomerAfter(data);
                     this.showEdit = false;
                 },
-                (err) => self.apiErrors(self.form, 'customer', err.json()),
+                (err) => this.apiErrors(this.form, 'customer', err.json()),
             );
     }
 
@@ -438,7 +424,7 @@ export class CustomersEdit extends BaseForm{
                     this.addFormAfter();
                     this.showEditAddress = false;
                 },
-                (err) => self.apiErrors(self.form, 'customer', err.json()),
+                (err) => this.apiErrors(this.form, 'customer', err.json()),
             );
     }
 
@@ -454,7 +440,7 @@ export class CustomersEdit extends BaseForm{
                     this.addFormAfter();
                     this.showEditAddress = false;
                 },
-                (err) => self.apiErrors(self.form, 'customer', err.json()),
+                (err) => this.apiErrors(this.form, 'customer', err.json()),
             );
     }
 
@@ -468,7 +454,7 @@ export class CustomersEdit extends BaseForm{
                     this.addFormAfter();
                     this.showEditAddress = false;
                 },
-                (err) => self.apiErrors(self.form, 'customer', err.json()),
+                (err) => this.apiErrors(this.form, 'customer', err.json()),
             );
     }
 
@@ -477,8 +463,25 @@ export class CustomersEdit extends BaseForm{
         this._http
             .delete(url)
             .subscribe(
-                () => this._router.navigate(['Customers']),
-                (err) => self.apiErrors(self.form, 'customer', err.json()),
+                () => this.onCancel(),
+                (err) => this.apiErrors(this.form, 'customer', err.json()),
             );
     }
 }
+
+//------------------------------------------------------------------------------AdminCustomersModule
+@NgModule({
+    imports: [
+        FormsModule, ReactiveFormsModule, CommonModule,
+        AdminComponentsModule,
+    ],
+    providers: [
+    ],
+    declarations: [
+        AdminCustomers,
+        AdminCustomersNew,
+        AdminCustomersEdit,
+        ProvincePipe
+    ]
+})
+export class AdminCustomersModule {}

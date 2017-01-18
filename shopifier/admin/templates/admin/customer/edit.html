@@ -2,7 +2,7 @@
 <div class="rows pt20 center" *ngIf="form.customer && form.default_address && api_data.customer">
     <div class="row w16 center pl30">
         <div class="rows w16 ml30">
-            <div class="form pb10">
+            <form class="form pb10" [formGroup]="form.customer">{% csrf_token %}
                 <div class="row mb10 p20">
                     <span class="fa-stack fa-lg color-avatar font48">
                       <i class="fa fa-circle fa-stack-2x"></i>
@@ -16,13 +16,13 @@
                 </div>
                 <div class="input-section">
                     <label class="input-box input">
-                        <textarea autosize rows="1" [ngFormControl]="form.customer.controls.note" 
+                        <textarea autosize rows="1" formControlName="note" 
                         (input)="onFormChange()"
                         placeholder="Add a note about {% verbatim %}{{ api_data.customer.first_name }}{% endverbatim %}">
                         </textarea>
                     </label>
                 </div>
-            </div>
+            </form>
             <div class="form mt20 p20" *ngIf="!form.odrers">
                 <h2><strong>Recent orders</strong></h2>
                 <div class="rows center p15">
@@ -121,8 +121,8 @@
     </div>
  </div>
 
- <modal-form *ngIf="form.customer && showEdit">
-    <form class="input-form" novalidate>
+ <div class="modal-form"  *ngIf="form.customer && showEdit">
+    <form class="input-form" [formGroup]="form.customer" novalidate>
         {% with group='customer' change='customerChange=true' %}
         <div class="modal-header">
             <h2>Edit customer</h2>
@@ -148,10 +148,10 @@
         </div>
         {% endwith %}
     </form>
-</modal-form>
+</div>
 
-<modal-form *ngIf="form.default_address && showEditAddress">
-    <form class="input-form" novalidate>
+<div class="modal-form" *ngIf="form.default_address && showEditAddress">
+    <form class="input-form" [formGroup]="form.default_address" novalidate>{% csrf_token %}
         {% with group='default_address' change='changeAddress=true' %}
         <div class="modal-header">
             <h2 *ngIf="current_address.id" >Edit address</h2>
@@ -169,8 +169,8 @@
         <div class="input-section">
             <label class="input-box input select">
                 Coutry
-                <select [ngFormControl]="form.default_address.controls.country_code"
-                (change)="form.default_address.controls.province.updateValue(''); changeAddress=true">
+                <select formControlName="country_code"
+                (change)="form.default_address.controls.province.setValue(''); changeAddress=true">
                     <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
                             {% verbatim %}{{ country.display_name }}{% endverbatim %}
                     </option>
@@ -179,7 +179,7 @@
             <label class="input input-box select" *ngIf="(form.default_address_meta.province_code.choices | 
                                     province:form.default_address.controls.country_code.value).length>0"> 
                 Region
-                <select [ngFormControl]="form.default_address.controls.province_code"
+                <select formControlName="province_code"
                 (change)="changeAddress=true">
                     <option *ngFor="let region of form.default_address_meta.province_code.choices | 
                                     province:form.default_address.controls.country_code.value" [value]="region.value">
@@ -200,7 +200,7 @@
         </div>
         {% endwith %}
     </form>
-</modal-form>
+</div>
 
 
 <leave-page 

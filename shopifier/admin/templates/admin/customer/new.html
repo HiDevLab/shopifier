@@ -4,7 +4,7 @@
         <div class="col pt20">
              <h2><strong>Customer overview</strong></h2>
         </div>
-        <form class="form vw8 pt15 pb10" *ngIf="form.customer">
+        <form class="form vw8 pt15 pb10" *ngIf="form.customer" [formGroup]="form.customer">{% csrf_token %}
         {% with group='customer' %}
             {% include "admin/input-section.html" with group="customer" control1="first_name" control2="last_name" %}
             {% include "admin/input-section.html" with group="customer" control1="email" %}
@@ -26,7 +26,7 @@
             <p></p>
             The primary address of this customer.
         </div>
-        <form class="form vw8 pt15 pb10" *ngIf="form.default_address">
+        <form class="form vw8 pt15 pb10" *ngIf="form.default_address" [formGroup]="form.default_address">{% csrf_token %}
         {% with group='default_address' %}
             {% include 'admin/input-section.html' with control1='first_name' control2='last_name' %}
             {% include 'admin/input-section.html' with control1='company' control2='phone' %}
@@ -36,8 +36,8 @@
             <div class="input-section">
                 <label class="input-box input select">
                     Coutry
-                    <select [ngFormControl]="form.default_address.controls.country_code"
-                    (change)="form.default_address.controls.province.updateValue(''); formChange=true">
+                    <select formControlName="country_code"
+                    (change)="form.default_address.controls.province.setValue(''); formChange=true">
                         <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
                                 {% verbatim %}{{ country.display_name }}{% endverbatim %}
                         </option>
@@ -46,14 +46,14 @@
                 <label class="input input-box select" *ngIf="(form.default_address_meta.province_code.choices | 
                                         province:form.default_address.controls.country_code.value).length>0"> 
                     Region
-                    <select [ngFormControl]="form.default_address.controls.province_code"
+                    <select formControlName="province_code"
                     (change)="formChange=true">
                         <option *ngFor="let region of form.default_address_meta.province_code.choices | 
                                         province:form.default_address.controls.country_code.value" [value]="region.value">
                                 {% verbatim %}{{ region.display_name }}{% endverbatim %}
                         </option>
                     </select>
-                </label>   
+                </label>
                 {% include "admin/input.html" with control="province" display="(form.default_address_meta.province_code.choices | province:form.default_address.controls.country_code.value).length==0" %}
             </div>
         {% endwith %} 
@@ -68,7 +68,7 @@
             <p></p>
             Enter any extra notes relating to this customer.
         </div>
-        <form class="form vw8 pt15 pb10" *ngIf="form.customer">
+        <form class="form vw8 pt15 pb10" *ngIf="form.customer" [formGroup]="form.customer">{% csrf_token %}
             <div class="input-section">
                 {% include "admin/textarea.html" with group="customer" control="note" placeholder="Add a note to this customer…" rows="1" %}
             </div>
@@ -83,7 +83,7 @@
             <p></p>
             Tags can be used to categorize customers into groups.
         </div>
-        <form class="form vw8 p20 pb10" *ngIf="form.customer">
+        <form class="form vw8 p20 pb10" *ngIf="form.customer">{% csrf_token %}
             <label class="input-tags"
                 [ngClass]="{err: form.customer_meta.tags.error}">
                 Tags
@@ -98,7 +98,7 @@
                             [ngClass]="{hide: !tooltipError}">
                             Oops, you've already used this tag.
                         </div>
-                        <input [(ngModel)]="tag"
+                        <input [(ngModel)]="tag" name="tag"
                         (change)="changeTag()"
                         (keydown)="onKeyUpTag($event)"
                         (focus)="inputtagsFocus=true"

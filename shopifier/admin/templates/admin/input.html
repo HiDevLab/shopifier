@@ -2,7 +2,7 @@
        [ngClass]="{err: form.{{ group }}_meta.{{ control }}.error}"
        {% if display %}*ngIf="{{ display }}"{% endif %}>
     {% templatetag openvariable %} form.{{ group }}_meta.{{ control }}.label {% templatetag closevariable %}
-    <input [(ngModel)]="form.{{ group }}.controls.{{ control }}" 
+    <input formControlName="{{ control }}"
     (input)="{% if change %}{{ change }}{% else %}formChange=true{% endif %};"
     placeholder="{{ placeholder }}">
 </label>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule, Component, DynamicComponentLoader, ViewContainerRef } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -84,11 +84,12 @@ export class AdminAccountProfile extends BaseForm {
                 [AdminAuthService], [Admin], [AdminUtils]];
     }
 
-    constructor(http, fb, router, params, auth, admin, utils, routeparams) {
+    constructor(http, fb, router, params, auth, admin, utils) {
         super(http, fb, router, auth, admin, utils);
         this.object_id = params.snapshot.params.id;
         this.model = 'user';
         this.currentLink = '/settings/account';
+        this.cancelLink = '/settings/account';
     }
 
     ngOnInit() {
@@ -307,7 +308,6 @@ export class AdminAccountProfile extends BaseForm {
         this._http.get(`/api/admin/${id}/session/`)
             .subscribe((data) => {
                 this.sessions = data;
-                console.log(data);
             }
         );
     }
@@ -321,14 +321,10 @@ export class AdminAccountProfile extends BaseForm {
         let d = new Date(date);
         return d;
     }
-
-    onCancel() {
-        this._router.navigate(['/settings/account']);
-    }
 }
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminAccountDeleteSessions
 @Component({
     selector : 'sessions',
     templateUrl: 'templates/account/del-sessions.html',
