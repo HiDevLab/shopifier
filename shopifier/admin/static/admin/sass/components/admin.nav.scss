@@ -222,12 +222,13 @@ footer {
     justify-content: center;
     position: fixed;
     overflow-y: hidden;
+    z-index: 100;
     &.hidden {
-        transition-duration: 300ms;
+        transition-duration: 400ms;
         height: 0;
     }
     &.show {
-        transition-duration: 300ms;
+        transition-duration: 400ms;
         height: 80px;
     }
 }
