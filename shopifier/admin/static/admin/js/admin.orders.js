@@ -33,16 +33,6 @@ export class AdminOrdersDrafts {
 }
 
 
-//------------------------------------------------------------------------------AdminOrdersTransfers
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
-export class AdminOrdersTransfers {
-    component = 'Transfers';
-    static get parameters() {return [[Admin]];}
-    constructor(admin) {this._admin = admin;}
-    ngOnInit() {this._admin.currentUrl();}
-}
-
-
 //------------------------------------------------------------------------------AdminOrdersModule
 @NgModule({
     imports: [
@@ -52,7 +42,6 @@ export class AdminOrdersTransfers {
     providers: [
     ],
     declarations: [
-        AdminOrdersTransfers,
         AdminOrdersDrafts,
         AdminOrdersOrders,
     ]

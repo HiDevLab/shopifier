@@ -17,7 +17,7 @@ import { AdminCustomersModule, AdminCustomers,
     AdminCustomersNew, AdminCustomersEdit } from './admin.customers';
 import { AdminComponentsModule } from './components';
 import { AdminOrdersModule, AdminOrdersOrders, AdminOrdersDrafts,
-    AdminOrdersTransfers } from './admin.orders';
+    } from './admin.orders';
 import { AdminSettingsModule, AdminSettingsGeneral, AdminSettingsCheckout,
     AdminAccount, AdminAccountProfile } from './admin.settings';
 
@@ -49,7 +49,6 @@ const routes = [
         { path : 'orders', redirectTo: '/orders/orders', pathMatch: 'full'},
         { path : 'orders/orders', component : AdminOrdersOrders },
         { path : 'orders/drafts', component : AdminOrdersDrafts },
-        { path : 'orders/transfers', component : AdminOrdersTransfers },
     ]},
 ]
 export const routing = RouterModule.forRoot(routes);

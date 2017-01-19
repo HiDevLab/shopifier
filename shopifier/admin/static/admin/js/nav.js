@@ -22,7 +22,7 @@ export var Nav = [
                  'icon': 'calendar-check-o',
                  'text': 'Orders',
                  'url': '/orders/orders',
-                 'uri': '/admin/orders/orders',
+                 'uri': '/admin/orders',
              },
              {
                  'icon': 'calendar-check-o',
@@ -30,12 +30,6 @@ export var Nav = [
                  'url': '/orders/drafts',
                  'uri': '/admin/orders/drafts',
              },
-             {
-                 'icon': 'calendar-check-o',
-                 'text': 'Transfers',
-                 'url': '/orders/transfers',
-                 'uri': '/admin/orders/drafts',
-             }
         ],
     },
     {
@@ -46,22 +40,22 @@ export var Nav = [
              {
                  'icon': 'tag',
                  'text': 'Products',
-                 'url': '/Admin/Products',
+                 'url': '/products',
                  'uri': '/admin/products',
                  'type': 'router',
              },
              {
                  'icon': 'truck',
                  'text': 'Transfers',
-                 'url': '/Admin/Transfers',
+                 'url': '/transfers',
                  'uri': '/admin/transfers',
                  'type': 'router',
              },
              {
                  'icon': 'tag',
                  'text': 'Collections',
-                 'url': '/Admin/Collections',
-                 'uri': '/admin/products/collections',
+                 'url': '/collections',
+                 'uri': '/admin/collections',
                  'type': 'component',
              }
         ],
