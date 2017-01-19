@@ -58,6 +58,45 @@ export class AdminUtils {
         return ret;
     }
 
+    msgBox(vcr, title, text) {
+        let ret = new Promise((resolve, reject) => {
+            @Component({ 
+                selector: 'msgbox', 
+                templateUrl: 'templates/msgbox.html' 
+            })
+            class DynamicHtmlComponent {
+                constructor() {
+                    this.title = title;
+                    this.text = text;
+                }
+                resolve(result) {
+                    component.destroy();
+                    resolve();
+                }
+                reject(reason) {
+                    component.destroy();
+                    reject();
+                }
+            };
+
+            @NgModule({
+                imports: [CommonModule],
+                declarations: [DynamicHtmlComponent]
+            })
+            class DynamicHtmlModule {}
+
+            let component = undefined;
+            this.compiler.compileModuleAndAllComponentsAsync(DynamicHtmlModule)
+                .then((factory) => {
+                    let compFactory = factory.componentFactories.find(
+                        x => x.componentType === DynamicHtmlComponent);
+                    component = vcr.createComponent(compFactory, 0);
+            });
+        });
+        return ret;
+    }
+
+
 
     emailValidator(control) {
         if (control.value && control.value

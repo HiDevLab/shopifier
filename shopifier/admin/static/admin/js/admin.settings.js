@@ -326,7 +326,10 @@ export class AdminAccountProfile extends BaseForm {
     }
 
     expireSessions() {
-        this._utils.openDialog(this, this._vcr, 'templates/account/expire-sessions.html')
+        this._utils.msgBox(this._vcr, 
+                `Expire Current User's Sessions`, 
+                `Are you sure you want to force ${this.user.full_name} to re-login?`
+            )
             .then(
                 () => {
                     this._http
@@ -446,7 +449,10 @@ export class AdminAccount {
     }
 
     deleteSessions() {
-        this._utils.openDialog(this, this._vcr, 'templates/account/delete-all-sessions.html')
+        this._utils.msgBox(this._vcr, 
+                'Expire Staff Users Sessions', 
+                'Are you sure you want to force staff users to re-login?'
+            )
             .then(
                 () => {
                     this._http.delete('/api/sessions-expire/')
