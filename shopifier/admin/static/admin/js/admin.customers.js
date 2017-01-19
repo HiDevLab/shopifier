@@ -1,11 +1,11 @@
 import 'rxjs/Rx';
 
 import { CommonModule } from '@angular/common';
-import { NgModule, Component, Pipe, ViewContainerRef } from '@angular/core';
-import { Http } from '@angular/http';
-import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
     Validators } from '@angular/forms';
+import { Http } from '@angular/http';
+import { NgModule, Component, Pipe, ViewContainerRef } from '@angular/core';
+import { Router, Routes, ActivatedRoute } from '@angular/router';
 
 import { AdminAuthService, AdminUtils } from './admin.auth';
 import { Admin } from './admin';

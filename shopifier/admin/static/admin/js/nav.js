@@ -21,19 +21,19 @@ export var Nav = [
              {
                  'icon': 'calendar-check-o',
                  'text': 'Orders',
-                 'url': '/Admin/Orders/Orders',
+                 'url': '/orders/orders',
                  'uri': '/admin/orders/orders',
              },
              {
                  'icon': 'calendar-check-o',
                  'text': 'Drafts',
-                 'url': '/Admin/Orders/Drafts',
+                 'url': '/orders/drafts',
                  'uri': '/admin/orders/drafts',
              },
              {
                  'icon': 'calendar-check-o',
                  'text': 'Transfers',
-                 'url': '/Admin/Orders/Transfers',
+                 'url': '/orders/transfers',
                  'uri': '/admin/orders/drafts',
              }
         ],

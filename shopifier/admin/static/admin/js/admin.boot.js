@@ -16,6 +16,8 @@ import { AdminAuthModule, SuperHttp, CanActivateAdmin,
 import { AdminCustomersModule, AdminCustomers,
     AdminCustomersNew, AdminCustomersEdit } from './admin.customers';
 import { AdminComponentsModule } from './components';
+import { AdminOrdersModule, AdminOrdersOrders, AdminOrdersDrafts,
+    AdminOrdersTransfers } from './admin.orders';
 import { AdminSettingsModule, AdminSettingsGeneral, AdminSettingsCheckout,
     AdminAccount, AdminAccountProfile } from './admin.settings';
 
@@ -44,6 +46,10 @@ const routes = [
         { path : 'customers', component : AdminCustomers },
         { path : 'customers/new', component : AdminCustomersNew, },
         { path : 'customers/:id', component : AdminCustomersEdit, canDeactivate: [CanDeactivateGuard] },
+        { path : 'orders', redirectTo: '/orders/orders', pathMatch: 'full'},
+        { path : 'orders/orders', component : AdminOrdersOrders },
+        { path : 'orders/drafts', component : AdminOrdersDrafts },
+        { path : 'orders/transfers', component : AdminOrdersTransfers },
     ]},
 ]
 export const routing = RouterModule.forRoot(routes);
@@ -55,7 +61,8 @@ export const routing = RouterModule.forRoot(routes);
         AdminAuthModule,
         AdminComponentsModule,
         AdminSettingsModule,
-        AdminCustomersModule
+        AdminCustomersModule,
+        AdminOrdersModule
     ],
     providers: [
         Admin,

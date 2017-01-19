@@ -1,16 +1,19 @@
-import { Component, DynamicComponentLoader, ViewContainerRef } from 'angular2/core';
-import { Router, RouteParams, RouteConfig, ROUTER_DIRECTIVES,  } from 'angular2/router'
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, Validators, Control } from 'angular2/common';
-import { Http } from 'angular2/http'
-import 'rxjs/Rx'
+import 'rxjs/Rx';
 
-import { AdminAuthService, AdminUtils } from './admin.auth'
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
+    Validators } from '@angular/forms';
+import { Http } from '@angular/http';
+import { NgModule, Component, Pipe, ViewContainerRef } from '@angular/core';
+import { Router, Routes, ActivatedRoute } from '@angular/router';
+
 import { Admin } from './admin'
+import { AdminAuthService, AdminUtils } from './admin.auth'
+import { BaseForm } from './admin.baseform';
+import { AdminComponentsModule, AdminLeavePage } from './components';
 
-import { AdminLeavePage } from './components';
 
-
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminOrdersOrders
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
 export class AdminOrdersOrders {
     component = 'Orders';
@@ -20,7 +23,7 @@ export class AdminOrdersOrders {
 }
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminOrdersDrafts
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
 export class AdminOrdersDrafts {
     component = 'Drafts';
@@ -30,7 +33,7 @@ export class AdminOrdersDrafts {
 }
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminOrdersTransfers
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
 export class AdminOrdersTransfers {
     component = 'Transfers';
@@ -40,36 +43,18 @@ export class AdminOrdersTransfers {
 }
 
 
-//------------------------------------------------------------------------------ 
-@Component({
-  selector: 'main',
-  template : '<router-outlet></router-outlet>',
-  directives: [ROUTER_DIRECTIVES],
+//------------------------------------------------------------------------------AdminOrdersModule
+@NgModule({
+    imports: [
+        FormsModule, ReactiveFormsModule, CommonModule,
+        AdminComponentsModule,
+    ],
+    providers: [
+    ],
+    declarations: [
+        AdminOrdersTransfers,
+        AdminOrdersDrafts,
+        AdminOrdersOrders,
+    ]
 })
-@RouteConfig([
-     {
-         path : '/',
-         redirectTo: ['Orders'],
-     }, 
-
-    {
-        path : '/orders',
-        name : 'Orders',
-        component : AdminOrdersOrders
-    },
-
-    {
-        path : '/drafts',
-        name : 'Drafts',
-        component : AdminOrdersDrafts
-    },
-
-    {
-        path : '/transfers',
-        name : 'Transfers',
-        component : AdminOrdersTransfers
-    },
-
-])
-export class AdminOrders {
-}
+export class AdminOrdersModule {}
