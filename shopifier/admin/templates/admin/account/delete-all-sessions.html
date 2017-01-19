@@ -1,0 +1,15 @@
+<div class="modal-form" *ngIf="parent">
+    <form class="input-form up">{% csrf_token %}
+        <div class="modal-header">
+            <h2>Expire User Sessions</h2>
+            <a class="cross fa fa-times" (click)="reject()"></a>
+        </div>
+         <div class="row ph20 pv10">
+            Are you sure you want to force all users to re-login?
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="reject()">Cancel</a>
+            <a class="btn btn-blue" (click)="resolve()">Yes</a>
+        </div>
+    </form>
+</div>

@@ -68,7 +68,7 @@
         <div class="card pb20">
             <div class="row p20 pb0">
                 <h3 class="bold">Staff accounts</h3>
-                <a *ngIf="currentUser.is_admin" class="ref ml-auto">Log out all staff accounts</a>
+                <a *ngIf="currentUser.is_admin" class="ref ml-auto" (click)="deleteSessions()">Log out all staff accounts</a>
                 <a *ngIf="currentUser.is_admin" class="ref ml20" (click)="goInvite()">Add staff account</a>
             </div>
             <div class="row p20 pb0" *ngFor="let user of (users | boolean:'is_admin':false)">

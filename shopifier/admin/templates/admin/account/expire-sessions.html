@@ -1,0 +1,15 @@
+<div *ngIf="parent" class="modal-form">
+    <form class="input-form up">{% csrf_token %}
+        <div class="modal-header">
+            <h2>Expire Current User's Sessions </h2>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="reject()"></a>
+        </div>
+         <div class="row ph20 pv10">
+            Are you sure you want to force<strong> {% verbatim %}{{ parent.user.first_name + ' ' + parent.user.last_name  }}{% endverbatim %}</strong> to re-login?
+        </div>
+        <div class="modal-footer">
+            <a class="btn mr10" (click)="reject()">Cancel</a>
+            <a class="btn btn-blue" (click)="resolve()">Yes</a>
+        </div>
+    </form>
+</div>

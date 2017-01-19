@@ -64,20 +64,12 @@ export class AdminAccountProfile extends BaseForm {
     
     emailChange = false;
     passwordChange = false;
-    confirmPassword = false;
-    expireSessions = false;
-    showSetAdmin = false;
 
-    log_out_mobile = 0;
-    admin_password = '';
-    
     isUser = false;    //currentUser is this user
     isAdmin = false;    //currentUser is admin
 
     full_permissions = 1;
     permissions = [];
-
-    delete_user = null;
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
@@ -87,7 +79,7 @@ export class AdminAccountProfile extends BaseForm {
     constructor(http, fb, router, params, auth, admin, utils, vcr) {
         super(http, fb, router, auth, admin, utils, vcr);
         this.object_id = params.snapshot.params.id;
-        this.vcr = vcr;
+        this._vcr = vcr;
         this.model = 'user';
         this.currentLink = '/settings/account';
         this.cancelLink = '/settings/account';
@@ -122,9 +114,6 @@ export class AdminAccountProfile extends BaseForm {
         this.new_avatar = null;
         this.emailChange = false;
         this.passwordChange = false;
-        this.confirmPassword = false;
-        this.expireSessions = false;
-        this.showSetAdmin = false;
 
         this.isUser = this.user.id == this._auth._currentUser.id;// no correct
         this.isAdmin = this._auth._currentUser.is_admin;
@@ -199,10 +188,10 @@ export class AdminAccountProfile extends BaseForm {
                     if(permission.select) {
                         out.push(permission.api);
                     }
-                });                    if (this.isUser) {
-                        this._admin.refreshCurrentUser();
-                    }
-
+                });
+                if (this.isUser) {
+                    this._admin.refreshCurrentUser();
+                }
             });
         }
         return out;
@@ -210,25 +199,26 @@ export class AdminAccountProfile extends BaseForm {
 
     onSave() {
         if (
-                this.form.user.controls['email'].value != this.user.email || 
-                this.form.user.controls['password1'].value ||
-                this.form.user.controls['password2'].value
+                this.form.user.value['email'] != this.user.email || 
+                this.form.user.value['password1'] ||
+                this.form.user.value['password2']
             ){
-                this.admin_password = '';
-                this.confirmPassword = true;
+                this._utils.openDialog(this, this._vcr, 'templates/account/confirm-password.html')
+                    .then(
+                        (res) => this.onSaveAdmin(res.password, res.log_out_mobile),
+                        () => {}
+                );
         }
         else {
             this.onSaveAdmin();
         }
     }
     
-    onSaveAdmin() { // admin permissions
+    onSaveAdmin(admin_password, log_out_mobile) { // admin permissions
         if(!this.groupValidate(this.form, 'user')) return;
         let data = Object.assign({}, this.form.user.value);
-        if (
-                this.form.user.controls['password1'].value ||
-                this.form.user.controls['password2'].value) {
-            data['admin_password'] = this.admin_password;
+        if (data['password1'] || data['password2']) {
+            data['admin_password'] = admin_password;
         } else {
             delete data['admin_password'];
             delete data['password1'];
@@ -249,29 +239,31 @@ export class AdminAccountProfile extends BaseForm {
                         this._admin.refreshCurrentUser();
                     }
                     this.getUserAfter(data);
+                    this.formChange = false;
+                    this._admin.notNavigate = false;
+                    this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been changed`);
                 },
                 (err) => this.apiErrors(this.form, 'user', err.json()), 
             );
-            this.formChange = false;
-            this._admin.notNavigate = false;
     }
 
     setAdmin() {
-        this.showSetAdmin = true;
-    }
-
-    addOwnership() {
-        this.user.is_admin = !this.user.is_admin;
-        let data = {is_admin: this.user.is_admin, permissions: ['full']};
-        this._http.patch(`/admin/users/${this.object_id}.json`, { user: data })
-            .subscribe(
-                (data) => {
-                    this.getUserAfter(data);
-                },
-                (err) => {
-                    this.apiErrors(this.form, 'user', err.json());
-                }
-            );
+       this._utils.openDialog(this, this._vcr, 'templates/account/set-admin.html')
+            .then(
+            () => {
+                this.user.is_admin = !this.user.is_admin;
+                let data = {is_admin: this.user.is_admin, permissions: ['full']};
+                this._http.patch(`/admin/users/${this.object_id}.json`, { user: data })
+                    .subscribe(
+                        (data) => {
+                            this.getUserAfter(data);
+                        },
+                        (err) => {
+                            this.apiErrors(this.form, 'user', err.json());
+                        }
+                    );
+            }, () => {}
+        );
     }
 
     upLoadAvatar(event) {
@@ -306,7 +298,7 @@ export class AdminAccountProfile extends BaseForm {
 //         ref.changeDetectorRef.detectChanges();
 // @NgModule({ entryComponents: [ AdminAccountDelete,]}]
 
-           this._utils.openDialog(this, this.vcr, 'templates/account/delete.html')
+           this._utils.openDialog(this, this._vcr, 'templates/account/delete.html')
                 .then(
                 (result) => {
                     this._http.delete(`/api/admin/${this.user.id}/`)
@@ -332,47 +324,24 @@ export class AdminAccountProfile extends BaseForm {
         );
     }
 
-    deleteSessions() {
-        this._http.delete(`/api/admin/${this.user.id}/deletesession/`)
-            .subscribe(() => this.getSessions(this.user.id));
+    expireSessions() {
+        this._utils.openDialog(this, this._vcr, 'templates/account/expire-sessions.html')
+            .then(
+                () => {
+                    this._http
+                        .delete(`/api/admin/${this.user.id}/deletesession/`)
+                        .subscribe(() => { 
+                            this.getSessions(this.user.id);
+                            this._admin.footer(`${this.user.first_name}'s sessions have been expiered`);
+                        });
+                }, () => {}
+        );
     }
 
     setDate (date) {
         let d = new Date(date);
         return d;
     }
-}
-
-//------------------------------------------------------------------------------AdminAccountDeleteSessions
-@Component({
-    selector : 'sessions',
-    templateUrl: 'templates/account/del-sessions.html',
-})
-export class AdminAccountDeleteSessions {
-    show = false;
-    parrent = null;
-    errors = [];
-    obj_errors = {};
-    
-    static get parameters() {
-        return [[Http], [Admin]];
-    }
-    constructor(http, admin) {
-        this._http = userRefreshhttp;
-        this._admin = admin;
-        
-    }
-    
-    goDeleteSessions() {
-        this._http.delete('/api/sessions-expire/')
-                .subscribe( () => {},
-                            () => {}, 
-                            () =>  {
-                                this.show=false;
-                                this._admin.footer('You have successfully logged out all users');
-                            } 
-                 );
-    }   
 }
 
 
@@ -439,17 +408,20 @@ export class AdminAccount {
 
 //modal
     invite_user = null;
-    delete_sessions = null;
-        
+
     static get parameters() {
-        return [[Http], [AdminAuthService], [FormBuilder], [Router], [Admin]];
+        return [[Http], [AdminAuthService], [FormBuilder], [Router], [Admin],
+                [AdminUtils], [ViewContainerRef]
+        ];
     }
      
-    constructor(http, authService, formbuilder, router, admin) {
+    constructor(http, authService, formbuilder, router, admin, utils, vcr) {
         this._http = http;
         this._router = router;
         this._auth = authService;
         this._admin = admin;
+        this._utils = utils;
+        this._vcr = vcr;
     }
 
     ngOnInit() {
@@ -460,13 +432,8 @@ export class AdminAccount {
         
         this._auth.getCurrentUser().then(data => this.currentUser = data );
         this._admin.headerButtons = [];
-//         this.dcl.loadNextToLocation(AdminAccountDeleteSessions,  this.viewContainerRef)
-//             .then((compRef)=> {
-//                 this.delete_sessions = compRef.instance;
-//                 this.delete_sessions.parrent = this; 
-//             });    
     }
-        
+
     setDate (date) {
         let d = new Date(date);
         return d;
@@ -477,10 +444,20 @@ export class AdminAccount {
         this.invite_user.cls();
     }
 
-    goDeleteSessions() {
-        this.delete_sessions.show = true;
+    deleteSessions() {
+        this._utils.openDialog(this, this._vcr, 'templates/account/delete-all-sessions.html')
+            .then(
+                () => {
+                    this._http.delete('/api/sessions-expire/')
+                        .subscribe(() => {}, () => {}, 
+                            () =>  {
+                                this._admin.footer('You have successfully logged out all users');
+                            } 
+                    );
+                }, () => {}
+        );
     }
-    
+
     goProfile(user) {
         let link;
         if (user.token && this.currentUser.is_admin) {
@@ -507,6 +484,7 @@ export class AdminSettingsGeneral {
     }
     ngOnInit() {this._admin.currentUrl();}
 }
+
 
 //------------------------------------------------------------------------------AdminSettingsCheckout
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})

@@ -149,6 +149,7 @@
                     </div>
                 </div>
             </span>
+            {% endwith %}
         </form>
     </div>
 </div>
@@ -185,7 +186,7 @@
                 </div>
                 <div class="input-section">
                     <div class="row ml10 mb10">
-                        <a class="btn" (click)="expireSessions=true">Log Out {% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</a>
+                        <a class="btn" (click)="expireSessions()">Log Out {% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</a>
                     </div>
                 </div>
             </div>
@@ -227,7 +228,7 @@
     </div>
 </span>
 
-<span *ngIf="user && isAdmin && currentUser.id!=user.id">
+<span *ngIf="user && isAdmin && !isUser">
     <div class="separator"></div>
     <div class="section-profile ">
         <div class="section-annotation">
@@ -256,42 +257,7 @@
             (click)="onSave()"> Save</a>
     </div> 
 </div>
-
-<div *ngIf="confirmPassword" class="modal-form">
-    <form class="input-form up" novalidate>{% csrf_token %}
-        <div class="modal-header">
-            <h2>
-                Please confirm your password
-            </h2>
-            <a class="cross fa fa-times" aria-hidden="true"
-              (click)="confirmPassword=false"></a>
-        </div>
-        <div class="input-section">
-             <div class="input-box">
-                <label class="input">
-                    Enter your current password to save changes to your account.
-                    <input type="password" [(ngModel)]="admin_password" name="admin_password">
-                </label>
-            </div>    
-        </div>        
-        <div class="input-section" *ngIf="passwordChange">
-             <div class="input-box">
-                <p>Changing your password will log you out of your store on all web browsers.</p>
-                <div class="input">
-                    <input type="checkbox" id="checkbox-id2" [(ngModel)]="log_out_mobile" name="log_out_mobile">
-                    <label for="checkbox-id2"><i class="fa fa-check" aria-hidden="true"></i>Also log out of your store on Shopify Mobile and/or Shopify POS</label>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a class="btn mr10"
-            (click)="confirmPassword=false">Cancel</a>
-            <a class="btn btn-blue" (click)="onSaveAdmin();confirmPassword=false">Confirm</a>
-        </div>
-        {% endwith %}
-    </form>
-</div>
-
+<!-- 
 
 <div *ngIf="expireSessions" class="modal-form">
     <form class="input-form up">{% csrf_token %}
@@ -313,14 +279,7 @@
             <a class="btn btn-blue" (click)="deleteSessions(); expireSessions=false;">Yes</a>
         </div>
     </form>
-</div>
-
-{% include "admin/account/set-admin.html" %}
-
-<!-- <account_delete
-    [parent]="this"
-    [self]="'delete_user'">
-</account_delete> -->
+</div> -->
 
  <leave-page 
     [parrent_component]="self">
