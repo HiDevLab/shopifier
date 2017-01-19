@@ -26,6 +26,7 @@ export class AdminUtils {
         let ret = new Promise((resolve, reject) => {
             @Component({ selector: 'dialog-comp', templateUrl: template})
             class DynamicHtmlComponent {
+                fields = new Array(10);
                 constructor() {
                     this.parent = parent;
                 }
@@ -38,13 +39,14 @@ export class AdminUtils {
                     component.destroy();
                     reject(reason);
                 }
-
             };
+
             @NgModule({
                 imports: [FormsModule, ReactiveFormsModule, CommonModule,],
                 declarations: [DynamicHtmlComponent]
             })
             class DynamicHtmlModule {}
+
             let component = undefined;
             this.compiler.compileModuleAndAllComponentsAsync(DynamicHtmlModule)
                 .then((factory) => {
