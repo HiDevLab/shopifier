@@ -6,7 +6,8 @@
          <div class="row ph20 pv10">{% verbatim %}{{text}}{% endverbatim %}</div>
         <div class="modal-footer">
             <a class="btn mr10" (click)="reject()">Cancel</a>
-            <a class="btn btn-blue" (click)="resolve()">Yes</a>
+            <a *ngIf="!del" class="btn btn-blue" (click)="resolve()">{% verbatim %}{{btn}}{% endverbatim %}</a>
+            <a *ngIf="del" class="btn btn-delete" (click)="resolve()">{% verbatim %}{{btn}}{% endverbatim %}</a>
         </div>
     </form>
 </div>

@@ -1,7 +1,7 @@
 import 'rxjs/Rx';
 
 import { CommonModule } from '@angular/common';
-import { NgModule, Component, Pipe } from '@angular/core';
+import { NgModule, Component, Pipe, ViewContainerRef } from '@angular/core';
 import { Http } from '@angular/http';
 import { Router, Routes, ActivatedRoute, RouteParams } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
@@ -39,7 +39,6 @@ export class AdminCustomers extends BaseForm {
     constructor(http, fb, router, auth, admin, utils, routeparams) {
         super(http, fb, router, auth, admin, utils);
     }
-
 
     ngOnInit() {
         this._admin.currentUrl();
@@ -240,11 +239,12 @@ export class AdminCustomersNew extends BaseForm {
 export class AdminCustomersEdit extends BaseForm{
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
-                [AdminAuthService], [Admin], [AdminUtils]];
+                [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef]];
     }
 
-    constructor(http, fb, router, params, auth, admin, utils) {
+    constructor(http, fb, router, params, auth, admin, utils, vcr) {
         super(http, fb, router, auth, admin, utils);
+        this._vcr = vcr;
         this.object_id = params.snapshot.params.id;
         this.model = 'customer';
         this.currentLink = '/customers/';
@@ -286,12 +286,13 @@ export class AdminCustomersEdit extends BaseForm{
     getCustomerAfter(data) {
         this.object_id = data.customer.id;
         this.api_data = data;
+        this.customer = data.customer;
+        this.customer['full_name'] = `${data.customer.first_name} ${data.customer.last_name}`;
         this.tags = this.api_data.customer.tags; //for child
         this.setDataToControls(this.form, 'customer', this.api_data.customer);
 
-        let customer = this.api_data.customer;
         this._admin.currentUrl({
-            'url': '#', 'text': `${customer.first_name} ${customer.last_name}`
+            'url': '#', 'text': `${this.customer.full_name}`
         }, 1);
 
         this.disabledNext = undefined;
@@ -458,14 +459,25 @@ export class AdminCustomersEdit extends BaseForm{
             );
     }
 
-    onDeleteCustomer() {
-        let url = `/admin/customers/${this.object_id}.json`;
-        this._http
-            .delete(url)
-            .subscribe(
-                () => this.onCancel(),
-                (err) => this.apiErrors(this.form, 'customer', err.json()),
-            );
+    deleteCustomer() {
+        this._utils.msgBox(this._vcr, 
+                `Delete ${this.customer.full_name}`, 
+                `Are you sure you want to delete ${this.customer.full_name}? This action cannot be reversed.`,
+                'Delete customer'
+            )
+            .then(
+                () => {
+                    this._http
+                        .delete(`/admin/customers/${this.object_id}.json`)
+                        .subscribe(
+                            () => { 
+                                this.onCancel();
+                                this._admin.footer(`Customer ${this.customer.full_name} has been removed`);
+                            },
+                            (err) => this.apiErrors(this.form, 'customer', err.json()),
+                        );
+            }, () => {}
+        );
     }
 }
 

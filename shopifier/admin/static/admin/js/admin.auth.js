@@ -58,7 +58,7 @@ export class AdminUtils {
         return ret;
     }
 
-    msgBox(vcr, title, text) {
+    msgBox(vcr, title, text, btn) {
         let ret = new Promise((resolve, reject) => {
             @Component({ 
                 selector: 'msgbox', 
@@ -68,6 +68,9 @@ export class AdminUtils {
                 constructor() {
                     this.title = title;
                     this.text = text;
+                    this.btn = btn || 'Yes';
+                    this.del = !!(this.btn.toUpperCase().search('DELETE') > -1);
+                    console.log(this.btn, this.del);
                 }
                 resolve(result) {
                     component.destroy();
