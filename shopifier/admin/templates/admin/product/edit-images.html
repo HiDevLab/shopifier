@@ -56,7 +56,7 @@
     </div>
 </div>
 
-<modal-form *ngIf="showImagePreview && imagePreviewSrc">
+<div class="modal-form" *ngIf="showImagePreview && imagePreviewSrc">
     <form class="input-form" novalidate>
         <div class="preview-image">
             <img src="{% verbatim %}{{ imagePreviewSrc }}{% endverbatim %}">
@@ -65,9 +65,9 @@
             <a class="btn" (click)="showImagePreview=undefined">Done</a>
         </div>
     </form>
-</modal-form>
+</div>
 
-<modal-form *ngIf="showEditAltText && currentImage">
+<div class="modal-form" *ngIf="showEditAltText && currentImage">
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h2>Edit image alt text</h2>
@@ -78,7 +78,7 @@
                 <img src="{% verbatim %}{{ currentImage.src }}{% endverbatim %}">
             </div>
              <label class="input input-box">Image alt text
-                <input [(ngModel)]="altText">
+                <input [(ngModel)]="altText" name="alt_text">
                 <span class="color-subdued row mt10">
                     Write a brief description of this image to improve search engine optimization (SEO) and accessibility for visually impaired customers.
                 </span>
@@ -89,9 +89,9 @@
             <a class="btn btn-blue" (click)="saveAltText();">Done</a>
         </div>
     </form>
-</modal-form>
+</div>
 
-<modal-form *ngIf="showAddImageFromUrl">
+<div class="modal-form" *ngIf="showAddImageFromUrl">
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h2>Add image from URL</h2>
@@ -100,7 +100,7 @@
         {% include "admin/errorsbox.html" with errors="urlImageErrors" class="row m10 mb20" %}
         <div class="input-section">
             <label class="input input-box">Paste image URL
-                <input [(ngModel)]="imageUrl"
+                <input [(ngModel)]="imageUrl" name="image_url"
                 (input)="changeImageUrl=true"
                 placeholder="http://">
             </label>
@@ -110,10 +110,10 @@
             <a class="btn btn-blue" [ngClass]="{disabled : !changeImageUrl}" (click)="addImageFromUrl(imageUrl);">Add image</a>
         </div>
     </form>
-</modal-form>
+</div>
 
 
-<modal-form *ngIf="showDeleteImage">
+<div class="modal-form" *ngIf="showDeleteImage">
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h2>Delete this image?</h2>
@@ -129,4 +129,4 @@
             <a class="btn btn-red" (click)="deleteImage();showDeleteImage=undefined">Delete</a>
         </div>
     </form>
-</modal-form>
+</div>

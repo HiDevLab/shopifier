@@ -1,19 +1,22 @@
-import { FORM_PROVIDERS, FORM_DIRECTIVES, FormBuilder, 
-        Validators, Control, ControlGroup } from 'angular2/common';
-import { Component, Pipe } from 'angular2/core';
-import { Http } from 'angular2/http'
-import { Router, RouteParams, RouteConfig,
-            ROUTER_DIRECTIVES } from 'angular2/router';
+import 'rxjs/Rx';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
+    Validators } from '@angular/forms';
+import { Http } from '@angular/http';
+import { NgModule, Component, ViewContainerRef } from '@angular/core';
+import { Router, Routes, ActivatedRoute } from '@angular/router';
+
+import { AdminAuthService, AdminUtils } from './admin.auth';
 import { Admin } from './admin';
-import { AdminAuthService, AdminUtils } from './admin.auth'
-import { RichTextEditor,  AdminLeavePage, Popover} from './components';
-import { BaseForm } from './admin.baseform'
+import { BaseForm } from './admin.baseform';
+import { AdminComponentsModule, RichTextEditor,  AdminLeavePage, Popover
+    } from './components';
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminCollections
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
-export class AdminProductsCollections {
+export class AdminCollections {
     component = 'Collections';
     static get parameters() {return [[Admin]];}
     constructor(admin) {this._admin = admin;}
@@ -21,9 +24,9 @@ export class AdminProductsCollections {
 }
 
 
-//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------AdminTransfers
 @Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
-export class AdminProductsTransfers {
+export class AdminTransfers {
     component = 'Transfers';
     static get parameters() {return [[Admin]];}
     constructor(admin) {this._admin = admin;}
@@ -31,21 +34,21 @@ export class AdminProductsTransfers {
 }
 
 
-//------------------------------------------------------------------------------Products
+//------------------------------------------------------------------------------AdminProducts
 @Component({
   selector: 'main',
   templateUrl: 'templates/product/products.html',
-  directives: [FORM_DIRECTIVES],
 })
-export class Products extends BaseForm {
+export class AdminProducts extends BaseForm {
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [AdminAuthService],
-                [Admin], [AdminUtils]];
+                [Admin], [AdminUtils], [ViewContainerRef]];
     }
 
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
-        super(http, formbuilder, router, auth, admin, utils);
+    constructor(http, fb, router, auth, admin, utils, vcr) {
+        super(http, fb, router, auth, admin, utils);
+        this._vcr = vcr;
     }
 
     ngOnInit() {
@@ -92,24 +95,23 @@ export class Products extends BaseForm {
 //     }
 
     onAdd() {
-        this._router.navigate(['NewProduct']);
+        this._router.navigate(['products/new']);
     }
 
     onEditProduct(product) {
         this.current_product_index = this.products.indexOf(product);
-        let link = ['EditProduct', {'id': product.id }];
-        this._router.navigate(link);
+        this._router.navigate(['/products/', product.id]);
     }
 }
 
 
-//------------------------------------------------------------------------------ProductsNew(Edit) 
+//------------------------------------------------------------------------------AdminProductsNew(Edit) 
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
-  directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage, Popover],
+  directives: [RichTextEditor, AdminLeavePage, Popover],
 })
-export class ProductsNew extends BaseForm {
+export class AdminProductsNew extends BaseForm {
     container_images = undefined;
     images = [];
     api_images = [];
@@ -134,17 +136,17 @@ export class ProductsNew extends BaseForm {
     bulkCurrentImage = undefined;
 
     static get parameters() {
-        return [[Http], [FormBuilder], [Router], [AdminAuthService],
-            [Admin], [AdminUtils], [RouteParams]];
+        return [[Http], [FormBuilder], [Router], [ActivatedRoute],
+                [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef]];
     }
 
-    constructor(http, formbuilder, router, auth, admin, utils, routeparams) {
-        super(http, formbuilder, router, auth, admin, utils);
-        this._routeParams = routeparams;
-
-        this.object_id = this._routeParams.get('id');
+    constructor(http, fb, router, params, auth, admin, utils, vcr) {
+        super(http, fb, router, auth, admin, utils);
+        this._vcr = vcr;
+        this.object_id = params.snapshot.params.id;
         this.model = 'product';
-        this.currentLink = 'NewProduct';
+        this.currentLink = '/product/new';
+        this.cancelLink = '/products';
     }
 
     ngOnDestroy() {
@@ -347,10 +349,6 @@ export class ProductsNew extends BaseForm {
                     (err) => {this.apiErrors(this.form, 'product', err.json());}
                 );
         }
-    }
-
-    onCancel() {
-        this._router.navigate(['Products']);
     }
 
     onDeleteProduct() {
@@ -677,7 +675,7 @@ export class ProductsNew extends BaseForm {
         return child === parent;
     }
 
-//----------------------------------------------------------------------Variants
+//----------------------------------------------------------------------Options
      addOption() {
         let names = ['Size', 'Color', 'Material'];
         let current_names = [];
@@ -737,6 +735,24 @@ export class ProductsNew extends BaseForm {
 //         this._admin.notNavigate = true;
 //     }
 
+//----------------------------------------------------------------------Variants
+
+    deleteVariants() {
+        this.bulkVariants.forEach((variant) => {
+            let id = variant.id
+            this._http.delete(`/admin/products/${this.object_id}/variants/${id}.json`)
+                .subscribe(
+                () => {
+                    this.splice(this.variants, 'id', id);
+                    this.splice(this.api_variants, 'id', id);
+                    this.formChange = true;
+                    this._admin.notNavigate = true;
+                }, 
+                (err) => {}
+            );
+        });
+    }
+
     refreshVariants() {
         let options1 = this.options[0].values;
         let options2 = [];
@@ -790,16 +806,12 @@ export class ProductsNew extends BaseForm {
         let old_variant = {};
 
         // delete unselected variants
-        if (!this.object_id) {
-            this.variants.forEach((variant, index) => {
-                if (variant.select) {
-                    variant['position'] = index + 1;
-                    variants.push(variant);
-                }
-            });
-        } else {
-            variants = this.variants.slice(0);
-        }
+        this.variants.forEach((variant, index) => {
+            if (variant.select) {
+                variant['position'] = index + 1;
+                variants.push(variant);
+            }
+        });
         this.variants= [];
 
         variants.forEach((variant) => {
@@ -864,15 +876,17 @@ export class ProductsNew extends BaseForm {
         this.selectAllVariants = set;
     }
 
-    countSelectedVariants() {
+    getBulk() {
         this.bulkVariants = [];
         this.variants.forEach((v) => {
             if (v.select) {
                 this.bulkVariants.push(v);
-                count++
             };
         });
-        let count = this.bulkVariants.length;
+    }
+
+    countSelectedVariants() {
+        let count = this.variants.filter((v) => {return v.select;}).length;
         if (count === this.variants.length) {
             this.selectAllVariants = 1;
         } else {
@@ -939,8 +953,6 @@ export class ProductsNew extends BaseForm {
         this.bulkImagesPage--;
     }
 
-
-
     onPopover(event, popover){
         event.preventDefault();
         event.stopPropagation();
@@ -954,6 +966,7 @@ export class ProductsNew extends BaseForm {
             popover.classList.add('hide');
         }
     }
+
     hidePopovers(exclude) {
         for (let i in this.popovers) {
             if (this.popovers[i] != exclude) {
@@ -961,6 +974,7 @@ export class ProductsNew extends BaseForm {
             }
         }
     }
+
     switchPopover(popover, event) {
         let show = popover.classList.contains('hide');
         popover.classList.remove(show ? 'hide' : 'show');
@@ -976,11 +990,31 @@ export class ProductsNew extends BaseForm {
     }
 }
 
-//------------------------------------------------------------------------------ProductsEdit 
+//------------------------------------------------------------------------------AdminProductsEdit 
 @Component({
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
-  directives: [FORM_DIRECTIVES, RichTextEditor, AdminLeavePage, Popover],
+  directives: [RichTextEditor, AdminLeavePage, Popover],
 })
-export class ProductsEdit extends ProductsNew {
+export class AdminProductsEdit extends AdminProductsNew {
 }
+
+
+//------------------------------------------------------------------------------AdminProductsModule
+@NgModule({
+    imports: [
+        FormsModule, ReactiveFormsModule, CommonModule,
+        AdminComponentsModule,
+    ],
+    providers: [
+    ],
+    declarations: [
+        AdminCollections,
+        AdminTransfers,
+        AdminProducts,
+        AdminProductsNew,
+        AdminProductsEdit
+    ]
+})
+export class AdminProductsModule {}
+

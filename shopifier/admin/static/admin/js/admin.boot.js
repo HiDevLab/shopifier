@@ -18,6 +18,8 @@ import { AdminCustomersModule, AdminCustomers,
 import { AdminComponentsModule } from './components';
 import { AdminOrdersModule, AdminOrdersOrders, AdminOrdersDrafts,
     } from './admin.orders';
+import { AdminCollections, AdminTransfers, AdminProducts,
+        AdminProductsNew, AdminProductsEdit, AdminProductsModule } from './admin.products';
 import { AdminSettingsModule, AdminSettingsGeneral, AdminSettingsCheckout,
     AdminAccount, AdminAccountProfile } from './admin.settings';
 
@@ -49,7 +51,14 @@ const routes = [
         { path : 'orders', redirectTo: '/orders/orders', pathMatch: 'full'},
         { path : 'orders/orders', component : AdminOrdersOrders },
         { path : 'orders/drafts', component : AdminOrdersDrafts },
+        { path : 'products', component : AdminProducts },
+        { path : 'products/new', component : AdminProductsNew },
+        { path : 'products/:id', component : AdminProductsEdit, canDeactivate: [CanDeactivateGuard] },
+        { path : 'transfers', component : AdminTransfers },
+        { path : 'collections', component : AdminCollections },
     ]},
+
+
 ]
 export const routing = RouterModule.forRoot(routes);
 
@@ -61,7 +70,8 @@ export const routing = RouterModule.forRoot(routes);
         AdminComponentsModule,
         AdminSettingsModule,
         AdminCustomersModule,
-        AdminOrdersModule
+        AdminOrdersModule,
+        AdminProductsModule
     ],
     providers: [
         Admin,

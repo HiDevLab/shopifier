@@ -1,4 +1,4 @@
-<modal-form *ngIf="showBulkUpdateImages">
+<div class="modal-form" *ngIf="showBulkUpdateImages">
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h2>Update Images</h2>
@@ -24,9 +24,9 @@
             <a class="btn btn-blue" [ngClass]="{disabled : !bulkCurrentImage}" (click)="bulkImageSave(bulkCurrentImage)">Save</a>
         </div>
     </form>
-</modal-form>
+</div>
 
-<modal-form *ngIf="showDeleteVariants">
+<div class="modal-form" *ngIf="showDeleteVariants">
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h2 *ngIf="bulkVariants.length>1">Are you sure you want to delete the selected variants?</h2>
@@ -58,4 +58,4 @@
             <a class="btn btn-delete" (click)="deleteVariants();showDeleteVariants=undefined;">Delete</a>
         </div>
     </form>
-</modal-form>
+</div>

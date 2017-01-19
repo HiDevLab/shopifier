@@ -3,7 +3,7 @@
 <div class="rows pt20 center" *ngIf="form.product">
     <div class="row w16 left pl30">
         <div class="rows w16 ml30">
-            <div class="form pb10">
+            <form class="form pb10" [formGroup]="form.product">
                 {% with group='product' change='onFormChange()' %}
                 {% include "admin/input-section.html" with control1="title" placeholder1="Short Sleeve T-Shirt" %}
                 {% endwith %}
@@ -11,7 +11,7 @@
                     <reach-text-editor
                         [parrent_component]="self"></reach-text-editor> 
                 </div>
-            </div>
+            </form>
         </div>
     </div>
  </div>

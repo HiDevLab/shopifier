@@ -23,7 +23,7 @@
                 <div *ngIf="countSelectedVariants()[0]" class="select-bulk">
                     <div>
                         <div class="input">
-                            <input type="checkbox" id="select-bulk-variants" [(ngModel)]="selectAllVariants" (click)="selectVariants(0)">
+                            <input type="checkbox" id="select-bulk-variants" [(ngModel)]="selectAllVariants" name="select_all_variants" (click)="selectVariants(0)">
                             <label for="select-bulk-variants">
                                 <i class="fa" [ngClass]="{'fa-minus': !selectAllVariants, 'fa-check': selectAllVariants}"></i>
                             </label>
@@ -61,7 +61,7 @@
                             <tr>
                                 <th class="select">
                                      <div class="input">
-                                        <input type="checkbox" id="select-all-variants" [(ngModel)]="selectAllVariants" (click)="selectVariants(1)">
+                                        <input type="checkbox" id="select-all-variants" [(ngModel)]="selectAllVariants" name="select_all_variants2" (click)="selectVariants(1)">
                                         <label for="select-all-variants">
                                             <i class="fa fa-check" aria-hidden="true"></i>
                                         </label>
@@ -84,7 +84,7 @@
                                 [attr.data-dropzone]="true">
                                 <td class="select" [ngClass]="{hide: currentVariant==variant.id}">
                                     <span class="input">
-                                        <input type="checkbox" [attr.id]="'var-'+k" [(ngModel)]="variant.select">
+                                        <input type="checkbox" [attr.id]="'var-'+k" [(ngModel)]="variant.select" [attr.name]="'variant_select-'+k">
                                         <label [attr.for]="'var-'+k"><i class="fa fa-check backgraund-form" aria-hidden="true"></i></label>
                                     </span>
                                 </td>
@@ -97,17 +97,17 @@
                                     </span>
                                 </td>
                                 <td *ngIf="variant.option1" class="option" [ngClass]="{hide: currentVariant==variant.id}">
-                                    <input class="color-green" [(ngModel)]="variant.option1">
+                                    <input class="color-green" [(ngModel)]="variant.option1" [attr.name]="'variant_option1-'+k">
                                 </td>
                                 <td *ngIf="variant.option2" class="option" [ngClass]="{hide: currentVariant==variant.id}">
-                                    <input class="color-purple" [(ngModel)]="variant.option2">
+                                    <input class="color-purple" [(ngModel)]="variant.option2" [attr.name]="'variant_option2-'+k">
                                  </td>
                                 <td *ngIf="variant.option3"  class="option" [ngClass]="{hide: currentVariant==variant.id}">
-                                    <input class="color-orange" [(ngModel)]="variant.option3">
+                                    <input class="color-orange" [(ngModel)]="variant.option3" [attr.name]="'variant_option3-'+k">
                                 </td>
-                                <td *ngIf="inventoryManagement" [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.inventory_quantity"></td>
-                                <td [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.price"></td>
-                                <td [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.sku"></td>
+                                <td *ngIf="inventoryManagement" [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.inventory_quantity" [attr.name]="'variant_inventory_quantity-'+k"></td>
+                                <td [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.price" [attr.name]="'variant_price-'+k"></td>
+                                <td [ngClass]="{hide: currentVariant==variant.id}"><input [(ngModel)]="variant.sku" [attr.name]="'variant_sku-'+k"></td>
                                 <td [ngClass]="{hide: currentVariant==variant.id}">
                                     <a class="btn unit-left">Edit</a>
                                     <a class="btn unit-right fa fa-trash" (click)="bulkVariants=[variant];showDeleteVariants=true;"></a>
