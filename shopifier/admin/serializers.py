@@ -282,6 +282,16 @@ class UsersAPISerializer(SHPFSerializer):
 
             if data['password1'] != data['password2']:
                 raise serializers.ValidationError(err)
+
+            if (
+                'admin_password' not in data or
+                not self.context['request']
+                        .user.check_password(data['admin_password'])):
+
+                raise serializers.ValidationError(
+                    {'admin_password':
+                        _('Current password did not match records')})
+
         return super(UsersAPISerializer, self).validate(data)
 
 

@@ -483,13 +483,6 @@ class UsersAPIViewSet(SHPFViewSet):
 
     def perform_update(self, serializer):
         data = serializer.validated_data
-
-        if ('admin_password' in data and
-                not self.request.user.check_password(data['admin_password'])):
-            content = {
-                'admin_password': _('Current password did not match records')}
-            return Response(content, status=status.HTTP_400_BAD_REQUEST)
-
         serializer.save()
 
         if 'password1' in data:
