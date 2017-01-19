@@ -11,7 +11,7 @@
             <li type="disc">This action can be undone.</li>
         </ul>
         <div class="ph20">
-            Are you sure you want to granting ownership of your store to {% verbatim %}{{ parent.user.first_name + ' ' + parent.user.last_name  }}{% endverbatim %} ?
+            Are you sure you want to granting ownership of your store to {% verbatim %}{{ parent.user.full_name}}{% endverbatim %} ?
         </div>
         <div class="modal-footer">
             <a class="btn mr10" (click)="reject()">Cancel</a>
@@ -31,7 +31,7 @@
             <li type="disc">This action can be undone.</li>
         </ul>
         <div class="ph20">
-            Are you sure you want to taking away ownership of your store to {% verbatim %}{{ parent.user.first_name + ' ' + parent.user.last_name  }}{% endverbatim %} ?
+            Are you sure you want to taking away ownership of your store to {% verbatim %}{{ parent.user.full_name}}{% endverbatim %} ?
         </div>
         <div class="modal-footer">
             <a class="btn mr10" (click)="reject()">Cancel</a>

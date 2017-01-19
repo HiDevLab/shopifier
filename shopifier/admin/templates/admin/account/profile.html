@@ -9,7 +9,7 @@
                 <div class="input-box">
                     <h3> <strong>Name</strong></h3>
                     <p class="p5"></p>
-                    <h3>{% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</h3>
+                    <h3>{% verbatim %}{{user.full_name}}{% endverbatim %}</h3>
                     <p></p>
                     <h3> <strong>Email address</strong></h3>
                     <p class="p5"></p>
@@ -186,7 +186,7 @@
                 </div>
                 <div class="input-section">
                     <div class="row ml10 mb10">
-                        <a class="btn" (click)="expireSessions()">Log Out {% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %}</a>
+                        <a class="btn" (click)="expireSessions()">Log Out {% verbatim %}{{user.full_name}}{% endverbatim %}</a>
                     </div>
                 </div>
             </div>
@@ -208,7 +208,7 @@
                 <div class="input p10">
                     <input type="checkbox" [attr.id]="full_permissions-id" [(ngModel)]="full_permissions"  [ngModelOptions]="{standalone: true}"
                     (click)="onFormChange();clsPermissions();">
-                    <label [attr.for]="full_permissions-id"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}{{user.first_name + ' ' + user.last_name}}{% endverbatim %} has full permissions</label>
+                    <label [attr.for]="full_permissions-id"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}{{user.full_name}}{% endverbatim %} has full permissions</label>
                 </div>
                 <div *ngIf="!full_permissions" class="p10">
                     <div class="pv10 bold">Select the areas of admin this staff account will be able to access</div>
@@ -257,29 +257,6 @@
             (click)="onSave()"> Save</a>
     </div> 
 </div>
-<!-- 
-
-<div *ngIf="expireSessions" class="modal-form">
-    <form class="input-form up">{% csrf_token %}
-        <div class="modal-header">
-            <h2>
-                Expire Current User's Sessions
-            </h2>
-            <a class="cross fa fa-times" aria-hidden="true"
-              (click)="expireSessions=false"></a>
-        </div>
-         <div class="input-section">
-            <div class="input-box">
-                <div>Are you sure you want to force <strong>{% verbatim %}{{ user.first_name + ' ' + user.last_name  }}{% endverbatim %}</strong> to re-login?</div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a class="btn mr10"
-            (click)="expireSessions=false">Cancel</a>
-            <a class="btn btn-blue" (click)="deleteSessions(); expireSessions=false;">Yes</a>
-        </div>
-    </form>
-</div> -->
 
  <leave-page 
     [parrent_component]="self">

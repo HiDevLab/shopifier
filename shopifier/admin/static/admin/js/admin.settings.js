@@ -106,6 +106,7 @@ export class AdminAccountProfile extends BaseForm {
         this.api_data = data;
         this.setDataToControls(this.form, 'user', this.api_data.user);
         this.user = this.api_data.user;
+        this.user['full_name'] = `${this.user.first_name} ${this.user.last_name}`
         this.getPermissions();
 
         this.disabledNext = undefined;
@@ -123,7 +124,7 @@ export class AdminAccountProfile extends BaseForm {
         }, this);
 
         this._admin.currentUrl({
-            'url':'#', 'text': `${this.user.first_name} ${this.user.last_name}`
+            'url':'#', 'text': `${this.user.full_name}`
         }, 2);
 
         this._admin.headerButtons = [];
@@ -241,7 +242,7 @@ export class AdminAccountProfile extends BaseForm {
                     this.getUserAfter(data);
                     this.formChange = false;
                     this._admin.notNavigate = false;
-                    this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been changed`);
+                    this._admin.footer(`${this.user.full_name} has been changed`);
                 },
                 (err) => this.apiErrors(this.form, 'user', err.json()), 
             );
@@ -304,7 +305,7 @@ export class AdminAccountProfile extends BaseForm {
                     this._http.delete(`/api/admin/${this.user.id}/`)
                         .subscribe(
                             (data) => { 
-                                this._admin.footer(`${this.user.first_name} ${this.user.last_name} has been removed`);
+                                this._admin.footer(`${this.user.full_name} has been removed`);
                             },
                             (err) => {}, 
                             () => this.onCancel()

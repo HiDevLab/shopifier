@@ -5,7 +5,7 @@
             <a class="cross fa fa-times" aria-hidden="true" (click)="reject()"></a>
         </div>
          <div class="row ph20 pv10">
-            Are you sure you want to force<strong> {% verbatim %}{{ parent.user.first_name + ' ' + parent.user.last_name  }}{% endverbatim %}</strong> to re-login?
+            <span>Are you sure you want to force <strong>{% verbatim %}{{parent.user.full_name}}{% endverbatim %}</strong> to re-login?</span>
         </div>
         <div class="modal-footer">
             <a class="btn mr10" (click)="reject()">Cancel</a>
