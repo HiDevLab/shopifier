@@ -346,7 +346,7 @@ class UsersAdminViewSet(ModelViewSet):
     def deletesession(self, request, pk=None):
         user = self.get_object()
         [s.delete() for s in Session.objects.all()
-            if int(s.get_decoded().get('_auth_user_id') or 0) == user.id]
+            if int(s.get_decoded().get('_auth_user_id', 0)) == user.id]
         content = {'success': 'Sessions Expired.'}
         return Response(content, status=status.HTTP_200_OK)
 
@@ -392,7 +392,7 @@ class SessionsExpire(APIView):
     def delete(self, request, format=None):
         user = request.user
         [s.delete() for s in Session.objects.all()
-            if int(s.get_decoded().get('_auth_user_id')) != user.id]
+            if int(s.get_decoded().get('_auth_user_id', 0)) != user.id]
 
         content = {'success': 'Sessions Expired.'}
         return Response(content, status=status.HTTP_200_OK)
