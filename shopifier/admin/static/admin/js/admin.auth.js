@@ -587,14 +587,6 @@ export class SuperHttp extends Http {
 //         this.csrfToken();
 //         return super.delete(url, {headers: this.requestoptions.headers});
     }
-    template(url) {
-        this.csrfToken();
-        this.requestoptions.method = RequestMethod['Get'];
-        this.requestoptions.url= url;
-        this.requestoptions.body = undefined;
-        let request = new Request(this.requestoptions);
-        return super.request(request);
-    }
 }
 
 
