@@ -185,8 +185,8 @@ export class AdminCustomersNew extends BaseForm {
         this._http
             .post('/admin/customers.json', customer )
             .subscribe(
-                (data) => this.saveAddress(data),
-                (err) => {
+                data => this.saveAddress(data),
+                err => {
                     this.apiErrors(this.form, 'customer', err.json());
                 },
             );
@@ -206,8 +206,8 @@ export class AdminCustomersNew extends BaseForm {
         this._http
             .post(url, address )
             .subscribe(
-                (data) => this.setDefaultAddress(customer, data),
-                (err) => {
+                data => this.setDefaultAddress(customer, data),
+                err => {
                     this.apiErrors(this.form, 'default_address', err.json());
                 },
             );
@@ -219,10 +219,10 @@ export class AdminCustomersNew extends BaseForm {
         this._http
             .put(`/admin/customers/${c_id}/addresses/${a_id}/default.json`)
             .subscribe(
-                (data) => {
+                data => {
                     this._router.navigate(['customers/', customer.customer.id]);
                 },
-                (err) => {
+                err => {
                     this.apiErrors(this.form, 'default_address', err.json());
                 },
             );
@@ -317,12 +317,12 @@ export class AdminCustomersEdit extends BaseForm{
         this._http
             .patch(`/admin/customers/${this.object_id}.json`, customer)
             .subscribe(
-                (data) => {
+                data => {
                     this.getCustomerAfter(data);
                     this.getAPIData(['/admin/customers/tags.json'],
                                     ['getTagsAfter']);
                 },
-                (err) => this.apiErrors(this.form, 'customer', err.json()),
+                err => this.apiErrors(this.form, 'customer', err.json()),
             );
             this.formChange = false;
             this._admin.notNavigate = false;
@@ -333,12 +333,12 @@ export class AdminCustomersEdit extends BaseForm{
         this._http
             .patch(`/admin/customers/${this.object_id}.json`, customer)
             .subscribe(
-                (data) => { 
+                data => { 
                     this.getCustomerAfter(data);
                     this.getAPIData(['/admin/customers/tags.json'],
                                     ['getTagsAfter']);
                 },
-                (err) => this.apiErrors(this.form, 'customer', err.json()),
+                err => this.apiErrors(this.form, 'customer', err.json()),
             );
         this.formChange = false;
         this._admin.notNavigate = false;
@@ -359,11 +359,11 @@ export class AdminCustomersEdit extends BaseForm{
         this._http
             .patch(`/admin/customers/${this.object_id}.json`, customer)
             .subscribe(
-                (data) => {
+                data => {
                     this.getCustomerAfter(data);
                     this.showEdit = false;
                 },
-                (err) => this.apiErrors(this.form, 'customer', err.json()),
+                err => this.apiErrors(this.form, 'customer', err.json()),
             );
     }
 
@@ -455,16 +455,16 @@ export class AdminCustomersEdit extends BaseForm{
                     this.addFormAfter();
                     this.showEditAddress = false;
                 },
-                (err) => this.apiErrors(this.form, 'customer', err.json()),
+                err => this.apiErrors(this.form, 'customer', err.json()),
             );
     }
 
     deleteCustomer() {
-        this._utils.msgBox(this._vcr, 
-                `Delete ${this.customer.full_name}`, 
-                `Are you sure you want to delete ${this.customer.full_name}? This action cannot be reversed.`,
-                'Delete customer'
-            )
+        this._utils.msgBox(this._vcr, {
+                title: `Delete ${this.customer.full_name}`, 
+                text: `Are you sure you want to delete ${this.customer.full_name}? This action cannot be reversed.`,
+                btn: 'Delete customer'
+            })
             .then(
                 () => {
                     this._http

@@ -9,9 +9,6 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
 import { RouterModule, Router, Routes, ActivatedRoute,  CanDeactivate, CanActivate } from '@angular/router';
 
 
-// @Directive({ selector: 'modal-form'})
-// export class ModalFormDirective {}
-
 //------------------------------------------------------------------------------AdminUtils
 @Injectable()
 export class AdminUtils {
@@ -22,55 +19,19 @@ export class AdminUtils {
         this.compiler = compiler;
     }
 
-    openDialog(parent, vcr, template) {
-        let ret = new Promise((resolve, reject) => {
-            @Component({ selector: 'dialog-comp', templateUrl: template})
-            class DynamicHtmlComponent {
-                fields = new Array(10);
-                constructor() {
-                    this.parent = parent;
-                }
-                resolve(result) {
-                    component.destroy();
-                    resolve(result);
-                }
-
-                reject(reason) {
-                    component.destroy();
-                    reject(reason);
-                }
-            };
-
-            @NgModule({
-                imports: [FormsModule, ReactiveFormsModule, CommonModule,],
-                declarations: [DynamicHtmlComponent]
-            })
-            class DynamicHtmlModule {}
-
-            let component = undefined;
-            this.compiler.compileModuleAndAllComponentsAsync(DynamicHtmlModule)
-                .then((factory) => {
-                    let compFactory = factory.componentFactories.find(
-                        x => x.componentType === DynamicHtmlComponent);
-                    component = vcr.createComponent(compFactory, 0);
-            });
-        });
-        return ret;
-    }
-
-    msgBox(vcr, title, text, btn) {
+    msgBox(vcr, params, template='templates/msgbox.html') {
         let ret = new Promise((resolve, reject) => {
             @Component({ 
                 selector: 'msgbox', 
-                templateUrl: 'templates/msgbox.html' 
+                templateUrl: template
             })
             class DynamicHtmlComponent {
                 constructor() {
-                    this.title = title;
-                    this.text = text;
-                    this.btn = btn || 'Yes';
-                    this.del = !!(this.btn.toUpperCase().search('DELETE') > -1);
-                    console.log(this.btn, this.del);
+                    for (let param of Object.keys(params)) {
+                        this[param] = params[param];
+                    }
+                    this.btn = this.btn || 'Yes';
+                    this.btn_delete = !!(this.btn.toUpperCase().includes('DELETE'));
                 }
                 resolve(result) {
                     component.destroy();
@@ -98,7 +59,6 @@ export class AdminUtils {
         });
         return ret;
     }
-
 
 
     emailValidator(control) {

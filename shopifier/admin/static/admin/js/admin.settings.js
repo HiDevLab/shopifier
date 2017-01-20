@@ -204,7 +204,7 @@ export class AdminAccountProfile extends BaseForm {
                 this.form.user.value['password1'] ||
                 this.form.user.value['password2']
             ){
-                this._utils.openDialog(this, this._vcr, 'templates/account/confirm-password.html')
+                this._utils.msgBox(this._vcr, {parent: this}, 'templates/account/confirm-password.html')
                     .then(
                         (res) => this.onSaveAdmin(res.password, res.log_out_mobile),
                         () => {}
@@ -249,7 +249,7 @@ export class AdminAccountProfile extends BaseForm {
     }
 
     setAdmin() {
-       this._utils.openDialog(this, this._vcr, 'templates/account/set-admin.html')
+       this._utils.msgBox(this._vcr, {parent: this}, 'templates/account/set-admin.html')
             .then(
             () => {
                 this.user.is_admin = !this.user.is_admin;
@@ -299,7 +299,7 @@ export class AdminAccountProfile extends BaseForm {
 //         ref.changeDetectorRef.detectChanges();
 // @NgModule({ entryComponents: [ AdminAccountDelete,]}]
 
-           this._utils.openDialog(this, this._vcr, 'templates/account/delete.html')
+           this._utils.msgBox(this._vcr, {parent: this}, 'templates/account/delete.html')
                 .then(
                 (result) => {
                     this._http.delete(`/api/admin/${this.user.id}/`)
@@ -326,10 +326,10 @@ export class AdminAccountProfile extends BaseForm {
     }
 
     expireSessions() {
-        this._utils.msgBox(this._vcr, 
-                `Expire Current User's Sessions`, 
-                `Are you sure you want to force ${this.user.full_name} to re-login?`
-            )
+        this._utils.msgBox(this._vcr, {
+                title: `Expire Current User's Sessions`, 
+                text: `Are you sure you want to force ${this.user.full_name} to re-login?`
+            })
             .then(
                 () => {
                     this._http
@@ -449,10 +449,10 @@ export class AdminAccount {
     }
 
     deleteSessions() {
-        this._utils.msgBox(this._vcr, 
-                'Expire Staff Users Sessions', 
-                'Are you sure you want to force staff users to re-login?'
-            )
+        this._utils.msgBox(this._vcr, {
+                title: 'Expire Staff Users Sessions', 
+                text: 'Are you sure you want to force staff users to re-login?'
+            })
             .then(
                 () => {
                     this._http.delete('/api/sessions-expire/')
