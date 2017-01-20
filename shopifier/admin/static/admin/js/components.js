@@ -515,7 +515,6 @@ export class RichTextEditor {
 
     onLoad(){
         let self = this;
-        this.editor.setValue(this.parrent_component.body_html, false);
         this.document = this.editor.currentView.sandbox.getDocument();
         this.document.body.blur();
         wysihtml5.dom.delegate(this.document.body, 'a', 'click', (event) => {

@@ -235,7 +235,7 @@ export class AdminProductsNew extends BaseForm {
 
     addFormAfter() {
         if (this.object_id) {
-            this.getAPIData(
+            this.getAPIDataAll(
                 [
                     `/admin/products/${this.object_id}.json`,
                     `/admin/products/${this.object_id}/images.json`,
@@ -250,6 +250,11 @@ export class AdminProductsNew extends BaseForm {
         this.api_data = data;
         this.setDataToControls(this.form, 'product', this.api_data.product);
         this.body_html = data.product.body_html;
+        if (this.rich_text_editor) {
+            this.rich_text_editor.editor.setValue(this.body_html, false);
+            window.focus();
+            this.formChange = false;
+        }
         let product = this.api_data.product;
         this._admin.currentUrl({'url': '#', 'text': `${product.title}`}, 1);
         this.options = [];
@@ -351,12 +356,25 @@ export class AdminProductsNew extends BaseForm {
         }
     }
 
-    onDeleteProduct() {
-        this._http.delete(`/admin/products/${this.object_id}.json`)
-            .subscribe(
-                () => this._router.navigate(['Products']),
-                (err) => {this.apiErrors(this.form, 'product', err.json());},
-            );
+    deleteProduct() {
+        let title = this.form.product.value.title;
+        this._utils.msgBox(this._vcr, {
+                title: `Delete ${title}?`, 
+                text: `Are you sure you want to delete the product ${title}? This action cannot be reversed.`,
+                btn: 'Delete product'
+            })
+            .then(
+                () => {
+                    this._http.delete(`/admin/products/${this.object_id}.json`)
+                        .subscribe(
+                            () => { 
+                                this._router.navigate(['/products']);
+                                this._admin.footer('Successfully deleted product');
+                            },
+                            err => {this.apiErrors(this.form, 'product', err.json());},
+                        );
+            }, () => {}
+        );
     }
 
 //------------------------------------------------------------------------Images

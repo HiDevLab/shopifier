@@ -277,7 +277,8 @@ export class AdminCustomersEdit extends BaseForm{
     }
 
     addFormAfter() {
-        this.getAPIData([`/admin/customers/${this.object_id}.json`,
+        this.getAPIDataAll([
+            `/admin/customers/${this.object_id}.json`,
             '/admin/customers/tags.json'],
             ['getCustomerAfter', 'getTagsAfter']
         );
