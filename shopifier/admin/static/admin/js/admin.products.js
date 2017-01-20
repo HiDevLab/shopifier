@@ -235,10 +235,11 @@ export class AdminProductsNew extends BaseForm {
 
     addFormAfter() {
         if (this.object_id) {
-            this.getAPIData([
+            this.getAPIData(
+                [
                     `/admin/products/${this.object_id}.json`,
                     `/admin/products/${this.object_id}/images.json`,
-                    `/admin/products/${this.object_id}/variants.json`
+                    `/admin/products/${this.object_id}/variants.json?limit=100`
                 ],
                 ['getProductAfter', 'getImagesAfter', 'getVariantsAfter']
             );
@@ -300,7 +301,6 @@ export class AdminProductsNew extends BaseForm {
         }, 100);
         
     }
-
 
     onSave() {
         if(!this.groupValidate(this.form, 'product')) return;
