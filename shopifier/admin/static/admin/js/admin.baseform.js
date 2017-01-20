@@ -1,4 +1,5 @@
 import 'rxjs/Rx';
+import {Observable} from 'rxjs/Rx';
 
 import { FormBuilder, Validators, FormControl, ControlGroup } from '@angular/forms';
 import { Http } from '@angular/http';
@@ -36,11 +37,11 @@ export class BaseForm {
         this._http
             .options(url)
             .subscribe(
-                (data) => {
+                data => {
                     this.addFormFromOptinons(form, data, alias);
                     if (this.addFormAfter) this.addFormAfter();
                 },
-                (err) => {
+                err => {
                     this.obj_errors = err; 
 //                     this.errors = this._utils.to_array(err.json());
                 },
@@ -184,6 +185,29 @@ export class BaseForm {
                 );
         }
     }
+
+    getAPIDataAll(urls, afters) {
+        let _urls = [];
+        for(let i=0; i < urls.length; i++) {
+            _urls.push(this._http.get(urls[i]));
+        }
+        Observable.forkJoin(_urls).subscribe(
+            data => {
+                for(let i=0; i < urls.length; i++) {
+                    this[afters[i]](data[i]);
+                }
+            },
+            err => {
+                this.obj_errors = err;
+                try {
+                    this.errors = this._utils.to_array(err.json());
+                } catch(e) {
+                    console.log(err, e);
+                }
+            }
+        );
+    }
+
 
     setDataToControls(form, group_name, obj) {
         let group = form[group_name];
