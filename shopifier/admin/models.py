@@ -223,8 +223,25 @@ class Product(models.Model):
 
     body_html = models.TextField(
         _('Description'),  max_length=2048)
-    title = models.TextField(_('Title'), blank=False, max_length=254)
+    created_at = models.DateTimeField(blank=True, null=True)
+    handle = models.CharField(blank=True, max_length=254)
     options = JSONField(blank=True, null=True)
+    product_type = models.CharField(
+        _('Product type'), blank=True, max_length=254)
+    published_at = models.DateTimeField(blank=True, null=True)
+    published_scope = models.CharField(
+        _('The sales channels in which the product is visible'),
+        default='global', blank=True, max_length=254)
+    tags = TagField(default=[])
+    template_suffix = models.CharField(
+        _('The suffix of the liquid template being used'),
+        blank=True, max_length=254)
+    title = models.TextField(_('Title'), blank=False, max_length=254)
+    metafields_global_title_tag = models.TextField(blank=True, max_length=254)
+    metafields_global_description_tag = models.TextField(
+        blank=True, max_length=254)
+    updated_at = models.DateTimeField(blank=True, null=True)
+    vendor = models.TextField(_('Vendor'), blank=True, max_length=254)
 
 
 def normalization_img_file_name(instance, filename):
