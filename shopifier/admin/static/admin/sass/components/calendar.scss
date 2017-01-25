@@ -1,0 +1,95 @@
+calendar {
+    width: 200px;
+    padding: 8px 10px 10px 10px;
+    background: #ffffff;
+    border: solid 1px #bbbbbb;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    line-height: 24px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    &.show {
+        transform: scale(1);
+        visibility: visible;
+        opacity:0.99;
+
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+    }
+    &.hide {
+        transform: scale(0.8);
+        visibility: hidden;
+        opacity: 0;
+
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+    }
+
+    > .title {
+        display: flex;
+        justify-content: space-between;
+        line-height: inherit;
+        align-items: center;
+        cursor: default;
+        > .prev, > .next {
+            display: flex;
+            align-items: center;
+            color: #0078bd;
+            height: 16px;
+            width: 9px;
+            cursor: pointer;
+            &.disabled {
+                visibility: hidden;
+            }
+        }
+        > div {
+            display: flex;
+            align-items: center;
+        }
+    }
+    > .week {
+        display: flex;
+        justify-content: space-between;
+        line-height: inherit;
+        align-items: center;
+        padding: 5px;
+        > div {
+            color: #999;
+            text-align: center;
+        }
+    }
+    > ul {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: outside none none;
+            border-right: solid 1px #eee;
+            border-bottom: solid 1px #eee;
+        > li {
+            padding: 0;
+            text-align: center;
+            border-left: solid 1px #eee;
+            border-top: solid 1px #eee;
+            font-size: 12px;
+            line-height: inherit;
+            cursor: default;
+            width: 27px;
+            height: 24px;
+            color: #ddd;
+            &.enable {
+                color: black;
+                cursor: pointer;
+                &:hover {
+                    background: #329cda;
+                    color: #ffffff;
+                }
+            }
+        }
+    }
+}

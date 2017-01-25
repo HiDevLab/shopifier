@@ -182,6 +182,7 @@ export class StartsWithPipe {
     selector: 'tags',
     templateUrl: 'templates/tags-edit.html',
     directives: [Popover],
+    interpolation: ['[[', ']]'],
     inputs: ['tags', 'all_tags','all_tags_statistic', 'parrent_component' ],
     pipes: [NotInPipe, StartsWithPipe]
 })
@@ -370,6 +371,7 @@ export class AdminTagsEdit {
 @Component({
     selector: 'leave-page',
     templateUrl: 'templates/leave-page.html',
+    interpolation: ['[[', ']]'],
 //     inputs: ['parrent_component']
 })
 export class AdminLeavePage {
@@ -386,6 +388,7 @@ export class AdminLeavePage {
 @Component({
     selector: 'reach-text-editor',
     templateUrl: 'templates/reach-text-editor.html',
+    interpolation: ['[[', ']]'],
     directives: [Autosize, Popover],
     inputs: ['parrent_component']
 })
@@ -709,6 +712,135 @@ export class RichTextEditor {
 }
 
 
+//------------------------------------------------------------------------------Calendar
+@Component({
+    selector: 'calendar',
+    templateUrl: 'templates/calendar.html',
+    interpolation: ['[[', ']]'],
+    inputs: ['parent', 'show', 'change', 'start_date']
+})
+export class Calendar {
+    week = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+    days = [];
+    months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ]
+
+    static get parameters() {
+        return [[ElementRef]];
+    }
+  
+    constructor(element) {
+        this.element = element.nativeElement;
+    }
+
+    ngOnInit() {
+        if (!this.start_date) {
+            this.start_date = new Date(1900, 0, 1);
+        }
+
+        this.base_element = document.querySelector(`#base-${this.element.id}`) ||
+            this.element.parentElement;
+        let rect = this.base_element.getBoundingClientRect();
+        if (rect.top < 230) {
+            this.element.style.top = this.base_element.offsetHeight;
+        } else {
+            this.element.style.bottom = this.base_element.offsetHeight;
+        }
+        this.date = new Date();
+        this.year = this.date.getFullYear();
+        this.month = this.date.getMonth();
+        this.day = this.date.getDate();
+        this.refresh();
+    }
+
+    disableDay(day) {
+        if (this.present) {
+            return day < this.start_date.getDate();
+        } else {
+            return false;
+        }
+
+    }
+
+    refresh() {
+        this.days = [];
+        let days = new Date(this.year, this.month + 1, 0).getDate();
+        let start = new Date(this.year, this.month, 1).getDay();
+        let max = ((start + days) > 35) ? 42 : 35;
+
+        this.present = this.start_date.getFullYear() === this.year &&
+                this.start_date.getMonth() === this.month;
+
+        for (let i=0; i < max; i++) {
+            this.days.push({day: null, enable: 0});
+        }
+        for (let i=0; i < days; i++) {
+            if (!this.disableDay(i + 1)) {
+                this.days[i + start].enable = 1;
+            }
+            this.days[i + start].day = i + 1;
+        }
+    }
+
+    onPrev() {
+        this.month--;
+        if (this.month < 0) {
+            this.month = 11;
+            this.year--;
+        }
+        this.refresh();
+    }
+
+    onNext() {
+        this.month++;
+        if (this.month > 11) {
+            this.month = 0;
+            this.year++;
+        }
+        this.refresh();
+    }
+
+    onSelect(day) {
+        if (day.enable && day.day) {
+            let d = new Date(this.year, this.month, day.day, 7);
+            this.parent[this.change](d);
+            this.parent[this.show] = false;
+        }
+    }
+
+    @HostListener('window:click',['$event'])
+    onClick(event) {
+        let obj = event.target;
+        if (this.base_element!=obj && !this.childOf(obj, this.element)) {
+            this.parent[this.show] = false;
+        }
+        else {
+            event.stopPropagation();
+        }
+    }
+
+    childOf(c, p) {
+        while(c !== p && c) {
+            c = c.parentNode;
+        }
+        return c === p;
+    }
+}
+
+
+
+//------------------------------------------------------------------------------Var
+@Component({
+    selector: 'var',
+    template: '[[ text ]]',
+    inputs: ['text'],
+    interpolation: ['[[', ']]']
+})
+export class Var {
+}
+
 //------------------------------------------------------------------------------AdminComponentsModule
 @NgModule({
     imports: [
@@ -718,12 +850,14 @@ export class RichTextEditor {
         AdminLeavePage,
         Autosize,
         Popover,
-        ArrayLengthPipe,
-        NotInPipe,
         AdminTagsEdit,
-        StartsWithPipe,
         AdminLeavePage,
         RichTextEditor,
+        Calendar,
+        Var,
+        StartsWithPipe,
+        ArrayLengthPipe,
+        NotInPipe,
         booleanPipe
     ],
     exports: [
@@ -737,6 +871,8 @@ export class RichTextEditor {
         StartsWithPipe,
         AdminLeavePage,
         RichTextEditor,
+        Calendar,
+        Var
     ]
 })
 export class AdminComponentsModule {}

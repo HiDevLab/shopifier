@@ -1,0 +1,15 @@
+{% verbatim %}
+<div class="title">
+    <a class="fa fa-angle-left fa-2x prev"
+    (click)="onPrev()"
+    [ngClass]="{disabled: present}"></a>
+    <div>[[ months[month] ]] [[ year ]]</div>
+    <a class="fa fa-angle-right fa-2x next" (click)="onNext()"></a>
+</div>
+<div class="week">
+    <div *ngFor="let day of week" [ngClass]="{enable: day.enable}">[[day]]</div>
+</div>
+<ul>
+    <li *ngFor="let day of days" [ngClass]="{enable: day.enable}" (click)="onSelect(day)">[[day.day]]</li>
+<ul>
+{% endverbatim %}
