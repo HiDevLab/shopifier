@@ -176,7 +176,7 @@ $classes: (
   }
 }
 
-@for $i from 0 to 31 {
+@for $i from 0 to 100 {
     .pv#{$i} {
         padding-top: #{$i}px !important;
         padding-bottom: #{$i}px !important;

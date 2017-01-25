@@ -56,6 +56,7 @@ export var Permissions = [
 @Component({
     selector : 'profile',
     templateUrl: 'templates/account/profile.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminAccountProfile extends BaseForm {
     user = undefined;
@@ -353,6 +354,7 @@ export class AdminAccountProfile extends BaseForm {
 @Component({    
     selector : 'account_invite',
     templateUrl: 'templates/account/invaite.html',
+    interpolation: ['[[', ']]'],
     inputs: ['parent', 'self']
 })
 export class AdminAccountInvite {
@@ -405,7 +407,11 @@ export class AdminAccountInvite {
 
 
 //------------------------------------------------------------------------------AdminAccount
-@Component({ selector: 'main', templateUrl: 'templates/account/account.html' })
+@Component({
+    selector: 'main',
+    templateUrl: 'templates/account/account.html',
+    interpolation: ['[[', ']]'],
+})
 export class AdminAccount {
     currentUser = null;
     users = [];
@@ -482,7 +488,11 @@ export class AdminAccount {
 
 
 //------------------------------------------------------------------------------AdminSettingsGeneral
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+@Component({
+    selector: 'main',
+    templateUrl: 'templates/temporarily.html',
+    interpolation: ['[[', ']]'],
+})
 export class AdminSettingsGeneral {
     component = 'General';
     static get parameters() {return [[Admin]];}
@@ -494,7 +504,11 @@ export class AdminSettingsGeneral {
 
 
 //------------------------------------------------------------------------------AdminSettingsCheckout
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+@Component({
+    selector: 'main',
+    templateUrl: 'templates/temporarily.html',
+    interpolation: ['[[', ']]'],
+})
 export class AdminSettingsCheckout {
     component = 'Checkout';
     static get parameters() {return [[Admin]];}

@@ -31,6 +31,7 @@ export class BaseForm {
         this._auth = auth;
         this._utils = utils;
         this._formbuilder = formbuilder;
+        this.now = new Date;
     }
 
     addForm(form, url, alias) {
@@ -173,7 +174,12 @@ export class BaseForm {
             this._http
                 .get(urls[i])
                 .subscribe(
-                    (data) => this[afters[i]](data),
+                    (data) => { 
+                        this[afters[i]](data);
+                        if (i === (urls.length - 1) && this.AfterViewInit) {
+                            setTimeout(() => this.AfterViewInit(), 100);
+                        }
+                    },
                     (err) => {
                         this.obj_errors = err;
                         try {
@@ -195,6 +201,9 @@ export class BaseForm {
             data => {
                 for(let i=0; i < urls.length; i++) {
                     this[afters[i]](data[i]);
+                }
+                if (this.AfterViewInit) {
+                    setTimeout(() => this.AfterViewInit(), 100);
                 }
             },
             err => {
@@ -317,7 +326,12 @@ export class BaseForm {
     }
 
     DOMElement(selector) {
-        return window.document.querySelector(selector);
+        let el = document.querySelector(selector);
+        return el;
+    }
+
+    getByID(id) {
+        return document.querySelector(`[id='${id}']`);
     }
 
     isIndex(x) {

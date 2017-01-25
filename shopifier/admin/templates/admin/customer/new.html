@@ -39,7 +39,7 @@
                     <select formControlName="country_code"
                     (change)="form.default_address.controls.province.setValue(''); formChange=true">
                         <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
-                                {% verbatim %}{{ country.display_name }}{% endverbatim %}
+                                {% verbatim %}[[  country.display_name  ]]{% endverbatim %}
                         </option>
                     </select>
                 </label>
@@ -50,7 +50,7 @@
                     (change)="formChange=true">
                         <option *ngFor="let region of form.default_address_meta.province_code.choices | 
                                         province:form.default_address.controls.country_code.value" [value]="region.value">
-                                {% verbatim %}{{ region.display_name }}{% endverbatim %}
+                                {% verbatim %}[[  region.display_name  ]]{% endverbatim %}
                         </option>
                     </select>
                 </label>
@@ -89,7 +89,7 @@
                 Tags
                 <ul class="mt5 apply-tags" [ngClass]="{focus: inputtagsFocus}">
                     <li *ngFor="let new_tag of tags; let i=index" >
-                        {% verbatim %}{{ new_tag }}{% endverbatim %}
+                        {% verbatim %}[[ new_tag ]]{% endverbatim %}
                         <a class="fa fa-times" aria-hidden="true"
                             (click)="deleteTag(i)"></a>
                     </li>
@@ -111,7 +111,7 @@
                 <li *ngFor="let tag of all_tags|length:maxTags || 10; let j=index"
                     [ngClass]="{disabled: tags.includes(tag)}"
                     (click)="addTag(tag)">
-                    {% verbatim %}{{ tag }}{% endverbatim %}
+                    {% verbatim %}[[ tag ]]{% endverbatim %}
                 </li>
             </ul>
             <a class="ref mv10" (click)="maxTags=100" *ngIf="!maxTags || maxTags < 100">Show all tags</a>

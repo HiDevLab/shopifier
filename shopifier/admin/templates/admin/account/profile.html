@@ -9,23 +9,23 @@
                 <div class="input-box">
                     <h3> <strong>Name</strong></h3>
                     <p class="p5"></p>
-                    <h3>{% verbatim %}{{user.full_name}}{% endverbatim %}</h3>
+                    <h3>{% verbatim %}[[ user.full_name]]{% endverbatim %}</h3>
                     <p></p>
                     <h3> <strong>Email address</strong></h3>
                     <p class="p5"></p>
-                    <h3>{% verbatim %}{{user.email}}{% endverbatim %}</h3>
+                    <h3>{% verbatim %}[[ user.email]]{% endverbatim %}</h3>
                     <p></p>
                     <h3> <strong>Phone</strong></h3>
                     <p class="p5"></p>
-                    <h3>{% verbatim %}{{user.phone}}{% endverbatim %}</h3>
+                    <h3>{% verbatim %}[[ user.phone]]{% endverbatim %}</h3>
                     <p></p>
                     <h3> <strong>Personal website address</strong></h3>
                     <p class="p5"></p>
-                    <h3>{% verbatim %}{{user.www_site}}{% endverbatim %}</h3>
+                    <h3>{% verbatim %}[[ user.www_site]]{% endverbatim %}</h3>
                     <p></p>
                     <h3> <strong>Bio</strong></h3>
                     <p class="p5"></p>
-                    <h3>{% verbatim %}{{user.bio}}{% endverbatim %}</h3>
+                    <h3>{% verbatim %}[[ user.bio]]{% endverbatim %}</h3>
                     <p></p>
                 </div>
             </div>
@@ -44,7 +44,7 @@
             <div class="input-section">
                 <div class="input-box">
                     <div class="avatar" *ngIf="user">
-                        {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
+                        {% verbatim %}[[  user.first_name[0] + user.last_name[0] ]]{% endverbatim %}
                         <img *ngIf="user.avatar" [attr.src]="user.avatar">
                         <img *ngIf="new_avatar" [attr.src]="new_avatar">
                     </div>
@@ -86,7 +86,7 @@
             <div class="input-section">
                 <div class="input-box" *ngIf="!emailChange">
                     <p>Email address</p>
-                    <span>{% verbatim %}{{ user.email }} {% endverbatim %}<a class="ref" (click)="emailChange=true">Change email</a></span>
+                    <span>{% verbatim %}[[  user.email ]] {% endverbatim %}<a class="ref" (click)="emailChange=true">Change email</a></span>
                 </div>    
                 <div class="input-box" *ngIf="emailChange">
                     <label class="input" [ngClass]="{err: obj_errors['email']}">
@@ -127,7 +127,7 @@
             <span *ngIf="isUser" class="mb10">
                 <div class="row sep mt20 mb10"></div><h3 class="row bold pv10 ph20">PASSWORD RESET</h3>
                 <div class="row pv10 ph20">
-                    Change the password you use to login to {% templatetag openvariable %} settings.STORE_NAME {% templatetag closevariable %}.
+                    Change the password you use to login to [[ settings.STORE_NAME ]].
                 </div>
                 <div class="input-section" *ngIf="!passwordChange">
                     <div class="row ml10">
@@ -173,10 +173,10 @@
                             {% verbatim %}
                             <tbody *ngIf="sessions">
                                 <tr  class="wide" *ngFor="let session of sessions">
-                                     <td>{{ setDate(session.visit_datetime) | date:'EEEE' }} at {{ setDate(session.visit_datetime) | date:'shortTime' }}</td>
-                                    <td>{{ session.ip }}</td>
-                                    <td>{{ session.isp }}</td>
-                                    <td>{{ session.city + ', ' + session.country }}</td>
+                                     <td>[[  setDate(session.visit_datetime) | date:'EEEE' ]] at [[  setDate(session.visit_datetime) | date:'shortTime' ]]</td>
+                                    <td>[[  session.ip ]]</td>
+                                    <td>[[  session.isp ]]</td>
+                                    <td>[[  session.city + ', ' + session.country ]]</td>
                                     <td><a class="btn fa fa-info-circle" aria-hidden="true" [attr.title]="session.user_agent"></a></td>
                                 </tr>
                             </tbody>
@@ -186,7 +186,7 @@
                 </div>
                 <div class="input-section">
                     <div class="row ml10 mb10">
-                        <a class="btn" (click)="expireSessions()">Log Out {% verbatim %}{{user.full_name}}{% endverbatim %}</a>
+                        <a class="btn" (click)="expireSessions()">Log Out {% verbatim %}[[ user.full_name]]{% endverbatim %}</a>
                     </div>
                 </div>
             </div>
@@ -204,21 +204,21 @@
         <div class="section-content">
             <form class="p10">{% csrf_token %}
                 <h3 class="p10 bold">CUSTOMIZE PERMISSIONS</h3>
-                <div class="p10">Enable or restrict {% verbatim %}{{user.first_name}}{% endverbatim %}'s access to various parts of this store.</div>
+                <div class="p10">Enable or restrict {% verbatim %}[[ user.first_name]]{% endverbatim %}'s access to various parts of this store.</div>
                 <div class="input p10">
-                    <input type="checkbox" [attr.id]="full_permissions-id" [(ngModel)]="full_permissions"  [ngModelOptions]="{standalone: true}"
+                    <input type="checkbox" [attr.id]="full_permissions-id" [(ngModel)]="full_permissions" [ngModelOptions]="{standalone: true}"
                     (click)="onFormChange();clsPermissions();">
-                    <label [attr.for]="full_permissions-id"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}{{user.full_name}}{% endverbatim %} has full permissions</label>
+                    <label [attr.for]="full_permissions-id"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}[[ user.full_name]]{% endverbatim %} has full permissions</label>
                 </div>
                 <div *ngIf="!full_permissions" class="p10">
                     <div class="pv10 bold">Select the areas of admin this staff account will be able to access</div>
                     <div class="columns mv10 h-auto">
                         <div class="col mr30" *ngFor="let group of permissions;">
-                            {% templatetag openvariable %} group.group {% templatetag closevariable %}
+                            [[ group.group ]]
                             <div class="input mt15" *ngFor="let perm of group.permissions;">
                                 <input type="checkbox" [attr.id]="perm.api+'-id'" [(ngModel)]="perm.select" [ngModelOptions]="{standalone: true}"
                                 (click)="onFormChange()">
-                                <label [attr.for]="perm.api+'-id'"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}{{perm.name}}{% endverbatim %}</label>
+                                <label [attr.for]="perm.api+'-id'"><i class="fa fa-check" aria-hidden="true"></i>{% verbatim %}[[ perm.name]]{% endverbatim %}</label>
                             </div>
                         </div>
                     </div>

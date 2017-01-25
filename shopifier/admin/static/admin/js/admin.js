@@ -15,7 +15,11 @@ import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
 
 
 //------------------------------------------------------------------------------
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+@Component({
+    selector: 'main',
+    templateUrl: 'templates/temporarily.html',
+    interpolation: ['[[', ']]'],
+})
 export class AdminHome {
     component = 'Home';
     static get parameters() {return [[Admin]];}
@@ -24,7 +28,11 @@ export class AdminHome {
 }
 
 //------------------------------------------------------------------------------
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+@Component({
+    selector: 'main', templateUrl:
+    'templates/temporarily.html',
+    interpolation: ['[[', ']]'],
+})
 export class AdminSearch {
     component = 'Search';
     static get parameters() {return [[Admin]];}
@@ -37,6 +45,7 @@ export class AdminSearch {
 @Component({
     selector: 'body',
     templateUrl: 'templates/admin.html',
+    interpolation: ['[[', ']]'],
 })
 // @RouteConfig([
 //     {

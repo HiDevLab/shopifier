@@ -33,11 +33,11 @@
         <div class="list tr row mh20" *ngFor="let customer of customers">
             <a class=" ph10 pv17 tl w6 ref"
                 (click)="onEditCustomer(customer)">
-                {% verbatim %}{{ customer.fist_name }} {{ customer.last_name }}{% endverbatim %}
+                {% verbatim %}[[  customer.fist_name  ]] [[  customer.last_name  ]]{% endverbatim %}
             </a>
             <div class="ph10 pv17 tl w4 color-subdued" *ngIf="customer.default_address"
                 (click)="onEditCustomer(customer)">
-                {% verbatim %}{{ customer.default_address.country_name }}{% endverbatim %}
+                {% verbatim %}[[  customer.default_address.country_name  ]]{% endverbatim %}
             </div>
             <div class="ph10 pv17 tl w4 color-subdued" *ngIf="!customer.default_address"
                 (click)="onEditCustomer(customer)">

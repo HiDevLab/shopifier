@@ -31,6 +31,7 @@ enableProdMode();
 @Component({
   selector: 'body',
   template : '<router-outlet></router-outlet>',
+  interpolation: ['[[', ']]'],
 })
 export class AdminRoot {}
 

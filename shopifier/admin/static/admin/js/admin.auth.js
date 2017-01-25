@@ -23,7 +23,8 @@ export class AdminUtils {
         let ret = new Promise((resolve, reject) => {
             @Component({ 
                 selector: 'msgbox', 
-                templateUrl: template
+                templateUrl: template,
+                interpolation: ['[[', ']]'],
             })
             class DynamicHtmlComponent {
                 constructor() {
@@ -161,6 +162,7 @@ export class AdminAuthService {
 @Component({
     selector      : 'body',
     template      : '',
+    interpolation: ['[[', ']]'],
 })
 export class AdminAuthLogout {
 
@@ -251,6 +253,7 @@ export class CanActivateLogin extends CanActivateAdmin {
 @Component({
     selector: 'body',
     templateUrl: 'templates/auth/login.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminAuthLogin {
     message = '';
@@ -294,6 +297,7 @@ export class AdminAuthLogin {
 @Component({
     selector: 'body',
     templateUrl: 'templates/auth/recover.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminAuthRecover {
     message = '';
@@ -332,6 +336,7 @@ export class AdminAuthRecover {
 @Component({
     selector: 'body',
     templateUrl: 'templates/auth/reset.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminAuthReset {
     message = '';
@@ -403,6 +408,7 @@ export class AdminAuthReset {
 @Component({
     selector      : 'body',
     templateUrl   : 'templates/auth/accept.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminAuthAccept {
     errors = [];
@@ -482,6 +488,7 @@ export class AdminAuthAccept {
 @Component({
     selector      : 'body',
     templateUrl   : 'templates/auth/wrong-token.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminAuthWrongToken {
 }

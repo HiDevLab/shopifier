@@ -27,7 +27,7 @@
                         [ngClass]="{sel:current_i==-1}">
                         <i class="fa fa-plus-circle mv-auto" aria-hidden="true"></i>
                         <h3 class="bold ml5 mv-auto">Add</h3>
-                        <span class="ml5 mv-auto">{% verbatim %}{{ '"' + tag_input+'"' }}{% endverbatim %}</span>
+                        <span class="ml5 mv-auto">{% verbatim %}[[  '"' + tag_input+'"'  ]]{% endverbatim %}</span>
                     </a>
                 </li>
                 <li *ngFor="let tag of all_tags|not_in:tags|stastartswith:tag_input; let i=index;"
@@ -36,7 +36,7 @@
                         (click)="insertTag($event, tag)"
                         (keyup)="onKeyUp($event)"
                         [ngClass]="{sel:i==current_i}">
-                        {% verbatim %}{{ tag }}{% endverbatim %}
+                        {% verbatim %}[[  tag  ]]{% endverbatim %}
                     </a>
                 </li>
             </ul>
@@ -45,7 +45,7 @@
 </div>
 <ul class="mt10 apply-tags">
     <li class="tag" *ngFor="let tag of tags; let i=index" >
-        {% verbatim %}{{ tag }}{% endverbatim %}
+        {% verbatim %}[[  tag  ]]{% endverbatim %}
         <a class="fa fa-times" aria-hidden="true"
             (click)="deleteTag(i)"></a>
     </li>
@@ -64,7 +64,7 @@
             
             <ul class="ph20 pb20 apply-tags">
                 <li *ngFor="let ap_tag of tags; let k=index">
-                    {% verbatim %}{{ ap_tag }}{% endverbatim %}
+                    {% verbatim %}[[  ap_tag  ]]{% endverbatim %}
                     <a class="fa fa-times" aria-hidden="true"
                         (click)="deleteTag(k);tagsChange=true"></a>
                 </li>
@@ -86,7 +86,7 @@
                 <li *ngFor="let all_tag of all_tags; let j=index"
                     [ngClass]="{disabled: tags.includes(all_tag)}"
                     (click)="addTag(all_tag);tagsChange=true">
-                    {% verbatim %}{{ all_tag }}{% endverbatim %}
+                    {% verbatim %}[[  all_tag  ]]{% endverbatim %}
                 </li>
             </ul>
         </div>

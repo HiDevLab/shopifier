@@ -2,7 +2,7 @@
     <form class="input-form up" novalidate>{% csrf_token %}
         <div class="modal-header">
             <h2>
-                Remove user account for {% verbatim %}{{ parent.user.first_name + ' ' + parent.user.last_name }}{% endverbatim %}?
+                Remove user account for {% verbatim %}[[ parent.user.first_name + ' ' + parent.user.last_name ]]{% endverbatim %}?
             </h2>
             <a class="cross fa fa-times" aria-hidden="true"(click)="reject()"></a>
         </div>

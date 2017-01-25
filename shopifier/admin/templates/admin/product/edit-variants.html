@@ -1,6 +1,6 @@
 <div *ngIf="object_id" class="rows pt20 center">
     <div class="row w16 left pl30">
-        <div class="rows ml30" [ngClass]="{w16: options.length==1,w20: options.length==2,w24: options.length==3}">
+        <div class="rows" [ngClass]="{w16: options.length==1,w20: options.length==2,w24: options.length==3}">
             <div class="form p20">
                 <div class="row mh20">
                     <strong class="col mr-auto font16">Variants</strong>
@@ -16,7 +16,7 @@
                         <li *ngFor="let val of option.values" 
                             class="ref mr15" [ngClass]="{'color-green': i==0, 'color-purple': i==1, 'color-orange': i==2}"
                             (click)="filterVariants(i, val)">
-                            {% templatetag openvariable %}val{% templatetag closevariable %}
+                            [[ val ]]
                         </li>
                     </span>
                 </ul>
@@ -27,12 +27,12 @@
                             <label for="select-bulk-variants">
                                 <i class="fa" [ngClass]="{'fa-minus': !selectAllVariants, 'fa-check': selectAllVariants}"></i>
                             </label>
-                            {% templatetag openvariable %}countSelectedVariants()[1]{% templatetag closevariable %}
+                            [[ countSelectedVariants()[1] ]]
                         </div>
                         <div>
                             <a>Edit variants</a>
                         </div>
-                        <div id="base-bulk-actions" (click)="refreshDOM(); onPopover($event, popover_bulk_actions)">
+                        <div id="base-bulk-actions" (click)="onPopover($event, 'bulk-actions')">
                             <a>Bulk actions</a>
                             <span class="fa fa-caret-down ml3"></span>
                         </div>
@@ -70,7 +70,7 @@
                                 </th>
                                 <th class="image"></th>
                                 <th *ngFor="let option of options; let i = index;">
-                                    {% templatetag openvariable %}option.name{% templatetag closevariable %}
+                                    [[ option.name ]]
                                 </th>
                                 <th *ngIf="inventoryManagement" >Inventory</th><th>Price</th><th>SKU</th>
                             </tr>
@@ -115,9 +115,9 @@
                                 <span *ngIf="currentVariant==variant.id" class="hover">
                                     <div>
                                         Drop to set the variant image for 
-                                        <span class="color-green">{% templatetag openvariable %}variant.option1{% templatetag closevariable %}</span>
-                                        <span *ngIf="variant.option2" class="color-purple">, {% templatetag openvariable %}variant.option2{% templatetag closevariable %}</span>
-                                        <span *ngIf="variant.option3" class="color-orange">, {% templatetag openvariable %}variant.option3{% templatetag closevariable %}</span>
+                                        <span class="color-green">[[ variant.option1 ]]</span>
+                                        <span *ngIf="variant.option2" class="color-purple">, [[ variant.option2 ]]</span>
+                                        <span *ngIf="variant.option3" class="color-orange">, [[ variant.option3 ]]</span>
                                     </div>
                                 </span>
                             </tr>

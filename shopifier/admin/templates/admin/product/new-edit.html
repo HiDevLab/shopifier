@@ -1,6 +1,87 @@
 {% load static %}
 {% include "admin/errorsbox.html" with class="section-profile" %}
-<div class="rows pt20 center" *ngIf="form.product">
+
+<div class="row pt20 center" *ngIf="form.product">
+    <div class="row w16 left pl30">
+        <div class="rows w16">
+            <form class="form pb10" [formGroup]="form.product">
+                {% with group='product' change='onFormChange()' %}
+                {% include "admin/input-section.html" with control1="title" placeholder1="Short Sleeve T-Shirt" %}
+                {% endwith %}
+                <div class="input-section">
+                    <reach-text-editor
+                        [parrent_component]="self"></reach-text-editor> 
+                </div>
+            </form>
+            {% include "admin/product/edit-images.html" %}
+            {% include "admin/product/new-variants.html" %}
+        </div>
+        <div class="rows w8 ml20">
+            <form class="form pv20 grey">
+                <strong class="pl20 font16">Visibility</strong>
+                <div class="row"><div class="separator mv20"></div></div>
+                <div class="row ph20 input backgraund-grey">
+                    <input type="checkbox" id="online_store" [(ngModel)]="online_store" name="online_store">
+                    <label for="online_store"><i class="fa fa-check"></i>Online store</label>
+                    <a class="fa fa-calendar-o ml-auto color-blue bold" title="Set publish date" (click)="showPublishedAt=!showPublishedAt;published_at = ['', ''];"></a>
+                </div>
+                <span *ngIf="showPublishedAt">
+                    <div class="row ph20 pv10 color-subdued">
+                        Publish this product on
+                    </div>
+                    <div class="row ph20 pv10 color-subdued">
+                        <var [text]="published_at[0]"></var>
+                    </div>
+                    
+                    <div class="row ph20">
+                        <div class="row input backgraund-grey">
+                            <input [(ngModel)]="published_at[0]" name="published_at_date" class="backgraund-white mt0" id="base-calendar" (click)="onShowCalendar($event)">
+                            <input [(ngModel)]="published_at[1]" name="published_at_time" class="backgraund-white mt0" id="base-publish_time" (click)="getTimes($event)">
+                            <a class="cross fa fa-times ml20 color-blue" (click)="showPublishedAt=!showPublishedAt;published_at = ['', ''];"></a>
+                            <popover id="publish_time" class="down color-default hide mt18">
+                                <div class="default-popover">
+                                   <ul class="vh7">
+                                        <li *ngFor="let time of times" (click)="publishedTimeChage(time)">[[ time ]]</li>
+                                    </ul>
+                                </div>
+                            </popover>
+                            <span *ngIf="showCalendar">
+                                <calendar id="calendar"
+                                    [parent]="self"
+                                    [show]="'showCalendar'"
+                                    [change]="'publeshedChange'"
+                                    [start_date]="now">
+                                </calendar>
+                            </span>
+                        </div>
+                    </div>
+                </span>
+            </form>
+        </div>
+    </div>
+ </div>
+
+{% include "admin/product/edit-variants.html" %}
+
+<div class="separator mt20"></div>
+
+<div class="row p25 center">
+    <div class="row end w16 ph30">
+        <a class="btn btn-red mr-auto" (click)="deleteProduct();">Delete Product</a>
+        <a class="btn btn-blue"
+        [ngClass]="{disabled : !formChange}"
+        (click)="onSave()"> Save Product</a>
+    </div> 
+</div>
+
+<leave-page 
+    [parrent_component]="self">
+</leave-page>
+
+{% include "admin/product/bulk-actions.html" %}
+
+
+<!-- <div class="row pt20 center" *ngIf="form.product">
     <div class="row w16 left pl30">
         <div class="rows w16 ml30">
             <form class="form pb10" [formGroup]="form.product">
@@ -35,4 +116,4 @@
     [parrent_component]="self">
 </leave-page>
 
-{% include "admin/product/bulk-actions.html" %}
+{% include "admin/product/bulk-actions.html" %} -->

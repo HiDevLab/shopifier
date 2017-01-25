@@ -21,7 +21,7 @@
         <div class="list tr row mh20" *ngFor="let product of products">
             <a class=" ph10 pv17 tl w6 ref"
                 (click)="onEditProduct(product)">
-                {% verbatim %}{{ product.title }}{% endverbatim %}
+                {% verbatim %}[[  product.title ]]{% endverbatim %}
             </a>
             <div class="ph10 pv17 tl w4 color-subdued"
                 (click)="onEditProduct(product)">

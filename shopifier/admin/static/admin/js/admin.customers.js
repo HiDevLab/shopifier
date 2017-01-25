@@ -29,6 +29,7 @@ export class ProvincePipe {
 @Component({
   selector: 'main',
   templateUrl: 'templates/customer/customers.html',
+  interpolation: ['[[', ']]'],
 })
 export class AdminCustomers extends BaseForm {
 
@@ -99,6 +100,7 @@ export class AdminCustomers extends BaseForm {
 @Component({
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
+  interpolation: ['[[', ']]'],
   pipes: [ProvincePipe, ArrayLengthPipe]
 })
 export class AdminCustomersNew extends BaseForm {
@@ -234,6 +236,7 @@ export class AdminCustomersNew extends BaseForm {
 @Component({
     selector: 'main',
     templateUrl : 'templates/customer/edit.html',
+    interpolation: ['[[', ']]'],
     pipes: [ProvincePipe]
 })
 export class AdminCustomersEdit extends BaseForm{

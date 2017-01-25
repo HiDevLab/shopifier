@@ -8,10 +8,10 @@
         
         <div class="modal-header">
             <div>
-                Hi {% verbatim %}{{user.first_name}}{% endverbatim %},
+                Hi {% verbatim %}[[ user.first_name ]]{% endverbatim %},
                 <br>
-                You have been invited to create an account with {% verbatim %}{{ user.store_name }}{% endverbatim %}. Please finalize your account details here. 
-                <strong>Once completed you will have full access to this Shopifier store {% verbatim %}{{ user.store_name }}{% endverbatim %}.</strong>
+                You have been invited to create an account with {% verbatim %}[[  user.store_name  ]]{% endverbatim %}. Please finalize your account details here. 
+                <strong>Once completed you will have full access to this Shopifier store {% verbatim %}[[  user.store_name  ]]{% endverbatim %}.</strong>
             </div>
         </div>
         <div  *ngIf="errors.length> 0" class="input-section">
@@ -19,10 +19,10 @@
                 <div class="error-list">
                     <i  class="fa fa-exclamation-circle" aria-hidden="true"> </i>
                     <div>
-                        <h2> There is {% verbatim %}{{ errors.length }}{% endverbatim %} errors</h2>
+                        <h2> There is {% verbatim %}[[  errors.length  ]]{% endverbatim %} errors</h2>
                         <ul>
                             <li *ngFor="let error of errors">
-                                {% verbatim %}{{ error }}{% endverbatim %}
+                                {% verbatim %}[[  error  ]]{% endverbatim %}
                             </li>
                         </ul>
                     </div>

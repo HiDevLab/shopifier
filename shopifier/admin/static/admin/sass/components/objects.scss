@@ -7,7 +7,8 @@ $colors: (
     tags: #798c9c,
     green: #29bc94,
     purple: #763eaf,
-    orange: #ff9517
+    orange: #ff9517,
+    blue: #0078bd,
 );
 
 
@@ -24,6 +25,7 @@ $colors: (
 $backgrounds: (
     default: #EBEEF0,
     form: #FFFFFF,
+    white: #FFFFFF,
     grey: #F5F6F7,
 );
 
@@ -566,7 +568,6 @@ popover {
             left: calc(100% - 28px);
         }
     }
-
 }
 
 .default-popover {
@@ -577,6 +578,7 @@ popover {
         flex-direction: column;
         width: 100%;
         position: relative;
+        overflow-y: auto;
         li {
             padding: 5px 40px 5px 20px;
             &:hover {

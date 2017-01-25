@@ -11,7 +11,7 @@
                 <popover id="formatting-popover" class="down left color-default hide mt18">
                     <div class="default-popover">
                        <ul>
-                            <li *ngFor="let format of formats" (click)="commandFormatBlock(format.tag)">{{ format.title }}</li>
+                            <li *ngFor="let format of formats" (click)="commandFormatBlock(format.tag)">[[  format.title  ]]</li>
                         </ul>
                     </div>
                 </popover>
@@ -30,7 +30,7 @@
                 <popover id="alignment-popover" class="down color-default hide mt18">
                     <div class="default-popover">
                        <ul>
-                            <li *ngFor="let align of alignments" (click)="commandTag(align.command)">{{ align.title }}</li>
+                            <li *ngFor="let align of alignments" (click)="commandTag(align.command)">[[  align.title  ]]</li>
                         </ul>
                     </div>
                 </popover>
@@ -45,7 +45,7 @@
                                 <div *ngFor="let colors of palette">
                                     <div class="row sep"></div>
                                     <div class="rte-colors">
-                                        <div *ngFor="let color of colors" class="rte-color" title="{{ color.title }}" style="background-color: {{ color.color }};"
+                                        <div *ngFor="let color of colors" class="rte-color" title="[[  color.title  ]]" style="background-color: [[  color.color  ]];"
                                         (click)="commandColor(color.color)"></div>
                                     </div>
                                 </div>
@@ -56,7 +56,7 @@
                                 <div *ngFor="let colors of palette">
                                     <div class="row sep"></div>
                                     <div class="rte-colors">
-                                        <div *ngFor="let color of colors" class="rte-color" title="{{ color.title }}" style="background-color: {{ color.color }};"
+                                        <div *ngFor="let color of colors" class="rte-color" title="[[  color.title  ]]" style="background-color: [[  color.color  ]];"
                                         (click)="commandColor(color.color)"></div>
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                     </div>
                 </popover>
 
-                <div (click)="showLinkEdit=true" title="{{ linkToolTitle }}" class="tool left fa fa-link"></div>
+                <div (click)="showLinkEdit=true" title="[[  linkToolTitle  ]]" class="tool left fa fa-link"></div>
     
                 <div id="base-table-popover" class="tool row" title="Insert table" (click)="onPopover($event, popover_table)">
                     <span class="fa fa-table" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
@@ -76,11 +76,11 @@
                        <ul><li (click)="createTable()">Insert table</li></ul>
                        <div class="row sep mh5"></div>
                        <ul>
-                            <li *ngFor="let command of tables1" (click)="commandTable($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">{{ command.title }}</li>
+                            <li *ngFor="let command of tables1" (click)="commandTable($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">[[  command.title  ]]</li>
                         </ul>
                         <div class="row sep mh5"></div>
                         <ul>
-                            <li *ngFor="let command of tables2" (click)="commandTable2($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">{{ command.title }}</li>
+                            <li *ngFor="let command of tables2" (click)="commandTable2($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">[[  command.title  ]]</li>
                         </ul>
                     </div>
                 </popover>
@@ -131,7 +131,7 @@
         <div class="modal-footer">
             <a *ngIf="isLink" class="btn btn-red mr-auto" (click)="removeLink();">Remove link</a>
             <a class="btn mr10" (click)="showLinkEdit=false;">Cancel</a>
-            <a class="btn btn-blue" (click)="insertLink();">{{ linkToolTitle }}</a>
+            <a class="btn btn-blue" (click)="insertLink();">[[  linkToolTitle  ]]</a>
         </div>
     </form>
 </div>

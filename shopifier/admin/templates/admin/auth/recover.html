@@ -4,7 +4,7 @@
     
     <form [formGroup]="lform" class="login-box" novalidate>{% csrf_token %}
         <div *ngIf="errors" class="dialog-status">
-            {% verbatim %}{{errors.detail}}{% endverbatim %}
+            {% verbatim %}[[ errors.detail ]]{% endverbatim %}
             <i class="fa fa-exclamation-triangle"></i>
         </div>
         <div class="dialog-input">

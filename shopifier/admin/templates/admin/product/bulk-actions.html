@@ -32,9 +32,9 @@
             <h2 *ngIf="bulkVariants.length>1">Are you sure you want to delete the selected variants?</h2>
             <h2 *ngIf="bulkVariants.length==1">Delete 
                 {% verbatim %}
-                    {{ bulkVariants[0].option1 }} 
-                    <span *ngIf="bulkVariants[0].option2"> / {{ bulkVariants[0].option2 }}</span>
-                    <span *ngIf="bulkVariants[0].option3"> / {{ bulkVariants[0].option3 }}</span>
+                    [[ bulkVariants[0].option1 ]]
+                    <span *ngIf="bulkVariants[0].option2"> / [[ bulkVariants[0].option2 ]]</span>
+                    <span *ngIf="bulkVariants[0].option3"> / [[ bulkVariants[0].option3 ]]</span>
                 {% endverbatim %}?
             </h2>
             <a class="cross fa fa-times" aria-hidden="true" (click)="showDeleteVariants=undefined"></a>
@@ -45,9 +45,9 @@
                 Are you sure you want to delete the variant 
                 {% verbatim %}
                     <span class="bold">
-                        {{ bulkVariants[0].option1 }} 
-                        <span *ngIf="bulkVariants[0].option2"> / {{ bulkVariants[0].option2 }}</span>
-                        <span *ngIf="bulkVariants[0].option3"> / {{ bulkVariants[0].option3 }}</span>
+                        [[ bulkVariants[0].option1 ]]
+                        <span *ngIf="bulkVariants[0].option2"> / [[ bulkVariants[0].option2 ]]</span>
+                        <span *ngIf="bulkVariants[0].option3"> / [[ bulkVariants[0].option3 ]]</span>
                     </span>
                 {% endverbatim %}
                 ? This action cannot be reversed.

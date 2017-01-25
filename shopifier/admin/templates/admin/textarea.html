@@ -1,7 +1,7 @@
 <label class="input-box input"
        [ngClass]="{err: form.{{ group }}_meta.{{ control }}.error}"
        {% if display %}*ngIf="{{ display }}"{% endif %}>
-    {% templatetag openvariable %} form.{{ group }}_meta.{{ control }}.label {% templatetag closevariable %}
+    [[ form.{{ group }}_meta.{{ control }}.label ]]
     <textarea autosize rows="{{ rows }}" formControlName="{{ control }}"
         (input)="formChange=true"
         placeholder="{{ placeholder }}">

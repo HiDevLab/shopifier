@@ -17,7 +17,7 @@
             <div class="section">
                 <div class="cell">
                     <label>Memeber since</label> 
-                    <span *ngIf="currentUser">{% verbatim %}{{ setDate(currentUser.date_joined) | date:'longDate' }}{% endverbatim %}</span>
+                    <span *ngIf="currentUser">{% verbatim %}[[  setDate(currentUser.date_joined) | date:'longDate'  ]]{% endverbatim %}</span>
                 </div>
                 <div class="cell">
                     <label>Current plan</label>
@@ -45,17 +45,17 @@
             </div>
             <div class="row p20 pb0" *ngFor="let user of (users | boolean:'is_admin':true)">
                 <div class="avatar" *ngIf="user">
-                    {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
-                    <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
+                    {% verbatim %}[[  user.first_name[0] + user.last_name[0]  ]]{% endverbatim %}
+                    <img *ngIf="user.avatar" src="{% verbatim %}[[  user.avatar  ]]{% endverbatim %}">
                 </div>
                 <div class="rows">
                     <a class="ref pl20 pt5" (click)="goProfile(user)">
-                        {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
+                        {% verbatim %}[[  user.first_name + ' ' + user.last_name  ]]{% endverbatim %}
                     </a>
                     <div *ngIf="!user.is_active" class="pl20 pt5">Invitation Sent</div>
                     <div *ngIf="user.is_active" [ngSwitch]="user.visit_datetime" class="pl20 pt5">
                         <div *ngSwitchCase="null">No sessions found</div>
-                        <div *ngSwitchDefault>{% verbatim %}{{setDate(user.visit_datetime) | date:'EEEE, MMMM d, y HH:mm Z'}}{% endverbatim %}</div>
+                        <div *ngSwitchDefault>{% verbatim %}[[ setDate(user.visit_datetime) | date:'EEEE, MMMM d, y HH:mm Z' ]]{% endverbatim %}</div>
                     </div>
                 </div>
             </div>
@@ -73,17 +73,17 @@
             </div>
             <div class="row p20 pb0" *ngFor="let user of (users | boolean:'is_admin':false)">
                 <div class="avatar" *ngIf="user">
-                    {% verbatim %}{{ user.first_name[0] + user.last_name[0] }}{% endverbatim %}
-                    <img *ngIf="user.avatar" src="{% verbatim %}{{ user.avatar }}{% endverbatim %}">
+                    {% verbatim %}[[  user.first_name[0] + user.last_name[0]  ]]{% endverbatim %}
+                    <img *ngIf="user.avatar" src="{% verbatim %}[[  user.avatar  ]]{% endverbatim %}">
                 </div>
                 <div class="rows">
                     <a class="ref pl20 pt5" (click)="goProfile(user)">
-                        {% verbatim %}{{ user.first_name + ' ' + user.last_name }}{% endverbatim %}
+                        {% verbatim %}[[  user.first_name + ' ' + user.last_name  ]]{% endverbatim %}
                     </a>
                     <div *ngIf="!user.is_active" class="pl20 pt5">Invitation Sent</div>
                     <div *ngIf="user.is_active" [ngSwitch]="user.visit_datetime" class="pl20 pt5">
                         <div *ngSwitchCase="null">No sessions found</div>
-                        <div *ngSwitchDefault>{% verbatim %}{{setDate(user.visit_datetime) | date:'EEEE, MMMM d, y HH:mm Z'}}{% endverbatim %}</div>
+                        <div *ngSwitchDefault>{% verbatim %}[[ setDate(user.visit_datetime) | date:'EEEE, MMMM d, y HH:mm Z' ]]{% endverbatim %}</div>
                     </div>
                 </div>
                 <div class="row tr" [ngSwitch]="user.permissions[0]">

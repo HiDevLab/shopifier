@@ -14,7 +14,11 @@ import { AdminComponentsModule, AdminLeavePage } from './components';
 
 
 //------------------------------------------------------------------------------AdminOrdersOrders
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+@Component({
+    selector: 'main', templateUrl:
+    'templates/temporarily.html',
+    interpolation: ['[[', ']]'],
+})
 export class AdminOrdersOrders {
     component = 'Orders';
     static get parameters() {return [[Admin]];}
@@ -24,7 +28,11 @@ export class AdminOrdersOrders {
 
 
 //------------------------------------------------------------------------------AdminOrdersDrafts
-@Component({selector: 'main', templateUrl: 'templates/temporarily.html',})
+@Component({
+    selector: 'main',
+    templateUrl: 'templates/temporarily.html',
+    interpolation: ['[[', ']]'],
+})
 export class AdminOrdersDrafts {
     component = 'Drafts';
     static get parameters() {return [[Admin]];}

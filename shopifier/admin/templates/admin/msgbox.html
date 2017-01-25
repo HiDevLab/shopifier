@@ -1,13 +1,13 @@
 <div class="modal-form">
     <form class="input-form up">{% csrf_token %}
         <div class="modal-header">
-            <h2>{% verbatim %}{{title}}{% endverbatim %}</h2><a class="cross fa fa-times" (click)="reject()"></a>
+            <h2>[[ title ]]</h2><a class="cross fa fa-times" (click)="reject()"></a>
         </div>
-         <div class="row ph20 pv10">{% verbatim %}{{text}}{% endverbatim %}</div>
+         <div class="row ph20 pv10">[[ text ]]</div>
         <div class="modal-footer">
             <a class="btn mr10" (click)="reject()">Cancel</a>
-            <a *ngIf="!btn_delete" class="btn btn-blue" (click)="resolve()">{% verbatim %}{{btn}}{% endverbatim %}</a>
-            <a *ngIf="btn_delete" class="btn btn-delete" (click)="resolve()">{% verbatim %}{{btn}}{% endverbatim %}</a>
+            <a *ngIf="!btn_delete" class="btn btn-blue" (click)="resolve()">[[ btn ]]</a>
+            <a *ngIf="btn_delete" class="btn btn-delete" (click)="resolve()">[[ btn ]]</a>
         </div>
     </form>
 </div>

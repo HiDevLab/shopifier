@@ -9,8 +9,8 @@
                       <i class="mt6 fa fa-user fa-stack-1x fa-inverse font70"></i>
                     </span>
                      <div class="col pl20 pt15">
-                        <h2><strong>{% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}</strong></h2>
-                        <p *ngIf="api_data.customer.default_address" class="color-subdued">{% verbatim %}{{ api_data.customer.default_address.province_name }}{{ api_data.customer.default_address.province }}{% endverbatim %}</p> 
+                        <h2><strong>{% verbatim %}[[  api_data.customer.first_name  ]] [[  api_data.customer.last_name  ]]{% endverbatim %}</strong></h2>
+                        <p *ngIf="api_data.customer.default_address" class="color-subdued">{% verbatim %}[[  api_data.customer.default_address.province_name  ]][[  api_data.customer.default_address.province  ]]{% endverbatim %}</p> 
                         <p class="color-subdued">Customer for 2 days</p> 
                     </div>
                 </div>
@@ -18,7 +18,7 @@
                     <label class="input-box input">
                         <textarea autosize rows="1" formControlName="note" 
                         (input)="onFormChange()"
-                        placeholder="Add a note about {% verbatim %}{{ api_data.customer.first_name }}{% endverbatim %}">
+                        placeholder="Add a note about {% verbatim %}[[  api_data.customer.first_name  ]]{% endverbatim %}">
                         </textarea>
                     </label>
                 </div>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="col p20 pb0">
                     <a class="ref mt9" (click)="showMail=true">
-                        {% verbatim %}{{ api_data.customer.email }}{% endverbatim %}
+                        {% verbatim %}[[  api_data.customer.email  ]]{% endverbatim %}
                     </a>
                     <div class="color-subdued pt3 pb9">No account</div> 
                 </div>
@@ -70,16 +70,16 @@
                                         <div class="row space-between">
                                             <div class="col color-subdued pl20">
                                                 <div>
-                                                    {% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}
+                                                    {% verbatim %}[[  api_data.customer.first_name  ]] [[  api_data.customer.last_name  ]]{% endverbatim %}
                                                 </div>
                                                 <div class="mt3">
-                                                    {% verbatim %}{{ address.company }}{% endverbatim %}
+                                                    {% verbatim %}[[  address.company  ]]{% endverbatim %}
                                                 </div>
                                                 <div class="mt3">
-                                                    {% verbatim %}{{ address.province_name }}{% endverbatim %}
+                                                    {% verbatim %}[[  address.province_name  ]]{% endverbatim %}
                                                 </div>
                                                 <div class="mt3">
-                                                    {% verbatim %}{{ address.country_name }}{% endverbatim %}
+                                                    {% verbatim %}[[  address.country_name  ]]{% endverbatim %}
                                                 </div> 
                                             </div>
                                             <div class="col" *ngIf="!address.default">
@@ -98,16 +98,16 @@
                 </div>
                 <div class="col color-subdued p20 pb0" *ngIf="api_data.customer.default_address">
                     <div class="mt5">
-                        {% verbatim %}{{ api_data.customer.first_name }} {{ api_data.customer.last_name }}{% endverbatim %}
+                        {% verbatim %}[[  api_data.customer.first_name  ]] [[  api_data.customer.last_name  ]]{% endverbatim %}
                     </div>
                    <div class="mt3" >
-                        {% verbatim %}{{ api_data.customer.default_address.company }}{% endverbatim %}
+                        {% verbatim %}[[  api_data.customer.default_address.company  ]]{% endverbatim %}
                     </div>
                     <div class="mt3">
-                        {% verbatim %}{{ api_data.customer.default_address.province_name }}{% endverbatim %}
+                        {% verbatim %}[[  api_data.customer.default_address.province_name  ]]{% endverbatim %}
                     </div>
                     <div class="mt3">
-                        {% verbatim %}{{ api_data.customer.default_address.country_name }}{% endverbatim %}
+                        {% verbatim %}[[  api_data.customer.default_address.country_name  ]]{% endverbatim %}
                     </div> 
                 </div>
             </div>
@@ -172,7 +172,7 @@
                 <select formControlName="country_code"
                 (change)="form.default_address.controls.province.setValue(''); changeAddress=true">
                     <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
-                            {% verbatim %}{{ country.display_name }}{% endverbatim %}
+                            {% verbatim %}[[  country.display_name  ]]{% endverbatim %}
                     </option>
                 </select>
             </label>
@@ -183,7 +183,7 @@
                 (change)="changeAddress=true">
                     <option *ngFor="let region of form.default_address_meta.province_code.choices | 
                                     province:form.default_address.controls.country_code.value" [value]="region.value">
-                            {% verbatim %}{{ region.display_name }}{% endverbatim %}
+                            {% verbatim %}[[  region.display_name  ]]{% endverbatim %}
                     </option>
                 </select>
             </label>   
