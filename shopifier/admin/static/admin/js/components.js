@@ -830,17 +830,6 @@ export class Calendar {
 }
 
 
-
-//------------------------------------------------------------------------------Var
-@Component({
-    selector: 'var',
-    template: '[[ text ]]',
-    inputs: ['text'],
-    interpolation: ['[[', ']]']
-})
-export class Var {
-}
-
 //------------------------------------------------------------------------------AdminComponentsModule
 @NgModule({
     imports: [
@@ -854,7 +843,6 @@ export class Var {
         AdminLeavePage,
         RichTextEditor,
         Calendar,
-        Var,
         StartsWithPipe,
         ArrayLengthPipe,
         NotInPipe,
@@ -872,7 +860,6 @@ export class Var {
         AdminLeavePage,
         RichTextEditor,
         Calendar,
-        Var
     ]
 })
 export class AdminComponentsModule {}

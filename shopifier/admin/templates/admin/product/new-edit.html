@@ -30,15 +30,15 @@
                         Publish this product on
                     </div>
                     <div class="row ph20 pv10 color-subdued">
-                        <var [text]="published_at[0]"></var>
+                        published on [[ published_at[0] + ' ' + published_at[1] ]]
                     </div>
                     
                     <div class="row ph20">
                         <div class="row input backgraund-grey">
                             <input [(ngModel)]="published_at[0]" name="published_at_date" class="backgraund-white mt0" id="base-calendar" (click)="onShowCalendar($event)">
-                            <input [(ngModel)]="published_at[1]" name="published_at_time" class="backgraund-white mt0" id="base-publish_time" (click)="getTimes($event)">
+                            <input [(ngModel)]="published_at[1]" name="published_at_time" class="backgraund-white mt0" id="base-publish-time" (click)="getTimes($event)">
                             <a class="cross fa fa-times ml20 color-blue" (click)="showPublishedAt=!showPublishedAt;published_at = ['', ''];"></a>
-                            <popover id="publish_time" class="down color-default hide mt18">
+                            <popover id="publish-time" class="down color-default hide mt18">
                                 <div class="default-popover">
                                    <ul class="vh7">
                                         <li *ngFor="let time of times" (click)="publishedTimeChage(time)">[[ time ]]</li>

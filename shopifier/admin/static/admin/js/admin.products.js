@@ -11,7 +11,7 @@ import { AdminAuthService, AdminUtils } from './admin.auth';
 import { Admin } from './admin';
 import { BaseForm } from './admin.baseform';
 import { AdminComponentsModule, RichTextEditor,  AdminLeavePage, Popover,
-    Calendar, Var } from './components';
+    Calendar, } from './components';
 
 
 //------------------------------------------------------------------------------AdminCollections
@@ -119,7 +119,7 @@ export class AdminProducts extends BaseForm {
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
   interpolation: ['[[', ']]'],
-  directives: [RichTextEditor, AdminLeavePage, Popover, Calendar, Var],
+  directives: [RichTextEditor, AdminLeavePage, Popover, Calendar ],
 })
 export class AdminProductsNew extends BaseForm {
     container_images = undefined;
@@ -234,7 +234,7 @@ export class AdminProductsNew extends BaseForm {
             }
         );
 
-        this.popovers = ['bulk_actions', 'publish_time'];
+        this.popovers = ['bulk-actions', 'publish-time'];
         // drag and drop
         this.container_images = this.getByID('images');
         this.drake = dragula(
@@ -1009,7 +1009,7 @@ export class AdminProductsNew extends BaseForm {
     }
 
     hidePopovers(exclude) {
-        for (let i in this.popovers) {
+        for (let i=0; i < this.popovers.length; i++) {
             if (this.popovers[i] != exclude) {
                 this.hidePopover(this.popovers[i]);
             }
@@ -1073,7 +1073,7 @@ export class AdminProductsNew extends BaseForm {
 
     getTimes(event) {
         if (this.times.length) {
-            this.onPopover(event, 'publish_time');
+            this.onPopover(event, 'publish-time');
         }
     }
 }

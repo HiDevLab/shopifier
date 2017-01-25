@@ -2,7 +2,7 @@
     <form class="input-form up" novalidate>
         <div class="modal-header">
             <h2>Update Images</h2>
-            <a class="cross fa fa-times" aria-hidden="true" (click)="showAddImageFromUrl=undefined"></a>
+            <a class="cross fa fa-times" aria-hidden="true" (click)="showBulkUpdateImages=false;"></a>
         </div>
         <div class="input-section">
              <ul class="bulk-images mh20 mb20" id="images" [ngClass]="{hide: dragOverImg}">
@@ -31,11 +31,9 @@
         <div class="modal-header">
             <h2 *ngIf="bulkVariants.length>1">Are you sure you want to delete the selected variants?</h2>
             <h2 *ngIf="bulkVariants.length==1">Delete 
-                {% verbatim %}
-                    [[ bulkVariants[0].option1 ]]
-                    <span *ngIf="bulkVariants[0].option2"> / [[ bulkVariants[0].option2 ]]</span>
-                    <span *ngIf="bulkVariants[0].option3"> / [[ bulkVariants[0].option3 ]]</span>
-                {% endverbatim %}?
+                [[ bulkVariants[0].option1 ]]
+                <span *ngIf="bulkVariants[0].option2"> / [[ bulkVariants[0].option2 ]]</span>
+                <span *ngIf="bulkVariants[0].option3"> / [[ bulkVariants[0].option3 ]]</span>
             </h2>
             <a class="cross fa fa-times" aria-hidden="true" (click)="showDeleteVariants=undefined"></a>
         </div>
@@ -43,13 +41,11 @@
             <div *ngIf="bulkVariants.length>1" class="p10">You cannot recover deleted product variants, do you wish to continue?</div>
             <div *ngIf="bulkVariants.length==1" class="p10">
                 Are you sure you want to delete the variant 
-                {% verbatim %}
                     <span class="bold">
                         [[ bulkVariants[0].option1 ]]
                         <span *ngIf="bulkVariants[0].option2"> / [[ bulkVariants[0].option2 ]]</span>
                         <span *ngIf="bulkVariants[0].option3"> / [[ bulkVariants[0].option3 ]]</span>
                     </span>
-                {% endverbatim %}
                 ? This action cannot be reversed.
             </div>
         </div>
