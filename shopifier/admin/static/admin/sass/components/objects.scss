@@ -302,11 +302,11 @@ $input-error-background: #fef6f5;
             }
         }
     }
-    > strong {
+    strong {
         font-weight: bold;
     }
 
-    > input, > textarea, > select {
+    input, textarea, select {
         position: relative;
         background: inherit;
         margin-top: 5px;
