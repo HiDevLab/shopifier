@@ -148,19 +148,11 @@ export class AdminProductsNew extends BaseForm {
     online_store = 0;
 
     showCalendar = false;
-    published_at = ['', ''];
-
+    published_at = null;
+    published_at_date = null;
+    published_at_time = null;
     times = [];
-    _times = [ '00:00 am',
-        '00:30 am', '01:00 am', '01:30 am', '02:00 am', '02:30 am', '03:00 am',
-        '03:30 am', '04:00 am', '04:30 am', '05:00 am', '05:30 am', '06:00 am',
-        '06:30 am', '07:00 am', '07:30 am', '08:00 am', '08:30 am', '09:00 am',
-        '09:30 am', '10:00 am', '10:30 am', '11:00 am', '11:30 am', '12:00 am',
-        '00:30 pm', '01:00 pm', '01:30 pm', '02:00 pm', '02:30 pm', '03:00 pm',
-        '03:30 pm', '04:00 pm', '04:30 pm', '05:00 pm', '05:30 pm', '06:00 pm',
-        '06:30 pm', '07:00 pm', '07:30 pm', '08:00 pm', '08:30 pm', '09:00 pm',
-        '09:30 pm', '10:00 pm', '10:30 pm', '11:00 pm', '11:30 pm'
-    ]
+    _times = []
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
@@ -218,6 +210,14 @@ export class AdminProductsNew extends BaseForm {
             'text': 'Save product', 'class': 'btn btn-blue', 
             'click': this.onSave, 'primary': true, 'self': this 
         });
+
+        this.date_locale = moment.locale(navigator.language);
+        this.date_format = moment.localeData(this.date_locale).longDateFormat('L');
+
+        for (let i = 0; i < 24; i++) {
+            this._times.push(`0${i}:00`.slice(-5));
+            this._times.push(`0${i}:30`.slice(-5));
+        }
     }
 
     AfterViewInit(){
@@ -296,6 +296,20 @@ export class AdminProductsNew extends BaseForm {
 
         this.disabledNext = undefined;
         this.disabledPrev = undefined;
+
+        this.showPublishedAt = false;
+        if (data.product.published_at) {
+            this.published_at = moment(data.product.published_at);
+            this.published_at_date = this.published_at.format(this.date_format);
+            this.published_at_time = this.published_at.format('HH:mm');
+            this.refreshTimes();
+            this.online_store = 0;
+            if (this.published_at.diff(moment()) < 0) {
+                this.online_store = 1;
+            }
+        } else {
+            this.online_store = 1;
+        }
     }
 
     getImagesAfter(data) {
@@ -352,7 +366,14 @@ export class AdminProductsNew extends BaseForm {
                 values: this.options[2].values
             });
         }
+
         product.product['options'] = options;
+
+        if (this.published_at) {
+            product.product['published_at'] = this.published_at.toDate();
+        } else {
+            product.product['published_at'] = null;
+        }
         if (!this.object_id) {
             this._http.post('/admin/products.json', product )
                 .subscribe(
@@ -1037,27 +1058,67 @@ export class AdminProductsNew extends BaseForm {
         event.preventDefault();
         event.stopPropagation();
         this.showCalendar = !this.showCalendar;
+        this.hidePopovers();
     }
-    publeshedChange(d) {
-        this.formChange = true;
-        this._admin.notNavigate = true;
-        this.published_at[0] = d.toISOString().split('T')[0];
 
-        let date = new Date().toISOString().split('T')[0];
-        let hm = new Date().toISOString().split('T')[1].split(':').slice(0,2);
-        if (this.published_at[0] === date) {
+    publishedCheck() {
+        let cls = {'hour': 0, 'minute': 0, 'second': 0, 'millisecond': 0};
+        if (this.published_at.isValid()) {
+            this.published_at.set(cls);
+            let diff = this.published_at.diff(moment().set(cls));
+            if (diff < 0) {
+                this.published_at_time = null;
+                this.published_at = null;
+            } else if (diff == 0) {
+                this.published_at = moment();
+                this.published_at_time = this.published_at.format('HH:mm');
+                this.published_at_date = this.published_at.format(this.date_format);
+            } else {
+                this.published_at_time = this.published_at.format('HH:mm');
+                this.published_at_date = this.published_at.format(this.date_format);
+            }
+        } else {
+            this.published_at = null;
+            this.published_at_time = null;
+        }
+        this.refreshTimes()
+        if (this.published_at) {
+            this.online_store = 0;
+            this.formChange = true;
+            this._admin.notNavigate = true;
+        } else {
+            this.online_store = 1;
+        }
+    }
+
+    publeshedDateChange(date) {
+        this.published_at = moment(date);
+        this.publishedCheck();
+    }
+
+    publeshedDateInput() {
+        this.showCalendar = false;
+        this.published_at = moment(this.published_at_date, this.date_format, true);
+        this.publishedCheck();
+    }
+
+    refreshTimes() {
+        if (!this.published_at) {
+            this.times = [];
+            return;
+        }
+        let d = moment();
+        let date = d.format(this.date_format);
+        let hh = d.format('HH');
+        let mm = d.format('mm');
+
+        let h, m;
+        if (this.published_at.format(this.date_format) === date) {
             this.times = this._times.filter(val => {
-                let t = val.split(' ')[0].split(':');
-                let apm = val.split(' ')[1];
-                t[0] = Number(t[0]);
-                t[1] = Number(t[1]);
-                if (apm === 'pm') {
-                    t[0] += 12;
-                }
-                let ret = hm[0] < t[0] || (hm[0] === t[0] && hm[0] < t[0]);
-                return ret;
-            }).slice();
-        } else if (this.published_at[0]) {
+                [h, m] = val.match(/^(\d\d):(\d\d)/).slice(1,3);
+                return hh < h || (hh == h && mm < m);
+            }).slice(0);
+        } else if (this.published_at_date) {
             this.times = this._times.slice(0);
         } else {
             this.times = [];
@@ -1065,16 +1126,61 @@ export class AdminProductsNew extends BaseForm {
     }
 
     publishedTimeChage(time) {
-        this.formChange = true;
-        this._admin.notNavigate = true;
-        this.published_at[1]=time;
+        this.published_at_time = time;
+        this.publishedTimeInput();
         this.hidePopovers();
+    }
+
+    publishedTimeInput() {
+        let hm = this.published_at_time.match(/^(\d\d):(\d\d)/);
+        if (hm) {
+            this.published_at = moment(this.published_at_date, this.date_format, true);
+            this.published_at.set({'hour': hm[1], 'minute': hm[2], 'second': 0, 'millisecond': 0});
+            if (this.published_at.diff(moment()) < 0) {
+                this.published_at = null;
+            }
+        } else {
+            this.published_at = null;
+        }
+        if (this.published_at) {
+            this.online_store = 0;
+            this.formChange = true;
+            this._admin.notNavigate = true;
+        } else {
+            this.online_store = 1;
+        }
     }
 
     getTimes(event) {
         if (this.times.length) {
             this.onPopover(event, 'publish-time');
         }
+    }
+
+    onChangeOnlineStore(flag) {
+        this.showPublishedAt = false;
+        if (flag) {
+            this.published_at = moment();
+            this.published_at_time = this.published_at.format('HH:mm');
+            this.published_at_date = this.published_at.format(this.date_format);
+        } else {
+            this.published_at = null;
+            this.published_at_date = null;
+            this.published_at_time = null;
+        }
+        this.refreshTimes();
+        this.formChange = true;
+        this._admin.notNavigate = true;
+    }
+
+    onCancelPublishedAt() {
+        this.online_store = 0;
+        this.published_at = null;
+        this.published_at_date = null;
+        this.published_at_time = null;
+        this.showPublishedAt = false;
+        this.formChange = true;
+        this._admin.notNavigate = true;
     }
 }
 

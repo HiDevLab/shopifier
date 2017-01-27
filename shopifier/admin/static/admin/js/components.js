@@ -743,7 +743,7 @@ export class Calendar {
         this.base_element = document.querySelector(`#base-${this.element.id}`) ||
             this.element.parentElement;
         let rect = this.base_element.getBoundingClientRect();
-        if (rect.top < 230) {
+        if (rect.top < 350) {
             this.element.style.top = this.base_element.offsetHeight;
         } else {
             this.element.style.bottom = this.base_element.offsetHeight;

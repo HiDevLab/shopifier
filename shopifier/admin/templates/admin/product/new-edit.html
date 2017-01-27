@@ -21,26 +21,32 @@
                 <strong class="pl20 font16">Visibility</strong>
                 <div class="row"><div class="separator mv20"></div></div>
                 <div class="row ph20 input backgraund-grey">
-                    <input type="checkbox" id="online_store" [(ngModel)]="online_store" name="online_store">
+                    <input type="checkbox" id="online_store" [(ngModel)]="online_store" name="online_store" (change)="onChangeOnlineStore(online_store)">
                     <label for="online_store"><i class="fa fa-check"></i>Online store</label>
-                    <a class="fa fa-calendar-o ml-auto color-blue bold" title="Set publish date" (click)="showPublishedAt=!showPublishedAt;published_at = ['', ''];"></a>
+                    <a class="fa fa-calendar-o ml-auto color-blue bold" title="Set publish date" (click)="showPublishedAt=!showPublishedAt;"></a>
+                </div>
+                <div *ngIf="!online_store && published_at" class="row ph20 pv10 color-subdued">
+                    Will be published on: [[ published_at.format('LLL') ]]
                 </div>
                 <span *ngIf="showPublishedAt">
                     <div class="row ph20 pv10 color-subdued">
                         Publish this product on
                     </div>
-                    <div class="row ph20 pv10 color-subdued">
-                        published on [[ published_at[0] + ' ' + published_at[1] ]]
-                    </div>
-                    
                     <div class="row ph20">
                         <div class="row input backgraund-grey">
-                            <input [(ngModel)]="published_at[0]" name="published_at_date" class="backgraund-white mt0" id="base-calendar" (click)="onShowCalendar($event)">
-                            <input [(ngModel)]="published_at[1]" name="published_at_time" class="backgraund-white mt0" id="base-publish-time" (click)="getTimes($event)">
-                            <a class="cross fa fa-times ml20 color-blue" (click)="showPublishedAt=!showPublishedAt;published_at = ['', ''];"></a>
+                            <input [(ngModel)]="published_at_date"
+                                    name="published_at_date" class="backgraund-white mt0" id="base-calendar"
+                                    (input)="publeshedDateInput()"
+                                    (click)="onShowCalendar($event)">
+                            <input [(ngModel)]="published_at_time" 
+                                    name="published_at_time" class="backgraund-white mt0" id="base-publish-time" 
+                                    (click)="getTimes($event)"
+                                    (input)="publishedTimeInput()">
+
+                            <a class="cross fa fa-times ml20 color-blue" (click)="onCancelPublishedAt();"></a>
                             <popover id="publish-time" class="down color-default hide mt18">
                                 <div class="default-popover">
-                                   <ul class="vh7">
+                                   <ul class="vh5">
                                         <li *ngFor="let time of times" (click)="publishedTimeChage(time)">[[ time ]]</li>
                                     </ul>
                                 </div>
@@ -49,7 +55,7 @@
                                 <calendar id="calendar"
                                     [parent]="self"
                                     [show]="'showCalendar'"
-                                    [change]="'publeshedChange'"
+                                    [change]="'publeshedDateChange'"
                                     [start_date]="now">
                                 </calendar>
                             </span>
