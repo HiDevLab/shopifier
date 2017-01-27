@@ -63,6 +63,43 @@
                     </div>
                 </span>
             </form>
+            <form class="form mt20 pv20 grey" [formGroup]="form.product">
+                <strong class="pl20 font16">Organization</strong>
+                <div class="row mt20 mh10">
+                    <label class="input input-box backgraund-grey">Product type
+                        <span class="row mv10">
+                            <input class="backgraund-white mt0" formControlName="product_type" (input)="onFormChange()" placeholder="Shirts">
+                            <a class="btn color-subdued fa-vertical" (click)="getTypes($event)">
+                                <i class="fa fa-angle-up bold"></i><i class="fa fa-angle-down bold"></i>
+                            </a>
+                            <popover id="product-types" class="down color-default hide mt18 w24">
+                                <div class="default-popover">
+                                   <ul>
+                                        <li *ngFor="let type of product_types" (click)="productType(type)">[[ type ]]</li>
+                                    </ul>
+                                </div>
+                            </popover>
+                        </span>
+                    </label>
+                </div>
+                <div class="row m10">
+                    <label class="input input-box backgraund-grey">Vendor
+                        <span *ngIf="_admin.settings.STORE_NAME" class="row mv10">
+                            <input class="backgraund-white mt0" formControlName="vendor" (input)="onFormChange()" [attr.placeholder]="_admin.settings.STORE_NAME">
+                            <a class="btn color-subdued fa-vertical" (click)="getVendors($event)">
+                                <i class="fa fa-angle-up bold"></i><i class="fa fa-angle-down bold"></i>
+                            </a>
+                            <popover id="vendors" class="down color-default hide mt18 w24">
+                                <div class="default-popover">
+                                   <ul>
+                                        <li *ngFor="let vendor of vendors" (click)="productVendor(vendor)">[[ vendor ]]</li>
+                                    </ul>
+                                </div>
+                            </popover>
+                        </span>
+                    </label>
+                </div>
+            </form>
         </div>
     </div>
  </div>

@@ -224,6 +224,22 @@ $color-ref: #0078bd;//#479ccf;
 }
 
 
+.fa-vertical {
+    display: flex;
+    flex-direction: column;
+    width: inherit;
+    position: relative;
+    padding-top: 0;
+    padding-bottom: 0;
+    > i:first-child {
+        transform: translateY(25%)
+    }
+    > i:last-child {
+        transform: translateY(-10%)
+    }
+}
+
+
 
 //input
 
@@ -502,9 +518,10 @@ popover {
     cursor: default;
     z-index: 10;
     position: absolute;
-    //width: 100%;
+    min-width: 10%;
     border-radius: 3px;
     box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
+//     transform: translate(-50%);
     & > div {
         position: relative;
         z-index: 11;
@@ -548,7 +565,7 @@ popover {
         transform-origin: center top;
         top: 35px;
         &::before {
-            top: -7px;
+            top: -6px;
         }
     }
     &.up {

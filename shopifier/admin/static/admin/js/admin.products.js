@@ -154,6 +154,9 @@ export class AdminProductsNew extends BaseForm {
     times = [];
     _times = []
 
+    product_types = [];
+    vendors = [];
+
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
                 [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef]];
@@ -182,6 +185,8 @@ export class AdminProductsNew extends BaseForm {
     ngOnInit() {
         this.self = this; // for child components
         this._admin.notNavigate = false;
+
+        this.popovers = ['bulk-actions', 'publish-time', 'product-types', 'vendors'];
 
         this.addForm(this.form, '/admin/products.json', 'product');
 
@@ -234,7 +239,6 @@ export class AdminProductsNew extends BaseForm {
             }
         );
 
-        this.popovers = ['bulk-actions', 'publish-time'];
         // drag and drop
         this.container_images = this.getByID('images');
         this.drake = dragula(
@@ -1017,8 +1021,9 @@ export class AdminProductsNew extends BaseForm {
         this.showCalendar = false;
         event.preventDefault();
         event.stopPropagation();
-        this.switchPopover(popover);
+        let ret = this.switchPopover(popover);
         this.hidePopovers(popover);
+        return ret;
     }
 
     hidePopover(popover) {
@@ -1038,9 +1043,10 @@ export class AdminProductsNew extends BaseForm {
     }
 
     switchPopover(popover, event) {
+        let show = false;
         let el = this.getByID(popover);
         if (el) {
-            let show = el.classList.contains('hide');
+            show = el.classList.contains('hide');
             el.classList.remove(show ? 'hide' : 'show');
             el.classList.add(show ? 'show' : 'hide');
             if (show) {
@@ -1048,6 +1054,7 @@ export class AdminProductsNew extends BaseForm {
                 el.dispatchEvent(event);
             }
         }
+        return show;
     }
 
     getId(){
@@ -1179,6 +1186,48 @@ export class AdminProductsNew extends BaseForm {
         this.published_at_date = null;
         this.published_at_time = null;
         this.showPublishedAt = false;
+        this.formChange = true;
+        this._admin.notNavigate = true;
+    }
+
+    getTypes(event) {
+        if (this.onPopover(event, 'product-types')) {
+            this.getAPI('/admin/products.json?fields=product_type', (data) => {
+                this.product_types = [];
+                data.products.forEach(v => {
+                    if (v.product_type && this.product_types.indexOf(v.product_type) === -1) {
+                        this.product_types.push(v.product_type)
+                    }
+                    if (!this.product_types.length) {
+                        this.hidePopover('product_types')
+                    }
+                });
+            });
+        }
+    }
+    productType(type) {
+        this.form.product.controls['product_type'].setValue(type);
+        this.formChange = true;
+        this._admin.notNavigate = true;
+    }
+
+    getVendors(event) {
+        if (this.onPopover(event, 'vendors')) {
+            this.getAPI('/admin/products.json?fields=vendor', (data) => {
+                this.vendors = [];
+                data.products.forEach(v => {
+                    if (v.vendor && this.vendors.indexOf(v.vendor) === -1) {
+                        this.vendors.push(v.vendor)
+                    }
+                });
+                if (!this.vendors.length) {
+                    this.hidePopover('vendors')
+                }
+            });
+        }
+    }
+    productVendor(vendor) {
+        this.form.product.controls['vendor'].setValue(vendor);
         this.formChange = true;
         this._admin.notNavigate = true;
     }

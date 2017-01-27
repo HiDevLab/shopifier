@@ -192,6 +192,22 @@ export class BaseForm {
         }
     }
 
+    getAPI(url, after) {
+        this._http.get(url)
+            .subscribe(
+                (data) => after(data),
+                (err) => {
+                    this.obj_errors = err;
+                    try {
+                        this.errors = this._utils.to_array(err.json());
+                    } catch(e) {
+                        console.log(err, e);
+                    }
+                },
+            );
+
+    }
+
     getAPIDataAll(urls, afters) {
         let _urls = [];
         for(let i=0; i < urls.length; i++) {
