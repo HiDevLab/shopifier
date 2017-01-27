@@ -11,6 +11,7 @@ calendar {
     justify-content: center;
     position: absolute;
     left: 0;
+    z-index: 100;
     &.show {
         transform: scale(1);
         visibility: visible;
