@@ -156,7 +156,7 @@ export class Admin {
         this._auth.getCurrentUser().then(
             data => {
                 this.currentUser = data;
-                this.settings = data['settings'];
+                this.settings = JSON.parse(data['settings']);
             }
         );
     }
@@ -223,10 +223,10 @@ export class Admin {
         }
     }
 
-    goProfile() {
-        let link = ['Settings/Profile', {'id': this.currentUser.id }];
-        this._router.navigate(link);
-    }
+//     goProfile() {
+//         let link = ['Settings/Profile', {'id': this.currentUser.id }];
+//         this._router.navigate(link);
+//     }
 
     currentUrl (addition, levels) {
         let url = '/admin';
