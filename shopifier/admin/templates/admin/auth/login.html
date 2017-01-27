@@ -4,7 +4,7 @@
     
     <form [formGroup]="lform" class="login-box" novalidate>{% csrf_token %}
         <div *ngIf="errors" class="dialog-status">
-            {% verbatim %}[[ errors.detail ]]{% endverbatim %}
+            [[ errors.detail ]]
             <i class="fa fa-exclamation-triangle"></i>
         </div>
         <div class="dialog-input">
@@ -12,7 +12,7 @@
             <i class="fa fa-envelope"></i>
         </div>
         <div class="dialog-input">
-            <input type="password" class="login-input" formControlName="password" required placeholder="Password"/>
+            <input type="password" class="login-input" formControlName="password" required placeholder="Password">
             <i class="fa fa-lock"></i>
             <a [routerLink]="['/auth/recover']">
                <i class="fa fa-question-circle-o" title="Forgot your password?"></i>

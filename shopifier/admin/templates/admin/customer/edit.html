@@ -9,8 +9,8 @@
                       <i class="mt6 fa fa-user fa-stack-1x fa-inverse font70"></i>
                     </span>
                      <div class="col pl20 pt15">
-                        <h2><strong>{% verbatim %}[[  api_data.customer.first_name  ]] [[  api_data.customer.last_name  ]]{% endverbatim %}</strong></h2>
-                        <p *ngIf="api_data.customer.default_address" class="color-subdued">{% verbatim %}[[  api_data.customer.default_address.province_name  ]][[  api_data.customer.default_address.province  ]]{% endverbatim %}</p> 
+                        <h2><strong>[[ api_data.customer.first_name ]] [[ api_data.customer.last_name ]]</strong></h2>
+                        <p *ngIf="api_data.customer.default_address" class="color-subdued">[[ api_data.customer.default_address.province_name ]] [[ api_data.customer.default_address.province ]]</p> 
                         <p class="color-subdued">Customer for 2 days</p> 
                     </div>
                 </div>
@@ -18,7 +18,7 @@
                     <label class="input-box input">
                         <textarea autosize rows="1" formControlName="note" 
                         (input)="onFormChange()"
-                        placeholder="Add a note about {% verbatim %}[[  api_data.customer.first_name  ]]{% endverbatim %}">
+                        placeholder="Add a note about [[ api_data.customer.first_name ]]">
                         </textarea>
                     </label>
                 </div>
@@ -44,9 +44,7 @@
                     <a class="ref mt-auto" (click)="onEditCustomer()">Edit</a>
                 </div>
                 <div class="col p20 pb0">
-                    <a class="ref mt9" (click)="showMail=true">
-                        {% verbatim %}[[  api_data.customer.email  ]]{% endverbatim %}
-                    </a>
+                    <a class="ref mt9" (click)="showMail=true">[[ api_data.customer.email ]]</a>
                     <div class="color-subdued pt3 pb9">No account</div> 
                 </div>
                 <div class="row sep mt20 mb20"></div>
@@ -69,18 +67,10 @@
                                         </div>
                                         <div class="row space-between">
                                             <div class="col color-subdued pl20">
-                                                <div>
-                                                    {% verbatim %}[[  api_data.customer.first_name  ]] [[  api_data.customer.last_name  ]]{% endverbatim %}
-                                                </div>
-                                                <div class="mt3">
-                                                    {% verbatim %}[[  address.company  ]]{% endverbatim %}
-                                                </div>
-                                                <div class="mt3">
-                                                    {% verbatim %}[[  address.province_name  ]]{% endverbatim %}
-                                                </div>
-                                                <div class="mt3">
-                                                    {% verbatim %}[[  address.country_name  ]]{% endverbatim %}
-                                                </div> 
+                                                <div>[[ api_data.customer.first_name  ]] [[ api_data.customer.last_name ]]</div>
+                                                <div class="mt3">[[ address.company ]]</div>
+                                                <div class="mt3">[[ address.province_name ]]</div>
+                                                <div class="mt3">[[ address.country_name ]]</div> 
                                             </div>
                                             <div class="col" *ngIf="!address.default">
                                                 <a class="btn mr10"
@@ -97,18 +87,10 @@
                     </div>
                 </div>
                 <div class="col color-subdued p20 pb0" *ngIf="api_data.customer.default_address">
-                    <div class="mt5">
-                        {% verbatim %}[[  api_data.customer.first_name  ]] [[  api_data.customer.last_name  ]]{% endverbatim %}
-                    </div>
-                   <div class="mt3" >
-                        {% verbatim %}[[  api_data.customer.default_address.company  ]]{% endverbatim %}
-                    </div>
-                    <div class="mt3">
-                        {% verbatim %}[[  api_data.customer.default_address.province_name  ]]{% endverbatim %}
-                    </div>
-                    <div class="mt3">
-                        {% verbatim %}[[  api_data.customer.default_address.country_name  ]]{% endverbatim %}
-                    </div> 
+                    <div class="mt5">[[ api_data.customer.first_name ]] [[ api_data.customer.last_name ]]</div>
+                   <div class="mt3" >[[ api_data.customer.default_address.company ]]</div>
+                    <div class="mt3">[[ api_data.customer.default_address.province_name ]]</div>
+                    <div class="mt3">[[ api_data.customer.default_address.country_name ]]</div> 
                 </div>
             </div>
             <div class="form mt20 p20 grey">
@@ -121,7 +103,7 @@
     </div>
  </div>
 
- <div class="modal-form"  *ngIf="form.customer && showEdit">
+ <div class="modal-form" *ngIf="form.customer && showEdit">
     <form class="input-form" [formGroup]="form.customer" novalidate>
         {% with group='customer' change='customerChange=true' %}
         <div class="modal-header">
@@ -140,11 +122,8 @@
             {% include "admin/checkbox.html" with control="tax_exempt" %}
         </div>
         <div class="modal-footer">
-            <a class="btn mr10"
-            (click)="showEdit=false">Cancel</a>
-            <a class="btn btn-blue"
-                [ngClass]="{disabled : !customerChange}"
-                (click)="onSaveCustomer()">Save</a>
+            <a class="btn mr10" (click)="showEdit=false">Cancel</a>
+            <a class="btn btn-blue" [ngClass]="{disabled : !customerChange}" (click)="onSaveCustomer()">Save</a>
         </div>
         {% endwith %}
     </form>
@@ -172,7 +151,7 @@
                 <select formControlName="country_code"
                 (change)="form.default_address.controls.province.setValue(''); changeAddress=true">
                     <option *ngFor="let country of form.default_address_meta.country_code.choices" [value]="country.value">
-                            {% verbatim %}[[  country.display_name  ]]{% endverbatim %}
+                            [[ country.display_name ]]
                     </option>
                 </select>
             </label>
@@ -183,7 +162,7 @@
                 (change)="changeAddress=true">
                     <option *ngFor="let region of form.default_address_meta.province_code.choices | 
                                     province:form.default_address.controls.country_code.value" [value]="region.value">
-                            {% verbatim %}[[  region.display_name  ]]{% endverbatim %}
+                            [[ region.display_name ]]
                     </option>
                 </select>
             </label>   

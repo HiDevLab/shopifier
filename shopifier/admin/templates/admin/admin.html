@@ -7,9 +7,9 @@
         <li *ngFor="let nav of navs"
             [ngClass]="{selected: nav === selectedNav, 'with-submenu': nav.submenu.length > 0}"
             (click)="onSelect(nav); forcePopupShow=false;">
-            <a href="{% verbatim %}[[ nav.url ]]{% endverbatim %}">
-                <i class="fa fa-{% verbatim %}[[ nav.icon ]]{% endverbatim %}" title="{% verbatim %}[[ nav.text ]]{% endverbatim %}"></i>
-                {% verbatim %}[[ nav.text ]]{% endverbatim %}
+            <a href="[[ nav.url ]]">
+                <i class="fa fa-[[ nav.icon ]]" title="[[ nav.text ]]"></i>
+                [[ nav.text ]]
              </a>
         </li>
         <li class="account"  *ngIf="currentUser"
@@ -17,12 +17,12 @@
             (mouseover)="forceSubmenuShow=false;">
 
             <div class="avatar" *ngIf="currentUser">
-                {% verbatim %}[[ currentUser.first_name[0] + currentUser.last_name[0] ]]{% endverbatim %}
-                <img *ngIf="currentUser.avatar" src="{% verbatim %}[[ currentUser.avatar ]]{% endverbatim %}">
+                [[ currentUser.first_name[0] + currentUser.last_name[0] ]]
+                <img *ngIf="currentUser.avatar" src="[[ currentUser.avatar ]]">
             </div>
             <span>
                 <span> Shopifier</span>
-                 <span> {% verbatim %}[[ currentUser.first_name + ' ' + currentUser.last_name ]]{% endverbatim %}</span>
+                 <span> [[ currentUser.first_name + ' ' + currentUser.last_name ]]</span>
             </span>
         </li>
 
@@ -31,9 +31,7 @@
                 <div>
                     <ul>
                         <li *ngFor="let popup of popups">
-                            <a href="{% verbatim %}[[ popup.url ]]{% endverbatim %}">  
-                            {% verbatim %}[[ popup.text ]]{% endverbatim %}
-                            </a>
+                            <a [attr.href]="popup.url">[[ popup.text ]]</a>
                         </li>
                     </ul>
                 </div>
@@ -52,11 +50,11 @@
         </popup>
     </ul>
     <ul class="menu submenu" *ngIf="selectedNav.submenu.length > 0">
-         <h3>{% verbatim %}[[ selectedNav.text ]]{% endverbatim %}</h3>
+         <h3>[[ selectedNav.text ]]</h3>
          <li *ngFor="let subnav of selectedNav.submenu"
             [ngClass]="{selected: subnav === selectedSubNav}"
             (click)="onSelectSubNav(subnav); forcePopupShow=false;">
-            <a href="{% verbatim %}[[ subnav.url ]]{% endverbatim %}">{% verbatim %}[[ subnav.text ]]{% endverbatim %}</a>
+            <a href="[[ subnav.url ]]">[[ subnav.text ]]</a>
         </li>
     </ul>
 </nav>
@@ -64,24 +62,19 @@
 <div class="rows">
   <header >
       <h1>
-        <i class="fa fa-{% verbatim %}[[ headerNav[headerNav.length-1].icon ]]{% endverbatim %}"></i>
+        <i class="fa fa-[[ headerNav[headerNav.length-1].icon ]]"></i>
         <ul>
-            <li *ngFor="let headnav of headerNav"
-                (click)="onSelectHeader(headnav)">
-                <a>
-                    {% verbatim %}[[ headnav.text ]]{% endverbatim %}
-                </a>
-                <span>/</span> 
-                <div>{% verbatim %}[[ headnav.text ]]{% endverbatim %}</div>
+            <li *ngFor="let headnav of headerNav"(click)="onSelectHeader(headnav)">
+                <a>[[ headnav.text ]]</a><span>/</span><div>[[ headnav.text ]]</div>
             </li>
-        </ul>        
+        </ul>
       </h1>
       <div *ngIf="headerButtons">
          <a *ngFor="let btn of headerButtons" 
-                class="{% verbatim %}[[ btn.class ]]{% endverbatim %}"
+                class="[[ btn.class ]]"
                 [ngClass]="{disabled : (!btn.self.formChange && btn.primary) || btn.self[btn.disabled]}"
                 (click)="btn.click.call(btn.self, btn.self)">
-                {% verbatim %}[[ btn.text ]]{% endverbatim %}
+                [[ btn.text ]]
         </a> 
       </div>  
   </header>
@@ -92,6 +85,6 @@
 
 <footer 
     [ngClass]="{hidden: !footerShow, 'show': footerShow}">
-    <h1 class="mb30">{% verbatim %}[[ footerText ]]{% endverbatim %}</h1>
+    <h1 class="mb30">[[ footerText ]]</h1>
 </footer>
 

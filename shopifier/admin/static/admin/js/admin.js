@@ -153,10 +153,12 @@ export class Admin {
     }
 
     ngOnInit() {
-        this._auth.getCurrentUser().then(data => {
-            this.currentUser = data;
-            this.settings = data['settings'];
-        });
+        this._auth.getCurrentUser().then(
+            data => {
+                this.currentUser = data;
+                this.settings = data['settings'];
+            }
+        );
     }
 
     refreshCurrentUser() {

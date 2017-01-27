@@ -1,21 +1,18 @@
 <div class="login">
     <form class="login-box">
         {% csrf_token %}
-       
         <div class="dialog-status">
             Can't process this invite link
             <i class="fa fa-exclamation-triangle"></i>
         </div>
         <div class="login-note">
-            
             This invite link can't be accepted for one of the following reasons:
             <ul>
                 <li>You already used this link to create your account.</li>
                 <li>You already used this link to create your account.</li>
             </ul>
             <p class="p10"></p>
-             if you already have an account, go to the <a class="ref" [routerLink]="['Login']">login page.</a> Otherwise, contact the owner of Shopifier store to request access. 
+             if you already have an account, go to the <a class="ref" [routerLink]="['/auth/login']">login page.</a> Otherwise, contact the owner of Shopifier store to request access. 
         </div>
     </form>
 </div>
-
