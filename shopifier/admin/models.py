@@ -359,10 +359,10 @@ class CustomCollection(models.Model):
 
 
 class Collect(models.Model):
-    collection = models.ForeignKey(CustomCollection, related_name='products')
+    collection = models.ForeignKey(CustomCollection, related_name='collects')
     created_at = models.DateTimeField(blank=True, null=True)
     featured = models.BooleanField(default=False)
     position = models.IntegerField()
-    product = models.ForeignKey(Product, related_name='collections')
+    product = models.ForeignKey(Product, related_name='collects')
 #     sort_value =
     updated_at = models.DateTimeField(default=now)
