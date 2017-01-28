@@ -221,8 +221,7 @@ def default_options():
 
 class Product(models.Model):
 
-    body_html = models.TextField(
-        _('Description'),  max_length=2048)
+    body_html = models.TextField(_('Description'),  max_length=2048)
     created_at = models.DateTimeField(blank=True, null=True)
     handle = models.CharField(blank=True, max_length=254)
     options = JSONField(blank=True, null=True)
@@ -319,3 +318,41 @@ class ProductVariant(models.Model):
 
     class Meta:
         ordering = ['product', 'position']
+
+
+# CustomCollection
+def normalization_img_collection_file_name(instance, filename):
+    return 'collections/{}/img{}'.format(
+        instance.customcollection.title, os.path.splitext(filename)[1])
+
+
+class CustomCollection(models.Model):
+
+    SORT_ORDERS = (
+        ('alpha-asc', 'Alphabetically, in ascending order (A - Z)'),
+        ('alpha-desc', 'Alphabetically, in descending order (Z - A)'),
+        ('best-selling', 'By best-selling products'),
+        ('created', 'By date created, in ascending order (oldest - newest)'),
+        (
+            'created-desc',
+            'By date created, in descending order (newest - oldest)'
+        ),
+        ('manual', 'Order created by the shop owner'),
+        ('price-asc', 'By price, in ascending order (lowest - highest)'),
+        ('price-desc', 'By price, in descending order (highest - lowest)'))
+
+    body_html = models.TextField(_('Description'),  max_length=2048)
+    handle = models.CharField(blank=True, max_length=254)
+    image = models.ImageField(upload_to=normalization_img_collection_file_name)
+#     metafield
+    published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(blank=True, null=True)
+    published_scope = models.CharField(
+        _('The sales channels in which the custom collection is visible'),
+        default='global', blank=True, max_length=254)
+    sort_order = models.CharField(
+        max_length=56, choices=SORT_ORDERS, default='alpha-asc')
+    template_suffix = models.CharField(
+        _('The suffix of the liquid template being used'),
+        blank=True, max_length=254)
+    updated_at = models.DateTimeField(default=now)
