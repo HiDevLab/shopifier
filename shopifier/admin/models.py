@@ -356,3 +356,13 @@ class CustomCollection(models.Model):
         _('The suffix of the liquid template being used'),
         blank=True, max_length=254)
     updated_at = models.DateTimeField(default=now)
+
+
+class Collect(models.Model):
+    collection = models.ForeignKey(CustomCollection, related_name='products')
+    created_at = models.DateTimeField(blank=True, null=True)
+    featured = models.BooleanField(default=False)
+    position = models.IntegerField()
+    product = models.ForeignKey(Product, related_name='collections')
+#     sort_value =
+    updated_at = models.DateTimeField(default=now)
