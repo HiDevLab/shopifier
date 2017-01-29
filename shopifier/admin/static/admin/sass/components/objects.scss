@@ -441,7 +441,7 @@ $note-color: #888888;
 }
 
 .separator {
-    border-top: 1px solid $border-section-color;
+    border-top: 1px solid #ebeef0;//$border-section-color;
     width: 100%;
     height: 1px;
     padding: 0 20px;
@@ -453,8 +453,34 @@ $note-color: #888888;
     height: 1px;
 }
 
+.loading {
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.15) none repeat scroll 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > i {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 
-
+wait {
+    flex-direction: row;
+    height: 100%;
+    overflow: hidden;
+    > i {
+        display: flex;
+        color: $btn-color;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 
 // customers
 
