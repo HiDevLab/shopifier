@@ -390,7 +390,7 @@ export class AdminLeavePage {
     templateUrl: 'templates/reach-text-editor.html',
     interpolation: ['[[', ']]'],
     directives: [Autosize, Popover],
-    inputs: ['parrent_component']
+    inputs: ['parent', 'change']
 })
 export class RichTextEditor {
     showHtml = false;
@@ -508,7 +508,7 @@ export class RichTextEditor {
 
 
     ngOnInit() {
-        this.parrent_component.rich_text_editor = this;
+        this.parent.rich_text_editor = this;
         this.editor = new wysihtml5.Editor('editor', {
             parserRules: wysihtml5ParserRules,
             stylesheets: ['/static/admin/wysihtml/css/wysihtml5.css']
@@ -553,6 +553,8 @@ export class RichTextEditor {
             }
         });
 
+        this.editor.on('interaction', this.onChange.bind(this));
+
         this.popover_formatting = document.querySelector('#formatting-popover');
         this.popover_alignment = document.querySelector('#alignment-popover');
         this.popover_color = document.querySelector('#color-popover');
@@ -572,11 +574,12 @@ export class RichTextEditor {
         this.editor.on('tableunselect:composer', () => {
             self.tableTools = false;
         });
-        this.editor.on('change', () => {
-            self.parrent_component.body_html = self.editor.getValue();
-            self.parrent_component._admin.notNavigate = true;
-            self.parrent_component.formChange = true;
-        });
+//         this.editor.on('change', () => {
+//             self.parent.body_html = self.editor.getValue();
+//             self.parent._admin.notNavigate = true;
+//             self.parent.formChange = true;
+//             console.log('change');
+//         });
 
         //disable drop files in iframe
         this.document.addEventListener('dragenter', this.disableDrop, false);
@@ -589,7 +592,12 @@ export class RichTextEditor {
         this.document.removeEventListener('dragover', this.disableDrop, false);
         this.document.removeEventListener('drop', this.disableDrop, false);
         this.editor.destroy();
-        this.parrent_component.rich_text_editor = undefined;
+        this.parent.rich_text_editor = undefined;
+    }
+
+    onChange() {
+        this.parent.body_html = this.editor.getValue();
+        this.parent[this.change]();
     }
 
     onPopover(event, popover){
@@ -830,6 +838,15 @@ export class Calendar {
 }
 
 
+//------------------------------------------------------------------------------Wait
+@Component({
+    selector: 'wait',
+    template: '<i *ngIf="!wait" class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>',
+    inputs: ['wait']
+})
+export class Wait {}
+
+
 //------------------------------------------------------------------------------AdminComponentsModule
 @NgModule({
     imports: [
@@ -843,6 +860,7 @@ export class Calendar {
         AdminLeavePage,
         RichTextEditor,
         Calendar,
+        Wait,
         StartsWithPipe,
         ArrayLengthPipe,
         NotInPipe,
@@ -860,6 +878,7 @@ export class Calendar {
         AdminLeavePage,
         RichTextEditor,
         Calendar,
+        Wait
     ]
 })
 export class AdminComponentsModule {}

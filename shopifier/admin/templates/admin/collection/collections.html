@@ -1,0 +1,24 @@
+<div class="rows center p20" *ngIf="collections">
+    <div class="form w24 pb20">
+        <ul class="row tabs left w24">
+            <li class="active"> All Collections</li>
+        </ul>
+        <div class="list row ph20 mt20">
+            <div class="th ph10 pv17 tl w6" >
+                Title
+            </div>
+            <div class="th ph10 pv17 tl w4" >
+                Product condition
+            </div>
+        </div>
+        <div class="list tr row mh20" *ngFor="let collection of collections">
+            <a class=" ph10 pv17 tl w6 ref"
+                (click)="onEditCollection(collection)">
+                [[ collection.title ]]
+            </a>
+            <div class="ph10 pv17 tl w4 color-subdued"
+                (click)="onEditCollection(collection)">
+            </div>
+        </div>
+    </div>
+</div>

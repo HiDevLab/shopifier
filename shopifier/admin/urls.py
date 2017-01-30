@@ -19,6 +19,8 @@ class JsonRouter(SimpleRouter):
 
 
 router = JsonRouter()
+router.register(r'collects', views.CollectViewSet)
+router.register(r'custom_collections', views.CustomCollectionViewSet)
 router.register(r'products', views.ProductViewSet)
 router.register(r'users', views.UsersAPIViewSet)
 router.register(

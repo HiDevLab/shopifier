@@ -1,0 +1,22 @@
+{% load static %}
+{% include "admin/errorsbox.html" with class="section-profile" %}
+
+<div class="row pt20 center" *ngIf="form.custom_collection">
+    <div class="row w16 left pl30">
+        <div class="rows w16">
+            <form class="form pv10" [formGroup]="form.custom_collection">
+                {% with group='custom_collection' change='onFormChange()' %}
+                {% include "admin/input-section.html" with control1="title" placeholder1="e.g. Summer collection, Under $100, Staff picks" %}
+                {% endwith %}
+                <div class="input-section">
+                    <reach-text-editor [parent]="self" [change]="'onFormChange'"></reach-text-editor>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<leave-page 
+    [parrent_component]="self">
+</leave-page>

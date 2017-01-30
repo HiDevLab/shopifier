@@ -381,4 +381,18 @@ export class BaseForm {
         this._router.navigate([this.cancelLink]);
     }
 
+// compare dictionaries, properties first object only
+    compare(obj1, obj2) {
+        if (!obj1 || !obj2) return false;
+        for (let p in obj1) {
+            let type = typeof (obj1[p]);
+            if ( type != 'object' && type != 'function') {
+                let v1 = (obj1[p] === undefined || obj1[p] === null) ? "" : obj1[p];
+                let v2 = (obj2[p] === undefined || obj2[p] === null) ? "" : obj2[p];
+                if (v1 != v2) return false;
+            }
+        }
+        return true;
+    };
+
 }

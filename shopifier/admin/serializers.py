@@ -20,7 +20,8 @@ from drf_extra_fields.fields import Base64ImageField
 from easy_thumbnails.files import get_thumbnailer
 
 from shopifier.admin.models import (
-    User, UserLog, Customer, Address, Product, ProductImage, ProductVariant)
+    now, User, UserLog, Customer, Address, Product, ProductImage,
+    ProductVariant, CollectionImage, CustomCollection, Collect)
 
 
 # accounts
@@ -409,3 +410,54 @@ class VariantSerializer(SHPFSerializer):
         model = ProductVariant
         read_only_fields = ('created_at', 'updated_at')
         exclude = ('product',)
+
+
+# Collection
+class CollectionImageSerializer(serializers.ModelSerializer):
+    src = ImageUrlField(required=False)
+    attachment = Base64ImageField(required=False, allow_null=True)
+
+    class Meta:
+        model = CollectionImage
+        read_only_fields = ('created_at',)
+        exclude = ()
+
+    def update(self, instance, validated_data):
+        if not validated_data.get('src'):
+            validated_data['src'] = validated_data.get('attachment')
+        return super(CollectionImageSerializer, self).update(
+            instance, validated_data)
+
+    def create(self, validated_data):
+        if not validated_data.get('src'):
+            validated_data['src'] = validated_data.get('attachment')
+        return super(CollectionImageSerializer, self).create(validated_data)
+
+
+class CustomCollectionSerializer(SHPFSerializer):
+
+    image = CollectionImageSerializer(
+        many=False, read_only=False, required=False)
+    body_html = serializers.CharField(
+        label=_('Description'),
+        max_length=2048, required=False, allow_null=True, allow_blank=True
+    )
+
+    class Meta:
+        model = CustomCollection
+        read_only_fields = ('updated_at',)
+        exclude = ()
+
+
+class CollectSerializer(SHPFSerializer):
+
+    sort_value = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Collect
+        read_only_fields = ('created_at', 'updated_at', 'sort_value')
+        exclude = ()
+
+    def get_sort_value(self, obj):
+        if obj.position is not None:
+            return str(obj.position).zfill(10)
