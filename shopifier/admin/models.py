@@ -326,6 +326,11 @@ def normalization_img_collection_file_name(instance, filename):
         instance.customcollection.title, os.path.splitext(filename)[1])
 
 
+class CollectionImage(models.Model):
+    src = models.ImageField(upload_to=normalization_img_collection_file_name)
+    created_at = models.DateTimeField(default=now)
+
+
 class CustomCollection(models.Model):
 
     SORT_ORDERS = (
@@ -343,7 +348,7 @@ class CustomCollection(models.Model):
 
     body_html = models.TextField(_('Description'),  max_length=2048)
     handle = models.CharField(blank=True, max_length=254)
-    image = models.ImageField(upload_to=normalization_img_collection_file_name)
+    image = models.ForeignKey(CollectionImage, related_name='collection')
 #     metafield
     published = models.BooleanField(default=True)
     published_at = models.DateTimeField(blank=True, null=True)
@@ -355,6 +360,7 @@ class CustomCollection(models.Model):
     template_suffix = models.CharField(
         _('The suffix of the liquid template being used'),
         blank=True, max_length=254)
+    title = models.TextField(_('Title'), blank=True, max_length=254)
     updated_at = models.DateTimeField(default=now)
 
 
