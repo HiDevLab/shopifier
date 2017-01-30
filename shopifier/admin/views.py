@@ -25,7 +25,7 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from shopifier.admin import serializers
 from shopifier.admin.models import (
      now, User, UserLog, Customer, Address, Product, ProductImage,
-     ProductVariant)
+     ProductVariant, CollectionImage, CustomCollection, Collect)
 
 
 # accounts
@@ -398,39 +398,12 @@ class SessionsExpire(APIView):
         return Response(content, status=status.HTTP_200_OK)
 
 
-# customers
-# features shpf API
-class SHPFViewSet(ModelViewSet):
-    REPR = {
-            'User': {
-                        'list': 'users',
-                        'nonlist': 'user',
-                        },
-            'Customer': {
-                        'list': 'customers',
-                        'nonlist': 'customer',
-                        },
-            'Address': {
-                       'list': 'addresses',
-                       'nonlist': 'customer_address',
-                    },
-            'Product': {
-                       'list': 'products',
-                       'nonlist': 'product',
-                    },
-            'ProductImage': {
-                       'list': 'images',
-                       'nonlist': 'image',
-                    },
-            'ProductVariant': {
-                       'list': 'variants',
-                       'nonlist': 'variant',
-                    },
-            }
-
+# Base class for wrapping API data
+class WrapViewSet(ModelViewSet):
     def __init__(self, *args, **kwargs):
-        self.repr = self.REPR[self.queryset.model.__name__]
-        super(SHPFViewSet, self).__init__(*args, **kwargs)
+        self.wrap_plural = getattr(
+            self, 'wrap_plural', '{}s'.format(self.wrap_single))
+        super(WrapViewSet, self).__init__(*args, **kwargs)
 
     def filter_queryset(self, queryset):
         since_id = self.request.query_params.get('since_id', None)
@@ -443,30 +416,30 @@ class SHPFViewSet(ModelViewSet):
             return self.queryset.model.objects.filter(
                 id__lt=before_id).order_by('-id')
 
-        return super(SHPFViewSet, self).filter_queryset(queryset)
+        return super(WrapViewSet, self).filter_queryset(queryset)
 
     def list(self, request, *args, **kwargs):
-        response = super(SHPFViewSet, self).list(request, *args, **kwargs)
-        response.data = {self.repr['list']: response.data}
+        response = super(WrapViewSet, self).list(request, *args, **kwargs)
+        response.data = {self.wrap_plural: response.data}
         return response
 
     def retrieve(self, request, *args, **kwargs):
-        response = super(SHPFViewSet, self).retrieve(request, *args, **kwargs)
-        response.data = {self.repr['nonlist']: response.data}
+        response = super(WrapViewSet, self).retrieve(request, *args, **kwargs)
+        response.data = {self.wrap_single: response.data}
         return response
 
     def create(self, request, *args, **kwargs):
-        response = super(SHPFViewSet, self).create(request, *args, **kwargs)
-        response.data = {self.repr['nonlist']: response.data}
+        response = super(WrapViewSet, self).create(request, *args, **kwargs)
+        response.data = {self.wrap_single: response.data}
         return response
 
     def update(self, request, *args, **kwargs):
-        response = super(SHPFViewSet, self).update(request, *args, **kwargs)
-        response.data = {self.repr['nonlist']: response.data}
+        response = super(WrapViewSet, self).update(request, *args, **kwargs)
+        response.data = {self.wrap_single: response.data}
         return response
 
     def destroy(self, request, *args, **kwargs):
-        response = super(SHPFViewSet, self).destroy(request, *args, **kwargs)
+        response = super(WrapViewSet, self).destroy(request, *args, **kwargs)
         response.status = status.HTTP_200_OK
         return response
 
@@ -476,10 +449,11 @@ def get_token(email):
     return signer.signature(email)
 
 
-class UsersAPIViewSet(SHPFViewSet):
+class UsersAPIViewSet(WrapViewSet):
     permission_classes = (permissions.IsAdminUser,)
     queryset = User.objects.all().order_by('id')
     serializer_class = serializers.UsersAPISerializer
+    wrap_single = 'user'
 
     def perform_update(self, serializer):
         data = serializer.validated_data
@@ -495,10 +469,11 @@ class UsersAPIViewSet(SHPFViewSet):
                 login(self.request, user)
 
 
-class CustomerViewSet(SHPFViewSet):
+class CustomerViewSet(WrapViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Customer.objects.all().order_by('id')
     serializer_class = serializers.CustomerSerializer
+    wrap_single = 'customer'
 
     @detail_route(methods=['post'])
     def account_activation_url(self, request, pk=None):
@@ -533,10 +508,12 @@ class CustomerViewSet(SHPFViewSet):
         return Response(content, status=status.HTTP_200_OK)
 
 
-class AddressViewSet(SHPFViewSet):
+class AddressViewSet(WrapViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Address.objects.all().order_by('customer')
     serializer_class = serializers.AddressSerializer
+    wrap_single = 'customer_address'
+    wrap_plural = 'addresses'
 
     def get_queryset(self):
         qs = super(AddressViewSet, self).get_queryset()
@@ -572,16 +549,18 @@ class AddressViewSet(SHPFViewSet):
 
 
 # Product
-class ProductViewSet(SHPFViewSet):
+class ProductViewSet(WrapViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Product.objects.all().order_by('id')
     serializer_class = serializers.ProductSerializer
+    wrap_single = 'product'
 
 
-class ProductImageViewSet(SHPFViewSet):
+class ProductImageViewSet(WrapViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = ProductImage.objects.all()
     serializer_class = serializers.ImageSerializer
+    wrap_single = 'image'
 
     def get_queryset(self):
         qs = super(ProductImageViewSet, self).get_queryset()
@@ -609,10 +588,11 @@ class ProductImageViewSet(SHPFViewSet):
         self.perform_update(serializer)
 
 
-class ProductVariantViewSet(SHPFViewSet):
+class ProductVariantViewSet(WrapViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = ProductVariant.objects.all()
     serializer_class = serializers.VariantSerializer
+    wrap_single = 'variant'
 
     def get_queryset(self):
         qs = super(ProductVariantViewSet, self).get_queryset()
@@ -625,6 +605,38 @@ class ProductVariantViewSet(SHPFViewSet):
 
     def perform_update(self, serializer):
         serializer.validated_data['product'] = self.product
+        serializer.validated_data['updated_at'] = now()
+        serializer.save()
+
+    def perform_create(self, serializer):
+        serializer.validated_data['created_at'] = now()
+        self.perform_update(serializer)
+
+
+# CustomCollection
+class CustomCollectionViewSet(WrapViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = CustomCollection.objects.all().order_by('id')
+    serializer_class = serializers.CustomCollectionSerializer
+    wrap_single = 'custom_collection'
+
+
+class CollectViewSet(WrapViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Collect.objects.all()
+    serializer_class = serializers.CollectSerializer
+    wrap_single = 'collect'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.product = get_object_or_404(Product, id=kwargs['product_id'])
+        self.collection = get_object_or_404(
+            CustomCollection, id=kwargs['collection_id'])
+        return super(CollectViewSet, self).dispatch(
+            request, *args, **kwargs)
+
+    def perform_update(self, serializer):
+        serializer.validated_data['product'] = self.product
+        serializer.validated_data['collection'] = self.collection
         serializer.validated_data['updated_at'] = now()
         serializer.save()
 
