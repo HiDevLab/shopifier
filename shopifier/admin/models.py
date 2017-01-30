@@ -221,7 +221,8 @@ def default_options():
 
 class Product(models.Model):
 
-    body_html = models.TextField(_('Description'),  max_length=2048)
+    body_html = models.TextField(
+        _('Description'),  max_length=2048, blank=True)
     created_at = models.DateTimeField(blank=True, null=True)
     handle = models.CharField(blank=True, max_length=254)
     options = JSONField(blank=True, null=True)
@@ -327,7 +328,8 @@ def normalization_img_collection_file_name(instance, filename):
 
 
 class CollectionImage(models.Model):
-    src = models.ImageField(upload_to=normalization_img_collection_file_name)
+    src = models.ImageField(
+        upload_to=normalization_img_collection_file_name, null=True)
     created_at = models.DateTimeField(default=now)
 
 
@@ -348,7 +350,8 @@ class CustomCollection(models.Model):
 
     body_html = models.TextField(_('Description'),  max_length=2048)
     handle = models.CharField(blank=True, max_length=254)
-    image = models.ForeignKey(CollectionImage, related_name='collection')
+    image = models.ForeignKey(
+        CollectionImage, null=True, related_name='collection')
 #     metafield
     published = models.BooleanField(default=True)
     published_at = models.DateTimeField(blank=True, null=True)
