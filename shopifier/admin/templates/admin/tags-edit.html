@@ -21,22 +21,22 @@
                 (keyup)="onKeyUp($event)">
                 <li class="row add" *ngIf="tag_input && !(available().length==1 && available()[0]==tag_input)"
                     (show)="current_i=-1">
-                    <a class="row left ph20 pv5 sel"
+                    <a class="row left ph20 pv5 sel w24"
                         (click)="insertTag($event, tag_input)"
                         (mouseover)="current_i=-1"
                         [ngClass]="{sel:current_i==-1}">
                         <i class="fa fa-plus-circle mv-auto" aria-hidden="true"></i>
                         <h3 class="bold ml5 mv-auto">Add</h3>
-                        <span class="ml5 mv-auto">{% verbatim %}[[  '"' + tag_input+'"'  ]]{% endverbatim %}</span>
+                        <span class="ml5 mv-auto">[[ '"' + tag_input+'"' ]]</span>
                     </a>
                 </li>
-                <li *ngFor="let tag of all_tags|not_in:tags|stastartswith:tag_input; let i=index;"
+                <li *ngFor="let tag of all_tags|not_in:tags|startswith:tag_input; let i=index;"
                     (mouseover)="current_i=i">
                     <a class="ph20 pv5"
                         (click)="insertTag($event, tag)"
                         (keyup)="onKeyUp($event)"
                         [ngClass]="{sel:i==current_i}">
-                        {% verbatim %}[[  tag  ]]{% endverbatim %}
+                        [[ tag ]]
                     </a>
                 </li>
             </ul>
@@ -45,7 +45,7 @@
 </div>
 <ul class="mt10 apply-tags">
     <li class="tag" *ngFor="let tag of tags; let i=index" >
-        {% verbatim %}[[  tag  ]]{% endverbatim %}
+        [[ tag ]]
         <a class="fa fa-times" aria-hidden="true"
             (click)="deleteTag(i)"></a>
     </li>
