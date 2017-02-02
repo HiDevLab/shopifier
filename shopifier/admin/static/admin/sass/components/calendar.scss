@@ -12,27 +12,6 @@ calendar {
     position: absolute;
     left: 0;
     z-index: 100;
-    &.show {
-        transform: scale(1);
-        visibility: visible;
-        opacity:0.99;
-
-        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
-        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
-        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
-        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
-    }
-    &.hide {
-        transform: scale(0.8);
-        visibility: hidden;
-        opacity: 0;
-
-        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-    }
-
     > .title {
         display: flex;
         justify-content: space-between;

@@ -1,5 +1,6 @@
 import { NgModule, Component, ElementRef, HostListener, Directive, Pipe, Input,
-    Output, EventEmitter } from '@angular/core';
+    Output, EventEmitter, trigger, state, style, transition,
+    animate } from '@angular/core';
 import { CommonModule, ORM_PROVIDERS, FORM_DIRECTIVES } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -747,7 +748,18 @@ export class RichTextEditor {
     selector: 'calendar',
     templateUrl: 'templates/calendar.html',
     interpolation: ['[[', ']]'],
-    inputs: ['parent', 'show', 'change', 'start_date']
+    inputs: ['parent', 'show', 'change', 'start_date'],
+    animations: [
+        trigger('state', [
+            state('*', style({transform: 'scale(1)', opacity: 99})),
+            transition(':enter', [animate(300)]),
+            transition(':leave', [animate(300, style({transform: 'scale(0.1) rotate(-90deg)', opacity: 0}))]),
+        ])
+    ],
+    host: {
+        '[@state]': 'true',
+        style: "transform: scale(0.1) rotate(-90deg); opacity: 0; transform-origin: left top;"
+    },
 })
 export class Calendar {
     week = ['Su','Mo','Tu','We','Th','Fr','Sa'];
