@@ -103,7 +103,7 @@ export class AdminAccountProfile extends BaseForm {
     }
 
     getUserAfter(data) {
-        this.settings = JSON.parse(this._admin.settings);
+        this.settings = this._admin.settings;
         this.api_data = data;
         this.setDataToControls(this.form, 'user', this.api_data.user);
         this.user = this.api_data.user;
