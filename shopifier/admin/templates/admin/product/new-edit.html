@@ -4,13 +4,12 @@
 <div class="row pt20 center" *ngIf="form.product">
     <div class="row w16 left pl30">
         <div class="rows w16">
-            <form class="form pb10" [formGroup]="form.product">
+            <form class="form pv10" [formGroup]="form.product">
                 {% with group='product' change='onFormChange()' %}
                 {% include "admin/input-section.html" with control1="title" placeholder1="Short Sleeve T-Shirt" %}
                 {% endwith %}
                 <div class="input-section">
-                    <reach-text-editor
-                        [parrent_component]="self"></reach-text-editor> 
+                    <reach-text-editor [parent]="self" [change]="'onFormChange'"></reach-text-editor> 
                 </div>
             </form>
             {% include "admin/product/edit-images.html" %}
@@ -41,16 +40,13 @@
                             <input [(ngModel)]="published_at_time" 
                                     name="published_at_time" class="backgraund-white mt0" id="base-publish-time" 
                                     (click)="getTimes($event)"
-                                    (input)="publishedTimeInput()">
+                                    (input)="publishedTimeInput()"
+                                    id="base-publish-time">
 
                             <a class="cross fa fa-times ml20 color-blue" (click)="onCancelPublishedAt();"></a>
-                            <popover id="publish-time" class="down color-default hide mt18">
-                                <div class="default-popover">
-                                   <ul class="vh5">
-                                        <li *ngFor="let time of times" (click)="publishedTimeChage(time)">[[ time ]]</li>
-                                    </ul>
-                                </div>
-                            </popover>
+
+                            <pop-up-menu class="down color-default hide mt18" id="publish-time" [items]="times" (select)="publishedTimeChage($event)"></pop-up-menu>
+
                             <span *ngIf="showCalendar">
                                 <calendar id="calendar"
                                     [parent]="self"
@@ -72,13 +68,7 @@
                             <a class="btn color-subdued fa-vertical" (click)="getTypes($event)">
                                 <i class="fa fa-angle-up bold"></i><i class="fa fa-angle-down bold"></i>
                             </a>
-                            <popover id="product-types" class="down color-default hide mt18 w24">
-                                <div class="default-popover">
-                                   <ul>
-                                        <li *ngFor="let type of product_types" (click)="productType(type)">[[ type ]]</li>
-                                    </ul>
-                                </div>
-                            </popover>
+                            <pop-up-menu class="down color-default hide mt18 w24" id="product-types" [items]="product_types" (select)="productType($event)"></pop-up-menu>
                         </span>
                     </label>
                 </div>
@@ -89,17 +79,20 @@
                             <a class="btn color-subdued fa-vertical" (click)="getVendors($event)">
                                 <i class="fa fa-angle-up bold"></i><i class="fa fa-angle-down bold"></i>
                             </a>
-                            <popover id="vendors" class="down color-default hide mt18 w24">
-                                <div class="default-popover">
-                                   <ul>
-                                        <li *ngFor="let vendor of vendors" (click)="productVendor(vendor)">[[ vendor ]]</li>
-                                    </ul>
-                                </div>
-                            </popover>
+                            <pop-up-menu class="down color-default hide mt18 w24" id="vendors" [items]="vendors" (select)="productVendor($event)"></pop-up-menu>
                         </span>
                     </label>
                 </div>
-            </form>
+                <div class="row"><div class="separator mv10"></div></div>
+                <div class="row m10">
+                    <label class="input input-box backgraund-grey" (click)="getCollections($event)">Collections
+                        <span class="row mv10">
+                            <input class="backgraund-white" #search (keyup)="onSearchCollections($event, search.value)" placeholder="Search for collections">
+                            <pop-up-menu class="down color-default hide mt18 w24" id="collections" [items]="collections" (select)="selectCollection($event)"></pop-up-menu>
+                        </span>
+                    </label>
+                </div>
+             </form>
         </div>
     </div>
  </div>

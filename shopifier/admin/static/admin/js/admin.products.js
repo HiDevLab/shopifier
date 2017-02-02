@@ -11,21 +11,7 @@ import { AdminAuthService, AdminUtils } from './admin.auth';
 import { Admin } from './admin';
 import { BaseForm } from './admin.baseform';
 import { AdminComponentsModule, RichTextEditor,  AdminLeavePage, Popover,
-    Calendar, } from './components';
-
-
-//------------------------------------------------------------------------------AdminCollections
-@Component({
-    selector: 'main',
-    templateUrl: 'templates/temporarily.html',
-    interpolation: ['[[', ']]'],
-})
-export class AdminCollections {
-    component = 'Collections';
-    static get parameters() {return [[Admin]];}
-    constructor(admin) {this._admin = admin;}
-    ngOnInit() {this._admin.currentUrl();}
-}
+    Calendar, Wait, PopUpMenu, PopUp, PopUpMenuCollection} from './components';
 
 
 //------------------------------------------------------------------------------AdminTransfers
@@ -119,7 +105,6 @@ export class AdminProducts extends BaseForm {
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
   interpolation: ['[[', ']]'],
-  directives: [RichTextEditor, AdminLeavePage, Popover, Calendar ],
 })
 export class AdminProductsNew extends BaseForm {
     container_images = undefined;
@@ -157,6 +142,10 @@ export class AdminProductsNew extends BaseForm {
     product_types = [];
     vendors = [];
 
+    collections = [];
+    _collections = [];
+    search_collection = ''
+
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
                 [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef]];
@@ -186,7 +175,7 @@ export class AdminProductsNew extends BaseForm {
         this.self = this; // for child components
         this._admin.notNavigate = false;
 
-        this.popovers = ['bulk-actions', 'publish-time', 'product-types', 'vendors'];
+        this.menus = new PopUpMenuCollection;
 
         this.addForm(this.form, '/admin/products.json', 'product');
 
@@ -220,8 +209,8 @@ export class AdminProductsNew extends BaseForm {
         this.date_format = moment.localeData(this.date_locale).longDateFormat('L');
 
         for (let i = 0; i < 24; i++) {
-            this._times.push(`0${i}:00`.slice(-5));
-            this._times.push(`0${i}:30`.slice(-5));
+            this._times.push({title: `0${i}:00`.slice(-5)});
+            this._times.push({title: `0${i}:30`.slice(-5)});
         }
     }
 
@@ -271,9 +260,13 @@ export class AdminProductsNew extends BaseForm {
                 [
                     `/admin/products/${this.object_id}.json`,
                     `/admin/products/${this.object_id}/images.json`,
-                    `/admin/products/${this.object_id}/variants.json?limit=100`
+                    `/admin/products/${this.object_id}/variants.json?limit=100`,
+                    '/admin/custom_collections.json?fields=title,id',
                 ],
-                ['getProductAfter', 'getImagesAfter', 'getVariantsAfter']
+                [
+                    'getProductAfter', 'getImagesAfter', 'getVariantsAfter',
+                    'getCollectionsAfter'
+                ]
             );
         }
     }
@@ -346,11 +339,28 @@ export class AdminProductsNew extends BaseForm {
         this.api_variants = variants.slice(0);
     }
 
+    getCollectionsAfter(data){
+        this._collections = [];
+        data.custom_collections.forEach(v => {
+            this._collections.push({title: v.title, id:v.id, select: 0});
+        });
+    }
+
+
+    onFormChange() {
+        this.form[this.model].value['body_html'] = this.body_html;
+        this.formChange = !this.compare(
+            this.form[this.model].value,
+            this.api_data[this.model]
+        );
+        this._admin.notNavigate = this.formChange;
+    }
+
     onSave() {
         if(!this.groupValidate(this.form, 'product')) return;
         let product = {};
         product['product'] = this.form['product'].value;
-        product.product['body_html'] = this.body_html;
+//         product.product['body_html'] = this.rich_text_editor.editor.getValue();
         let options = [];
         if (this.options[0].values.length) {
             options.push({
@@ -988,7 +998,7 @@ export class AdminProductsNew extends BaseForm {
         this.showBulkUpdateImages=true;
         this.bulkImagesPage=0;
         this.bulkCurrentImage=undefined;
-        this.hidePopovers();
+        this.menus.hideAll();
     }
 
     bulkImagesRemove() {
@@ -1017,55 +1027,16 @@ export class AdminProductsNew extends BaseForm {
         this.bulkImagesPage--;
     }
 
-    onPopover(event, popover){
-        this.showCalendar = false;
-        event.preventDefault();
-        event.stopPropagation();
-        let ret = this.switchPopover(popover);
-        this.hidePopovers(popover);
-        return ret;
-    }
-
-    hidePopover(popover) {
-        let el = this.getByID(popover);
-        if (el && el.classList.contains('show')) {
-            el.classList.remove('show');
-            el.classList.add('hide');
-        }
-    }
-
-    hidePopovers(exclude) {
-        for (let i=0; i < this.popovers.length; i++) {
-            if (this.popovers[i] != exclude) {
-                this.hidePopover(this.popovers[i]);
-            }
-        }
-    }
-
-    switchPopover(popover, event) {
-        let show = false;
-        let el = this.getByID(popover);
-        if (el) {
-            show = el.classList.contains('hide');
-            el.classList.remove(show ? 'hide' : 'show');
-            el.classList.add(show ? 'show' : 'hide');
-            if (show) {
-                let event = new Event('show');
-                el.dispatchEvent(event);
-            }
-        }
-        return show;
-    }
-
     getId(){
         return Math.floor(Math.random() * 1000);
     }
 
+//----------------------------------------------------------------published date
     onShowCalendar(event) {
         event.preventDefault();
         event.stopPropagation();
         this.showCalendar = !this.showCalendar;
-        this.hidePopovers();
+        this.menus.hideAll();
     }
 
     publishedCheck() {
@@ -1122,7 +1093,7 @@ export class AdminProductsNew extends BaseForm {
         let h, m;
         if (this.published_at.format(this.date_format) === date) {
             this.times = this._times.filter(val => {
-                [h, m] = val.match(/^(\d\d):(\d\d)/).slice(1,3);
+                [h, m] = val.title.match(/^(\d\d):(\d\d)/).slice(1,3);
                 return hh < h || (hh == h && mm < m);
             }).slice(0);
         } else if (this.published_at_date) {
@@ -1133,9 +1104,9 @@ export class AdminProductsNew extends BaseForm {
     }
 
     publishedTimeChage(time) {
-        this.published_at_time = time;
+        this.published_at_time = time.title;
         this.publishedTimeInput();
-        this.hidePopovers();
+        this.menus.hideAll();
     }
 
     publishedTimeInput() {
@@ -1159,8 +1130,9 @@ export class AdminProductsNew extends BaseForm {
     }
 
     getTimes(event) {
+        this.showCalendar = false;
         if (this.times.length) {
-            this.onPopover(event, 'publish-time');
+            this.menus.onSwitch(event, 'publish-time')
         }
     }
 
@@ -1190,46 +1162,81 @@ export class AdminProductsNew extends BaseForm {
         this._admin.notNavigate = true;
     }
 
+
+//------------------------------------------------------------------Product Type
     getTypes(event) {
-        if (this.onPopover(event, 'product-types')) {
+        if (this.menus.onSwitch(event, 'product-types')) {
             this.getAPI('/admin/products.json?fields=product_type', (data) => {
                 this.product_types = [];
                 data.products.forEach(v => {
                     if (v.product_type && this.product_types.indexOf(v.product_type) === -1) {
-                        this.product_types.push(v.product_type)
+                        this.product_types.push({title: v.product_type});
                     }
                     if (!this.product_types.length) {
-                        this.hidePopover('product_types')
+                        this.menus.hide('product_types')
                     }
                 });
             });
         }
     }
+
     productType(type) {
-        this.form.product.controls['product_type'].setValue(type);
+        this.form.product.controls['product_type'].setValue(type.title);
         this.formChange = true;
         this._admin.notNavigate = true;
+        this.menus.hide('product_type');
     }
 
+//------------------------------------------------------------------------Vendor
     getVendors(event) {
-        if (this.onPopover(event, 'vendors')) {
+        if (this.menus.onSwitch(event, 'vendors')) {
             this.getAPI('/admin/products.json?fields=vendor', (data) => {
                 this.vendors = [];
                 data.products.forEach(v => {
                     if (v.vendor && this.vendors.indexOf(v.vendor) === -1) {
-                        this.vendors.push(v.vendor)
+                        this.vendors.push({title: v.vendor});
                     }
                 });
                 if (!this.vendors.length) {
-                    this.hidePopover('vendors')
-                }
+                    this.menus.hide('vendors');
+                }  
             });
         }
     }
+
     productVendor(vendor) {
-        this.form.product.controls['vendor'].setValue(vendor);
+        this.form.product.controls['vendor'].setValue(vendor.title);
         this.formChange = true;
         this._admin.notNavigate = true;
+        this.menus.hide('vendors');
+    }
+
+//--------------------------------------------------------------------Collection
+    getCollections(event) {
+        if (this._collections.length) {
+            this.collections = this._collections;
+            this.menus.onSwitch(event, 'collections')
+        }
+    }
+
+    onSearchCollections(event, search) {
+        if(
+            !['Enter', 'NumpadEnter', 'ArrowUp', 'ArrowDown', 'Escape']
+            .includes(event.code)
+        ) {
+            this.collections = this._collections.filter( 
+                el => {
+                    return el.title.startsWith(search);
+                }
+            ).slice(0);
+            this.menus.show('collections');
+        } 
+    }
+
+    selectCollection(item) {
+        item.select = !item.select;
+        event.stopPropagation();
+        event.preventDefault();
     }
 }
 
@@ -1238,7 +1245,6 @@ export class AdminProductsNew extends BaseForm {
   selector: 'main',
   templateUrl : 'templates/product/new-edit.html',
   interpolation: ['[[', ']]'],
-  directives: [RichTextEditor, AdminLeavePage, Popover],
 })
 export class AdminProductsEdit extends AdminProductsNew {
 }
@@ -1253,7 +1259,6 @@ export class AdminProductsEdit extends AdminProductsNew {
     providers: [
     ],
     declarations: [
-        AdminCollections,
         AdminTransfers,
         AdminProducts,
         AdminProductsNew,

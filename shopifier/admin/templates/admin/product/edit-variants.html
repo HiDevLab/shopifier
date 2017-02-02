@@ -32,17 +32,17 @@
                         <div>
                             <a>Edit variants</a>
                         </div>
-                        <div id="base-bulk-actions" (click)="onPopover($event, 'bulk-actions')">
+                        <div id="base-bulk-actions" (click)="menus.onSwitch($event, 'bulk-actions')">
                             <a>Bulk actions</a>
                             <span class="fa fa-caret-down ml3"></span>
                         </div>
-                        <popover id="bulk-actions" class="down color-default hide mt18">
+                        <popup id="bulk-actions" class="down color-default hide mt18">
                             <div class="default-popover">
                                <ul>
                                     <li>Change prices</li>
                                     <li [ngClass]="{disabled:!updateInventory}">Update inventory</li>
                                     <li (click)="getBulk(); onBulkUpdateImage();">Update images</li>
-                                    <li (click)="getBulk(); showDeleteVariants=true; hidePopovers();">Delete Variants</li>
+                                    <li (click)="getBulk(); showDeleteVariants=true; menus.hideAll();">Delete Variants</li>
                                     <li>Continue sellingwhen sold out</li>
                                     <li>Stop selling when sold out</li>
                                     <li class="disabled">DUPLICATE VARIANS</li>
@@ -52,7 +52,7 @@
                                     <li>... in another Size</li>
                                 </ul>
                             </div>
-                        </popover>
+                        </popup>
                     </div>
                 </div>
                 <div class="rows edit-variant-table">
