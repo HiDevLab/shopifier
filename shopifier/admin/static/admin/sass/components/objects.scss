@@ -471,6 +471,7 @@ $note-color: #888888;
 }
 
 wait {
+    display: flex;
     flex-direction: row;
     height: 100%;
     overflow: hidden;
@@ -544,7 +545,7 @@ popover {
     cursor: default;
     z-index: 10;
     position: absolute;
-    min-width: 10%;
+//     min-width: 10%;
     border-radius: 3px;
     box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
 //     transform: translate(-50%);
@@ -624,6 +625,9 @@ popover {
         overflow-y: auto;
         li {
             padding: 5px 40px 5px 20px;
+            &.selected {
+                background: #eff9fd;
+            }
             &:hover {
                 cursor: pointer; cursor: hand;
                 background: #0069A6;
@@ -639,9 +643,116 @@ popover {
                 }
             }
         }
-        
     }
 }
+
+
+pop-up-menu {
+    font-family: $shopify-font-family;
+    white-space: nowrap;
+    cursor: default;
+    z-index: 10;
+    position: absolute;
+//     min-width: 10%;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(39, 44, 48, 0.05), 0 2px 7px 1px rgba(39, 44, 48, 0.16);
+//     transform: translate(-50%);
+    & > div {
+        position: relative;
+        z-index: 11;
+        border-radius: 3px;
+        background: $background-main-color;
+    }
+    &.show {
+        //transform-origin: center top;
+        transform: scale(1);
+        visibility: visible;
+        opacity:0.99;
+
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0s step-start;
+    }
+    &.hide {
+        //transform-origin: center top;
+        transform: scale(0.8);
+        visibility: hidden;
+        opacity: 0;
+
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+    }
+    &::before {
+        z-index: 11;
+        transform: rotate(45deg);
+        position: absolute;
+        left: calc(50% - 6px);
+        height: 12px;
+        width: 12px;
+        background: $background-main-color;
+        box-shadow: inherit;
+        content: "";
+    }
+    &.down {
+        transform-origin: center top;
+        top: 35px;
+        &::before {
+            top: -6px;
+        }
+    }
+    &.up {
+        transform-origin: center bottom;
+        bottom: 45px;
+        &::before {
+            bottom: -7px;
+        }
+    }
+    &.left {
+        &::before {
+            left: 18px;
+        }
+    }
+    &.right {
+        &::before {
+            left: calc(100% - 28px);
+        }
+    }
+    ul {
+        line-height: 24px;
+        padding: 5px 0;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        position: relative;
+        overflow-y: auto;
+        cursor: pointer;
+        li {
+            padding: 5px 40px 5px 20px;
+            &.selected {
+                background: #eff9fd;
+            }
+            &.hover {
+                cursor: pointer; cursor: hand;
+                background: #0069A6;
+                color: #ffffff;
+            }
+            &.disabled {
+                color: #dddddd;
+                cursor: default;
+                &:hover {
+                    cursor: default;
+                    background: inherit;
+                    color: #dddddd;
+                }
+            }
+        }
+    }
+
+}
+
 
 
 // tags

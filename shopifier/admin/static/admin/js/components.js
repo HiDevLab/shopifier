@@ -1,4 +1,5 @@
-import { NgModule, Component, ElementRef, HostListener, Directive, Pipe, Input} from '@angular/core';
+import { NgModule, Component, ElementRef, HostListener, Directive, Pipe, Input,
+    Output, EventEmitter } from '@angular/core';
 import { CommonModule, ORM_PROVIDERS, FORM_DIRECTIVES } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -159,7 +160,7 @@ export class NotInPipe {
 
 //------------------------------------------------------------------------------StartsWithPipe
 @Pipe({
-    name: 'stastartswith',
+    name: 'startswith',
     pure: false
 })
 export class StartsWithPipe {
@@ -175,6 +176,27 @@ export class StartsWithPipe {
         });
     }
 }
+
+
+//------------------------------------------------------------------------------PropertyStartsWithPipe
+@Pipe({
+    name: 'property_startswith',
+    pure: false
+})
+export class PropertyStartsWithPipe {
+    transform(list, property, filter) {
+        if (!list) {
+            return [];
+        }
+        if (!filter) {
+            return list;
+        }
+        return list.filter( value => {
+            return value[property].startsWith(filter);
+        });
+    }
+}
+
 
 
 //------------------------------------------------------------------------------AdminTagsEdit
@@ -219,7 +241,7 @@ export class AdminTagsEdit {
             return;
         }
         this.changePopover(event, 'show');
-        this.current_i=0;
+        this.current_i = 0;
     }
 
     pushTag(tag) {
@@ -847,6 +869,212 @@ export class Calendar {
 export class Wait {}
 
 
+//------------------------------------------------------------------------------PopUpMenu
+export class PopUpMenuCollection {
+    _menus = new Set;
+
+    getElement(id) {
+        this._menus.add(id);
+        let el = document.querySelector(`[id='${id}']`);
+        return el;
+    }
+
+    onSwitch(event, id) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.hideAllMenu(id);
+        return this.switchMenu(id);
+    }
+
+    hide(id) {
+        let el = this.getElement(id);
+        if (el) {
+            el.component.onHide();
+        }
+    }
+
+    show(id) {
+        let el = this.getElement(id);
+        if (el) {
+            el.component.onShow();
+        }
+        this.hideAllMenu(id)
+    }
+
+    hideAllMenu(exclude) {
+        this._menus.forEach( menu => {
+            if (menu != exclude) {
+                this.hide(menu);
+            }
+        });
+    }
+
+    switchMenu(id) {
+        let show = false;
+        let el = this.getElement(id);
+        if (el) {
+            show = el.component.onSwitch();
+        }
+        return show;
+    }
+}
+
+
+@Component({
+    selector: 'pop-up-menu',
+    template: 
+    `
+        <div class="pop-up-menu">
+           <ul class="max-vh5">
+                <wait [wait]="items.length"></wait>
+                <li *ngFor="let item of items;let i=index;"
+                        (click)="selectItem($event, item)"
+                        (mouseover)="onOver($event, i)"
+                        [ngClass]="{selected: item.select, hover:i==current_i, disabled:item.disabled}">
+                    <i class="fa fa-check" [ngClass]="{hidden: !item.select}"></i>
+                    <span class="ml10" (click)="selectItem($event, item)">[[ item.title ]]</span>
+                </li>
+            </ul>
+        </div>
+    `,
+    interpolation: ['[[', ']]'],
+    inputs: ['items'],
+})
+export class PopUpMenu {
+    stopOver = false;
+    show = false;
+
+    @Output() select = new EventEmitter();
+
+    static get parameters() {
+        return [[ElementRef]];
+    }
+
+    constructor(element) {
+        this.element = element.nativeElement;
+    }
+    ngOnInit() {
+        this.element.show = false;
+        this.element.component = this;
+//         document.addEventListener('keyup', this.onKeyUp.bind(this), false);
+    }
+
+
+    @HostListener('window:click',['$event'])
+    onClick(event) {
+        if (!this.show) {
+            return;
+        }
+        let obj = event.target;
+        if (this.element.previousElementSibling!=obj && !this.childOf(obj, this.element)) {
+            this.onHide();
+        }
+        else {
+            event.stopPropagation();
+        }
+    }
+
+    onSwitch() {
+        if (this.show) {
+            this.onHide()
+        } else {
+            this.onShow()
+        }
+    }
+
+    onShow(event) {
+        // starting point elemevnt with id = base-... OR parrent element
+        if (this.show) {
+            return;
+        }
+        let base_element = document.querySelector(`#base-${this.id}`);
+        let left = 0;
+        if (!base_element) {
+            base_element = this.element.parentElement;
+        } else {
+            left = base_element.offsetLeft;
+        }
+        if (!this.element.classList.contains('left') && !this.element.classList.contains('right')) {
+            left = left + base_element.offsetWidth/2 - this.element.clientWidth/2;
+        } else if (this.element.classList.contains('right')) {
+            left = left + base_element.offsetWidth - this.element.offsetWidth;
+        }
+        this.element.style.left = left;
+        this.element.classList.remove('hide');
+        this.element.classList.add('show');
+        this.show = true;
+        this.current_i = 0;
+    }
+
+    onHide(event) {
+        if (!this.show) {
+            return;
+        }
+        this.element.classList.remove('show');
+        this.element.classList.add('hide');
+        this.show = false;
+    }
+
+    @HostListener('window:keyup',['$event'])
+    onKeyUp(event) {
+        if (!this.show) {
+            return;
+        }
+        let li = this.element.querySelectorAll('li');
+        if( this.current_i > (this.items.length-1)) {
+            this.current_i = this.items.length - 1;
+        }
+
+        if (event.code=='ArrowDown' && this.current_i < (this.items.length-1)) {
+            this.current_i++;
+            this.pauseOver()
+            li[this.current_i].scrollIntoView(false);
+            event.stopImmediatePropagation();
+            return;
+        } else if (event.code=='ArrowUp' && this.current_i > 0) {
+            this.current_i--;
+            this.pauseOver()
+            li[this.current_i].scrollIntoView(false);
+            event.stopImmediatePropagation();;
+            return;
+        } else if (['Enter', 'NumpadEnter'].includes(event.code)) {
+            event.stopImmediatePropagation();
+            this.select.emit(this.items[this.current_i]);
+        } else if (event.code=='Escape') {
+            this.onHide();
+        }
+    }
+
+    onOver(event, i) {
+        if (!this.show) {
+            return;
+        }
+        if (!this.stopOver) {
+            this.current_i = i;
+        }
+    }
+
+    childOf(c, p) {
+        while(c !== p && c) {
+            c = c.parentNode;
+        }
+        return c === p;
+    }
+
+    pauseOver() {
+        this.stopOver = true;
+        setTimeout( () => {
+            this.stopOver = false;
+        }, 500, this);
+    }
+
+    selectItem(event, item) {
+        event.stopPropagation();
+        this.select.emit(item);
+    }
+}
+
+
 //------------------------------------------------------------------------------AdminComponentsModule
 @NgModule({
     imports: [
@@ -860,11 +1088,14 @@ export class Wait {}
         AdminLeavePage,
         RichTextEditor,
         Calendar,
+        PopUpMenu,
         Wait,
         StartsWithPipe,
         ArrayLengthPipe,
         NotInPipe,
-        booleanPipe
+        booleanPipe,
+        PropertyStartsWithPipe,
+        
     ],
     exports: [
         AdminLeavePage,
@@ -873,13 +1104,14 @@ export class Wait {}
         booleanPipe,
         ArrayLengthPipe,
         NotInPipe,
+        PropertyStartsWithPipe,
         AdminTagsEdit,
         StartsWithPipe,
         AdminLeavePage,
         RichTextEditor,
         Calendar,
-        Wait
+        Wait,
+        PopUpMenu
     ]
 })
 export class AdminComponentsModule {}
-

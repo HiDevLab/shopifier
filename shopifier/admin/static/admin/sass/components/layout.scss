@@ -126,6 +126,19 @@
     .min-h#{$i} {
         min-height: calc(99.99% / 24 * #{$i});
     }
+    .max-w#{$i} {
+        max-width: calc(99.99% / 24 * #{$i});
+    }
+    .max-vw#{$i} {
+        max-width: calc(99.99vw / 24 * #{$i});
+    }
+    .max-vh#{$i} {
+        max-height: calc(99.99vh / 24 * #{$i});
+    }
+    .max-h#{$i} {
+        max-height: calc(99.99% / 24 * #{$i});
+    }
+
 }
 
 .w-auto {
