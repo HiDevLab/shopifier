@@ -108,11 +108,11 @@
         <div class="input-section rte-section">
             <label class="input-box input">
                 Link to
-                <input class="rte-link-input" type="text" placeholder="http://" [(ngModel)]="linkTo">
+                <input class="rte-link-input" type="text" placeholder="http://" [(ngModel)]="linkTo" name="linkTo">
             </label>
             <label class="rte-select"> 
                 Open this link in
-                <select [(ngModel)]="openlinkIn">
+                <select [(ngModel)]="openlinkIn" name="openlinkIn">
                     <option>the same window</option>
                     <option>a new window</option>
                 </select>
@@ -122,7 +122,7 @@
         <div class="input-section rte-section">
             <label class="input-box input">
                 Link title
-                <input class="rte-link-input" type="text" [(ngModel)]="linkTitle">
+                <input class="rte-link-input" type="text" [(ngModel)]="linkTitle" name="linkTitle">
             </label>
         </div>
         <p class="ml20 color-subdued">Used for accessibility and SEO</p>
