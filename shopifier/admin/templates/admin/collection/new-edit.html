@@ -9,7 +9,7 @@
                 {% include "admin/input-section.html" with control1="title" placeholder1="e.g. Summer collection, Under $100, Staff picks" %}
                 {% endwith %}
                 <div class="input-section">
-                    <reach-text-editor [parent]="self" [change]="'onFormChange'"></reach-text-editor>
+                    <reach-text-editor [parent]="self" (change)="changeRTE($event)"></reach-text-editor>
                 </div>
             </form>
         </div>

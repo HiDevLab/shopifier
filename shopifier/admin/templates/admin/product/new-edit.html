@@ -9,7 +9,7 @@
                 {% include "admin/input-section.html" with control1="title" placeholder1="Short Sleeve T-Shirt" %}
                 {% endwith %}
                 <div class="input-section">
-                    <reach-text-editor [parent]="self" [change]="'onFormChange'"></reach-text-editor> 
+                    <reach-text-editor [parent]="self" (change)="changeRTE($event)"></reach-text-editor> 
                 </div>
             </form>
             {% include "admin/product/edit-images.html" %}
@@ -52,7 +52,8 @@
                                     [parent]="self"
                                     [show]="'showCalendar'"
                                     [change]="'publeshedDateChange'"
-                                    [start_date]="now">
+                                    [start_date]="now"
+                                    >
                                 </calendar>
                             </span>
                         </div>

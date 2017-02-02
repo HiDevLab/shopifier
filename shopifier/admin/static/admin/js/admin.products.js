@@ -30,9 +30,9 @@ export class AdminTransfers {
 
 //------------------------------------------------------------------------------AdminProducts
 @Component({
-  selector: 'main',
-  templateUrl: 'templates/product/products.html',
-  interpolation: ['[[', ']]'],
+    selector: 'main',
+    templateUrl: 'templates/product/products.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminProducts extends BaseForm {
 
@@ -102,11 +102,12 @@ export class AdminProducts extends BaseForm {
 
 //------------------------------------------------------------------------------AdminProductsNew(Edit) 
 @Component({
-  selector: 'main',
-  templateUrl : 'templates/product/new-edit.html',
-  interpolation: ['[[', ']]'],
+    selector: 'main',
+    templateUrl : 'templates/product/new-edit.html',
+    interpolation: ['[[', ']]'],
 })
 export class AdminProductsNew extends BaseForm {
+    state = ''
     container_images = undefined;
     images = [];
     api_images = [];
@@ -346,9 +347,12 @@ export class AdminProductsNew extends BaseForm {
         });
     }
 
+    changeRTE(body_html) {
+        this.form[this.model].value['body_html'] = body_html;
+        this.onFormChange();
+    }
 
     onFormChange() {
-        this.form[this.model].value['body_html'] = this.body_html;
         this.formChange = !this.compare(
             this.form[this.model].value,
             this.api_data[this.model]
@@ -360,7 +364,6 @@ export class AdminProductsNew extends BaseForm {
         if(!this.groupValidate(this.form, 'product')) return;
         let product = {};
         product['product'] = this.form['product'].value;
-//         product.product['body_html'] = this.rich_text_editor.editor.getValue();
         let options = [];
         if (this.options[0].values.length) {
             options.push({
@@ -1165,6 +1168,7 @@ export class AdminProductsNew extends BaseForm {
 
 //------------------------------------------------------------------Product Type
     getTypes(event) {
+        this.showCalendar = false;
         if (this.menus.onSwitch(event, 'product-types')) {
             this.getAPI('/admin/products.json?fields=product_type', (data) => {
                 this.product_types = [];
@@ -1189,6 +1193,7 @@ export class AdminProductsNew extends BaseForm {
 
 //------------------------------------------------------------------------Vendor
     getVendors(event) {
+        this.showCalendar = false;
         if (this.menus.onSwitch(event, 'vendors')) {
             this.getAPI('/admin/products.json?fields=vendor', (data) => {
                 this.vendors = [];
@@ -1213,6 +1218,7 @@ export class AdminProductsNew extends BaseForm {
 
 //--------------------------------------------------------------------Collection
     getCollections(event) {
+        this.showCalendar = false;
         if (this._collections.length) {
             this.collections = this._collections;
             this.menus.onSwitch(event, 'collections')
@@ -1220,6 +1226,7 @@ export class AdminProductsNew extends BaseForm {
     }
 
     onSearchCollections(event, search) {
+        this.showCalendar = false;
         if(
             !['Enter', 'NumpadEnter', 'ArrowUp', 'ArrowDown', 'Escape']
             .includes(event.code)

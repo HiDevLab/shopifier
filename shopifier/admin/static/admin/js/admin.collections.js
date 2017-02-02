@@ -131,8 +131,12 @@ export class AdminCollectionsNew extends BaseForm {
         }
     }
 
+    changeRTE(body_html) {
+        this.form[this.model].value['body_html'] = body_html;
+        this.onFormChange();
+    }
+
     onFormChange() {
-        this.form[this.model].value['body_html'] = this.body_html;
         this.formChange = !this.compare(
             this.form[this.model].value,
             this.api_data[this.model]

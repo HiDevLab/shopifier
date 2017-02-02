@@ -529,6 +529,7 @@ export class RichTextEditor {
         {title: 'Delete table', command1: 'deleteTable', command2: ''},
     ]
 
+    @Output() change = new EventEmitter();
 
     ngOnInit() {
         this.parent.rich_text_editor = this;
@@ -619,8 +620,9 @@ export class RichTextEditor {
     }
 
     onChange() {
-        this.parent.body_html = this.editor.getValue();
-        this.parent[this.change]();
+        this.change.emit(this.editor.getValue());
+//         this.parent.body_html = this.editor.getValue();
+//         this.parent[this.change]();
     }
 
     onPopover(event, popover){
@@ -881,7 +883,7 @@ export class Calendar {
 export class Wait {}
 
 
-//------------------------------------------------------------------------------PopUpMenu
+//------------------------------------------------------------------------------PopUpMenuCollection
 export class PopUpMenuCollection {
     _menus = new Set;
 
@@ -1010,7 +1012,7 @@ export class PopUp extends BasePopUp {
     }
 }
 
-
+//------------------------------------------------------------------------------PopUpMenu
 @Component({
     selector: 'pop-up-menu',
     template: 
