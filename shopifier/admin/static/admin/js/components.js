@@ -882,83 +882,56 @@ export class PopUpMenuCollection {
     onSwitch(event, id) {
         event.preventDefault();
         event.stopPropagation();
-        this.hideAllMenu(id);
-        return this.switchMenu(id);
+        let show = false;
+        let el = this.getElement(id);
+        if (el && el.component) {
+            show = !el.component.show
+            if (!show) {
+                el.component.onHide()
+            } else {
+                this.hideAll(id);
+                el.component.onShow()
+            }
+        }
+        return show;
     }
 
     hide(id) {
         let el = this.getElement(id);
-        if (el) {
+        if (el && el.component) {
             el.component.onHide();
         }
     }
 
     show(id) {
         let el = this.getElement(id);
-        if (el) {
+        if (el && el.component) {
             el.component.onShow();
         }
-        this.hideAllMenu(id)
+        this.hideAll(id)
     }
 
-    hideAllMenu(exclude) {
+    hideAll(exclude) {
         this._menus.forEach( menu => {
             if (menu != exclude) {
                 this.hide(menu);
             }
         });
     }
-
-    switchMenu(id) {
-        let show = false;
-        let el = this.getElement(id);
-        if (el) {
-            show = el.component.onSwitch();
-        }
-        return show;
-    }
 }
 
-
-@Component({
-    selector: 'pop-up-menu',
-    template: 
-    `
-        <div class="pop-up-menu">
-           <ul class="max-vh5">
-                <wait [wait]="items.length"></wait>
-                <li *ngFor="let item of items;let i=index;"
-                        (click)="selectItem($event, item)"
-                        (mouseover)="onOver($event, i)"
-                        [ngClass]="{selected: item.select, hover:i==current_i, disabled:item.disabled}">
-                    <i class="fa fa-check" [ngClass]="{hidden: !item.select}"></i>
-                    <span class="ml10" (click)="selectItem($event, item)">[[ item.title ]]</span>
-                </li>
-            </ul>
-        </div>
-    `,
-    interpolation: ['[[', ']]'],
-    inputs: ['items'],
-})
-export class PopUpMenu {
-    stopOver = false;
+//------------------------------------------------------------------------------BasePopUp
+class BasePopUp {
     show = false;
-
-    @Output() select = new EventEmitter();
-
-    static get parameters() {
-        return [[ElementRef]];
-    }
 
     constructor(element) {
         this.element = element.nativeElement;
     }
+
     ngOnInit() {
         this.element.show = false;
         this.element.component = this;
-//         document.addEventListener('keyup', this.onKeyUp.bind(this), false);
     }
-
 
     @HostListener('window:click',['$event'])
     onClick(event) {
@@ -974,20 +947,12 @@ export class PopUpMenu {
         }
     }
 
-    onSwitch() {
-        if (this.show) {
-            this.onHide()
-        } else {
-            this.onShow()
-        }
-    }
-
     onShow(event) {
         // starting point elemevnt with id = base-... OR parrent element
         if (this.show) {
             return;
         }
-        let base_element = document.querySelector(`#base-${this.id}`);
+        let base_element = document.querySelector(`#base-${this.element.id}`);
         let left = 0;
         if (!base_element) {
             base_element = this.element.parentElement;
@@ -1013,6 +978,54 @@ export class PopUpMenu {
         this.element.classList.remove('show');
         this.element.classList.add('hide');
         this.show = false;
+    }
+
+    childOf(c, p) {
+        while(c !== p && c) {
+            c = c.parentNode;
+        }
+        return c === p;
+    }
+}
+
+//------------------------------------------------------------------------------PopUp
+@Directive({
+    selector: 'popup'
+})
+export class PopUp extends BasePopUp {
+    static get parameters() {
+        return [[ElementRef]];
+    }
+}
+
+
+@Component({
+    selector: 'pop-up-menu',
+    template: 
+    `
+        <div class="pop-up-menu">
+           <ul class="max-vh5">
+                <wait [wait]="items.length"></wait>
+                <li *ngFor="let item of items;let i=index;"
+                        (click)="selectItem($event, item)"
+                        (mouseover)="onOver($event, i)"
+                        [ngClass]="{selected: item.select, hover:i==current_i, disabled:item.disabled}">
+                    <i *ngIf="item.hasOwnProperty('select')" class="fa fa-check mr10" [ngClass]="{hidden: !item.select}"></i>
+                    <span (click)="selectItem($event, item)">[[ item.title ]]</span>
+                </li>
+            </ul>
+        </div>
+    `,
+    interpolation: ['[[', ']]'],
+    inputs: ['items'],
+})
+export class PopUpMenu extends BasePopUp {
+    stopOver = false;
+
+    @Output() select = new EventEmitter();
+
+    static get parameters() {
+        return [[ElementRef]];
     }
 
     @HostListener('window:keyup',['$event'])
@@ -1054,13 +1067,6 @@ export class PopUpMenu {
         }
     }
 
-    childOf(c, p) {
-        while(c !== p && c) {
-            c = c.parentNode;
-        }
-        return c === p;
-    }
-
     pauseOver() {
         this.stopOver = true;
         setTimeout( () => {
@@ -1089,6 +1095,7 @@ export class PopUpMenu {
         RichTextEditor,
         Calendar,
         PopUpMenu,
+        PopUp,
         Wait,
         StartsWithPipe,
         ArrayLengthPipe,
@@ -1111,7 +1118,8 @@ export class PopUpMenu {
         RichTextEditor,
         Calendar,
         Wait,
-        PopUpMenu
+        PopUpMenu,
+        PopUp
     ]
 })
 export class AdminComponentsModule {}
