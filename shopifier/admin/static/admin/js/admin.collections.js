@@ -11,7 +11,7 @@ import { AdminAuthService, AdminUtils } from './admin.auth';
 import { Admin } from './admin';
 import { BaseForm } from './admin.baseform';
 import { AdminComponentsModule, RichTextEditor,  AdminLeavePage, Popover,
-    Calendar, Wait} from './components';
+    Calendar, Wait } from './components';
 
 
 //------------------------------------------------------------------------------AdminCollections
@@ -140,8 +140,6 @@ export class AdminCollectionsNew extends BaseForm {
         this._admin.notNavigate = this.formChange;
     }
 
-
-
     getCollectionAfter(data) {
         this.api_data = data;
         this.setDataToControls(this.form, this.model, this.api_data[this.model]);
@@ -162,8 +160,6 @@ export class AdminCollectionsNew extends BaseForm {
         if(!this.groupValidate(this.form, this.model)) return;
         let data = {};
         data[this.model] = this.form[this.model].value;
-
-//         data[this.model]['body_html'] = this.rich_text_editor.editor.getValue();
 
         if (!this.object_id) {
             this._http.post('/admin/custom_collections.json', data)
@@ -192,7 +188,6 @@ export class AdminCollectionsNew extends BaseForm {
   selector: 'main',
   templateUrl : 'templates/collection/new-edit.html',
   interpolation: ['[[', ']]'],
-  directives: [RichTextEditor, AdminLeavePage, Popover],
 })
 export class AdminCollectionsEdit extends AdminCollectionsNew {
 }
