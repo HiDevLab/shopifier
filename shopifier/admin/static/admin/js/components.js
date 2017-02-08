@@ -305,7 +305,10 @@ export class AdminTagsEdit {
             ul.children[this.current_i].scrollIntoView(false);
             return;
         }
-        if (event.code=='ArrowUp' && (this.current_i > 0 || (!!this.tag_input && this.current_i > -1))) {
+        if (
+            event.code=='ArrowUp' &&
+            (this.current_i > 0 || (!!this.tag_input && this.current_i > -1))
+        ) {
             this.current_i--;
             event.stopPropagation();
             ul.children[this.current_i].scrollIntoView(true);
@@ -579,31 +582,18 @@ export class RichTextEditor {
 
         this.editor.on('interaction', this.onChange.bind(this));
 
-        this.popover_formatting = document.querySelector('#formatting-popover');
-        this.popover_alignment = document.querySelector('#alignment-popover');
-        this.popover_color = document.querySelector('#color-popover');
-        this.popover_table = document.querySelector('#table-popover');
-        this.popovers = [
-            this.popover_formatting, this.popover_alignment,
-            this.popover_color, this.popover_table
-        ]
+        this.menus = new PopUpMenuCollection;
 
         this.document.addEventListener('click', () => {
-            self.hidePopovers()
+            this.menus.hideAll();
         });
-        
+
         this.editor.on('tableselect:composer', () => {
             self.tableTools = true;
         });
         this.editor.on('tableunselect:composer', () => {
             self.tableTools = false;
         });
-//         this.editor.on('change', () => {
-//             self.parent.body_html = self.editor.getValue();
-//             self.parent._admin.notNavigate = true;
-//             self.parent.formChange = true;
-//             console.log('change');
-//         });
 
         //disable drop files in iframe
         this.document.addEventListener('dragenter', this.disableDrop, false);
@@ -621,39 +611,8 @@ export class RichTextEditor {
 
     onChange() {
         this.change.emit(this.editor.getValue());
-//         this.parent.body_html = this.editor.getValue();
-//         this.parent[this.change]();
     }
 
-    onPopover(event, popover){
-        event.preventDefault();
-        event.stopPropagation();
-        this.hidePopovers(popover);
-        this.switchPopover(popover);
-    }
-
-    hidePopover(popover) {
-        if (popover.classList.contains('show')) {
-            popover.classList.remove('show');
-            popover.classList.add('hide');
-        }
-    }
-    hidePopovers(exclude) {
-        for (let i in this.popovers) {
-            if (this.popovers[i] != exclude) {
-                this.hidePopover(this.popovers[i]);
-            }
-        }
-    }
-    switchPopover(popover, event) {
-        let show = popover.classList.contains('hide');
-        popover.classList.remove(show ? 'hide' : 'show');
-        popover.classList.add(show ? 'show' : 'hide');
-        if (show) {
-            let event = new Event('show');
-            popover.dispatchEvent(event);
-        }
-    }
     switchTextBackground(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -661,12 +620,15 @@ export class RichTextEditor {
     }
     hideView(){
         this.showHtml = !this.showHtml;
-        if (this.editor.currentView === this.editor.textarea || this.editor.currentView === "source") {
+        if (
+            this.editor.currentView === this.editor.textarea ||
+            this.editor.currentView === "source"
+        ) {
             this.editor.fire("change_view", "composer");
         } else {
             this.editor.fire("change_view", "textarea");
         }
-        this.hidePopovers();
+        this.menus.hideAll();
         this.editor.focus();
     }
 
@@ -676,22 +638,22 @@ export class RichTextEditor {
         } else {
             this.editor.composer.commands.exec('bgColorStyle', color);
         }
-        this.hidePopovers();
         this.editor.focus();
     }
 
-    commandFormatBlock(tag) {
-        this.editor.composer.commands.exec('formatBlock', tag);
-        this.hidePopovers();
+    commandFormatBlock(format) {
+        this.editor.composer.commands.exec('formatBlock', format.tag);
         this.editor.focus();
     }
     commandTag(tag) {
-        this.editor.composer.commands.exec(tag);
+        this.editor.composer.commands.exec(tag.command);
         this.editor.focus();
     }
     createTable() {
-        this.editor.composer.commands.exec('createTable', { rows: 1, cols: 1, tableStyle: "width: 100%;" });
-        this.hidePopovers();
+        this.editor.composer.commands.exec('createTable',
+            { rows: 1, cols: 1, tableStyle: "width: 100%;" }
+        );
+        this.menus.hideAll();
         this.editor.focus();
     }
     commandTable2(event, command1, command2) {
@@ -713,16 +675,20 @@ export class RichTextEditor {
             return;
         }
         this.editor.composer.commands.exec(command1, command2);
-        this.hidePopovers();
+        this.menus.hideAll();
         this.editor.focus();
     }
     insertLink() {
         this.showLinkEdit = false;
 
         if (this.openlinkIn==='the same window') {
-            this.editor.composer.commands.exec('createLink', { href: this.linkTo, target: '', title: this.linkTitle, toggle: true});
+            this.editor.composer.commands.exec('createLink',
+                { href: this.linkTo, target: '', title: this.linkTitle, toggle: true}
+            );
         } else {
-            this.editor.composer.commands.exec('createLink', { href: this.linkTo, target: '_blank', title: this.linkTitle, toggle: true});
+            this.editor.composer.commands.exec('createLink',
+                { href: this.linkTo, target: '_blank', title: this.linkTitle, toggle: true}
+            );
         }
         this.editor.focus();
     }
@@ -920,7 +886,7 @@ export class PopUpMenuCollection {
     show(id) {
         let el = this.getElement(id);
         if (el && el.component) {
-            el.component.onShow();
+            el.component.onShow(); //instead el.dispatchEvent(new Event('show'));
         }
         this.hideAll(id)
     }
@@ -973,7 +939,10 @@ class BasePopUp {
         } else {
             left = base_element.offsetLeft;
         }
-        if (!this.element.classList.contains('left') && !this.element.classList.contains('right')) {
+        if (
+            !this.element.classList.contains('left') &&
+            !this.element.classList.contains('right')
+        ) {
             left = left + base_element.offsetWidth/2 - this.element.clientWidth/2;
         } else if (this.element.classList.contains('right')) {
             left = left + base_element.offsetWidth - this.element.offsetWidth;
