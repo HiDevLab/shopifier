@@ -26,7 +26,7 @@
             </span>
         </li>
 
-        <popup *ngIf="currentUser" [ngClass]="{show: forcePopupShow }">
+        <div *ngIf="currentUser" [ngClass]="{show: forcePopupShow }" class="nav-popup">
             <div>
                 <div>
                     <ul>
@@ -47,7 +47,7 @@
                 </div>
             </div>
             <tringle></tringle> 
-        </popup>
+        </div>
     </ul>
     <ul class="menu submenu" *ngIf="selectedNav.submenu.length > 0">
          <h3>[[ selectedNav.text ]]</h3>
