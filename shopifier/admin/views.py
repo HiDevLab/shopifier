@@ -25,7 +25,7 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from shopifier.admin import serializers
 from shopifier.admin.models import (
      now, User, UserLog, Customer, Address, Product, ProductImage,
-     ProductVariant, CollectionImage, CustomCollection, Collect)
+     ProductVariant, CustomCollection, Collect)
 
 
 # accounts
@@ -627,16 +627,14 @@ class CollectViewSet(WrapViewSet):
     serializer_class = serializers.CollectSerializer
     wrap_single = 'collect'
 
-    def dispatch(self, request, *args, **kwargs):
-        self.product = get_object_or_404(Product, id=kwargs['product_id'])
-        self.collection = get_object_or_404(
-            CustomCollection, id=kwargs['collection_id'])
-        return super(CollectViewSet, self).dispatch(
-            request, *args, **kwargs)
+    def get_queryset(self):
+        queryset = super(CollectViewSet, self).get_queryset()
+        product_id = self.request.query_params.get('product_id', None)
+        if product_id is not None:
+            queryset = queryset.filter(product=product_id)
+        return queryset
 
     def perform_update(self, serializer):
-        serializer.validated_data['product'] = self.product
-        serializer.validated_data['collection'] = self.collection
         serializer.validated_data['updated_at'] = now()
         serializer.save()
 

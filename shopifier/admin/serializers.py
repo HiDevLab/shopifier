@@ -20,7 +20,7 @@ from drf_extra_fields.fields import Base64ImageField
 from easy_thumbnails.files import get_thumbnailer
 
 from shopifier.admin.models import (
-    now, User, UserLog, Customer, Address, Product, ProductImage,
+    User, UserLog, Customer, Address, Product, ProductImage,
     ProductVariant, CollectionImage, CustomCollection, Collect)
 
 
@@ -452,11 +452,14 @@ class CustomCollectionSerializer(SHPFSerializer):
 class CollectSerializer(SHPFSerializer):
 
     sort_value = serializers.SerializerMethodField()
+    product_id = serializers.IntegerField()
+    collection_id = serializers.IntegerField()
 
     class Meta:
         model = Collect
-        read_only_fields = ('created_at', 'updated_at', 'sort_value')
-        exclude = ()
+        read_only_fields = ('created_at', 'updated_at', 'sort_value',
+                            'product_id', 'collection_id')
+        exclude = ('collection', 'product')
 
     def get_sort_value(self, obj):
         if obj.position is not None:
