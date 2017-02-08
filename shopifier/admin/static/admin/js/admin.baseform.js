@@ -195,7 +195,7 @@ export class BaseForm {
     getAPI(url, after) {
         this._http.get(url)
             .subscribe(
-                (data) => after(data),
+                (data) => after.call(this, data),
                 (err) => {
                     this.obj_errors = err;
                     try {
@@ -395,4 +395,25 @@ export class BaseForm {
         return true;
     };
 
+    compareArray(arr1, arr2) {
+        if (!Array.isArray(arr1) || !Array.isArray(arr2) || arr1.length != arr2.length) {
+            return false;
+        }
+        for (let i = 0; i < arr1.length; i++) {
+            let ret = this.compare(arr1[i], arr2[i]);
+            if (!ret) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    copy(obj) {
+        if (obj) {
+            return JSON.parse(JSON.stringify(obj));
+        } else {
+            console.log('bad copy');
+            return [];
+        }
+    }
 }
