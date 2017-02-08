@@ -1,17 +1,17 @@
+import { Location } from '@angular/common'
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, CanActivate } from '@angular/router'
-import { Location } from '@angular/common'
 
 import { AdminAuthService, AdminUtils } from './admin.auth'
-import { Nav, PopUpMenu } from './nav'
-
+import { PopUpMenuCollection} from './components';
+import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
 import { AdminOrders } from './admin.orders'
 import { 
     Products, ProductsNew, ProductsEdit, AdminProductsTransfers, 
     AdminProductsCollections
 } from './admin.products';
 import { AdminSettings, AdminAccountInvite } from './admin.settings'
-import { Customers, CustomersNew, CustomersEdit } from './admin.customers'
+import { Nav, PopUpMenu } from './nav'
 
 
 //------------------------------------------------------------------------------
@@ -47,79 +47,6 @@ export class AdminSearch {
     templateUrl: 'templates/admin.html',
     interpolation: ['[[', ']]'],
 })
-// @RouteConfig([
-//     {
-//         path : '/',
-//         redirectTo: ['Home'],
-//     }, 
-//      
-//     {
-//         path : '/home',
-//         name : 'Home',
-//         component : AdminHome
-//     },
-// 
-//     {
-//         path : '/search',
-//         name : 'Search',
-//         component : AdminSearch
-//     },
-// 
-//     {
-//         path : '/orders/...',
-//         name : 'Orders',
-//         component : AdminOrders,
-//     },
-// 
-//     {
-//         path : '/settings/...',
-//         name : 'Settings',
-//         component : AdminSettings,
-//     },
-// 
-//     {
-//         path : '/products/collections',
-//         name : 'Collections',
-//         component : AdminProductsCollections
-//     },
-// 
-//     {
-//         path : '/products',
-//         name : 'Products',
-//         component : Products
-//     },
-//     {
-//         path : '/products/new',
-//         name : 'NewProduct',
-//         component : ProductsNew,
-//     },
-//     {
-//         path : '/products/:id',
-//         name : 'EditProduct',
-//         component : ProductsEdit,
-//     },
-//     {
-//         path : '/transfers',
-//         name : 'Transfers',
-//         component : AdminProductsTransfers
-//     },
-// 
-//     {
-//         path : '/customers',
-//         name : 'Customers',
-//         component : Customers,
-//     },
-//     {
-//         path : '/customers/new',
-//         name : 'NewCustomer',
-//         component : CustomersNew,
-//     },
-//     {
-//         path : '/customers/:id',
-//         name : 'EditCustomer',
-//         component : CustomersEdit,
-//     },
-// ])
 export class Admin {
     navs = Nav;
     popups = PopUpMenu;
@@ -222,11 +149,6 @@ export class Admin {
             this.onSelectSubNav(headnav);
         }
     }
-
-//     goProfile() {
-//         let link = ['Settings/Profile', {'id': this.currentUser.id }];
-//         this._router.navigate(link);
-//     }
 
     currentUrl (addition, levels) {
         let url = '/admin';
