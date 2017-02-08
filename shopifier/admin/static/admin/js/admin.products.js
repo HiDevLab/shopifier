@@ -1,4 +1,5 @@
 import 'rxjs/Rx';
+import {Observable} from 'rxjs/Rx';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup,
@@ -143,6 +144,7 @@ export class AdminProductsNew extends BaseForm {
     product_types = [];
     vendors = [];
 
+    collects = [];
     collections = [];
     _collections = [];
     search_collection = ''
@@ -189,7 +191,7 @@ export class AdminProductsNew extends BaseForm {
                 'text': '', 'class': 'btn mr10 fa fa-chevron-left',
                 'click': this.onPrev, 'self': this, 'disabled' : 'disabledPrev'
             });
-    
+
             this._admin.headerButtons.push({
                 'text': '', 'class': 'btn mr10 fa fa-chevron-right', 
                 'click': this.onNext, 'self': this, 'disabled' : 'disabledNext'
@@ -257,17 +259,26 @@ export class AdminProductsNew extends BaseForm {
 
     addFormAfter() {
         if (this.object_id) {
-            this.getAPIData(
+            this.getAPIDataAll(
                 [
                     `/admin/products/${this.object_id}.json`,
                     `/admin/products/${this.object_id}/images.json`,
                     `/admin/products/${this.object_id}/variants.json?limit=100`,
                     '/admin/custom_collections.json?fields=title,id',
+                    `/admin/collects.json?product_id=${this.object_id}`,
                 ],
                 [
-                    'getProductAfter', 'getImagesAfter', 'getVariantsAfter',
-                    'getCollectionsAfter'
+                    'getProductAfter',
+                    'getImagesAfter',
+                    'getVariantsAfter',
+                    'getCollectionsAfter',
+                    'getCollectsAfter'
                 ]
+            );
+        } else {
+            this.getAPIData(
+                ['/admin/custom_collections.json?fields=title,id'],
+                ['getCollectionsAfter']
             );
         }
     }
@@ -319,8 +330,9 @@ export class AdminProductsNew extends BaseForm {
             });
             images.push(data.images[i]);
         }
-        this.images = images.slice(0);
-        this.api_images = images.slice(0);
+        this.images = this.copy(images);
+        this.api_images = this.copy(images);
+
     }
 
     getVariantsAfter(data) {
@@ -336,15 +348,37 @@ export class AdminProductsNew extends BaseForm {
                 data.variants[i].inventory_management==='shopifier'
             );
         }
-        this.variants = variants.slice(0);
-        this.api_variants = variants.slice(0);
+        this.variants = this.copy(variants);
+        this.api_variants = this.copy(variants);
     }
 
     getCollectionsAfter(data){
         this._collections = [];
+        this.api_collections = [];
         data.custom_collections.forEach(v => {
-            this._collections.push({title: v.title, id:v.id, select: 0});
+            this._collections.push(
+                {title: v.title, id: v.id, select: false, idd: 0}
+            );
         });
+        this.api_collections = this.copy(this._collections);
+    }
+
+    getCollectsAfter(data) {
+        this._collections = this.copy(this.api_collections);
+        this.collects = data.collects;
+        
+        this.api_collections.forEach(val => {
+            let v = this.find(this.collects, 'collection_id', val.id);
+            val.select = v;
+            if (v) {
+                val.select = true;
+                val.idd = v.id
+            } else {
+                val.select = false;
+                val.idd = 0;
+            }
+        });
+        this._collections = this.copy(this.api_collections);
     }
 
     changeRTE(body_html) {
@@ -353,10 +387,9 @@ export class AdminProductsNew extends BaseForm {
     }
 
     onFormChange() {
-        this.formChange = !this.compare(
-            this.form[this.model].value,
-            this.api_data[this.model]
-        );
+        let b1 = this.compare( this.form[this.model].value, this.api_data[this.model])
+        let b2 = this.compareArray(this.api_collections, this._collections);
+        this.formChange = !(b1 && b2);
         this._admin.notNavigate = this.formChange;
     }
 
@@ -396,6 +429,7 @@ export class AdminProductsNew extends BaseForm {
                 .subscribe(
                     (data) => {
                         this.object_id = data.product.id;
+                        this.saveCollections();
                         this.getProductAfter(data);
                         this.saveImages();
                         this.saveVariants();
@@ -406,6 +440,7 @@ export class AdminProductsNew extends BaseForm {
             this._http.put(`/admin/products/${this.object_id}.json`, product)
                 .subscribe(
                     (data) => {
+                        this.saveCollections();
                         this.getProductAfter(data);
                         this.saveImages();
                         this.saveVariants();
@@ -499,11 +534,13 @@ export class AdminProductsNew extends BaseForm {
         for(let i=0; i < files.length; i++) {
             let reader = new FileReader();
             reader.onload = (evt) => {
-                this.addImage(evt.target.result, 'attachment')
+                this.addImage(evt.target.result, 'attachment');
             };
             reader.readAsDataURL(files[i]);
         }
         event.target.files = null;
+        this.formChange = true;
+        this._admin.notNavigate = true;
     }
 
     // add new image
@@ -521,6 +558,8 @@ export class AdminProductsNew extends BaseForm {
                 },
                 (err) => {}
             );
+            this.formChange = true;
+            this._admin.notNavigate = true;
         } else {
             if (type==='src') {
                 this.images.push({src: src, id: -this.getId(), type: type });
@@ -535,8 +574,6 @@ export class AdminProductsNew extends BaseForm {
                 this.currentVariant = undefined;
             }
             this.dragOverImg = undefined;
-            this.formChange = true;
-            this._admin.notNavigate = true;
         }
     }
 
@@ -699,7 +736,7 @@ export class AdminProductsNew extends BaseForm {
 
     saveImages() {
         let old_image = {};
-        let images = this.images.slice(0);
+        let images = this.copy(this.images);
         this.images = [];
 
         images.forEach((image) => {
@@ -877,7 +914,7 @@ export class AdminProductsNew extends BaseForm {
     }
 
     saveVariants() {
-        let api_variants = this.api_variants.slice(0);
+        let api_variants = this.copy(this.api_variants);
         let variants = [];
         this.api_variants= [];
         let old_variant = {};
@@ -1135,7 +1172,7 @@ export class AdminProductsNew extends BaseForm {
     getTimes(event) {
         this.showCalendar = false;
         if (this.times.length) {
-            this.menus.onSwitch(event, 'publish-time')
+            this.menus.onSwitch(event, 'publish-time');
         }
     }
 
@@ -1235,7 +1272,7 @@ export class AdminProductsNew extends BaseForm {
                 el => {
                     return el.title.startsWith(search);
                 }
-            ).slice(0);
+            );
             this.menus.show('collections');
         } 
     }
@@ -1244,6 +1281,46 @@ export class AdminProductsNew extends BaseForm {
         item.select = !item.select;
         event.stopPropagation();
         event.preventDefault();
+        this.onFormChange();
+    }
+
+    saveCollections() {
+        let p = 1;
+        let requests = [];
+        let data = {collect: {}};
+
+        for (let i = 0; i < this._collections.length; i++) {
+            if (this._collections[i].select != this.api_collections[i].select) {
+                if (this._collections[i].select) {
+                    data.collect = {
+                        product_id: this.object_id,
+                        collection_id: this._collections[i].id,
+                        position: p++
+                    };
+                    requests.push(this._http.post('/admin/collects.json', data));
+                } else {
+                    requests.push(this._http.delete(`/admin/collects/${this._collections[i].idd}.json`));
+                }
+            } else if (this._collections[i].select) {
+                data.collect = {id: this._collections[i].idd, position: p++};
+                requests.push(this._http.patch(`/admin/collects/${this._collections[i].idd}.json`, data ));
+            }
+        }
+        Observable.forkJoin(requests).subscribe(
+            () => {
+                this.getAPI(
+                    `/admin/collects.json?product_id=${this.object_id}`,
+                    this.getCollectsAfter
+                );
+            },
+            err => {
+                try {
+                    this.errors = this._utils.to_array(err.json());
+                } catch(e) {
+                    console.log(err, e);
+                }
+            }
+        );
     }
 }
 

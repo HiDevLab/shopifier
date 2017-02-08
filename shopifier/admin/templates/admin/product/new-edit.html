@@ -84,15 +84,24 @@
                         </span>
                     </label>
                 </div>
-                <div class="row"><div class="separator mv10"></div></div>
-                <div class="row m10">
+                <div class="sep"></div>
+                <div class="row mt20 mh10">
                     <label class="input input-box backgraund-grey" (click)="getCollections($event)">Collections
-                        <span class="row mv10">
+                        <span class="row mt10">
                             <input class="backgraund-white" #search (keyup)="onSearchCollections($event, search.value)" placeholder="Search for collections">
                             <pop-up-menu class="down color-default hide mt18 w24" id="collections" [items]="collections" (select)="selectCollection($event)"></pop-up-menu>
                         </span>
                     </label>
                 </div>
+                <div *ngIf="!(_collections | boolean:'select':true).length" class="row mt10 mh20 color-subdued">
+                    Add this product to a collection so it’s easy to find in your store.
+                </div>
+                <ul class="product-collections">
+                    <li *ngFor="let collect of _collections | boolean:'select':true;">
+                        <a>[[collect.title]]</a>
+                        <a class="fa fa-times" (click)="collect.select=false;onFormChange();"></a>
+                    </li>
+                </ul>
              </form>
         </div>
     </div>
