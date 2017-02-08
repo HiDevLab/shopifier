@@ -3,17 +3,12 @@
     <form class="edit-box">
         <div id="toolbar" class="row" class="edit-toolbar">
             <div class="row" [ngClass]="{hide:showHtml}">
-                <div id="base-formatting-popover" class="tool row left" title="Formatting"
-                (click)="onPopover($event, popover_formatting)">
+                <div id="base-formatting" class="tool row left" title="Formatting"
+                (click)="menus.onSwitch($event, 'formatting')">
                     <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
-                <popover id="formatting-popover" class="down left color-default hide mt18">
-                    <div class="default-popover">
-                       <ul>
-                            <li *ngFor="let format of formats" (click)="commandFormatBlock(format.tag)">[[ format.title ]]</li>
-                        </ul>
-                    </div>
-                </popover>
+
+                <pop-up-menu class="down left color-default hide mt18" id="formatting" [items]="formats" (select)="commandFormatBlock($event)"></pop-up-menu>
 
                 <div (click)="commandTag('bold')" title="Bold" class="tool fa fa-bold"></div>
                 <div (click)="commandTag('italic')" title="Italic" class="tool fa fa-italic"></div>
@@ -23,20 +18,16 @@
                 <div (click)="commandTag('Outdent')" title="Outdent" class="tool fa fa-outdent"></div>
                 <div (click)="commandTag('Indent')" title="Indent" class="tool fa fa-indent"></div>
                 
-                <div id="base-alignment-popover" class="tool row left" title="Alignment" (click)="onPopover($event, popover_alignment)">
+                <div id="base-alignment" class="tool row left" title="Alignment" (click)="menus.onSwitch($event, 'alignment')">
                     <span class="fa fa-align-left" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
-                <popover id="alignment-popover" class="down color-default hide mt18">
-                    <div class="default-popover">
-                       <ul>
-                            <li *ngFor="let align of alignments" (click)="commandTag(align.command)">[[ align.title ]]</li>
-                        </ul>
-                    </div>
-                </popover>
-                <div id="base-color-popover" class="tool row right" title="Color" (click)="onPopover($event, popover_color)">
+
+                <pop-up-menu class="down left color-default hide mt18" id="alignment" [items]="alignments" (select)="commandTag($event)"></pop-up-menu>
+
+                <div id="base-colors" class="tool row right" title="Color" (click)="menus.onSwitch($event, 'colors')">
                     <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
-                <popover id="color-popover" class="down color-default hide mt18">
+                <popup id="colors" class="down color-default hide mt18">
                     <div class="rte-color-container">
                         <div class="columns rte-color-sections" [ngClass]="{bg: !textBackground, txt: textBackground}">
                             <div class="rte-text-color-section">
@@ -63,14 +54,14 @@
                             </div>
                         </div>
                     </div>
-                </popover>
+                </popup>
 
                 <div (click)="showLinkEdit=true" title="[[ linkToolTitle ]]" class="tool left fa fa-link"></div>
     
-                <div id="base-table-popover" class="tool row" title="Insert table" (click)="onPopover($event, popover_table)">
+                <div id="base-table" class="tool row" title="Insert table" (click)="menus.onSwitch($event, 'table')">
                     <span class="fa fa-table" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
-                <popover id="table-popover" class="down color-default hide mt18" data-behavior="showstyles">
+                <popup id="table" class="down color-default hide mt18" data-behavior="showstyles">
                     <div class="default-popover">
                        <ul><li (click)="createTable()">Insert table</li></ul>
                        <div class="row sep mh5"></div>
@@ -82,7 +73,7 @@
                             <li *ngFor="let command of tables2" (click)="commandTable2($event, command.command1, command.command2)" [ngClass]="{disabled:!tableTools}">[[ command.title ]]</li>
                         </ul>
                     </div>
-                </popover>
+                </popup>
             <div (click)="clearFormatting()" title="Clear Formatting" class="tool right fa fa-ban"></div>
             </div>
             <div class="row right w24">
