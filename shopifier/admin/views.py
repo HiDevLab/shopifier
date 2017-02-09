@@ -114,7 +114,7 @@ class UserInviteView(CreateAPIView):
     def perform_create(self, serializer):
         user = serializer.save()
         current_user = self.request.user
-        ref_url = '{}/auth/accept/{}/{}/'.format(
+        ref_url = '{}/admin/auth/accept/{}/{}/'.format(
             settings.SITE, user.id, get_token(user.email)
         )
         store_name = settings.STORE_NAME
