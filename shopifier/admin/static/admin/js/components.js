@@ -77,7 +77,7 @@ export class Popover {
     }
 
     onShow(event) {
-        // starting point elemevnt with id = base-... OR parrent element
+        // starting point elemevnt with id = base-... OR parent element
         let base_element = document.querySelector(`#base-${this.id}`);
         let left = 0;
         if (!base_element) {
@@ -206,7 +206,7 @@ export class PropertyStartsWithPipe {
     templateUrl: 'templates/tags-edit.html',
     directives: [Popover],
     interpolation: ['[[', ']]'],
-    inputs: ['tags', 'all_tags','all_tags_statistic', 'parrent_component' ],
+    inputs: ['tags', 'all_tags','all_tags_statistic', 'parent' ],
     pipes: [NotInPipe, StartsWithPipe]
 })
 export class AdminTagsEdit {
@@ -286,7 +286,7 @@ export class AdminTagsEdit {
             }
             this.tag_input = this.pushTag(t);
 
-            this.parrent_component.formChange = true;
+            this.parent.formChange = true;
             this.current_i = 0;
 
             if (this.available().length == 0) {
@@ -331,7 +331,7 @@ export class AdminTagsEdit {
             }
             this.tag_input = this.pushTag(t);
             
-            this.parrent_component.formChange = true;
+            this.parent.formChange = true;
             this.current_i = 0;
 
             if (this.available().length == 0) {
@@ -355,7 +355,7 @@ export class AdminTagsEdit {
 
     deleteTag(i) {
         this.tags.splice(i, 1);
-        this.parrent_component.formChange = true;
+        this.parent.formChange = true;
     }
 
     insertTag(event, tag) {
@@ -365,7 +365,7 @@ export class AdminTagsEdit {
         if (this.available().length == 0) {
             this.changePopover(event, 'hide');
         }
-        this.parrent_component.formChange = true;
+        this.parent.formChange = true;
     }
 
     sortAllTags(index) {

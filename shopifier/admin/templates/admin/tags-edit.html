@@ -95,7 +95,7 @@
             (click)="showAllTags=false">Cancel</a>
             <a class="btn btn-blue"
                 [ngClass]="{disabled:!tagsChange}"
-                (click)="parrent_component.saveTags(parrent_component); showAllTags=false; tagsChange=false">Apply changes</a>
+                (click)="parent.saveTags(parent); showAllTags=false; tagsChange=false">Apply changes</a>
         </div>
     </form>
 </div>
