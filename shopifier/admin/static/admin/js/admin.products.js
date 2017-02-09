@@ -139,7 +139,7 @@ export class AdminProductsNew extends BaseForm {
     published_at_date = null;
     published_at_time = null;
     times = [];
-    _times = []
+    _times = [];
 
     product_types = [];
     vendors = [];
@@ -147,7 +147,11 @@ export class AdminProductsNew extends BaseForm {
     collects = [];
     collections = [];
     _collections = [];
-    search_collection = ''
+    search_collection = '';
+
+    tags = [];
+    all_tags = [];
+    all_tags_statistic = [];
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
@@ -266,19 +270,27 @@ export class AdminProductsNew extends BaseForm {
                     `/admin/products/${this.object_id}/variants.json?limit=100`,
                     '/admin/custom_collections.json?fields=title,id',
                     `/admin/collects.json?product_id=${this.object_id}`,
+                    '/admin/products/tags.json',
                 ],
                 [
                     'getProductAfter',
                     'getImagesAfter',
                     'getVariantsAfter',
                     'getCollectionsAfter',
-                    'getCollectsAfter'
+                    'getCollectsAfter',
+                    'getTagsAfter',
                 ]
             );
         } else {
             this.getAPIData(
-                ['/admin/custom_collections.json?fields=title,id'],
-                ['getCollectionsAfter']
+                [
+                    '/admin/custom_collections.json?fields=title,id',
+                    '/admin/products/tags.json',
+                ],
+                [
+                    'getCollectionsAfter',
+                    'getTagsAfter',
+                ]
             );
         }
     }
@@ -319,6 +331,7 @@ export class AdminProductsNew extends BaseForm {
         } else {
             this.online_store = 1;
         }
+        this.tags = product.tags; //for TagsEsit
     }
 
     getImagesAfter(data) {
@@ -381,6 +394,15 @@ export class AdminProductsNew extends BaseForm {
         this._collections = this.copy(this.api_collections);
     }
 
+    getTagsAfter(data) {
+        this.all_tags_statistic = data.tags;//for child
+        this.all_tags = [];
+        for (let i in this.all_tags_statistic) {
+            this.all_tags.push(this.all_tags_statistic[i][0]);
+        }
+    }
+
+
     changeRTE(body_html) {
         this.form[this.model].value['body_html'] = body_html;
         this.onFormChange();
@@ -424,6 +446,9 @@ export class AdminProductsNew extends BaseForm {
         } else {
             product.product['published_at'] = null;
         }
+
+        product.product['tags'] = this.tags
+
         if (!this.object_id) {
             this._http.post('/admin/products.json', product )
                 .subscribe(
@@ -433,6 +458,7 @@ export class AdminProductsNew extends BaseForm {
                         this.getProductAfter(data);
                         this.saveImages();
                         this.saveVariants();
+                        this.getAPIData(['/admin/customers/tags.json'], ['getTagsAfter']);
                     },
                     (err) => {this.apiErrors(this.form, 'product', err.json());}
                 );
@@ -444,6 +470,7 @@ export class AdminProductsNew extends BaseForm {
                         this.getProductAfter(data);
                         this.saveImages();
                         this.saveVariants();
+                        this.getAPIData(['/admin/customers/tags.json'], ['getTagsAfter']);
                     },
                     (err) => {this.apiErrors(this.form, 'product', err.json());}
                 );
@@ -955,7 +982,6 @@ export class AdminProductsNew extends BaseForm {
             .subscribe((data) => {this.getAPIVariant(data);}, (err) => {});
     }
 
-
    // update variant if it necessary
     updateVariant(new_image, old_image) {
 //         let data = {};
@@ -1321,6 +1347,26 @@ export class AdminProductsNew extends BaseForm {
                 }
             }
         );
+    }
+
+    saveTags() {
+        if (this.object_id) {
+            let product = {'product': {'tags': this.tags}};
+            this._http
+                .patch(`/admin/products/${this.object_id}.json`, product)
+                .subscribe(
+                    data => { 
+                        this.getProductAfter(data);
+                        this.getAPIData(['/admin/products/tags.json'], ['getTagsAfter']);
+                    },
+                    err => this.apiErrors(this.form, 'product', err.json()),
+                );
+            this.formChange = false;
+            this._admin.notNavigate = false;
+        } else {
+            this.formChange = true;
+            this._admin.notNavigate = true;
+        }
     }
 }
 

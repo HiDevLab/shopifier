@@ -379,6 +379,7 @@ class ProductSerializer(SHPFSerializer):
         max_length=2048, required=False, allow_null=True, allow_blank=True
     )
     images = ProductImageSerializer(many=True, read_only=True)
+    tags = TagsField(required=False)
     variants = ProductVariantSerializer(many=True, read_only=True)
 
     class Meta:

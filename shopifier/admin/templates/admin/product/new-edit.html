@@ -102,6 +102,14 @@
                         <a class="fa fa-times" (click)="collect.select=false;onFormChange();"></a>
                     </li>
                 </ul>
+                <div class="sep mt20"></div>
+                <div class="row mt20 mh20">
+                    <tags [tags]="tags" 
+                        [all_tags]="all_tags" 
+                        [all_tags_statistic]="all_tags_statistic"
+                        [parent]="self">
+                    </tags>
+                </div>
              </form>
         </div>
     </div>

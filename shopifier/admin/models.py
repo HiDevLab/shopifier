@@ -243,6 +243,8 @@ class Product(models.Model):
     updated_at = models.DateTimeField(blank=True, null=True)
     vendor = models.TextField(_('Vendor'), blank=True, max_length=254)
 
+    objects = TagQuerySet.as_manager()
+
 
 def normalization_img_file_name(instance, filename):
     return 'products/{}/img{}'.format(

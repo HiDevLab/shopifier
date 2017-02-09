@@ -555,6 +555,22 @@ class ProductViewSet(WrapViewSet):
     serializer_class = serializers.ProductSerializer
     wrap_single = 'product'
 
+    @list_route(methods=['get'])
+    def tags(self, request, pk=None):
+        tags = Product.objects.count_tag_values('tags')
+        content = {
+            'tags': tags,
+        }
+        return Response(content, status=status.HTTP_200_OK)
+
+    @list_route(methods=['get'])
+    def count(self, request, pk=None):
+        count = Product.objects.all().count()
+        content = {
+            'count': count,
+        }
+        return Response(content, status=status.HTTP_200_OK)
+
 
 class ProductImageViewSet(WrapViewSet):
     permission_classes = (permissions.IsAuthenticated,)
