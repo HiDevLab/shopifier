@@ -645,8 +645,12 @@ export class RichTextEditor {
         this.editor.composer.commands.exec('formatBlock', format.tag);
         this.editor.focus();
     }
-    commandTag(tag) {
+    colorTag(tag) {
         this.editor.composer.commands.exec(tag.command);
+        this.editor.focus();
+    }
+    commandTag(tag) {
+        this.editor.composer.commands.exec(tag);
         this.editor.focus();
     }
     createTable() {
