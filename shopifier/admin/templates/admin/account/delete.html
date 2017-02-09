@@ -2,12 +2,12 @@
     <form class="input-form up" novalidate>{% csrf_token %}
         <div class="modal-header">
             <h2>
-                Remove user account for {% verbatim %}[[ parent.user.first_name + ' ' + parent.user.last_name ]]{% endverbatim %}?
+                Remove user account for [[ parent.user.first_name ]] [[ parent.user.last_name ]]?
             </h2>
             <a class="cross fa fa-times" aria-hidden="true"(click)="reject()"></a>
         </div>
          <div class="rows ph20 pv10">
-            <span>Are you sure you want to remove the user account for <strong> {% verbatim %}{{ parent.user.full_name}}{% endverbatim %}</strong>?</span>
+            <span>Are you sure you want to remove the user account for <strong> [[ parent.user.full_name ]]</strong>?</span>
             <span class="mt10">This action cannot be reversed.</span>
         </div>
         <div class="modal-footer">
