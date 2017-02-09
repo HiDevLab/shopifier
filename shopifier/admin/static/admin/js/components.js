@@ -206,7 +206,7 @@ export class PropertyStartsWithPipe {
     templateUrl: 'templates/tags-edit.html',
     directives: [Popover],
     interpolation: ['[[', ']]'],
-    inputs: ['tags', 'all_tags','all_tags_statistic', 'parent' ],
+    inputs: ['tags', 'all_tags','all_tags_statistic', 'parent', 'title_class' ],
     pipes: [NotInPipe, StartsWithPipe]
 })
 export class AdminTagsEdit {
