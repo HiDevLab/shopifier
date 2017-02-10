@@ -184,7 +184,7 @@ nav {
                             padding: 5px 5px 20px 5px;
                             text-decoration: none;
                             color: $color-nav-popup-menu;
-
+                            white-space: nowrap;
                             &:hover {
                                 text-decoration: underline;
                                 cursor: pointer; cursor: hand;

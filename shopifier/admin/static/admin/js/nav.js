@@ -17,6 +17,7 @@ export var Nav = [
         'icon': 'calendar-check-o',
         'text': 'Orders',
         'url': '#',
+        'permission': ['orders'],
         'submenu': [
              {
                  'icon': 'calendar-check-o',
@@ -36,27 +37,31 @@ export var Nav = [
         'icon': 'tag',
         'text': 'Products',
         'url': '#',
+        'permission': ['products', 'transfers', 'collections'],
         'submenu': [
              {
-                 'icon': 'tag',
-                 'text': 'Products',
-                 'url': '/products',
-                 'uri': '/admin/products',
-                 'type': 'router',
+                'icon': 'tag',
+                'text': 'Products',
+                'url': '/products',
+                'uri': '/admin/products',
+                'type': 'router',
+                'permission': ['products'],
              },
              {
-                 'icon': 'truck',
-                 'text': 'Transfers',
-                 'url': '/transfers',
-                 'uri': '/admin/transfers',
-                 'type': 'router',
+                'icon': 'truck',
+                'text': 'Transfers',
+                'url': '/transfers',
+                'uri': '/admin/transfers',
+                'type': 'router',
+                'permission': ['transfers'],
              },
              {
-                 'icon': 'tag',
-                 'text': 'Collections',
-                 'url': '/collections',
-                 'uri': '/admin/collections',
-                 'type': 'component',
+                'icon': 'tag',
+                'text': 'Collections',
+                'url': '/collections',
+                'uri': '/admin/collections',
+                'type': 'component',
+                'permission': ['collections'],
              }
         ],
     },
@@ -67,11 +72,13 @@ export var Nav = [
         'uri': '/admin/customers',
         'type': 'router',
         'submenu': [],
+        'permission': ['customers'],
     },
     {
         'icon': 'cog',
         'text': 'Settings',
         'url': '##',
+        'permission': ['settings'],
         'submenu': [
              {
                  'icon': 'cog',
@@ -97,6 +104,27 @@ export var Nav = [
         ],
     }
 ];
+
+
+// the table of correspondence component's name and account.permissions
+export var ComponentPermission = {
+    'AdminSettingsGeneral': 'settings',
+    'AdminSettingsCheckout': 'settings',
+    'AdminAccount': 'settings',
+    'AdminAccountProfile': 'settings',
+    'AdminCustomers': 'customers',
+    'AdminCustomersNew': 'customers',
+    'AdminCustomersEdit': 'customers',
+    'AdminOrdersOrders': 'orders',
+    'AdminOrdersDrafts': 'orders',
+    'AdminProducts': 'products',
+    'AdminProductsNew': 'customers',
+    'AdminProductsEdit': 'customers',
+    'AdminTransfers': 'transfers',
+    'AdminCollections': 'collections',
+    'AdminCollectionsNew': 'collections',
+    'AdminCollectionsEdit': 'collections',
+}; 
 
 
 export var PopUpMenu = [

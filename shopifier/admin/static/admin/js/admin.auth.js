@@ -93,6 +93,9 @@ export class AdminAuthService {
     message = '';
     errors = '';
 
+    selectedNav = undefined;
+    permissions = [];
+
     static get parameters() {
         return [[Http]];
     }
@@ -109,7 +112,10 @@ export class AdminAuthService {
         this._userPromise = this._userPromise || 
                             this._http.get('/api/current-user/')
             .toPromise()
-            .then(data => this._currentUser = data);
+            .then(data => {
+                this._currentUser = data;
+                this.permissions = data.permissions;
+            });
         return this._userPromise;
     }
 

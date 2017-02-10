@@ -4,7 +4,7 @@
         <h1> 
             <a href="/"> <i class="fa fa-shopping-bag"></i> <span>Shopifier</span></a>
         </h1>
-        <li *ngFor="let nav of navs"
+        <li *ngFor="let nav of navs | permissions:permissions"
             [ngClass]="{selected: nav === selectedNav, 'with-submenu': nav.submenu.length > 0}"
             (click)="onSelect(nav); forcePopupShow=false;">
             <a href="[[ nav.url ]]">
@@ -12,7 +12,7 @@
                 [[ nav.text ]]
              </a>
         </li>
-        <li class="account"  *ngIf="currentUser"
+        <li class="account" *ngIf="currentUser"
             (click)="forcePopupShow=true;"
             (mouseover)="forceSubmenuShow=false;">
 
@@ -37,7 +37,7 @@
                 </div>
                 <div>
                     <ul>
-                        <li>
+                        <li *ngIf="permissions.includes('settings') || permissions[0] == 'full'">
                             <a [routerLink]="['/settings/account', currentUser.id]"> Your profile</a>
                         </li>
                         <li>
@@ -49,9 +49,9 @@
             <tringle></tringle> 
         </div>
     </ul>
-    <ul class="menu submenu" *ngIf="selectedNav.submenu.length > 0">
+    <ul class="menu submenu">
          <h3>[[ selectedNav.text ]]</h3>
-         <li *ngFor="let subnav of selectedNav.submenu"
+         <li *ngFor="let subnav of selectedNav.submenu | permissions:permissions"
             [ngClass]="{selected: subnav === selectedSubNav}"
             (click)="onSelectSubNav(subnav); forcePopupShow=false;">
             <a href="[[ subnav.url ]]">[[ subnav.text ]]</a>

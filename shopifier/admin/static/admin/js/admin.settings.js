@@ -17,7 +17,6 @@ export var Permissions = [
         group: 'General',
         permissions: 
         [
-            {name: 'Home', api: 'home', select: 0},
             {name: 'Orders', api: 'orders', select: 0},
             {name: 'Customers', api: 'customers', select: 0},
             {name: 'Discounts', api: 'discounts', select: 0},
@@ -499,7 +498,7 @@ export class AdminSettingsGeneral {
     constructor(admin) {
         this._admin = admin;
     }
-    ngOnInit() {this._admin.currentUrl();}
+    ngOnInit() {this._admin.currentUrl(); this._admin.headerButtons = [];}
 }
 
 
@@ -513,7 +512,7 @@ export class AdminSettingsCheckout {
     component = 'Checkout';
     static get parameters() {return [[Admin]];}
     constructor(admin) {this._admin = admin;}
-    ngOnInit() {this._admin.currentUrl();}
+    ngOnInit() {this._admin.currentUrl(); this._admin.headerButtons = [];}
 }
 
 
