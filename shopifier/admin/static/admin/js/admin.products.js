@@ -25,7 +25,7 @@ export class AdminTransfers {
     component = 'Transfers';
     static get parameters() {return [[Admin]];}
     constructor(admin) {this._admin = admin;}
-    ngOnInit() {this._admin.currentUrl();}
+    ngOnInit() {this._admin.currentUrl(); this._admin.headerButtons = [];}
 }
 
 

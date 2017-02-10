@@ -23,7 +23,7 @@ export class AdminOrdersOrders {
     component = 'Orders';
     static get parameters() {return [[Admin]];}
     constructor(admin) {this._admin = admin;}
-    ngOnInit() {this._admin.currentUrl();}
+    ngOnInit() {this._admin.currentUrl(); this._admin.headerButtons = [];}
 }
 
 
@@ -37,7 +37,7 @@ export class AdminOrdersDrafts {
     component = 'Drafts';
     static get parameters() {return [[Admin]];}
     constructor(admin) {this._admin = admin;}
-    ngOnInit() {this._admin.currentUrl();}
+    ngOnInit() {this._admin.currentUrl(); this._admin.headerButtons = [];}
 }
 
 
