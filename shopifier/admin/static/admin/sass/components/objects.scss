@@ -572,10 +572,10 @@ popover, popup {
         visibility: hidden;
         opacity: 0;
 
-        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
+        transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end;
+        -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end;
+        -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end;
+        -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end;
     }
     &::before {
         z-index: 11;
@@ -599,7 +599,7 @@ popover, popup {
         transform-origin: center bottom;
         bottom: 45px;
         &::before {
-            bottom: -7px;
+            bottom: -6px;
         }
     }
     &.left {

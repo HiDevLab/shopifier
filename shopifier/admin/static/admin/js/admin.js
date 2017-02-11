@@ -126,6 +126,7 @@ export class Admin {
     permissions = [];
 
     popups = PopUpMenu;
+    menus = new PopUpMenuCollection;
 
     forceSubmenuShow = false;
     forcePopupShow = false;

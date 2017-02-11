@@ -1,4 +1,4 @@
-<nav>
+<nav (mouseleave)="menus.hideAll()">
     <ul class="menu" [ngClass]="{'selected-with-submenu': selectedNav.submenu.length > 0, 'force-submenu-show': forceSubmenuShow}"
         (transitionend)= "forcePopupShow=false">
         <h1> 
@@ -12,8 +12,8 @@
                 [[ nav.text ]]
              </a>
         </li>
-        <li class="account" *ngIf="currentUser"
-            (click)="forcePopupShow=true;"
+        <li class="account" *ngIf="currentUser" id="base-profile"
+            (click)="menus.onSwitch($event, 'profile');"
             (mouseover)="forceSubmenuShow=false;">
 
             <div class="avatar" *ngIf="currentUser">
@@ -26,29 +26,30 @@
             </span>
         </li>
 
-        <div *ngIf="currentUser" [ngClass]="{show: forcePopupShow }" class="nav-popup">
-            <div>
-                <div>
-                    <ul>
-                        <li *ngFor="let popup of popups">
-                            <a [attr.href]="popup.url">[[ popup.text ]]</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <ul>
-                        <li *ngIf="permissions.includes('settings') || permissions[0] == 'full'">
-                            <a [routerLink]="['/settings/account', currentUser.id]"> Your profile</a>
-                        </li>
-                        <li>
-                            <a [routerLink]="['/auth/logout']"> Log out</a>
-                        </li>
-                    </ul>
-                </div>
+        <popup id="profile" class="up hide">
+            <div class="backgraund-white">
+                <ul class="p10">
+                    <li *ngFor="let popup of popups" class="ref p5 pr20">
+                        <a class="ref"[attr.href]="popup.url" (click)="menus.hideAll();">[[ popup.text ]]</a>
+                    </li>
+                </ul>
+                <div class="sep"></div>
+                <ul class="p10">
+                    <li *ngIf="permissions.includes('settings') || permissions[0] == 'full'" class="ref p5 pr20">
+                        <a class="ref" [routerLink]="['/settings/account', currentUser.id]"
+                            (click)="menus.hideAll();" > Your profile
+                        </a>
+                    </li>
+                    <li class="ref p5 pr20">
+                        <a class="ref" [routerLink]="['/auth/logout']"
+                            (click)="menus.hideAll();"> Log out
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <tringle></tringle> 
-        </div>
+        </popup>
     </ul>
+
     <ul class="menu submenu">
          <h3>[[ selectedNav.text ]]</h3>
          <li *ngFor="let subnav of selectedNav.submenu | permissions:permissions"
@@ -76,7 +77,7 @@
                 (click)="btn.click.call(btn.self, btn.self)">
                 [[ btn.text ]]
         </a> 
-      </div>  
+      </div>
   </header>
 <section>
   <router-outlet></router-outlet>
