@@ -4,10 +4,7 @@
         <div class="rows w16 ml30">
             <form class="form pb10" [formGroup]="form.customer">{% csrf_token %}
                 <div class="row mb10 p20">
-                    <span class="fa-stack fa-lg color-avatar font48">
-                      <i class="fa fa-circle fa-stack-2x"></i>
-                      <i class="mt6 fa fa-user fa-stack-1x fa-inverse font70"></i>
-                    </span>
+                    <i class="fa fa-user-circle font80 color-avatar" aria-hidden="true"></i>
                      <div class="col pl20 pt15">
                         <h2><strong>[[ api_data.customer.first_name ]] [[ api_data.customer.last_name ]]</strong></h2>
                         <p *ngIf="api_data.customer.default_address" class="color-subdued">[[ api_data.customer.default_address.province_name ]] [[ api_data.customer.default_address.province ]]</p> 
