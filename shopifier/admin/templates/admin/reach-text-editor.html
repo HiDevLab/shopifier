@@ -8,7 +8,7 @@
                     <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
 
-                <pop-up-menu class="down left color-default hide mt18" id="formatting" [items]="formats" (select)="commandFormatBlock($event)"></pop-up-menu>
+                <pop-up-menu class="down left color-default hide" id="formatting" [items]="formats" (select)="commandFormatBlock($event)"></pop-up-menu>
 
                 <div (click)="commandTag('bold')" title="Bold" class="tool fa fa-bold"></div>
                 <div (click)="commandTag('italic')" title="Italic" class="tool fa fa-italic"></div>
@@ -27,7 +27,7 @@
                 <div id="base-colors" class="tool row right" title="Color" (click)="menus.onSwitch($event, 'colors')">
                     <span class="fa fa-font" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
-                <popup id="colors" class="down color-default hide mt18">
+                <popup id="colors" class="down color-default hide">
                     <div class="rte-color-container">
                         <div class="columns rte-color-sections" [ngClass]="{bg: !textBackground, txt: textBackground}">
                             <div class="rte-text-color-section">
@@ -61,7 +61,7 @@
                 <div id="base-table" class="tool row" title="Insert table" (click)="menus.onSwitch($event, 'table')">
                     <span class="fa fa-table" aria-hidden="true"></span><span class="fa fa-caret-down ml4" aria-hidden="true"></span>
                 </div>
-                <popup id="table" class="down color-default hide mt18" data-behavior="showstyles">
+                <popup id="table" class="down color-default hide" data-behavior="showstyles">
                     <div class="default-popover">
                        <ul><li (click)="createTable()">Insert table</li></ul>
                        <div class="row sep mh5"></div>

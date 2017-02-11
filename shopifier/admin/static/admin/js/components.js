@@ -937,12 +937,14 @@ class BasePopUp {
             return;
         }
         let base_element = document.querySelector(`#base-${this.element.id}`);
-        let left = 0;
+        let base = true; // ther is base element
         if (!base_element) {
             base_element = this.element.parentElement;
-        } else {
-            left = base_element.offsetLeft;
+            base = false;
         }
+
+        let left = base ? base_element.offsetLeft : 0;
+
         if (
             !this.element.classList.contains('left') &&
             !this.element.classList.contains('right')
@@ -951,6 +953,17 @@ class BasePopUp {
         } else if (this.element.classList.contains('right')) {
             left = left + base_element.offsetWidth - this.element.offsetWidth;
         }
+
+        if (this.element.classList.contains('up')) {
+            this.element.style.bottom = base_element.offsetHeight + 9;
+        }
+
+        let top = base ? base_element.offsetTop : 0;
+        if (this.element.classList.contains('down')) {
+            this.element.style.top = base_element.offsetHeight + top + 18;
+        }
+
+
         this.element.style.left = left;
         this.element.classList.remove('hide');
         this.element.classList.add('show');
