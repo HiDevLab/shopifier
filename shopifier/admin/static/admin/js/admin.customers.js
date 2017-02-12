@@ -379,34 +379,12 @@ export class AdminCustomersEdit extends BaseForm{
             );
     }
 
-    changePopover(event, display) {
-        let popover = document.querySelector('#address-popover');
-        popover.classList.remove(display=='show' ? 'hide' : 'show');
-        popover.classList.add(display=='show' ? 'show' : 'hide');
-    }
-
-    switchPopover() {
-        let popover = document.querySelector('#address-popover');
-        let show = popover.classList.contains('hide');
-        popover.classList.remove(show ? 'hide' : 'show');
-        popover.classList.add(show ? 'show' : 'hide');
-        if (show) {
-            let event = new Event('show');
-            popover.dispatchEvent(event);
-        }
-    }
-
-
-    onChangeAddress(event) {
-        this.switchPopover();
-    }
-
     onEditAddress(event, address) {
         this.current_address = address || {};
         this.setDataToControls(this.form, 'default_address',
                                this.current_address
         );
-        this.changePopover(event, 'hide');
+        this.menus.hideAll();
         this.showEditAddress = true;
     }
 
@@ -442,7 +420,7 @@ export class AdminCustomersEdit extends BaseForm{
     }
 
     onSelectAddress(event, address) {
-        this.changePopover(event, 'hide');
+        this.menus.hideAll();
         let c_id = this.object_id;
         let a_id = address.id;
         

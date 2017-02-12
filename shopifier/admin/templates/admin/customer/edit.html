@@ -48,9 +48,8 @@
                 <div class="row space-between">
                     <h2 class="pl20 mt-auto"><strong>Default address</strong></h2>
                     <div class="ref mt-auto pr20">
-                        <a id="base-address-popover" class="ref mt-auto" (click)="onChangeAddress($event)">Change
-                        </a>
-                        <popover id="address-popover" class="down w24 color-default hide">
+                        <a id="base-address" class="ref mt-auto" (click)="menus.onSwitch($event, 'address');">Change</a>
+                        <popup id="address" class="down w24 color-default">
                             <div>
                                 <div class="row space-between p20" >
                                     <h2 class="mt-auto"><strong>Change address</strong></h2>
@@ -80,7 +79,7 @@
                                     </li>
                                 </ul>
                             </div>
-                        </popover>
+                        </popup>
                     </div>
                 </div>
                 <div class="col color-subdued p20 pb0" *ngIf="api_data.customer.default_address">
