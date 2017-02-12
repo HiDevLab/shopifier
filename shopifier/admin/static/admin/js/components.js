@@ -204,24 +204,14 @@ export class PropertyStartsWithPipe {
 @Component({
     selector: 'tags',
     templateUrl: 'templates/tags-edit.html',
-    directives: [Popover],
     interpolation: ['[[', ']]'],
-    inputs: ['tags', 'all_tags','all_tags_statistic', 'parent', 'title_class' ],
-    pipes: [NotInPipe, StartsWithPipe]
+    inputs: ['tags', 'all_tags','all_tags_statistic', 'menus', 'save', 'change',
+            'title_class' ],
 })
 export class AdminTagsEdit {
     all_tags = [];
     tag_input = '';
     isAlphabetically = false;
-    
-    changePopover(event, display) {
-        event.stopPropagation();
-        let popover = document.querySelector('#tags-popover');
-        if (!!popover) {
-            popover.classList.remove(display=='show' ? 'hide' : 'show');
-            popover.classList.add(display=='show' ? 'show' : 'hide');
-        }
-    }
 
     available() { //copy of NotInPipe and StratWithPipe
         if (!this.all_tags) {
@@ -241,7 +231,7 @@ export class AdminTagsEdit {
         if (this.available().length == 0 && !this.tag_input) {
             return;
         }
-        this.changePopover(event, 'show');
+        this.menus.show('tags');
         this.current_i = 0;
     }
 
@@ -268,11 +258,9 @@ export class AdminTagsEdit {
 
         }, this);
         if (this.tooltipError) {
-            let self = this;
-            setTimeout(()=> { self.tooltipError = false; }, 5000);
+            setTimeout(()=> { this.tooltipError = false; }, 5000);
         }
         return out.join(' ,');
-        //Array.prototype.push.apply(this.tags, tags);
     }
 
     onKeyDown(event) {
@@ -286,11 +274,11 @@ export class AdminTagsEdit {
             }
             this.tag_input = this.pushTag(t);
 
-            this.parent.formChange = true;
+            this.change();
             this.current_i = 0;
 
-            if (this.available().length == 0) {
-                this.changePopover(event, 'hide');
+            if (this.available().length === 0) {
+                this.menus.hide('tags');
             }
         }
     }
@@ -318,7 +306,7 @@ export class AdminTagsEdit {
             this.current_i = 0;
             this.tag_input = '';
             if (this.available().length == 0) {
-                this.changePopover(event, 'hide');
+                this.menus.hide('tags');
             }
             return;
         }
@@ -331,11 +319,11 @@ export class AdminTagsEdit {
             }
             this.tag_input = this.pushTag(t);
             
-            this.parent.formChange = true;
+            this.change();
             this.current_i = 0;
 
             if (this.available().length == 0) {
-                this.changePopover(event, 'hide');
+                this.menus.hide('tags');
                 return;
             }
         }
@@ -353,9 +341,10 @@ export class AdminTagsEdit {
         }
     }
 
-    deleteTag(i) {
+    deleteTag(event, i) {
+        event.stopPropagation();
         this.tags.splice(i, 1);
-        this.parent.formChange = true;
+        this.change();
     }
 
     insertTag(event, tag) {
@@ -363,9 +352,9 @@ export class AdminTagsEdit {
         event.stopPropagation();
         this.tag_input = this.pushTag(tag);
         if (this.available().length == 0) {
-            this.changePopover(event, 'hide');
+            this.menus.hide('tags');
         }
-        this.parent.formChange = true;
+        this.change();
     }
 
     sortAllTags(index) {

@@ -94,7 +94,9 @@
                 <tags   [tags]="tags" 
                         [all_tags]="all_tags" 
                         [all_tags_statistic]="all_tags_statistic"
-                        [parent]="self"
+                        [menus]="menus"
+                        [change]="onFormChange.bind(self)"
+                        [save]="saveTags.bind(self)"
                         [title_class]="'bold h2'">
                 </tags>
             </div>
@@ -102,8 +104,8 @@
     </div>
  </div>
 
- <div class="modal-form" *ngIf="form.customer && showEdit">
-    <form class="input-form" [formGroup]="form.customer" novalidate>
+ <div *ngIf="form.customer && showEdit" class="modal-form">
+    <form class="input-form up" [formGroup]="form.customer" novalidate>
         {% with group='customer' change='customerChange=true' %}
         <div class="modal-header">
             <h2>Edit customer</h2>

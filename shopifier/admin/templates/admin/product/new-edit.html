@@ -107,7 +107,9 @@
                     <tags [tags]="tags" 
                         [all_tags]="all_tags" 
                         [all_tags_statistic]="all_tags_statistic"
-                        [parent]="self">
+                        [menus]="menus"
+                        [change]="onFormChange.bind(self)"
+                        [save]="saveTags.bind(self)">
                     </tags>
                 </div>
              </form>

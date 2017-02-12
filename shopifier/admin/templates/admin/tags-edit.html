@@ -3,28 +3,28 @@
     <a class="ref mt-auto" (click)="showAllTags=true">View all tags</a>
 </div>
 <div>
-    <div class="tooltip-error bottom30"
-        [ngClass]="{hide: !tooltipError}">
+    <div class="tooltip-error bottom30" [ngClass]="{hide: !tooltipError}">
         Oops, you've already used this tag.
     </div>
-    <input [(ngModel)]="tag_input" class="font16"
+    <input [(ngModel)]="tag_input" name="tag-input" class="font16"
            (keydown)="onKeyDown($event)"
            (keyup)="onKeyUp($event)"
            (focus)="onInputFocus($event)">
-    <popover id="tags-popover" class="up w24 hide">
+    <popup id="tags" class="up w24 hide">
         <div class="pv3">
-            <div class="row space-between pl20 pt20" *ngIf="!tag_input">
+            <div *ngIf="!tag_input" class="row space-between pl20 pt20">
                 <h3 class="mt-auto color-tags font11 bold">FREQUENTLY USED TAGS</h3>
             </div>
-            <div class="row sep mt10" *ngIf="!tag_input"></div>
+            <div *ngIf="!tag_input" class="row sep mt10"></div>
             <ul class="rows" id="tags-popover-ul" 
                 (keyup)="onKeyUp($event)">
-                <li class="row add" *ngIf="tag_input && !(available().length==1 && available()[0]==tag_input)"
+                <li *ngIf="tag_input && !(available().length==1 && available()[0]==tag_input)" class="row add" 
                     (show)="current_i=-1">
                     <a class="row left ph20 pv5 sel w24"
                         (click)="insertTag($event, tag_input)"
                         (mouseover)="current_i=-1"
                         [ngClass]="{sel:current_i==-1}">
+
                         <i class="fa fa-plus-circle mv-auto" aria-hidden="true"></i>
                         <h3 class="bold ml5 mv-auto">Add</h3>
                         <span class="ml5 mv-auto">[[ '"' + tag_input+'"' ]]</span>
@@ -41,13 +41,12 @@
                 </li>
             </ul>
         </div>
-    </popover>
+    </popup>
 </div>
 <ul class="mt10 apply-tags">
-    <li class="tag" *ngFor="let tag of tags; let i=index" >
-        [[ tag ]]
+    <li class="tag" *ngFor="let tag of tags; let i=index" >[[ tag ]]
         <a class="fa fa-times" aria-hidden="true"
-            (click)="deleteTag(i)"></a>
+            (click)="deleteTag($event, i)"></a>
     </li>
 </ul>
 
@@ -63,10 +62,10 @@
             <h2 class="bold ph20 mb20">applied tags</h2>
             
             <ul class="ph20 pb20 apply-tags">
-                <li *ngFor="let ap_tag of tags; let k=index">
-                    {% verbatim %}[[  ap_tag  ]]{% endverbatim %}
+                <li *ngFor="let ap_tag of tags; let k=index">[[ ap_tag ]]
                     <a class="fa fa-times" aria-hidden="true"
-                        (click)="deleteTag(k);tagsChange=true"></a>
+                        (click)="deleteTag(k);tagsChange=true">
+                    </a>
                 </li>
             </ul>
             <div class="sep"></div>
@@ -86,7 +85,7 @@
                 <li *ngFor="let all_tag of all_tags; let j=index"
                     [ngClass]="{disabled: tags.includes(all_tag)}"
                     (click)="addTag(all_tag);tagsChange=true">
-                    {% verbatim %}[[  all_tag  ]]{% endverbatim %}
+                    [[ all_tag ]]
                 </li>
             </ul>
         </div>
@@ -95,9 +94,7 @@
             (click)="showAllTags=false">Cancel</a>
             <a class="btn btn-blue"
                 [ngClass]="{disabled:!tagsChange}"
-                (click)="parent.saveTags(parent); showAllTags=false; tagsChange=false">Apply changes</a>
+                (click)="save(); showAllTags=false; tagsChange=false">Apply changes</a>
         </div>
     </form>
 </div>
-
-

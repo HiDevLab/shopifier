@@ -10,8 +10,7 @@ import { Router, Routes, ActivatedRoute } from '@angular/router';
 import { AdminAuthService, AdminUtils } from './admin.auth';
 import { Admin } from './admin';
 import { BaseForm } from './admin.baseform';
-import { AdminComponentsModule, Autosize, Popover, ArrayLengthPipe,
-    AdminLeavePage, AdminTagsEdit } from './components';
+import { AdminComponentsModule, PopUpMenuCollection } from './components';
 
 
 @Pipe({
@@ -101,7 +100,6 @@ export class AdminCustomers extends BaseForm {
   selector: 'main',
   templateUrl : 'templates/customer/new.html',
   interpolation: ['[[', ']]'],
-  pipes: [ProvincePipe, ArrayLengthPipe]
 })
 export class AdminCustomersNew extends BaseForm {
     tags = [];
@@ -198,15 +196,17 @@ export class AdminCustomersNew extends BaseForm {
         let address = {};
         address['address'] = this.form.default_address.value;
 
-        if (!address.address.first_name)
+        if (!address.address.first_name) {
             address.address.first_name = this.form.customer
                                              .controls.first_name.value;
-        if (!address.address.last_name)
+        }
+        if (!address.address.last_name) {
             address.address.last_name = this.form.customer
                                                  .controls.last_name.value;
+        }
         let url = `/admin/customers/${customer.customer.id}/addresses.json`;
         this._http
-            .post(url, address )
+            .post(url, address)
             .subscribe(
                 data => this.setDefaultAddress(customer, data),
                 err => {
@@ -237,9 +237,10 @@ export class AdminCustomersNew extends BaseForm {
     selector: 'main',
     templateUrl : 'templates/customer/edit.html',
     interpolation: ['[[', ']]'],
-    pipes: [ProvincePipe]
 })
 export class AdminCustomersEdit extends BaseForm{
+    menus = new PopUpMenuCollection;
+
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
                 [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef]];
@@ -292,7 +293,7 @@ export class AdminCustomersEdit extends BaseForm{
         this.api_data = data;
         this.customer = data.customer;
         this.customer['full_name'] = `${data.customer.first_name} ${data.customer.last_name}`;
-        this.tags = this.api_data.customer.tags; //for child
+        this.tags = this.api_data.customer.tags.slice(0).sort(); //for child
         this.setDataToControls(this.form, 'customer', this.api_data.customer);
 
         this._admin.currentUrl({
@@ -309,6 +310,13 @@ export class AdminCustomersEdit extends BaseForm{
         for (let i in this.all_tags_statistic) {
             this.all_tags.push(this.all_tags_statistic[i][0]);
         }
+    }
+
+    onFormChange() {
+        let b1 = this.compare(this.form[this.model].value, this.api_data[this.model])
+        let b3 = this.compareArrayUnsort(this.form[this.model].value.tags, this.tags);
+        this.formChange = !(b1 && b3);
+        this._admin.notNavigate = this.formChange;
     }
 
     onSaveNote() {

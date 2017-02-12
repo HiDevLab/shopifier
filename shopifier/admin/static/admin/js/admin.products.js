@@ -8,11 +8,10 @@ import { Http } from '@angular/http';
 import { NgModule, Component, ViewContainerRef } from '@angular/core';
 import { Router, Routes, ActivatedRoute } from '@angular/router';
 
-import { AdminAuthService, AdminUtils } from './admin.auth';
+import { AdminComponentsModule, PopUpMenuCollection} from './components';
 import { Admin } from './admin';
+import { AdminAuthService, AdminUtils } from './admin.auth';
 import { BaseForm } from './admin.baseform';
-import { AdminComponentsModule, RichTextEditor,  AdminLeavePage, Popover,
-    Calendar, Wait, PopUpMenu, PopUp, PopUpMenuCollection} from './components';
 
 
 //------------------------------------------------------------------------------AdminTransfers
@@ -108,6 +107,8 @@ export class AdminProducts extends BaseForm {
     interpolation: ['[[', ']]'],
 })
 export class AdminProductsNew extends BaseForm {
+    menus = new PopUpMenuCollection;
+
     state = ''
     container_images = undefined;
     images = [];
@@ -181,8 +182,6 @@ export class AdminProductsNew extends BaseForm {
     ngOnInit() {
         this.self = this; // for child components
         this._admin.notNavigate = false;
-
-        this.menus = new PopUpMenuCollection;
 
         this.addForm(this.form, '/admin/products.json', 'product');
 
@@ -331,7 +330,7 @@ export class AdminProductsNew extends BaseForm {
         } else {
             this.online_store = 1;
         }
-        this.tags = product.tags; //for TagsEsit
+        this.tags = product.tags.slice(0).sort(); //for TagsEsit
     }
 
     getImagesAfter(data) {
@@ -345,7 +344,6 @@ export class AdminProductsNew extends BaseForm {
         }
         this.images = this.copy(images);
         this.api_images = this.copy(images);
-
     }
 
     getVariantsAfter(data) {
@@ -409,9 +407,10 @@ export class AdminProductsNew extends BaseForm {
     }
 
     onFormChange() {
-        let b1 = this.compare( this.form[this.model].value, this.api_data[this.model])
+        let b1 = this.compare(this.form[this.model].value, this.api_data[this.model])
         let b2 = this.compareArray(this.api_collections, this._collections);
-        this.formChange = !(b1 && b2);
+        let b3 = this.compareArrayUnsort(this.form[this.model].value.tags, this.tags);
+        this.formChange = !(b1 && b2 && b3);
         this._admin.notNavigate = this.formChange;
     }
 
