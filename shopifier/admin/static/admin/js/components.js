@@ -979,7 +979,8 @@ class BasePopUp {
 
 //------------------------------------------------------------------------------PopUp
 @Directive({
-    selector: 'popup'
+    selector: 'popup',
+    host: {'class': 'hide'},
 })
 export class PopUp extends BasePopUp {
     static get parameters() {
@@ -1006,6 +1007,7 @@ export class PopUp extends BasePopUp {
         </div>
     `,
     interpolation: ['[[', ']]'],
+    host: {'class': 'hide'},
     inputs: ['items'],
 })
 export class PopUpMenu extends BasePopUp {
