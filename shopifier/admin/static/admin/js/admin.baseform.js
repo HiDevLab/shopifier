@@ -408,6 +408,13 @@ export class BaseForm {
         return true;
     }
 
+    compareArrayUnsort(arr1, arr2) {
+        if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+            return false;
+        }
+        return this.compareArray(arr1.slice(0).sort(), arr2.slice(0).sort());
+    }
+
     copy(obj) {
         if (obj) {
             return JSON.parse(JSON.stringify(obj));
