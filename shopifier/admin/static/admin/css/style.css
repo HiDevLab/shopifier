@@ -327,43 +327,6 @@ nav {
           right: 20px;
           bottom: 10px;
           font-family: FontAwesome; }
-    nav .menu .nav-popup {
-      display: none;
-      overflow: hidden; }
-      nav .menu .nav-popup.show {
-        display: block;
-        overflow: hidden; }
-      nav .menu .nav-popup > div {
-        position: absolute;
-        border-radius: 3px;
-        left: 33px;
-        bottom: 60px;
-        display: block;
-        background: rgba(255, 255, 255, 0.98); }
-        nav .menu .nav-popup > div div {
-          width: 143px;
-          padding: 10px 10px 10px 10px; }
-          nav .menu .nav-popup > div div li a {
-            line-height: 28px;
-            padding: 0;
-            padding: 5px 5px 20px 5px;
-            text-decoration: none;
-            color: #479ccf; }
-            nav .menu .nav-popup > div div li a:hover {
-              text-decoration: underline;
-              cursor: pointer;
-              cursor: hand; }
-          nav .menu .nav-popup > div div:last-of-type {
-            border-top: 1px solid #ebeef0; }
-      nav .menu .nav-popup > tringle {
-        position: absolute;
-        left: 105px;
-        bottom: 40px;
-        border: none;
-        border: 10px solid transparent;
-        border-top: 10px solid rgba(255, 255, 255, 0.98);
-        height: 0px;
-        width: 0px; }
 
 footer {
   flex: 1 1 0;
@@ -1056,10 +1019,10 @@ popover, popup {
     transform: scale(0.8);
     visibility: hidden;
     opacity: 0;
-    transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-    -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-    -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end;
-    -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.3s step-end; }
+    transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end;
+    -webkit-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end;
+    -moz-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end;
+    -o-transition: transform 0.2s linear, opacity 0.2s linear, visibility 0.2s step-end; }
   popover::before, popup::before {
     z-index: 11;
     transform: rotate(45deg);
@@ -1079,7 +1042,7 @@ popover, popup {
     transform-origin: center bottom;
     bottom: 45px; }
     popover.up::before, popup.up::before {
-      bottom: -7px; }
+      bottom: -6px; }
   popover.left::before, popup.left::before {
     left: 18px; }
   popover.right::before, popup.right::before {
@@ -1256,7 +1219,8 @@ pop-up-menu {
       cursor: pointer; }
 
 tags {
-  position: relative; }
+  position: relative;
+  width: 100%; }
   tags > div {
     position: relative; }
     tags > div > input {
@@ -1269,16 +1233,16 @@ tags {
       tags > div > input:focus {
         border-color: #0078bd; }
 
-tags popover > div > ul {
+tags popup > div > ul {
   max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden; }
-  tags popover > div > ul > li > a {
+  tags popup > div > ul > li > a {
     display: block;
     line-height: 24px; }
-    tags popover > div > ul > li > a:first-of-type {
+    tags popup > div > ul > li > a:first-of-type {
       color: #0078BD; }
-    tags popover > div > ul > li > a.sel {
+    tags popup > div > ul > li > a.sel {
       cursor: pointer;
       background: #0078BD;
       color: white; }
@@ -5168,27 +5132,27 @@ p.p5 {
   margin-bottom: 5px; }
 
 strong, .bold {
-  font-weight: bold; }
+  font-weight: bold !important; }
 
-h0 {
+h0, .h0 {
   font-size: 36px;
   font-weight: 400;
   line-height: 1.8em;
   margin-top: auto; }
 
-h1 {
+h1, .h1 {
   font-size: 24px;
   font-weight: 400;
   line-height: 1.2em;
   margin-top: auto; }
 
-h2 {
+h2, .h2 {
   font-size: 20px;
   font-weight: 400;
   line-height: 1.2em;
   margin-top: auto; }
 
-h3 {
+h3, .h3 {
   font-size: 15px;
   font-weight: 400;
   line-height: 1.2em;
