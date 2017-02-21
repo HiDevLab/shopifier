@@ -64,7 +64,7 @@
             <ul class="ph20 pb20 apply-tags">
                 <li *ngFor="let ap_tag of tags; let k=index">[[ ap_tag ]]
                     <a class="fa fa-times" aria-hidden="true"
-                        (click)="deleteTag(k);tagsChange=true">
+                        (click)="deleteTag($event,k);tagsChange=true">
                     </a>
                 </li>
             </ul>
