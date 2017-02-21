@@ -66,7 +66,6 @@ class LoginView(APIView):
             )
         else:
             content = {'detail': _('Your email or password was incorrect')}
-            
             return Response(content, status=status.HTTP_401_UNAUTHORIZED)
 
 
