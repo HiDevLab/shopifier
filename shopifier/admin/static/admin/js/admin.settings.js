@@ -228,11 +228,12 @@ export class AdminAccountProfile extends BaseForm {
 
         if (this.new_avatar) {
             data['avatar_image'] = this.new_avatar;
-        } else {
+        } else if (data['avatar_image']){
             delete data['avatar_image'];
         }
+
         data.permissions = this.setPermissions();
-        
+
         this._http.patch(`/admin/users/${this.object_id}.json`, { user: data })
             .subscribe(
                 (data) => {
@@ -289,7 +290,7 @@ export class AdminAccountProfile extends BaseForm {
         }
         this.new_avatar = null;
         this.user.avatar = null;
-        this.controls['avatar_image'].setValue(null);
+        this.form.user.controls['avatar_image'].setValue(null);
     }
 
     deleteAccount() {
