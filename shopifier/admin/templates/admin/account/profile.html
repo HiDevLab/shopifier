@@ -61,7 +61,6 @@
                      <div class="btn mr10">Upload photo
                         <input type="file" accept="image/gif, image/jpeg, image/png" (change)="upLoadAvatar($event)">
                      </div>
-                    
                      <a class="btn" 
                         [ngClass]="{disabled: !new_avatar && !user.avatar }" 
                         (click)="deleteAvatar()">
