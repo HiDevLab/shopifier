@@ -1,10 +1,12 @@
 System.config({
+    defaultJSExtensions: true,
     transpiler: 'babel',
     babelOptions: {
          'optional': ['es7.decorators', 'es7.classProperties'],
     },
     map: {
         app: "/static/admin/js/",
+        rxjs: '/static/rxjs',
         babel: 'https://cdn.jsdelivr.net/babel/5.8.38/browser.js',
         '@angular/http': '/static/@angular/http.umd.js',
         '@angular/core': '/static/@angular/core.umd.js',
@@ -16,12 +18,11 @@ System.config({
         '@angular/router': '/static/@angular/router.umd.js',
         '@angular/router-deprecated': '/static/@angular/router-deprecated.umd.js',
         '@angular/upgrade': '/static/@angular/upgrade.umd.js',
+        'dragula': '/static/dragula/dragula.js',
+        'ng2-dragula': '/static/dragula',
     },
     packages: {
-        app: {
-            main: 'admin.boot',
-            defaultExtension: 'js',
-        },
+        app: {main: 'admin.boot', defaultExtension: 'js',},
     },
 });
 System.import('app').catch(console.error.bind(console));

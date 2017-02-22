@@ -4,23 +4,19 @@
     <head>
         <base href="/admin/" />
         <meta charset="utf-8" />
-        <title>Shopifier</title>
+        <title>Shopifier Admin Site</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" /> -->
+        <link rel="stylesheet" href="{% static 'dragula/dragula.min.css' %}" />
         {% compress css %}
             <link rel="stylesheet" type="text/x-scss" href="{% static 'admin/sass/style.scss' %}" />
         {% endcompress %}
         
         <!-- 1. Load libraries -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.27/system.js"></script> -->
         <script src="{% static 'admin/js/es6/system.js' %}"></script> 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/Rx.js"></script>
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/angular2.js"></script> -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/router.js"></script> -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/http.js"></script> -->
-        <!-- <script src="{% static 'admin/js/es6/rx.js' %}"></script> -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/2.0.0-beta.17/Rx.js"></script> -->
         <script src="{% static 'admin/js/es6/zone.js' %}"></script>
         <script src="{% static 'admin/js/es6/Reflect.js' %}"></script>
         <script src="{% static 'admin/js/es6/config.js' %}"></script>
@@ -30,7 +26,7 @@
         <!-- rules defining tags, attributes and classes that are allowed -->
         <script src="{% static 'admin/wysihtml/parser_rules/advanced_and_extended.js' %}"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script> -->
 
         <!-- Load Feather code -->
         <script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>

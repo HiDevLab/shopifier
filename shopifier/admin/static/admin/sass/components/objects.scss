@@ -1205,13 +1205,14 @@ $tooltip-error-color: #ffffff;
             vertical-align: inherit;
             text-align: left;
             background: transparent;
+            > .btn {
+                padding: 6px 10px;
+                text-align: right;
+            }
+
             &:last-child {
                 padding: 6px 0 6px 10px;
                 text-align: end;
-                > .btn {
-                    padding: 6px 10px;
-                    text-align: right;
-                }
             }
         }
         td {

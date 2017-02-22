@@ -81,7 +81,7 @@
                                 [ngClass]="{selected: variant.select}"
                                 (dragover)="dragOver($event, dragOverVariant); currentVariant=variant.id"
                                 (drop)="addImages($event, k)"
-                                [attr.data-dropzone]="true">
+                                [attr.data-dropzone]="true" [dragula]='"images"'>
                                 <td class="select" [ngClass]="{hide: currentVariant==variant.id}">
                                     <span class="input">
                                         <input type="checkbox" [attr.id]="'var-'+k" [(ngModel)]="variant.select" [attr.name]="'variant_select-'+k">
@@ -93,7 +93,7 @@
                                         <a class="fa fa-picture-o"></a>
                                     </div>
                                     <span *ngIf="variant.image">
-                                        <img [attr.src]="variant.image.src">
+                                        <img [attr.src]="variant.image.src || variant.image.attachment">
                                     </span>
                                 </td>
                                 <td *ngIf="variant.option1" class="option" [ngClass]="{hide: currentVariant==variant.id}">

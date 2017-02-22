@@ -1,4 +1,4 @@
-<div class="form mt20 pt20"
+<div class="form mt20 pt20" style="min-height:288px;"
     (dragover)="dragOver($event); dragOverImg=true"
     (drop)="addImages($event)"
     [attr.data-dropzone]="true"
@@ -18,7 +18,7 @@
             <div>Drop files to upload</div>
         </div>
     </div>
-    <ul class="images mh20 mb20" id="images" [ngClass]="{hide: dragOverImg}">
+    <ul class="images mh20 mb20" id="images" [ngClass]="{hide: dragOverImg}" [dragula]='"images"'>
         <li *ngFor="let image of (images.length<12 || showAllImages)?images:images.slice(0,11); let i = index;" type="none"
             [attr.data-image]="image.id"
             (mouseover)="currentImg=image.id;"

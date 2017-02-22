@@ -8,6 +8,8 @@ import { Http } from '@angular/http';
 import { NgModule, Component, ViewContainerRef } from '@angular/core';
 import { Router, Routes, ActivatedRoute } from '@angular/router';
 
+import { DragulaModule, DragulaService } from 'ng2-dragula/ng2-dragula';
+
 import { AdminComponentsModule, PopUpMenuCollection} from './components';
 import { Admin } from './admin';
 import { AdminAuthService, AdminUtils } from './admin.auth';
@@ -110,7 +112,6 @@ export class AdminProductsNew extends BaseForm {
     menus = new PopUpMenuCollection;
 
     state = ''
-    container_images = undefined;
     images = [];
     api_images = [];
 
@@ -156,16 +157,18 @@ export class AdminProductsNew extends BaseForm {
 
     static get parameters() {
         return [[Http], [FormBuilder], [Router], [ActivatedRoute],
-                [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef]];
+                [AdminAuthService], [Admin], [AdminUtils], [ViewContainerRef],
+                [DragulaService]];
     }
 
-    constructor(http, fb, router, params, auth, admin, utils, vcr) {
+    constructor(http, fb, router, params, auth, admin, utils, vcr, dragula) {
         super(http, fb, router, auth, admin, utils);
         this._vcr = vcr;
         this.object_id = params.snapshot.params.id;
         this.model = 'product';
         this.currentLink = '/product/new';
         this.cancelLink = '/products';
+        this.dragula = dragula;
     }
 
     ngOnDestroy() {
@@ -174,9 +177,12 @@ export class AdminProductsNew extends BaseForm {
             this.rich_text_editor.ngOnDestroy();
         }
 
+        this.dragula.destroy('images');
+
         window.removeEventListener('dragenter', this.disableDrop, false);
         window.removeEventListener('dragover', this.disableDrop, false);
         window.removeEventListener('dragleave', this.dragLeave, false);
+        window.removeEventListener('dragstart', this.disableDrag, false);
     }
 
     ngOnInit() {
@@ -211,17 +217,8 @@ export class AdminProductsNew extends BaseForm {
             'click': this.onSave, 'primary': true, 'self': this 
         });
 
-        this.date_locale = moment.locale(navigator.language);
-        this.date_format = moment.localeData(this.date_locale).longDateFormat('L');
-
-        for (let i = 0; i < 24; i++) {
-            this._times.push({title: `0${i}:00`.slice(-5)});
-            this._times.push({title: `0${i}:30`.slice(-5)});
-        }
-    }
-
-    AfterViewInit(){
         // Image Editor (apiKey: ???)
+        let self = this;
         this.featherEditor = new Aviary.Feather(
             { 
                 apiVersion: 3,
@@ -235,28 +232,36 @@ export class AdminProductsNew extends BaseForm {
         );
 
         // drag and drop
-        this.container_images = this.getByID('images');
-        this.drake = dragula(
-            [this.container_images],
-            {
-                revertOnSpill: true,
-                moves: (el, source) => {
-                    return this.hasAttr(source, 'dragzone');
-                }
-            }
-        );
-        this.drake.on('drop', this.dropImage.bind(this));
-        this.drake.on('shadow', this.shadowImage.bind(this));
-        this.drake.on('dragend', this.dragEnd.bind(this));
+        this.dragula.shadow.subscribe(this.shadowImage.bind(this));
+        this.dragula.drop.subscribe(this.dropImage.bind(this));
+        this.dragula.dragend.subscribe(this.dragEnd.bind(this));
+
+
+        let options = {
+            revertOnSpill: false,
+            removeOnSpill: false,
+            moves: (el, source) => {
+                let ret = !!(el.dataset && el.dataset['dragzone']);
+                return ret;
+            },
+            copy: false,
+            copySortSource: true,
+        }
+        this.dragula.setOptions('images', options);
+        this.drake = this.dragula.find('images').drake;
 
         // disable dragover and drop 
         window.addEventListener('dragenter', this.disableDrop.bind(this), false);
         window.addEventListener('dragover', this.disableDrop.bind(this), false);
         window.addEventListener('dragleave', this.dragLeave.bind(this), false);
+        window.addEventListener('dragstart', this.disableDrag.bind(this), false);
 
-        let table = window.document.querySelectorAll('#variants-table tr')
-        for (let i=0; i < table.length; i++) {
-            this.drake.containers.push(table[i]);
+        this.date_locale = moment.locale(navigator.language);
+        this.date_format = moment.localeData(this.date_locale).longDateFormat('L');
+
+        for (let i = 0; i < 24; i++) {
+            this._times.push({title: `0${i}:00`.slice(-5)});
+            this._times.push({title: `0${i}:30`.slice(-5)});
         }
     }
 
@@ -499,33 +504,46 @@ export class AdminProductsNew extends BaseForm {
 
 //------------------------------------------------------------------------Images
     //dragula event
-    shadowImage(el) {
-        el = el.parentNode;
-        if(el.nodeName==='TR' && el.dataset && el.dataset.variant) {
+    shadowImage(args) {
+        let el = args[2];
+        if(el.dataset && el.dataset.variant) {
             this.currentVariant = el.dataset.variant;
         } else {
             this.currentVariant = undefined;
         }
     }
-    //dragula event
-    dropImage(el) {
+
+    dropImage(args) {
+        let image = args[1];
+        let variant = args[2];
         if (
-            el.parentNode && el.parentNode.dataset && el.dataset &&
-            el.parentNode.dataset.variant && el.dataset.image) {
-                Object.assign(
-                    this.find(this.variants, 'id', el.parentNode.dataset.variant),
-                    {image: this.find(this.images, 'id', el.dataset.image)});
-                this.drake.cancel(true);
+            (image.dataset && image.dataset.image) &&
+            (variant.dataset && variant.dataset.variant)
+        ) {
+            let var_ = this.find(this.variants, 'id', variant.dataset.variant);
+            let img = this.find(this.images, 'id', image.dataset.image);
+            Object.assign(var_, {image: img});
+            this.drake.cancel(true);
         }
     }
+
     //dragula event
-    dragEnd(el) {
+    dragEnd() {
         this.currentVariant = undefined;
         this.refreshImagesFromDOM();
         this.formChange = true;
         this._admin.notNavigate = true;
     }
+
     //window event
+    disableDrag(evt) {
+        if (!(evt.target.dataset && evt.target.dataset['dragzone'])) {
+            evt.preventDefault();
+            return false;
+        }
+        return true
+    }
+
     dragLeave(evt) {
         if (evt.clientX <= 0 && evt.clientY <= 0) {
             this.currentVariant = undefined;
@@ -641,13 +659,13 @@ export class AdminProductsNew extends BaseForm {
 
     // image Preview
     showImage(imageID) {
-        let img = this.container_images.querySelector(`[id='${imageID}']`);
+        let img = window.document.querySelector(`#images [id='${imageID}']`);
         this.imagePreviewSrc = img.src;
         this.showImagePreview = true;
     }
 
     editAltText(imageID) {
-        this.currentImage = this.container_images.querySelector(`[id='${imageID}']`);
+        this.currentImage = window.document.querySelector(`#images [id='${imageID}']`);
         this.altText = this.currentImage.alt;
         this.showEditAltText = true;
     }
@@ -692,7 +710,7 @@ export class AdminProductsNew extends BaseForm {
     }
 
     refreshImagesFromDOM(){
-        let dom_images = this.container_images.querySelectorAll('img');
+        let dom_images = window.document.querySelectorAll('#images img');
         let images = [];
         let image = {};
         let field = '';
@@ -869,11 +887,6 @@ export class AdminProductsNew extends BaseForm {
             this.refreshVariants();
         }
     }
-//     addTag(i, value) {
-//         this.options[i].values.push(value);
-//         this.formChange = true;
-//         this._admin.notNavigate = true;
-//     }
 
 //----------------------------------------------------------------------Variants
 
@@ -1383,6 +1396,7 @@ export class AdminProductsEdit extends AdminProductsNew {
 @NgModule({
     imports: [
         FormsModule, ReactiveFormsModule, CommonModule,
+        DragulaModule,
         AdminComponentsModule,
     ],
     providers: [
